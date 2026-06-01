@@ -43,7 +43,7 @@ export default async function EditaisPage() {
           <div className="sec-head">
             <div>
               <span className="eyebrow">Chamamentos e processos</span>
-              <h2>Editais</h2>
+              <h1>Editais</h1>
               <p>
                 Publicados também na{' '}
                 <a href={tribuna} target="_blank" rel="noopener noreferrer">

@@ -40,7 +40,7 @@ export default async function ReunioesPage() {
           <div className="sec-head">
             <div>
               <span className="eyebrow">Reuniões abertas ao público</span>
-              <h2>Calendário e atas</h2>
+              <h1>Calendário e atas</h1>
               <p>Filtre por ano e tipo. As atas em PDF ficam disponíveis após a aprovação.</p>
             </div>
           </div>

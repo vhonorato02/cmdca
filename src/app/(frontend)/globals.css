@@ -70,7 +70,7 @@ html.contrast nav.main a:hover,html.contrast nav.main a.active{color:var(--accen
 
 section.band{padding:56px 0;border-bottom:1px solid var(--line)}
 .sec-head{margin-bottom:28px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
-.sec-head h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.1;letter-spacing:-.015em;margin-top:11px}
+.sec-head h1,.sec-head h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.1;letter-spacing:-.015em;margin-top:11px}
 .sec-head p{color:var(--ink-2);margin-top:9px;max-width:60ch}
 .sec-head .more{font-size:.84rem;font-weight:700;color:var(--indigo);cursor:pointer;white-space:nowrap}html.contrast .sec-head .more{color:var(--accent)}
 

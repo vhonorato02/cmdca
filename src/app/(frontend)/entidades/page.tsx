@@ -42,7 +42,7 @@ export default async function EntidadesPage() {
           <div className="sec-head">
             <div>
               <span className="eyebrow">Sociedade civil</span>
-              <h2>Registro de Entidades</h2>
+              <h1>Registro de Entidades</h1>
               <p>
                 Organizações da área da infância e da adolescência registradas e acompanhadas pelo
                 conselho, conforme os arts. 90 e 91 do ECA.

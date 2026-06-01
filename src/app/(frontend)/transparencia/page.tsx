@@ -49,7 +49,7 @@ export default async function TransparenciaPage() {
             <div className="sec-head">
               <div>
                 <span className="eyebrow">Transparência viva</span>
-                <h2>O que fazemos, em números e gráficos</h2>
+                <h1>O que fazemos, em números e gráficos</h1>
                 <p>
                   Todos os valores vêm do painel e são editáveis pela coordenação e pelo jurídico.{' '}
                   {ind?.observacao || 'Dados ilustrativos.'}

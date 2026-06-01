@@ -2,6 +2,37 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/).
 
+## [0.2.1] — 2026-06-01
+
+Auditoria profunda página por página (site público + painel) e correções.
+
+### Corrigido
+
+- **🔴 Crítico: contatos de emergência invisíveis na página Ajuda.** O bloco de
+  emergência (190, Disque 100, card da criança, Conselho Tutelar) usava `.reveal`
+  sem o componente `<Reveal>` — ficava `opacity:0` para 100% dos visitantes com
+  JavaScript. Corrigido (verificado: visível).
+- **`<h1>` único por página:** home com um `<h1>` (nome do conselho); títulos do
+  slider viram `<h2>` (antes 1 `<h1>` por slide); páginas de listagem (Notícias,
+  Reuniões, Resoluções, Editais, Entidades, Transparência) ganham `<h1>` real.
+- **Barra de acessibilidade:** `aria-pressed` do alto contraste reflete o estado
+  real (antes fixo em `false`).
+- **`prefers-reduced-motion`:** desativa animações/transições e não autoavança o
+  slider para quem pede menos movimento (WCAG 2.2.2 / 2.3.3).
+- **Slider:** slides inativos com `inert` (fora do tab order e de leitores de tela).
+- **Manchete da home:** mostra o rótulo amigável da categoria (não o código cru).
+
+### Adicionado
+
+- **Páginas 404 e de erro com identidade do CMDCA** (em PT-BR, com caminhos úteis),
+  no lugar do 404 padrão do Next.
+
+### Dados (produção)
+
+- Endereços da **rede de proteção** (2º CT, Casa, 5 CRAS, 2 CREAS) e a **lei do
+  CMDCA** (nº 2.626/1991) aplicados na base via `pnpm apply:confirmados`
+  (idempotente; FMDCA financeiro permanece pendente).
+
 ## [0.2.0] — 2026-06-01
 
 Primeira rodada de auditoria e estabilização após a v1. Build, lint e typecheck

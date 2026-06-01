@@ -1,0 +1,41 @@
+'use client'
+
+import Link from 'next/link'
+
+import { Hero } from '@/components/Hero'
+
+/**
+ * Error boundary do site público. Mostra uma página com identidade do CMDCA
+ * (em vez do erro cru) e um botão para tentar novamente.
+ */
+export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return (
+    <>
+      <Hero
+        deep
+        eyebrow="Ops"
+        titulo="Algo deu errado ao carregar esta página"
+        texto="Tivemos um problema temporário. Você pode tentar de novo ou seguir por um dos caminhos abaixo."
+      />
+      <section className="band">
+        <div className="wrap">
+          <div style={{ marginBottom: 22 }}>
+            <button type="button" className="btn" onClick={reset}>
+              Tentar novamente
+            </button>
+          </div>
+          <div className="links">
+            <Link href="/">
+              <h4>Início</h4>
+              <p>Voltar à página inicial do conselho.</p>
+            </Link>
+            <Link href="/ajuda">
+              <h4>Preciso de ajuda</h4>
+              <p>Emergência (190), Disque 100 e Conselho Tutelar.</p>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}

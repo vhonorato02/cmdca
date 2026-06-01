@@ -36,7 +36,7 @@ export default async function ResolucoesPage() {
           <div className="sec-head">
             <div>
               <span className="eyebrow">Atos normativos</span>
-              <h2>Resoluções</h2>
+              <h1>Resoluções</h1>
               <p>
                 Os atos oficiais do conselho também são publicados na{' '}
                 <a href={tribuna} target="_blank" rel="noopener noreferrer">

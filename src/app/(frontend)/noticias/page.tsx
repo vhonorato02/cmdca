@@ -32,7 +32,7 @@ export default async function NoticiasPage() {
           <div className="sec-head">
             <div>
               <span className="eyebrow">Blog do conselho</span>
-              <h2>Notícias</h2>
+              <h1>Notícias</h1>
               <p>Conteúdo gerenciado pela coordenação e pelo jurídico no painel.</p>
             </div>
           </div>

@@ -43,3 +43,19 @@ services:
         sync: false
       - key: S3_SECRET_ACCESS_KEY
         sync: false
+      # --- e-mail (opcional): defina para habilitar reset de senha por SMTP.
+      # Sem SMTP_HOST, o reset apenas registra no log (modo desenvolvimento).
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM_NAME
+        sync: false
+      - key: EMAIL_FROM_ADDRESS
+        sync: false

@@ -50,6 +50,8 @@ pnpm dev
 | `pnpm build`           | Build de produção (type-check + páginas estáticas/ISR).        |
 | `pnpm start`           | Sobe o build de produção.                                      |
 | `pnpm lint`            | ESLint.                                                        |
+| `pnpm typecheck`       | Checagem de tipos (`tsc --noEmit`).                            |
+| `pnpm test`            | Testes unitários (Vitest) das funções puras (slug, datas).    |
 | `pnpm migrate`         | Aplica migrations no Neon (conexão direct/unpooled).           |
 | `pnpm migrate:create`  | Gera uma nova migration a partir de mudanças no schema.        |
 | `pnpm migrate:status`  | Lista o status das migrations.                                 |
@@ -72,6 +74,10 @@ pnpm dev
 
 ## 6. Painel / CMS
 
+- **Em português por padrão** (`i18n.fallbackLanguage: 'pt'`), com **identidade do CMDCA**
+  (logo na tela de login, ícone na barra lateral, favicon próprio) e um **dashboard de
+  boas-vindas** com atalhos para as tarefas mais comuns (criar notícia, cadastrar reunião,
+  enviar resolução, publicar edital, rede de proteção, editar indicadores).
 - **Papéis:** _Administrador_ (acesso total, inclui Usuários e Configurações) e _Editor_ (CRUD de conteúdo; **não** vê Usuários nem Configurações).
 - **Rascunho → publicar:** as coleções de conteúdo têm versões com rascunho. O site público mostra **apenas o que está publicado**; salvar como rascunho não afeta o site. Há **histórico e rollback** por documento.
 - **Indicadores e Página inicial** são globais — editar os Indicadores atualiza os contadores e gráficos do site.
@@ -106,6 +112,9 @@ Nada migra de lugar: Render, Neon e R2 permanecem; só muda o endereço público
 - **Acessibilidade (eMAG / WCAG 2.1 AA):** barra com ajuste de fonte, alto contraste (persistidos no navegador), **VLibras** (script oficial), navegação por teclado, foco visível, _skip-link_ e ilustrações com `aria-hidden`.
 - **SEO:** `generateMetadata` por rota, Open Graph/Twitter, `sitemap.xml`, `robots.txt`, JSON-LD `GovernmentOrganization`, ISR e revalidação ao publicar.
 - **LGPD / ECA Digital (Lei 15.211/2025):** página de Privacidade; sem cookies de rastreamento; regra de imagem de menor no upload de mídia.
+- **E-mail (reset de senha):** adaptador `@payloadcms/email-nodemailer` ativado por SMTP
+  (variáveis `SMTP_*` / `EMAIL_FROM_*`). Sem `SMTP_HOST`, o e-mail é registrado no console
+  (modo dev). Configure um SMTP real em produção para o "esqueci minha senha" funcionar.
 
 ## 10. Decisões e pequenas adaptações em relação à prévia
 
@@ -116,28 +125,27 @@ A casca permanece **idêntica** à prévia. As únicas adaptações (documentada
 - **Gráficos** reproduzidos com o **CSS da prévia** (barras + donut `conic-gradient`) lendo do CMS, em vez de Chart.js — para manter o visual aprovado.
 - **Mapa** da Ajuda em **Leaflet + OpenStreetMap** (a prévia usava um mapa SVG esquemático). Pontos sem coordenadas aparecem na lista; o mapa centraliza em Pindamonhangaba.
 - Animação de entrada `.reveal` com guarda `html.js` (sem JavaScript, o conteúdo continua visível).
-- Removido o _scaffold_ de testes (Playwright/Vitest) do template — pode ser readicionado se desejado.
+- Testes unitários mínimos (Vitest) cobrindo as funções puras de `slug` e formatação de datas (`pnpm test`). O _scaffold_ de e2e (Playwright) do template segue removido — pode ser readicionado se desejado.
 
 ---
 
 ## 11. Checklist `[A CONFIRMAR]` (antes de publicar oficialmente)
 
-Tudo abaixo está como **placeholder editável no CMS** ou como **valor ilustrativo** — nada foi inventado. Confirme na fonte oficial e atualize no painel.
+Tudo abaixo está como **placeholder editável no CMS** ou como **valor ilustrativo** — nada foi inventado. Confirme na fonte oficial e atualize no painel. **Detalhes, valores encontrados e fontes em [`CONTEUDO.md`](./CONTEUDO.md).**
 
-- [ ] **Lei municipal do CMDCA** (nº/ano) → _Configurações › Base legal › Lei do CMDCA_
-- [ ] **Lei municipal do FMDCA** (nº/ano) → _Configurações › Base legal › Lei do FMDCA_
-- [ ] **Regimento interno** → _Configurações › Base legal › Regimento_
-- [ ] **CNPJ do FMDCA** → _Configurações › FMDCA › CNPJ_
-- [ ] **Conta bancária do FMDCA** → _Configurações › FMDCA › Conta_
+- [x] **Endereço da Casa dos Conselhos** → preenchido (Rua Dr. Laerte Machado Guimarães, 590, Vila Borghese — provisório, fonte: Prefeitura). _Falta: CEP e horário._
+- [x] **2º Conselho Tutelar (Moreira César): endereço** → preenchido (Av. das Hortências, 168, Vale das Acácias — fonte: Prefeitura).
+- [ ] **Lei municipal do CMDCA** (nº/ano) — _fonte secundária encontrada (nº 2.626/1991), pendente de confirmação oficial_ → _Configurações › Base legal_
+- [ ] **Lei municipal do FMDCA** (nº/ano) e **Regimento interno** → _Configurações › Base legal_
+- [ ] **CNPJ e conta bancária do FMDCA** — _fonte secundária encontrada, **não publicada**; exige validação oficial_ → _Configurações › FMDCA_
 - [ ] **Percentual dedutível do IR** (confirmar limite legal com contador; hoje **6% ilustrativo**) → _Configurações › FMDCA_
 - [ ] **Composição nominal completa e paritária** (titulares/suplentes por segmento) → texto da página _O Conselho_ (hoje placeholder)
 - [ ] **Números reais dos indicadores** (hoje ilustrativos: 2.480 / 34 / 58 / 22 e séries dos gráficos) → _Indicadores_
 - [ ] **Calendário oficial de reuniões 2026** (com pautas e atas em PDF) → coleção _Reuniões_ (vazia)
-- [ ] **Endereço e horário exatos da Casa dos Conselhos** → _Configurações › Contato_ e coleção _Rede de Proteção_
-- [ ] **2º Conselho Tutelar (Moreira César): endereço exato** → coleção _Rede de Proteção_
+- [ ] **Horário/CEP da Casa dos Conselhos** → _Configurações › Contato_ e coleção _Rede de Proteção_
 - [ ] **Coordenadas (lat/lng) e endereços de CRAS, CREAS e dos Conselhos Tutelares** (para fixar os pinos no mapa) → coleção _Rede de Proteção_
 - [ ] **Revisar e publicar os 6 rascunhos de notícia** (Apêndice B) → coleção _Notícias_
-- [ ] **(Opcional) Adaptador de e-mail** para reset de senha em produção (hoje o e-mail vai para o console)
+- [x] **Adaptador de e-mail** para reset de senha → implementado (SMTP via env; ver §9)
 
 ---
 

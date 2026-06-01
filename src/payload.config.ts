@@ -1,6 +1,8 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
+import { pt } from '@payloadcms/translations/languages/pt'
 import { config as dotenvConfig } from 'dotenv'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -36,6 +38,37 @@ const connectionString = isMigrating
   ? process.env.DATABASE_URI_UNPOOLED || process.env.DATABASE_URI
   : process.env.DATABASE_URI
 
+// O driver `pg` avisa que `sslmode=require/prefer/verify-ca` é tratado, hoje,
+// como `verify-full`. Tornamos isso explícito: mesmo comportamento (o Neon usa
+// certificado público válido), porém sem o aviso de segurança no console/build.
+function withVerifyFullSSL(uri: string | undefined): string {
+  if (!uri) return ''
+  if (/[?&]sslmode=/.test(uri)) {
+    return uri.replace(/([?&]sslmode=)(require|prefer|verify-ca)\b/, '$1verify-full')
+  }
+  return `${uri}${uri.includes('?') ? '&' : '?'}sslmode=verify-full`
+}
+const secureConnectionString = withVerifyFullSSL(connectionString)
+
+// Adaptador de e-mail real (ex.: reset de senha) só é ativado quando há SMTP
+// configurado. Sem SMTP_HOST, o Payload usa o adaptador padrão (log no console),
+// preservando o comportamento de desenvolvimento.
+const emailAdapter = process.env.SMTP_HOST
+  ? nodemailerAdapter({
+      defaultFromName: process.env.EMAIL_FROM_NAME || 'CMDCA Pindamonhangaba',
+      defaultFromAddress: process.env.EMAIL_FROM_ADDRESS || 'nao-responder@cmdca-pinda.local',
+      transportOptions: {
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT || 587),
+        secure: process.env.SMTP_SECURE === 'true',
+        auth:
+          process.env.SMTP_USER && process.env.SMTP_PASS
+            ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+            : undefined,
+      },
+    })
+  : undefined
+
 // Em dev o painel roda em localhost; em produção, na URL pública. Manter o
 // serverURL alinhado à origem real é essencial: a proteção CSRF do Payload
 // rejeita o cookie de autenticação (HTTP 403 ao salvar/publicar) quando a
@@ -65,7 +98,23 @@ export default buildConfig({
     meta: {
       title: 'Painel · CMDCA Pindamonhangaba',
       titleSuffix: '',
+      description:
+        'Painel administrativo do Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba.',
+      icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/brand/favicon.svg' }],
     },
+    components: {
+      graphics: {
+        Logo: '/components/admin/Logo',
+        Icon: '/components/admin/Icon',
+      },
+      beforeDashboard: ['/components/admin/BeforeDashboard'],
+    },
+  },
+  // Painel somente em português: restringimos os idiomas suportados a `pt` para
+  // que o admin não caia em inglês quando o navegador envia Accept-Language: en.
+  i18n: {
+    fallbackLanguage: 'pt',
+    supportedLanguages: { pt },
   },
   collections: [
     Noticias,
@@ -88,11 +137,12 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
-      connectionString: connectionString || '',
+      connectionString: secureConnectionString,
     },
     // Schema controlado por migrations (não usar push automático com o Neon).
     push: false,
   }),
+  email: emailAdapter,
   sharp,
   plugins: [
     // Mídia no Cloudflare R2 (S3-compatible). disableLocalStorage = true por padrão,

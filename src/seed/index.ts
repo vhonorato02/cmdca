@@ -5,6 +5,16 @@
  * Regra de ouro: somente dados reais do Apêndice A. O que não está confirmado
  * entra como [A CONFIRMAR] (editável no CMS). Números de indicadores são
  * ILUSTRATIVOS e claramente marcados. As 6 notícias entram como rascunho.
+ *
+ * ATENÇÃO: estes valores são DEFAULTS para uma base nova. `updateGlobal`
+ * sobrescreve globais — não rode em produção com conteúdo já editado.
+ *
+ * Dados públicos preenchidos nesta versão (fontes registradas em CONTEUDO.md):
+ * - Casa dos Conselhos (endereço provisório): Prefeitura de Pindamonhangaba
+ *   (noticias/assistencia-social/casa-dos-conselhos-passa-a-funcionar-provisoriamente...).
+ * - 2º Conselho Tutelar (Moreira César): notícia oficial da Prefeitura (mudança em 09/06/2025).
+ * Dados financeiros (CNPJ/conta) e legais (lei do CMDCA/FMDCA) permanecem
+ * [A CONFIRMAR]: exigem validação em fonte oficial antes de publicar.
  */
 import type { Payload } from 'payload'
 import { getPayload } from 'payload'
@@ -116,8 +126,11 @@ async function seed() {
         email: 'cmdca@pindamonhangaba.sp.gov.br',
         telefone: '(12) 3642-1249',
         cep: '12420-070',
-        casaConselhosTelefone: '(12) 3643-1607 · (12) 3643-1609',
-        casaConselhosEndereco: `${CONFIRMAR} — endereço exato da Casa dos Conselhos`,
+        casaConselhosTelefone: '(12) 3643-1607 (ramal 6037) · (12) 3643-1609',
+        // Funcionamento provisório na sede da Secretaria de Assistência Social
+        // (fonte: Prefeitura de Pindamonhangaba). Confirmar CEP/horário antes de divulgar.
+        casaConselhosEndereco:
+          'Rua Dr. Laerte Machado Guimarães, 590 — Vila Borghese, Pindamonhangaba/SP (funcionamento provisório, na Secretaria de Assistência Social)',
         assessora: 'Simone Braça',
       },
       redes: {
@@ -287,7 +300,8 @@ async function seed() {
       _status: 'published',
       nome: '2º Conselho Tutelar (Moreira César)',
       tipo: 'ct',
-      endereco: `Moreira César — endereço exato: ${CONFIRMAR}`,
+      // Endereço atualizado pela Prefeitura (atendimento a partir de 09/06/2025).
+      endereco: 'Av. das Hortências, 168 — Vale das Acácias, Moreira César (Pindamonhangaba/SP)',
       telefone: '(12) 3641-1688',
       email: 'conselhotutelar2@pindamonhangaba.sp.gov.br',
       horario: 'Segunda a sexta, 7h30–17h30 · plantão fora do horário pela escala da Prefeitura',
@@ -297,10 +311,12 @@ async function seed() {
       _status: 'published',
       nome: 'Casa dos Conselhos',
       tipo: 'casa',
-      endereco: `Secretaria de Assistência Social — endereço exato: ${CONFIRMAR}`,
-      telefone: '(12) 3643-1607 · (12) 3643-1609',
-      horario: CONFIRMAR,
-      obs: 'Assessora: Simone Braça.',
+      // Sede provisória na Secretaria de Assistência Social (fonte: Prefeitura).
+      endereco:
+        'Rua Dr. Laerte Machado Guimarães, 590 — Vila Borghese, Pindamonhangaba/SP (na Secretaria de Assistência Social)',
+      telefone: '(12) 3643-1607 (ramal 6037) · (12) 3643-1609',
+      horario: `Segunda a sexta — horário a confirmar ${CONFIRMAR}`,
+      obs: 'Assessora: Simone Braça. Funcionamento provisório.',
     },
     {
       _status: 'published',

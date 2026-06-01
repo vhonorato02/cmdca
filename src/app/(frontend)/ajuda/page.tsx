@@ -52,7 +52,7 @@ export default async function AjudaPage() {
       />
 
       <div className="wrap">
-        <div className="reveal">
+        <Reveal>
           <div className="help-cards">
             <div className="hc urgent">
               <svg className="icn ic" viewBox="0 0 24 24">
@@ -119,7 +119,7 @@ export default async function AjudaPage() {
               perigo imediato, ligue 190 antes de qualquer outra coisa.
             </div>
           </div>
-        </div>
+        </Reveal>
       </div>
 
       <section className="band" style={{ borderTop: '1px solid var(--line)' }}>

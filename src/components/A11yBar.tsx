@@ -1,6 +1,14 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
+
+/** Assina mudanças na classe do <html> para refletir o alto contraste. */
+function subscribeContrast(onChange: () => void) {
+  const mo = new MutationObserver(onChange)
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+  return () => mo.disconnect()
+}
+const getContrast = () => document.documentElement.classList.contains('contrast')
 
 /**
  * Barra de acessibilidade (portada da prévia): ajuste de fonte (--fs),
@@ -8,6 +16,10 @@ import { useCallback } from 'react'
  * em localStorage; o script inline no <head> reaplica antes da pintura.
  */
 export function A11yBar() {
+  // Estado real do alto contraste (lido da classe do <html>, aplicada pelo script
+  // inline a partir do localStorage) para o aria-pressed correto no leitor de tela.
+  const contrast = useSyncExternalStore(subscribeContrast, getContrast, () => false)
+
   const fontStep = useCallback((d: number) => {
     const root = document.documentElement
     const current = parseInt(getComputedStyle(root).getPropertyValue('--fs'), 10) || 100
@@ -21,6 +33,7 @@ export function A11yBar() {
   }, [])
 
   const toggleContrast = useCallback(() => {
+    // Alterna a classe; o useSyncExternalStore detecta a mudança e re-renderiza.
     const on = document.documentElement.classList.toggle('contrast')
     try {
       localStorage.setItem('cmdca-contrast', on ? '1' : '0')
@@ -44,7 +57,7 @@ export function A11yBar() {
         <button type="button" onClick={() => fontStep(1)} aria-label="Aumentar tamanho da fonte">
           A+
         </button>
-        <button type="button" onClick={toggleContrast} aria-pressed={false}>
+        <button type="button" onClick={toggleContrast} aria-pressed={contrast}>
           Alto contraste
         </button>
         <button type="button" onClick={openVLibras} title="Tradução para Libras">

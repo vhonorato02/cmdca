@@ -20,6 +20,8 @@ export function HomeSlider({ slides }: { slides: Slide[] }) {
 
   useEffect(() => {
     if (n <= 1) return
+    // Não autoavança se o usuário pediu menos movimento (WCAG 2.2.2 / 2.3.3).
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
     const t = setInterval(() => setCur((c) => (c + 1) % n), 6000)
     return () => clearInterval(t)
   }, [n])
@@ -32,14 +34,18 @@ export function HomeSlider({ slides }: { slides: Slide[] }) {
         const href = d.cta?.href || ''
         const isInternal = href.startsWith('/')
         return (
-          <div className={i === cur ? 'slide on' : 'slide'} key={i}>
+          <div
+            className={i === cur ? 'slide on' : 'slide'}
+            key={i}
+            inert={i !== cur ? true : undefined}
+          >
             <div className="vis">
               <Illustration theme={d.tema || 'cidade'} />
               <span className="credit">ilustração CMDCA</span>
             </div>
             <div className="txt">
               {d.kicker ? <span className="kick">{d.kicker}</span> : null}
-              <h1>{d.titulo}</h1>
+              <h2>{d.titulo}</h2>
               {d.texto ? <p>{d.texto}</p> : null}
               {d.cta?.label && href ? (
                 <div>

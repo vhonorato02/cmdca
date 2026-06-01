@@ -59,7 +59,7 @@ html.contrast nav.main a:hover,html.contrast nav.main a.active{color:var(--accen
 .slide .txt{align-self:center;padding:0 5.5vw;color:#fff;position:relative;z-index:3}
 .slide .kick{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:inline-flex;align-items:center;gap:9px}
 .slide .kick::before{content:"";width:22px;height:2px;background:var(--accent)}
-.slide h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.05;letter-spacing:-.02em;margin:15px 0 14px;max-width:16ch}
+.slide h2{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.05;letter-spacing:-.02em;margin:15px 0 14px;max-width:16ch}
 .slide p{opacity:.9;max-width:42ch;font-size:1.03rem;margin-bottom:22px}
 .slide .vis{position:relative;overflow:hidden}
 .slide .vis::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--indigo-deep) 2%,rgba(22,20,47,.35) 55%,transparent 100%)}
@@ -306,3 +306,13 @@ body[data-role="admin"] .gated{display:inline-flex}.a-side .nav a span:not(.icn)
    Com JS, a classe .js entra no <html> antes da pintura e a animacao de entrada
    (.reveal -> .in) funciona como na previa. */
 html:not(.js) .reveal{opacity:1;transform:none}
+
+/* Conteudo so para leitores de tela (ex.: h1 da home, sem alterar o visual). */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Respeita "reduzir movimento": desliga animacoes/transicoes e garante que o
+   conteudo .reveal apareca sem depender da animacao de entrada. (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1!important;transform:none!important}
+}

@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 import { HomeSlider, type Slide } from '@/components/home/HomeSlider'
 import { Vozes, type Voz } from '@/components/home/Vozes'
-import { NewsCard } from '@/components/NewsCard'
+import { CATEGORIA_LABEL, NewsCard } from '@/components/NewsCard'
 import { Illustration } from '@/components/Illustration'
 import { Reveal } from '@/components/Reveal'
 import { StatsBand } from '@/components/StatsBand'
@@ -225,7 +225,7 @@ export default async function HomePage() {
                     <span className="credit">ilustração CMDCA</span>
                   </div>
                   <div>
-                    <span className="tag">{lead.categoria}</span>
+                    <span className="tag">{CATEGORIA_LABEL[lead.categoria] || 'Notícia'}</span>
                     <h3>{lead.title}</h3>
                     <p>{lead.resumo}</p>
                     {lead.data ? <div className="date">{formatDate(lead.data)}</div> : null}
@@ -254,6 +254,9 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }}
       />
+      <h1 className="sr-only">
+        Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba
+      </h1>
       {ordem.map((tipo) => blocos[tipo] ?? null)}
     </>
   )

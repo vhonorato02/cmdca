@@ -1,0 +1,45 @@
+# Render Blueprint — CMDCA Pindamonhangaba
+# https://render.com/docs/blueprint-spec
+#
+# Os valores marcados com `sync: false` NÃO ficam no repositório: defina-os no
+# painel do Render (Environment) com os mesmos valores do .env.local.
+services:
+  - type: web
+    name: cmdca
+    runtime: node
+    plan: free
+    region: virginia # US East — mais próximo do Neon sa-east-1 (São Paulo) que Oregon
+    branch: main
+    # corepack garante o pnpm 11 (campo packageManager); migrate aplica migrations
+    # pendentes (idempotente) antes do build.
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm migrate && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      # --- públicas (não sigilosas) ---
+      - key: NEXT_PUBLIC_SERVER_URL
+        value: https://cmdca.onrender.com
+      - key: NEXT_PUBLIC_R2_PUBLIC_URL
+        value: https://pub-11b5ed14186d414aa34b58a035bb6504.r2.dev
+      - key: S3_BUCKET
+        value: cmdca-media
+      - key: S3_REGION
+        value: auto
+      # --- sigilosas: definir no painel do Render ---
+      - key: PAYLOAD_SECRET
+        sync: false
+      - key: PREVIEW_SECRET
+        sync: false
+      - key: DATABASE_URI
+        sync: false
+      - key: DATABASE_URI_UNPOOLED
+        sync: false
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false

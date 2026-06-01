@@ -1,0 +1,6 @@
+# pnpm 10+ guarda aqui as deps autorizadas a rodar build scripts
+# (sharp/esbuild precisam disso para baixar/linkar seus binarios nativos).
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

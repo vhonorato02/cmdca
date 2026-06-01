@@ -1,0 +1,12 @@
+# Normaliza finais de linha para LF (build roda em Linux/Render).
+* text=auto eol=lf
+
+# Binários não devem ser convertidos.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary

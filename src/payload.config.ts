@@ -36,8 +36,27 @@ const connectionString = isMigrating
   ? process.env.DATABASE_URI_UNPOOLED || process.env.DATABASE_URI
   : process.env.DATABASE_URI
 
+// Em dev o painel roda em localhost; em produção, na URL pública. Manter o
+// serverURL alinhado à origem real é essencial: a proteção CSRF do Payload
+// rejeita o cookie de autenticação (HTTP 403 ao salvar/publicar) quando a
+// origem da requisição não bate com as origens permitidas.
+const serverURL =
+  process.env.NODE_ENV === 'production'
+    ? process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+    : 'http://localhost:3000'
+
+// Origens autorizadas para CSRF (cookies de auth) e CORS. Ao usar domínio
+// próprio, atualize NEXT_PUBLIC_SERVER_URL para o domínio final.
+const allowedOrigins = Array.from(
+  new Set(
+    ['http://localhost:3000', serverURL, process.env.NEXT_PUBLIC_SERVER_URL].filter(Boolean),
+  ),
+) as string[]
+
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  serverURL,
+  cors: allowedOrigins,
+  csrf: allowedOrigins,
   admin: {
     user: Users.slug,
     importMap: {

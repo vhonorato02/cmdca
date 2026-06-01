@@ -29,19 +29,24 @@ permanecem limpos; nenhuma funcionalidade existente foi removida.
   (sem flag de supressão): a string de conexão passa a usar `sslmode=verify-full`
   explicitamente — mesmo comportamento, já que o Neon usa certificado público válido.
 
-### Pesquisado e preenchido (fontes em `CONTEUDO.md`)
+### Pesquisado e preenchido (fontes oficiais — detalhes em `CONTEUDO.md`)
 
 - **Casa dos Conselhos** — endereço provisório na Secretaria de Assistência Social:
-  Rua Dr. Laerte Machado Guimarães, 590 — Vila Borghese (fonte oficial: Prefeitura).
+  Rua Dr. Laerte Machado Guimarães, 590 — Vila Borghese.
 - **2º Conselho Tutelar (Moreira César)** — Av. das Hortências, 168 — Vale das Acácias
-  (fonte oficial: Prefeitura; atendimento desde 09/06/2025).
+  (atendimento desde 09/06/2025).
+- **5 unidades de CRAS** (Araretama, Castolira, Centro, Cidade Nova, Moreira César) —
+  endereços, CEPs e telefones (página oficial de CRAS da Prefeitura).
+- **CREAS Centro e CREAS Moreira César** — endereços e telefones (página oficial de CREAS).
+- **Lei de criação do CMDCA** — **Lei Municipal nº 2.626, de 19/12/1991** (documento
+  oficial da Prefeitura; corroborado pela Câmara de Vereadores).
 
 ### Mantido como pendência (exige validação oficial — não publicado como fato)
 
 - CNPJ e conta bancária do FMDCA (apenas fonte secundária encontrada).
-- Lei municipal de criação do CMDCA/FMDCA (apenas fonte secundária encontrada).
+- Lei municipal do FMDCA e regimento interno (não localizados em fonte oficial).
 - Percentual dedutível do IR (hoje 6% ilustrativo no simulador).
-- Coordenadas (lat/lng) dos pontos da rede de proteção.
+- Coordenadas (lat/lng) dos pontos da rede de proteção (endereços já confirmados).
 - Números reais dos indicadores (hoje ilustrativos).
 
 ## [0.1.0] — 2026-05-31

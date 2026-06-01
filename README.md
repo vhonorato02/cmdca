@@ -135,7 +135,8 @@ Tudo abaixo está como **placeholder editável no CMS** ou como **valor ilustrat
 
 - [x] **Endereço da Casa dos Conselhos** → preenchido (Rua Dr. Laerte Machado Guimarães, 590, Vila Borghese — provisório, fonte: Prefeitura). _Falta: CEP e horário._
 - [x] **2º Conselho Tutelar (Moreira César): endereço** → preenchido (Av. das Hortências, 168, Vale das Acácias — fonte: Prefeitura).
-- [ ] **Lei municipal do CMDCA** (nº/ano) — _fonte secundária encontrada (nº 2.626/1991), pendente de confirmação oficial_ → _Configurações › Base legal_
+- [x] **Lei municipal do CMDCA** → preenchido: **Lei nº 2.626, de 19/12/1991** (fonte oficial: documento da Prefeitura + Câmara) → _Configurações › Base legal_
+- [x] **Endereços de CRAS (5), CREAS (2) e Conselhos Tutelares** → preenchidos (fonte: páginas oficiais da Prefeitura) → coleção _Rede de Proteção_
 - [ ] **Lei municipal do FMDCA** (nº/ano) e **Regimento interno** → _Configurações › Base legal_
 - [ ] **CNPJ e conta bancária do FMDCA** — _fonte secundária encontrada, **não publicada**; exige validação oficial_ → _Configurações › FMDCA_
 - [ ] **Percentual dedutível do IR** (confirmar limite legal com contador; hoje **6% ilustrativo**) → _Configurações › FMDCA_
@@ -143,7 +144,7 @@ Tudo abaixo está como **placeholder editável no CMS** ou como **valor ilustrat
 - [ ] **Números reais dos indicadores** (hoje ilustrativos: 2.480 / 34 / 58 / 22 e séries dos gráficos) → _Indicadores_
 - [ ] **Calendário oficial de reuniões 2026** (com pautas e atas em PDF) → coleção _Reuniões_ (vazia)
 - [ ] **Horário/CEP da Casa dos Conselhos** → _Configurações › Contato_ e coleção _Rede de Proteção_
-- [ ] **Coordenadas (lat/lng) e endereços de CRAS, CREAS e dos Conselhos Tutelares** (para fixar os pinos no mapa) → coleção _Rede de Proteção_
+- [ ] **Coordenadas (lat/lng)** de CRAS, CREAS e Conselhos Tutelares (endereços já confirmados; faltam só os pinos do mapa) → coleção _Rede de Proteção_
 - [ ] **Revisar e publicar os 6 rascunhos de notícia** (Apêndice B) → coleção _Notícias_
 - [x] **Adaptador de e-mail** para reset de senha → implementado (SMTP via env; ver §9)
 

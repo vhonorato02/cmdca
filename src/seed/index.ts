@@ -144,7 +144,13 @@ async function seed() {
         comoDestinar:
           'Pessoas físicas e jurídicas podem destinar parte do Imposto de Renda devido ao FMDCA. Os recursos permanecem em Pindamonhangaba, financiando projetos para a infância e a adolescência. Confirme limites e prazos com seu contador.',
       },
-      baseLegal: { leiCMDCA: CONFIRMAR, leiFMDCA: CONFIRMAR, regimento: CONFIRMAR },
+      // Lei do CMDCA confirmada em documento oficial da Prefeitura ("Criado pela Lei
+      // Municipal nº 2.626 de 19/12/1991"). Lei do FMDCA e regimento ainda pendentes.
+      baseLegal: {
+        leiCMDCA: 'Lei Municipal nº 2.626, de 19/12/1991',
+        leiFMDCA: CONFIRMAR,
+        regimento: CONFIRMAR,
+      },
       tribunaUrl: 'https://www.jornaltribunadonorte.com.br',
     },
   })
@@ -318,21 +324,65 @@ async function seed() {
       horario: `Segunda a sexta — horário a confirmar ${CONFIRMAR}`,
       obs: 'Assessora: Simone Braça. Funcionamento provisório.',
     },
+    // CRAS — 5 unidades (fonte: Prefeitura, página oficial de CRAS). Coordenadas
+    // (lat/lng) a confirmar; sem elas, o ponto aparece na lista acessível.
     {
       _status: 'published',
-      nome: 'CRAS (unidades)',
+      nome: 'CRAS Araretama',
       tipo: 'cras',
-      endereco: CONFIRMAR,
-      telefone: CONFIRMAR,
-      obs: 'Endereços, telefones e coordenadas a confirmar com a Secretaria de Assistência Social.',
+      endereco: 'Rua José Alves Pereira Sobrinho, 36 — Araretama, CEP 12426-320',
+      telefone: '(12) 3643-4209 (ramais 9026/9027)',
+      horario: 'Segunda a sexta',
     },
     {
       _status: 'published',
-      nome: 'CREAS',
+      nome: 'CRAS Castolira',
+      tipo: 'cras',
+      endereco: 'Rua Regina Célia Pestana César, 276 — Castolira, CEP 12405-490',
+      telefone: '(12) 3645-3672 (ramal 8850)',
+      horario: 'Segunda a sexta',
+    },
+    {
+      _status: 'published',
+      nome: 'CRAS Centro',
+      tipo: 'cras',
+      endereco: 'Rua Dr. Laerte de Assunção Júnior, 51 — Campo Alegre, CEP 12412-040',
+      telefone: '(12) 3642-1302 (ramais 8804/8805)',
+      horario: 'Segunda a sexta',
+    },
+    {
+      _status: 'published',
+      nome: 'CRAS Cidade Nova',
+      tipo: 'cras',
+      endereco: 'Av. Rio de Janeiro, 475 — Cidade Nova, CEP 12414-080',
+      telefone: '(12) 3645-6949 (ramais 8964/8965)',
+      horario: 'Segunda a sexta',
+    },
+    {
+      _status: 'published',
+      nome: 'CRAS Moreira César',
+      tipo: 'cras',
+      endereco: 'Rua Carlos Augusto Machado, 63 — Moreira César, CEP 12441-020',
+      telefone: '(12) 3637-5386 (ramais 9132/9133)',
+      horario: 'Segunda a sexta',
+    },
+    // CREAS — unidades Centro e Moreira César (fonte: Prefeitura, página oficial de CREAS).
+    {
+      _status: 'published',
+      nome: 'CREAS Centro',
       tipo: 'creas',
-      endereco: CONFIRMAR,
-      telefone: CONFIRMAR,
-      obs: 'Endereço, telefone e coordenadas a confirmar.',
+      endereco: 'Av. Fortunato Moreira, 341 — Centro',
+      telefone: '(12) 3642-6856 · (12) 3642-6403 (ramais 7090/7091)',
+      horario: 'Segunda a sexta, 8h–17h',
+      obs: 'Serviços: PAEFI, alta complexidade e abordagem social.',
+    },
+    {
+      _status: 'published',
+      nome: 'CREAS Moreira César',
+      tipo: 'creas',
+      endereco: 'Rua Joaquim Santana Salvador, 105 — Moreira César',
+      telefone: '(12) 3550-3608 · (12) 3550-3609 (ramais 9198/9199)',
+      horario: 'Segunda a sexta',
     },
   ])
 

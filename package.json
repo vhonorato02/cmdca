@@ -19,6 +19,7 @@
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation DATABASE_MIGRATION=true payload migrate:create",
     "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation DATABASE_MIGRATION=true payload migrate:status",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation DATABASE_MIGRATION=true tsx src/seed/index.ts",
+    "apply:confirmados": "cross-env NODE_OPTIONS=--no-deprecation DATABASE_MIGRATION=true tsx src/seed/apply-confirmados.ts",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {

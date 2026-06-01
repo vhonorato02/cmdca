@@ -5,10 +5,11 @@ Este documento registra, de forma honesta, **o que foi confirmado e preenchido**
 incluindo onde se pesquisou. Regra seguida: _dado não confirmado em fonte confiável
 não é publicado como fato_ (especialmente dados financeiros e legais).
 
-> Onde "preenchido": valor colocado como **default no seed** (`src/seed/index.ts`),
-> que alimenta bases novas. A base de produção (Neon) já tem conteúdo editado e
-> **não** foi sobrescrita — os valores abaixo devem ser conferidos e aplicados no
-> painel (`/admin`) pela coordenação.
+> **Aplicado na produção** em 2026-06-01 via `pnpm apply:confirmados` (script
+> idempotente e reversível — `configuracoes` tem versionamento): endereços da
+> rede de proteção (10 pontos), endereço/telefone da Casa dos Conselhos e a lei
+> do CMDCA. Os dados **pendentes** (CNPJ/conta do FMDCA) **não** foram tocados.
+> Os mesmos valores também são default no seed (`src/seed/index.ts`) para bases novas.
 
 ---
 

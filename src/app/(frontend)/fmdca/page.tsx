@@ -5,6 +5,7 @@ import { Hero } from '@/components/Hero'
 import { Reveal } from '@/components/Reveal'
 import { SimuladorIR } from '@/components/SimuladorIR'
 import { getPayloadClient } from '@/lib/payload'
+import { isConfirm } from '@/utilities/isConfirm'
 import type { Faq } from '@/payload-types'
 
 export const revalidate = 300
@@ -14,8 +15,6 @@ export const metadata: Metadata = {
   description:
     'Fundo Municipal dos Direitos da Criança e do Adolescente: o que é, como destinar parte do IR e transparência.',
 }
-
-const isConfirm = (v?: string | null) => !v || v.includes('[A CONFIRMAR]')
 
 export default async function FmdcaPage() {
   const payload = await getPayloadClient()

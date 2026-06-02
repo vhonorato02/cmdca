@@ -51,7 +51,7 @@ export default async function AjudaPage() {
         texto="Você não precisa resolver tudo sozinho(a). Escolha abaixo a situação mais próxima da sua."
       />
 
-      <div className="wrap">
+      <div className="wrap" id="emergencia">
         <Reveal>
           <div className="help-cards">
             <div className="hc urgent">
@@ -103,8 +103,8 @@ export default async function AjudaPage() {
                 </p>
                 <div className="num">(12) 3550-0513 · 3550-0514</div>
                 <div className="when">
-                  <b>2º CT (Moreira César):</b> (12) 3641-1688 · seg a sex, 7h30–17h30. Plantão fora do
-                  horário pela escala da Prefeitura.
+                  <b>2º CT (Moreira César):</b> Av. das Hortências, 168, Vale das Acácias · (12)
+                  3641-1688 · seg a sex, 7h30–17h30.
                 </div>
               </div>
             </div>
@@ -122,7 +122,7 @@ export default async function AjudaPage() {
         </Reveal>
       </div>
 
-      <section className="band" style={{ borderTop: '1px solid var(--line)' }}>
+      <section className="band" id="rede" style={{ borderTop: '1px solid var(--line)' }}>
         <div className="wrap">
           <Reveal>
             <div className="sec-head">

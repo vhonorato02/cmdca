@@ -17,7 +17,8 @@ export const Media: CollectionConfig = {
   },
   upload: {
     // Armazenamento vai para o R2 (storage-s3, disableLocalStorage por padrão).
-    mimeTypes: ['image/*', 'application/pdf'],
+    // Formatos raster seguros + PDF. SVG fica de fora (vetor de XSS se servido inline).
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'],
     imageSizes: [
       { name: 'thumbnail', width: 400 },
       { name: 'card', width: 768 },

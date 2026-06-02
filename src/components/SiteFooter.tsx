@@ -54,9 +54,9 @@ export async function SiteFooter() {
           <div>
             <h5>Proteção</h5>
             <Link href="/ajuda">Preciso de ajuda</Link>
-            <Link href="/ajuda">Conselho Tutelar</Link>
-            <Link href="/ajuda">Disque 100</Link>
-            <Link href="/ajuda">Rede de proteção</Link>
+            <Link href="/ajuda#emergencia">Disque 100 e emergência</Link>
+            <Link href="/ajuda#rede">Conselho Tutelar</Link>
+            <Link href="/ajuda#rede">Rede de proteção</Link>
           </div>
           <div>
             <h5>Transparência</h5>

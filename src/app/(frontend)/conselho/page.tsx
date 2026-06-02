@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Hero } from '@/components/Hero'
 import { Reveal } from '@/components/Reveal'
 import { getPayloadClient } from '@/lib/payload'
+import { isConfirm } from '@/utilities/isConfirm'
 
 export const revalidate = 300
 
@@ -12,8 +13,6 @@ export const metadata: Metadata = {
   description:
     'Órgão paritário, deliberativo, consultivo e fiscalizador (art. 88 do ECA). Composição, atribuições e base legal do CMDCA de Pindamonhangaba.',
 }
-
-const isConfirm = (v?: string | null) => !v || v.includes('[A CONFIRMAR]')
 
 function Valor({ value }: { value?: string | null }) {
   return isConfirm(value) ? <span className="confirm">a confirmar</span> : <>{value}</>

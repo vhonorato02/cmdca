@@ -45,8 +45,12 @@ export const Noticias: CollectionConfig = {
       name: 'resumo',
       label: 'Resumo',
       type: 'textarea',
+      required: true,
       maxLength: 320,
-      admin: { description: 'Chamada curta exibida nas listagens e no compartilhamento.' },
+      admin: {
+        description:
+          'Chamada curta (até 320 caracteres) exibida nas listagens, no Open Graph e no compartilhamento.',
+      },
     },
     { name: 'corpo', label: 'Corpo', type: 'richText' },
     {

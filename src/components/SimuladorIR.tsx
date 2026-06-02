@@ -30,10 +30,11 @@ export function SimuladorIR({
         <p>{texto}</p>
       </div>
       <div className="sim-box">
-        <label>
+        <label htmlFor="sim-ir-range">
           Seu imposto devido <b>R$ {fmt(v)}</b>
         </label>
         <input
+          id="sim-ir-range"
           type="range"
           min={0}
           max={20000}
@@ -41,8 +42,9 @@ export function SimuladorIR({
           value={v}
           onChange={(e) => setV(Number(e.target.value))}
           aria-label="Imposto de renda devido"
+          aria-valuetext={`R$ ${fmt(v)}`}
         />
-        <div className="sim-out">
+        <div className="sim-out" aria-live="polite">
           Você poderia destinar até<b>R$ {fmt(destino, 2)}</b>
         </div>
         <div className="sim-impact">

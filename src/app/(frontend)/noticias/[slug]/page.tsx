@@ -47,10 +47,28 @@ export async function generateMetadata({
   const { slug } = await params
   const post = await getPost(slug)
   if (!post) return { title: 'Notícia não encontrada' }
+  const capa = typeof post.capa === 'object' && post.capa ? post.capa : null
+  const url = `/noticias/${slug}`
+  const description = post.resumo || undefined
+  const images = capa?.url ? [{ url: capa.url, alt: capa.alt || post.title }] : undefined
   return {
     title: post.title,
-    description: post.resumo || undefined,
-    openGraph: { title: post.title, description: post.resumo || undefined, type: 'article' },
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: post.title,
+      description,
+      type: 'article',
+      url,
+      publishedTime: post.data || undefined,
+      authors: post.autor ? [post.autor] : undefined,
+      images,
+    },
+    twitter: {
+      card: images ? 'summary_large_image' : 'summary',
+      title: post.title,
+      description,
+    },
   }
 }
 
@@ -61,8 +79,30 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
   const capa = typeof post.capa === 'object' && post.capa ? post.capa : null
 
+  const base = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  const articleLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: post.title,
+    description: post.resumo || undefined,
+    datePublished: post.data || undefined,
+    dateModified: post.updatedAt || post.data || undefined,
+    author: post.autor ? { '@type': 'Organization', name: post.autor } : undefined,
+    image: capa?.url ? [capa.url] : undefined,
+    publisher: {
+      '@type': 'GovernmentOrganization',
+      name: 'CMDCA Pindamonhangaba',
+      logo: { '@type': 'ImageObject', url: `${base}/brand/logo-cmdca.jpg` },
+    },
+    mainEntityOfPage: `${base}/noticias/${slug}`,
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+      />
       <div className="wrap post-head">
         <Link className="mini" href="/noticias" style={{ marginBottom: 16, display: 'inline-block' }}>
           ← Voltar às notícias

@@ -18,14 +18,20 @@ try {
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  images: {
-    localPatterns: [
-      { pathname: '/api/media/file/**' },
-      { pathname: '/brand/**' },
+  // O runtime serverless precisa receber o binário e o libvips do sharp. Em
+  // instalações pnpm, o libvips fica em um pacote opcional irmão dentro de
+  // `@img`, que o rastreamento automático pode não seguir até o artefato.
+  outputFileTracingIncludes: {
+    '/*': [
+      'node_modules/sharp/**/*',
+      'node_modules/.pnpm/sharp@*/node_modules/sharp/**/*',
+      'node_modules/.pnpm/@img+sharp-linux-x64@*/node_modules/@img/sharp-linux-x64/**/*',
+      'node_modules/.pnpm/@img+sharp-libvips-linux-x64@*/node_modules/@img/sharp-libvips-linux-x64/**/*',
     ],
-    remotePatterns: r2Hostname
-      ? [{ protocol: 'https', hostname: r2Hostname }]
-      : [],
+  },
+  images: {
+    localPatterns: [{ pathname: '/api/media/file/**' }, { pathname: '/brand/**' }],
+    remotePatterns: r2Hostname ? [{ protocol: 'https', hostname: r2Hostname }] : [],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

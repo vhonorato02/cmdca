@@ -16,12 +16,21 @@ Uma página antiga em domínio oficial não comprova que endereço, telefone, co
 
 ## Fatos institucionais confirmados
 
-| Informação | Evidência oficial | Uso editorial |
-| --- | --- | --- |
-| CMDCA criado pela Lei Municipal nº 2.626, de 19/12/1991 | [publicação do CMDCA hospedada pela Prefeitura](https://www.pindamonhangaba.sp.gov.br/site/wp-content/uploads/2019/10/Publica%C3%A7%C3%A3o-Local-e-Hor%C3%A1rio-de-Prova_01Ago19-FINAL.pdf) | Pode constar como base legal. O texto integral e alterações posteriores devem acompanhar atos jurídicos que dependam do teor da lei. |
-| FMDCA criado pela Lei Municipal nº 4.140, de 23/03/2004 | [documento oficial no SAPL da Câmara](https://sapl.pindamonhangaba.sp.leg.br/pysc/download_materia_pysc?cod_materia=MzI0MDE%3D&texto_original=1) | Pode constar como referência de criação. Não substituir a leitura do texto integral da lei em pareceres. |
-| ECA — Lei Federal nº 8.069/1990 | [texto compilado no Planalto](https://www.planalto.gov.br/ccivil_03/leis/l8069compilado.htm) | Fonte principal para afirmações sobre o Estatuto. Verifique a redação compilada na data de publicação. |
-| Gestão municipal 2025–2027 empossada em 2025 | [notícia oficial da Prefeitura](https://pindamonhangaba.sp.gov.br/prefeitura-recebe-cerimonia-de-posse-do-cmdca) | Use a fonte para contexto da posse; nomes, representação e vigência devem ser conferidos no ato de nomeação antes de exibir composição nominal. |
+| Informação                                              | Evidência oficial                                                                                                                                                                           | Uso editorial                                                                                                                                   |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| CMDCA criado pela Lei Municipal nº 2.626, de 19/12/1991 | [publicação do CMDCA hospedada pela Prefeitura](https://www.pindamonhangaba.sp.gov.br/site/wp-content/uploads/2019/10/Publica%C3%A7%C3%A3o-Local-e-Hor%C3%A1rio-de-Prova_01Ago19-FINAL.pdf) | Pode constar como base legal. O texto integral e alterações posteriores devem acompanhar atos jurídicos que dependam do teor da lei.            |
+| FMDCA criado pela Lei Municipal nº 4.140, de 23/03/2004 | [documento oficial no SAPL da Câmara](https://sapl.pindamonhangaba.sp.leg.br/pysc/download_materia_pysc?cod_materia=MzI0MDE%3D&texto_original=1)                                            | Pode constar como referência de criação. Não substituir a leitura do texto integral da lei em pareceres.                                        |
+| ECA — Lei Federal nº 8.069/1990                         | [texto compilado no Planalto](https://www.planalto.gov.br/ccivil_03/leis/l8069compilado.htm)                                                                                                | Fonte principal para afirmações sobre o Estatuto. Verifique a redação compilada na data de publicação.                                          |
+| Gestão municipal 2025–2027 empossada em 2025            | [notícia oficial da Prefeitura](https://pindamonhangaba.sp.gov.br/prefeitura-recebe-cerimonia-de-posse-do-cmdca)                                                                            | Use a fonte para contexto da posse; nomes, representação e vigência devem ser conferidos no ato de nomeação antes de exibir composição nominal. |
+
+### Rede de proteção verificada em 19/07/2026
+
+| Serviço             | Evidência oficial                                                                                                                                                                                | Dados usados no portal                                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| CRAS                | [página municipal de endereços e contatos](https://pindamonhangaba.sp.gov.br/cras-centro-de-referencia-da-assistencia-social)                                                                    | Cinco unidades, endereços, CEPs, telefones e ramais.                                                                        |
+| CREAS               | [página municipal atualizada em 15/07/2026](https://pindamonhangaba.sp.gov.br/creas-enderecos-e-telefones)                                                                                       | Unidades Centro e Moreira César, endereços, telefones e ramais.                                                             |
+| 2º Conselho Tutelar | [comunicado municipal da nova sede](https://pindamonhangaba.sp.gov.br/conselho-tutelar-de-moreira-cesar-passa-a-atuar-em-nova-sede-a-partir-do-dia-9-de-junho)                                   | Avenida das Hortências, 168, Vale das Acácias; o telefone institucional foi cruzado com as publicações municipais recentes. |
+| Casa dos Conselhos  | [comunicado municipal de 29/09/2025](https://www.pindamonhangaba.sp.gov.br/noticias/assistencia-social/casa-dos-conselhos-passa-a-funcionar-provisoriamente-na-secretaria-de-assistencia-social) | O endereço e os telefones provisórios ficam em rascunho no CMS e não aparecem no portal até nova confirmação institucional. |
 
 ### Destinação do Imposto de Renda
 
@@ -70,14 +79,14 @@ Excluir o registro do CMS não é sinônimo de apagar cópias já distribuídas,
 
 ## Revisão periódica
 
-| Conteúdo | Frequência máxima sugerida |
-| --- | --- |
-| emergência, telefones e endereços | mensal e após aviso do órgão |
-| calendário, editais e prazos | antes de publicar e semanal enquanto vigentes |
-| composição do Conselho | a cada ato de nomeação ou substituição |
-| dados bancários e orientação de IR | antes de cada campanha/exercício |
-| indicadores | a cada nova competência, sempre com período e metodologia |
-| leis, resoluções e regimento | após publicação de novo ato |
-| política de privacidade e integrações | semestral e a cada fornecedor novo |
+| Conteúdo                              | Frequência máxima sugerida                                |
+| ------------------------------------- | --------------------------------------------------------- |
+| emergência, telefones e endereços     | mensal e após aviso do órgão                              |
+| calendário, editais e prazos          | antes de publicar e semanal enquanto vigentes             |
+| composição do Conselho                | a cada ato de nomeação ou substituição                    |
+| dados bancários e orientação de IR    | antes de cada campanha/exercício                          |
+| indicadores                           | a cada nova competência, sempre com período e metodologia |
+| leis, resoluções e regimento          | após publicação de novo ato                               |
+| política de privacidade e integrações | semestral e a cada fornecedor novo                        |
 
 Conteúdo vencido deve ser despublicado ou claramente marcado como histórico; não basta alterar a data.

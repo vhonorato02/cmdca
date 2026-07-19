@@ -5,6 +5,17 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 
+# O desenvolvimento ocorre no Windows e o runtime da Vercel usa Linux x64
+# com glibc. Manter as duas arquiteturas evita podar binários opcionais do sharp.
+supportedArchitectures:
+  os:
+    - current
+    - linux
+  cpu:
+    - x64
+  libc:
+    - glibc
+
 # Patches transitivos de segurança ainda não incorporados por todas as
 # dependências do Payload. Remover quando o upstream passar a resolver versões
 # iguais ou superiores.

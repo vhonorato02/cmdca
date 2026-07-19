@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og'
 
-export const alt = 'CMDCA de Pindamonhangaba — direitos, participação e transparência'
+export const alt = 'CMDCA de Pindamonhangaba: proteção, participação e transparência'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -37,7 +37,7 @@ export default function OpenGraphImage() {
             textTransform: 'uppercase',
           }}
         >
-          Serviço público municipal
+          Conselho municipal de direitos
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
           <div
@@ -54,7 +54,7 @@ export default function OpenGraphImage() {
             CMDCA de Pindamonhangaba
           </div>
           <div style={{ color: '#4f4b65', display: 'flex', fontSize: 30, lineHeight: 1.3 }}>
-            Direitos da criança e do adolescente, participação e transparência.
+            Proteção, participação e transparência para crianças e adolescentes.
           </div>
         </div>
         <div style={{ background: '#c8a62a', display: 'flex', height: 8, width: 250 }} />

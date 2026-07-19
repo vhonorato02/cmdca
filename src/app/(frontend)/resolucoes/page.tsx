@@ -11,7 +11,7 @@ import type { Configuracoe, Resolucoe } from '@/payload-types'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Resoluções do CMDCA de Pindamonhangaba | Atos Oficiais',
+  title: 'Resoluções do CMDCA | Atos Oficiais',
   description:
     'Consulte resoluções do CMDCA por número, data e assunto, com documento e publicação oficial quando disponíveis.',
   path: '/resolucoes',
@@ -45,7 +45,7 @@ export default async function ResolucoesPage() {
               <span className="eyebrow">Atos normativos</span>
               <h1>Resoluções</h1>
               <p>
-                Consulte o documento anexado e, quando disponível, o link direto para a publicação
+                Consulte o documento anexado e, quando houver, o link direto para a publicação
                 oficial. Para pesquisar outras edições, acesse o portal da{' '}
                 <a href={tribuna} target="_blank" rel="noopener noreferrer">
                   Tribuna do Norte
@@ -98,7 +98,7 @@ export default async function ResolucoesPage() {
               )
             })
           ) : (
-            <p style={{ color: 'var(--ink-2)' }}>Nenhuma resolução publicada até o momento.</p>
+            <p style={{ color: 'var(--ink-2)' }}>Não há resoluções publicadas nesta página no momento.</p>
           )}
           <p style={{ color: 'var(--ink-2)', marginTop: 24 }}>
             Consulte também as <Link href="/reunioes">reuniões e atas</Link> e os{' '}

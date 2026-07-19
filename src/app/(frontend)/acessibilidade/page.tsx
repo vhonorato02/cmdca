@@ -31,16 +31,16 @@ export default async function AcessibilidadePage() {
         deep
         eyebrow="Para todas as pessoas"
         titulo="Acessibilidade"
-        texto="Buscamos reduzir barreiras continuamente, usando o eMAG e as WCAG 2.2 como referências de projeto, conteúdo e avaliação."
+        texto="Esta página apresenta os recursos do site, as referências adotadas e os canais para relatar barreiras."
       />
       <section className="band">
         <div className="wrap">
           <Reveal>
             <div className="post-body" style={{ margin: 0 }}>
               <p>
-                <b>Declaração revisada em 19 de julho de 2026.</b> A adoção dessas referências não
-                equivale a certificação de conformidade integral. O site deve passar por
-                verificações contínuas, inclusive testes manuais e com tecnologias assistivas.
+                <b>Declaração revisada em 19 de julho de 2026.</b> O uso dessas referências não
+                significa certificação de conformidade integral. O site precisa de verificações
+                contínuas, inclusive testes manuais e com tecnologias assistivas.
               </p>
 
               <h3>Referências adotadas</h3>
@@ -53,8 +53,7 @@ export default async function AcessibilidadePage() {
                 <a href={WCAG_URL} target="_blank" rel="noopener noreferrer">
                   Diretrizes de Acessibilidade para Conteúdo Web (WCAG) 2.2
                 </a>
-                . Essas referências orientam melhorias; não representam um selo ou garantia de
-                ausência de barreiras.
+                . Elas orientam melhorias, mas não são um selo nem garantem ausência de barreiras.
               </p>
 
               <h3>Recursos disponíveis</h3>
@@ -66,11 +65,10 @@ export default async function AcessibilidadePage() {
               </p>
               <h3>Navegação</h3>
               <p>
-                A interface oferece atalho “Pular para o conteúdo”, estrutura de títulos e indicação
-                de foco nos controles interativos. Buscamos manter navegação por teclado, textos
-                compreensíveis, contraste adequado e alternativas textuais pertinentes. Consulte
-                também o <Link href="/mapa-do-site">mapa do site</Link> para acessar as principais
-                áreas.
+                A interface oferece o atalho “Pular para o conteúdo”, estrutura de títulos e
+                indicação de foco nos controles interativos. O objetivo é manter navegação por
+                teclado, textos claros, contraste adequado e alternativas textuais. Consulte também
+                o <Link href="/mapa-do-site">mapa do site</Link>.
               </p>
 
               <h3>Limitações conhecidas</h3>
@@ -91,7 +89,7 @@ export default async function AcessibilidadePage() {
                     Envie a mensagem para <a href={`mailto:${email}`}>{email}</a>.
                   </>
                 ) : null}{' '}
-                Seu relato será usado para priorizar correções e oferecer uma forma alternativa de
+                O relato ajuda a analisar a barreira e, quando possível, orientar uma alternativa de
                 acesso.
               </p>
             </div>

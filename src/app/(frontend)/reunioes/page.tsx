@@ -11,9 +11,9 @@ import type { Reunioe } from '@/payload-types'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Reuniões do CMDCA | Calendário, Pautas e Atas',
+  title: 'Reuniões do CMDCA | Calendário e Atas',
   description:
-    'Consulte datas, locais, classificação e atas aprovadas das reuniões do CMDCA de Pindamonhangaba.',
+    'Consulte datas, locais, classificação e atas publicadas das reuniões do CMDCA de Pindamonhangaba.',
   path: '/reunioes',
 })
 
@@ -54,8 +54,8 @@ export default async function ReunioesPage() {
               <span className="eyebrow">Agenda do colegiado</span>
               <h1>Calendário e atas</h1>
               <p>
-                Filtre por ano e classificação. Consulte cada registro para verificar data, local e
-                forma de acesso. As atas ficam disponíveis após aprovação e publicação.
+                Filtre por ano e classificação. Abra cada registro para confirmar data, local e
+                forma de acesso. As atas são incluídas após aprovação e publicação.
               </p>
             </div>
           </div>
@@ -63,10 +63,10 @@ export default async function ReunioesPage() {
           <div className="participate">
             <h3>Como acompanhar</h3>
             <p>
-              Reuniões identificadas como públicas podem ser acompanhadas pela comunidade, conforme
-              as informações divulgadas no calendário. Reuniões reservadas podem ocorrer quando a
-              pauta exigir proteção de informações ou de direitos. A existência de transmissão só
-              deve ser considerada quando houver link publicado no registro do encontro.
+              Reuniões marcadas como públicas podem ser acompanhadas pela comunidade conforme as
+              informações divulgadas no calendário. Reuniões reservadas podem ocorrer quando a pauta
+              exigir proteção de informações ou direitos. Só considere transmissão on-line quando
+              houver um link no registro do encontro.
             </p>
             <p style={{ marginTop: 10 }}>
               Consulte também as <Link href="/resolucoes">resoluções</Link> aprovadas e a página de{' '}

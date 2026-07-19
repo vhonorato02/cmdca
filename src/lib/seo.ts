@@ -22,7 +22,7 @@ function metadataImage(image?: string) {
     url,
     width: 1200,
     height: 630,
-    alt: `CMDCA de Pindamonhangaba — direitos da criança e do adolescente`,
+    alt: 'CMDCA de Pindamonhangaba: direitos de crianças e adolescentes',
   }
 }
 
@@ -42,7 +42,8 @@ export function createMetadata({
     keywords: [
       'CMDCA Pindamonhangaba',
       'direitos da criança e do adolescente',
-      'Conselho Tutelar Pindamonhangaba',
+      'proteção de crianças e adolescentes Pindamonhangaba',
+      'Conselho Municipal dos Direitos da Criança e do Adolescente',
       'FMDCA Pindamonhangaba',
     ],
     alternates: noIndex ? undefined : { canonical },

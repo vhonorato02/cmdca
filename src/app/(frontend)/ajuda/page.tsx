@@ -12,9 +12,9 @@ import type { Faq, RedeProtecao } from '@/payload-types'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Proteção à Criança em Pindamonhangaba | Telefones e Serviços',
+  title: 'Proteção de Crianças e Adolescentes | Pindamonhangaba',
   description:
-    'Em emergência, ligue 190. Para denunciar violações, use o Disque 100 ou encontre a rede de proteção de Pindamonhangaba.',
+    'Em perigo imediato, ligue 190. Para denunciar violações de direitos, use o Disque 100 ou consulte a rede de proteção em Pindamonhangaba.',
   path: '/ajuda',
 })
 
@@ -82,9 +82,9 @@ export default async function AjudaPage() {
   return (
     <>
       <Hero
-        eyebrow="Você está no lugar certo"
-        titulo="Se uma criança ou adolescente precisa de proteção, ajudamos a encontrar o caminho."
-        texto="Você não precisa resolver tudo sozinho(a). Escolha abaixo a situação mais próxima da sua."
+        eyebrow="Proteção começa com o canal certo"
+        titulo="Uma criança ou adolescente precisa de ajuda?"
+        texto="Escolha a situação mais próxima da sua. Em perigo imediato, ligue 190."
       />
 
       {faqLd ? (
@@ -117,15 +117,15 @@ export default async function AjudaPage() {
                 <path d="M3 11l18-5v12L3 18zM11 9v6" />
               </svg>
               <div>
-                <h3>Quero denunciar uma violação</h3>
-                <p>Suspeita ou conhecimento de violência, negligência ou abuso.</p>
+                <h3>Quero denunciar uma violação de direitos</h3>
+                <p>Use este canal em casos de violência, negligência, abuso ou suspeita.</p>
                 <div className="num">
                   <a href="tel:100" aria-label="Ligar para o Disque 100">
                     Disque 100
                   </a>
                 </div>
                 <div className="when">
-                  Anônimo e gratuito, 24h. Em Pinda, também pelo Conselho Tutelar.
+                  Atendimento gratuito e disponível 24 horas. A denúncia pode ser anônima.
                 </div>
               </div>
             </div>
@@ -135,17 +135,17 @@ export default async function AjudaPage() {
                 <path d="M12 10v6m-4 5 4-5 4 5" />
               </svg>
               <div>
-                <h3>Sou criança ou adolescente</h3>
+                <h3>Sou criança ou adolescente e preciso falar com alguém</h3>
                 <p>
-                  Se algo está te machucando ou te assustando, você pode pedir ajuda. A culpa nunca
-                  é sua.
+                  Se algo está machucando, assustando ou ameaçando você, peça ajuda. A culpa não é
+                  sua.
                 </p>
                 <div className="num">
                   <a href="tel:100" aria-label="Ligar para o Disque 100">
                     Disque 100
                   </a>
                 </div>
-                <div className="when">É de graça e você não precisa se identificar.</div>
+                <div className="when">A ligação é gratuita. Você pode denunciar sem se identificar.</div>
               </div>
             </div>
             <div className="hc">
@@ -206,8 +206,8 @@ export default async function AjudaPage() {
                 <span className="eyebrow">Rede de proteção</span>
                 <h2>Onde encontrar apoio na cidade</h2>
                 <p>
-                  Filtre por tipo de serviço. Localizações aproximadas — confirme o endereço antes
-                  de ir.
+                  Filtre por tipo de serviço. Os pontos no mapa são aproximados; confirme endereço
+                  e horário antes de sair.
                 </p>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default async function AjudaPage() {
               <div className="sec-head">
                 <div>
                   <span className="eyebrow">Dúvidas frequentes</span>
-                  <h2>Perguntas que recebemos</h2>
+                  <h2>Dúvidas frequentes</h2>
                 </div>
               </div>
               <FaqAccordion items={faqItems} />

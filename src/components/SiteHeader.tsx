@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 
 const NAV = [
   { href: '/', label: 'Início' },
-  { href: '/conselho', label: 'O Conselho' },
+  { href: '/conselho', label: 'CMDCA' },
   { href: '/reunioes', label: 'Reuniões' },
   { href: '/transparencia', label: 'Transparência' },
   { href: '/noticias', label: 'Notícias' },
@@ -72,7 +72,7 @@ export function SiteHeader() {
   return (
     <header className={scrolled ? 'top scrolled' : 'top'}>
       <div className="wrap">
-        <Link className="brand" href="/" aria-label="CMDCA Pindamonhangaba — início">
+        <Link className="brand" href="/" aria-label="Página inicial do CMDCA de Pindamonhangaba">
           <span className="mk">
             <Image src="/brand/emblema.jpg" alt="Símbolo do CMDCA" width={40} height={40} priority />
           </span>
@@ -82,7 +82,7 @@ export function SiteHeader() {
           </span>
         </Link>
         <Link className="help-link mobile-help" href="/ajuda">
-          Preciso de ajuda
+          Buscar ajuda
         </Link>
         <nav
           ref={navRef}
@@ -102,7 +102,7 @@ export function SiteHeader() {
             </Link>
           ))}
           <Link className="help-link" href="/ajuda" onClick={() => setOpen(false)}>
-            Preciso de ajuda
+            Buscar ajuda
           </Link>
         </nav>
         <button

@@ -11,9 +11,9 @@ import type { Entidade } from '@/payload-types'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Entidades Registradas no CMDCA de Pindamonhangaba',
+  title: 'Entidades Registradas no CMDCA | Pindamonhangaba',
   description:
-    'Consulte organizações, números de registro e validade do cadastro no CMDCA de Pindamonhangaba, quando informados.',
+    'Consulte as entidades registradas no CMDCA, com número de registro e validade quando essas informações estiverem publicadas.',
   path: '/entidades',
 })
 
@@ -48,9 +48,9 @@ export default async function EntidadesPage() {
               <span className="eyebrow">Sociedade civil</span>
               <h1>Entidades registradas</h1>
               <p>
-                Relação pública de organizações cadastradas no CMDCA. O número e a validade aparecem
-                somente quando informados no registro publicado. Consulte o conselho para confirmar
-                a situação vigente antes de usar esta lista em procedimento formal.
+                Esta é a relação pública de organizações registradas no CMDCA. Número e validade só
+                aparecem quando constam no registro publicado. Antes de usar a lista em um
+                procedimento formal, confirme a situação vigente com o conselho.
               </p>
             </div>
           </div>
@@ -69,16 +69,16 @@ export default async function EntidadesPage() {
             </div>
           ) : (
             <p style={{ color: 'var(--ink-2)' }}>
-              Nenhuma entidade registrada listada até o momento.
+              Não há entidades registradas listadas nesta página no momento.
             </p>
           )}
           <div className="participate" style={{ marginTop: 28 }}>
             <h2>Precisa de orientação sobre registro ou renovação?</h2>
             <p>
-              Os requisitos dependem do programa e dos atos vigentes. Consulte os{' '}
+              Os requisitos variam conforme o programa e os atos vigentes. Antes de protocolar
+              documentos, consulte os{' '}
               <Link href="/editais">editais</Link>, as <Link href="/resolucoes">resoluções</Link> e
-              os canais da página <Link href="/participe">Participe</Link> antes de protocolar
-              documentos.
+              os canais da página <Link href="/participe">Participe</Link>.
             </p>
           </div>
         </Reveal>

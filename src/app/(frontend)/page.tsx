@@ -26,7 +26,7 @@ export const revalidate = 300
 export const metadata: Metadata = createMetadata({
   title: 'CMDCA de Pindamonhangaba | Direitos da Criança e do Adolescente',
   description:
-    'Encontre canais de proteção, reuniões, resoluções, editais, entidades registradas e informações do FMDCA em Pindamonhangaba.',
+    'Acesse os canais de proteção, reuniões, resoluções, editais, entidades registradas e informações do Fundo Municipal em Pindamonhangaba.',
   path: '/',
 })
 
@@ -184,26 +184,27 @@ export default async function HomePage() {
                     lineHeight: 1.1,
                   }}
                 >
-                  Decisões públicas para proteger direitos.
+                  Onde as decisões sobre direitos ganham forma pública.
                 </h2>
                 <p>
-                  O <b>CMDCA</b> reúne poder público e sociedade civil em número igual. O conselho
-                  define prioridades da política municipal, acompanha organizações e programas,
-                  delibera sobre o Fundo Municipal e conduz o processo de escolha do Conselho Tutelar.
+                  O <b>CMDCA</b> reúne poder público e sociedade civil em número igual. Aqui são
+                  deliberadas prioridades da política municipal, decisões sobre o Fundo e regras
+                  para o registro de entidades e programas. O conselho também conduz o processo de
+                  escolha do Conselho Tutelar.
                 </p>
               </div>
               <div className="lead-box">
                 <span className="k">{publicText(dir?.gestaoLabel) || 'Gestão 2025–2027'}</span>
                 <div className="nm">Composição paritária</div>
                 <p className="ro" style={{ marginTop: 8 }}>
-                  Consulte a composição, as atribuições e a base legal do conselho.
+                  Veja quem compõe o colegiado, o que ele faz e quais leis o orientam.
                 </p>
                 <Link
                   className="mini"
                   href="/conselho"
                   style={{ marginTop: 14, display: 'inline-flex' }}
                 >
-                  Conhecer o conselho
+                  Entender o CMDCA
                 </Link>
               </div>
             </div>
@@ -218,8 +219,8 @@ export default async function HomePage() {
           <Reveal>
             <div className="sec-head">
               <div>
-                <span className="eyebrow">Por onde começar</span>
-                <h2>Acesso rápido</h2>
+                <span className="eyebrow">Serviços e informações</span>
+                <h2>Encontre o que você precisa</h2>
               </div>
             </div>
             <div className="links">
@@ -228,7 +229,7 @@ export default async function HomePage() {
                   <path d="M12 21C7 17.5 4 14 4 9.5 4 6.5 6.2 4.5 9 4.5c1.7 0 3 .9 3 .9s1.3-.9 3-.9c2.8 0 5 2 5 5C20 14 17 17.5 12 21Z" />
                 </svg>
                 <h4>Pedir ajuda</h4>
-                <p>Saiba qual canal usar em uma emergência, denúncia ou pedido de orientação.</p>
+                <p>Encontre o canal adequado para emergência, denúncia ou orientação.</p>
               </Link>
               <Link href="/reunioes">
                 <svg className="icn ic" viewBox="0 0 24 24">
@@ -236,21 +237,21 @@ export default async function HomePage() {
                   <path d="M8 3v4M16 3v4M4 10h16" />
                 </svg>
                 <h4>Reuniões e atas</h4>
-                <p>Calendário, pautas e atas das reuniões.</p>
+                <p>Consulte calendário, pautas e atas já publicadas.</p>
               </Link>
               <Link href="/transparencia">
                 <svg className="icn ic" viewBox="0 0 24 24">
                   <path d="M5 19V9M12 19V5M19 19v-7M3 21h18" />
                 </svg>
                 <h4>Transparência</h4>
-                <p>Atos, documentos e informações sobre a aplicação dos recursos.</p>
+                <p>Acesse atos, documentos e informações que já estão disponíveis.</p>
               </Link>
               <Link href="/fmdca">
                 <svg className="icn ic" viewBox="0 0 24 24">
                   <path d="M4 12v6a1 1 0 0 0 1 1h3v-7M8 12 4 9l8-5 8 5v9a1 1 0 0 1-1 1h-3v-7" />
                 </svg>
                 <h4>Destinar seu IR</h4>
-                <p>Entenda limites, prazos e formas oficiais de destinação.</p>
+                <p>Confira regras, limites e fontes oficiais antes de destinar.</p>
               </Link>
             </div>
           </Reveal>
@@ -277,8 +278,8 @@ export default async function HomePage() {
           <Reveal>
             <div className="sec-head">
               <div>
-                <span className="eyebrow">Acontece no conselho</span>
-                <h2>Notícias</h2>
+                <span className="eyebrow">Atualizações</span>
+                <h2>Notícias do conselho</h2>
               </div>
               <Link className="more" href="/noticias">
                 Todas as notícias →
@@ -326,7 +327,7 @@ export default async function HomePage() {
           <Reveal>
             <div className="about">
               <div>
-                <span className="eyebrow">Informação e serviço público</span>
+                <span className="eyebrow">Informação pública para a cidade</span>
                 <h1
                   id="inicio-titulo"
                   style={{
@@ -337,16 +338,16 @@ export default async function HomePage() {
                     maxWidth: '20ch',
                   }}
                 >
-                  Direitos da criança e do adolescente em Pindamonhangaba
+                  Direitos de crianças e adolescentes em Pindamonhangaba
                 </h1>
                 <p>
-                  Encontre canais de proteção, reuniões, atos oficiais, informações sobre o Fundo e
-                  maneiras de acompanhar e participar das decisões do CMDCA.
+                  Encontre canais de proteção, atos oficiais, reuniões e informações sobre o Fundo.
+                  Saiba também como acompanhar as decisões do CMDCA.
                 </p>
               </div>
               <div className="lead-box">
                 <span className="k">Precisa de proteção?</span>
-                <div className="nm">Veja o canal certo para cada situação</div>
+                <div className="nm">Comece pelo canal adequado à situação</div>
                 <p className="ro" style={{ marginTop: 8 }}>
                   Em perigo imediato, ligue 190. Para denunciar violações de direitos, use o Disque
                   100.

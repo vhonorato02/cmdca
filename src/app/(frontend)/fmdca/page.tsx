@@ -13,9 +13,9 @@ import type { Faq } from '@/payload-types'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Fundo da Criança de Pindamonhangaba | Destinação do IR',
+  title: 'Fundo Municipal | Destinação do Imposto de Renda',
   description:
-    'Entenda como destinar parte do Imposto de Renda ao Fundo da Criança e do Adolescente, com limites, prazos e orientações oficiais.',
+    'Entenda as regras para destinar parte do Imposto de Renda ao Fundo Municipal e consulte fontes oficiais antes de concluir.',
   path: '/fmdca',
 })
 
@@ -68,7 +68,7 @@ export default async function FmdcaPage() {
         deep
         eyebrow="Fundo da infância"
         titulo="Fundo Municipal dos Direitos da Criança e do Adolescente"
-        texto="Entenda as modalidades previstas em lei para destinar parte do Imposto de Renda devido. Antes de concluir, confirme o procedimento nos canais oficiais."
+        texto="Entenda as regras para destinar parte do Imposto de Renda devido. Antes de concluir, confirme o procedimento nos canais oficiais."
       />
 
       {faqLd ? (
@@ -93,13 +93,13 @@ export default async function FmdcaPage() {
                     lineHeight: 1.1,
                   }}
                 >
-                  Recurso público com finalidade definida em lei.
+                  Recursos públicos destinados à política de direitos.
                 </h2>
                 <p>
                   O Fundo reúne recursos destinados a programas e projetos de promoção, proteção e
-                  defesa dos direitos da criança e do adolescente. O CMDCA delibera sobre as
-                  prioridades de aplicação e deve dar publicidade à arrecadação, aos projetos
-                  apoiados e à prestação de contas.
+                  defesa dos direitos de crianças e adolescentes. O CMDCA delibera sobre prioridades
+                  de aplicação. Arrecadação, projetos apoiados e prestação de contas devem ser
+                  divulgados nos atos e documentos correspondentes.
                 </p>
                 <p style={{ marginTop: 16 }}>
                   A destinação pode direcionar ao Fundo uma parcela do imposto devido, dentro dos
@@ -117,8 +117,8 @@ export default async function FmdcaPage() {
                 {conta ? <div className="ro">Conta para destinação: {conta}</div> : null}
                 {!cnpj && !conta ? (
                   <p className="ro" style={{ marginTop: 8 }}>
-                    Dados bancários não são exibidos enquanto não houver validação formal. Não faça
-                    transferência com base em mensagens ou dados não publicados em ato oficial.
+                  Dados bancários não são exibidos sem validação formal. Não faça transferências com
+                  base em mensagens ou dados que não estejam em ato oficial.
                   </p>
                 ) : null}
                 <hr />
@@ -138,10 +138,10 @@ export default async function FmdcaPage() {
             <div className="sec-head">
               <div>
                 <span className="eyebrow">Duas formas de destinar</span>
-                <h2>O limite depende do momento</h2>
+                <h2>O limite varia conforme o momento da destinação</h2>
                 <p>
-                  As regras abaixo se referem à pessoa física e não substituem orientação
-                  tributária.
+                  As regras abaixo se referem à pessoa física e não substituem orientação tributária
+                  individual.
                 </p>
               </div>
             </div>
@@ -151,9 +151,8 @@ export default async function FmdcaPage() {
                   Na declaração: até 3%
                 </h3>
                 <p style={{ color: 'var(--ink-2)' }}>
-                  Quem usa o modelo por deduções legais pode destinar até 3% do imposto devido ao
-                  Fundo da Criança e do Adolescente diretamente na declaração, dentro do prazo da
-                  Receita.
+                  No modelo por deduções legais, a pessoa física pode destinar até 3% do imposto
+                  devido diretamente na declaração, dentro do prazo da Receita Federal.
                 </p>
                 <a href={RECEITA_DECLARACAO_URL} target="_blank" rel="noopener noreferrer">
                   Consultar o manual da Receita Federal
@@ -164,9 +163,8 @@ export default async function FmdcaPage() {
                   Durante o ano: até 6%
                 </h3>
                 <p style={{ color: 'var(--ink-2)' }}>
-                  Destinações realizadas ao longo do ano-calendário podem alcançar até 6% do imposto
-                  devido, observados o limite global, os comprovantes e as regras do art. 260 do
-                  ECA.
+                  Destinações feitas ao longo do ano-calendário podem alcançar até 6% do imposto
+                  devido, observados o limite global, os comprovantes e o art. 260 do ECA.
                 </p>
                 <a href={ECA_URL} target="_blank" rel="noopener noreferrer">
                   Consultar o ECA no Planalto
@@ -175,8 +173,8 @@ export default async function FmdcaPage() {
             </div>
             <p style={{ color: 'var(--ink-2)', marginTop: 18 }}>
               Empresas tributadas pelo lucro real seguem regras próprias. Antes de destinar, confirme
-              o enquadramento, o prazo e a documentação exigida com a Receita Federal ou profissional
-              de contabilidade.
+              enquadramento, prazo e documentação com a Receita Federal ou um profissional de
+              contabilidade.
             </p>
           </Reveal>
         </div>
@@ -188,8 +186,8 @@ export default async function FmdcaPage() {
             <SimuladorIR
               percentual={3}
               eyebrow="Estimativa para a declaração"
-              titulo="Calcule até 3% do imposto devido"
-              texto="A estimativa usa o limite da destinação feita diretamente na declaração por pessoa física no modelo por deduções legais. O valor efetivo depende dos dados apurados pela Receita Federal."
+              titulo="Estime até 3% do imposto devido"
+              texto="Esta é uma estimativa para a destinação feita diretamente na declaração por pessoa física no modelo por deduções legais. O valor efetivo depende da apuração da Receita Federal."
             />
           </Reveal>
         </div>
@@ -201,7 +199,7 @@ export default async function FmdcaPage() {
             <div className="sec-head">
               <div>
                 <span className="eyebrow">Fontes oficiais</span>
-                <h2>Confira antes de destinar</h2>
+                <h2>Consulte as fontes antes de destinar</h2>
               </div>
             </div>
             <p style={{ color: 'var(--ink-2)' }}>

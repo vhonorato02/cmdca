@@ -12,9 +12,9 @@ import type { Noticia } from '@/payload-types'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Conferências dos Direitos da Criança e do Adolescente | Pindamonhangaba',
+  title: 'Conferências e Fóruns | Direitos de Crianças e Adolescentes',
   description:
-    'Consulte notícias, documentos e resultados das conferências e dos fóruns municipais sobre infância e adolescência em Pindamonhangaba.',
+    'Consulte notícias, documentos e convocações publicadas sobre conferências e fóruns de direitos em Pindamonhangaba.',
   path: '/conferencias',
 })
 
@@ -43,7 +43,7 @@ export default async function ConferenciasPage() {
         deep
         eyebrow="Mobilização"
         titulo="Conferências e Fóruns"
-        texto="Espaços de escuta e construção coletiva da política municipal da infância e da adolescência."
+        texto="Espaços públicos para debater prioridades e formular propostas para a política municipal de direitos."
       />
 
       <section className="band">
@@ -61,13 +61,12 @@ export default async function ConferenciasPage() {
                     lineHeight: 1.1,
                   }}
                 >
-                  Acompanhe convocações e documentos oficiais.
+                  Acompanhe convocações, documentos e registros publicados.
                 </h2>
                 <p>
-                  As conferências avaliam políticas públicas, debatem prioridades e formulam
-                  diretrizes com participação do poder público e da sociedade civil. Uma nova edição
-                  só será tratada como confirmada neste site depois da publicação de convocação,
-                  data, local e programação nos canais oficiais.
+                  Conferências e fóruns reúnem poder público e sociedade civil para avaliar políticas,
+                  debater prioridades e formular diretrizes. Uma nova edição só aparece neste site
+                  após a publicação de convocação, data, local e programação nos canais oficiais.
                 </p>
                 <p style={{ marginTop: 16 }}>
                   Consulte os <Link href="/editais">editais</Link> e as{' '}

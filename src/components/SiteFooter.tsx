@@ -58,14 +58,14 @@ export async function SiteFooter() {
           </div>
           <nav aria-label="Navegação institucional">
             <h5>Navegação</h5>
-            <Link href="/conselho">O Conselho</Link>
+            <Link href="/conselho">Sobre o CMDCA</Link>
             <Link href="/reunioes">Reuniões</Link>
             <Link href="/transparencia">Transparência</Link>
             <Link href="/noticias">Notícias</Link>
           </nav>
           <nav aria-label="Canais de proteção">
             <h5>Proteção</h5>
-            <Link href="/ajuda">Preciso de ajuda</Link>
+            <Link href="/ajuda">Buscar ajuda</Link>
             <Link href="/ajuda#emergencia">Disque 100 e emergência</Link>
             <Link href="/ajuda#rede">Conselho Tutelar</Link>
             <Link href="/ajuda#rede">Rede de proteção</Link>
@@ -85,7 +85,7 @@ export async function SiteFooter() {
         <div className="foot-end">
           <span>© {year} CMDCA Pindamonhangaba</span>
           <div className="seals">
-            <span className="seal">Acessibilidade digital</span>
+            <span className="seal">Recursos de acessibilidade</span>
             <span className="seal">VLibras</span>
           </div>
         </div>

@@ -11,9 +11,9 @@ import type { Configuracoe, Editai } from '@/payload-types'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Editais do CMDCA | Chamamentos, Prazos e Resultados',
+  title: 'Editais do CMDCA | Prazos, Anexos e Publicações',
   description:
-    'Consulte editais, prazos, anexos e publicações oficiais de chamamentos e processos do CMDCA de Pindamonhangaba.',
+    'Consulte editais do CMDCA, com prazos, anexos e links para as publicações oficiais quando disponíveis.',
   path: '/editais',
 })
 
@@ -50,9 +50,8 @@ export default async function EditaisPage() {
               <span className="eyebrow">Chamamentos e processos</span>
               <h1>Editais</h1>
               <p>
-                Consulte o documento, os anexos, os prazos e eventuais retificações. Quando
-                disponível, use o link direto para a publicação oficial; para pesquisar outras
-                edições, acesse a{' '}
+                Confira o documento, os anexos, os prazos e as retificações. Quando houver link,
+                prefira a publicação oficial. Para pesquisar outras edições, acesse a{' '}
                 <a href={tribuna} target="_blank" rel="noopener noreferrer">
                   Tribuna do Norte
                 </a>
@@ -107,7 +106,7 @@ export default async function EditaisPage() {
               )
             })
           ) : (
-            <p style={{ color: 'var(--ink-2)' }}>Nenhum edital publicado até o momento.</p>
+            <p style={{ color: 'var(--ink-2)' }}>Não há editais publicados nesta página no momento.</p>
           )}
           <p style={{ color: 'var(--ink-2)', marginTop: 24 }}>
             Veja também as <Link href="/resolucoes">resoluções</Link> e a página de{' '}

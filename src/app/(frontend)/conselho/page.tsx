@@ -11,9 +11,9 @@ import { publicText } from '@/lib/site'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Sobre o CMDCA de Pindamonhangaba | Composição e Competências',
+  title: 'CMDCA de Pindamonhangaba | Composição e Atribuições',
   description:
-    'Conheça a gestão 2025–2027, as competências, a composição paritária, a base legal e o funcionamento do CMDCA de Pindamonhangaba.',
+    'Conheça a composição, as atribuições, a base legal e os atos públicos do CMDCA de Pindamonhangaba.',
   path: '/conselho',
 })
 
@@ -38,7 +38,7 @@ export default async function ConselhoPage() {
         deep
         eyebrow="Institucional"
         titulo="O Conselho Municipal dos Direitos da Criança e do Adolescente"
-        texto="Órgão paritário, deliberativo e controlador das ações da política municipal de atendimento, conforme o art. 88 do ECA."
+        texto="Órgão paritário que delibera e acompanha a política municipal de atendimento, nos termos do art. 88 do ECA."
       />
 
       <section className="band">
@@ -56,26 +56,25 @@ export default async function ConselhoPage() {
                     lineHeight: 1.1,
                   }}
                 >
-                  Participação social, em igual peso.
+                  Poder público e sociedade civil, com o mesmo número de cadeiras.
                 </h2>
                 <p>
-                  O CMDCA é <b>paritário</b>: poder público e sociedade civil dividem, em igual
-                  número, as cadeiras do colegiado, em mandato voluntário de dois anos. As reuniões
-                  podem ser ordinárias ou extraordinárias; a forma de acesso, pública ou reservada,
-                  depende da natureza da pauta e das regras aplicáveis.
+                  O CMDCA é <b>paritário</b>: poder público e sociedade civil têm o mesmo número de
+                  cadeiras no colegiado. As reuniões podem ser ordinárias ou extraordinárias. O
+                  acesso depende da pauta e das regras aplicáveis a cada sessão.
                 </p>
                 <p style={{ marginTop: 16 }}>
-                  Entre as atribuições estão deliberar sobre a aplicação dos recursos do Fundo,
-                  registrar e acompanhar organizações e programas e conduzir o processo de escolha
-                  do Conselho Tutelar, sob fiscalização do Ministério Público.
+                  Entre suas atribuições estão deliberar sobre os recursos do Fundo, registrar e
+                  acompanhar entidades e programas e conduzir o processo de escolha do Conselho
+                  Tutelar, sob fiscalização do Ministério Público.
                 </p>
               </div>
               <div className="lead-box">
                 <span className="k">{publicText(dir?.gestaoLabel) || 'Gestão 2025–2027'}</span>
                 <div className="nm">Representação paritária</div>
                 <p className="ro" style={{ marginTop: 8 }}>
-                  A Prefeitura publicou a relação de titulares e suplentes da gestão. Para preservar
-                  a fidelidade dos nomes, consulte a fonte oficial e o ato de nomeação.
+                  Consulte a publicação oficial para conferir titulares, suplentes e a vigência da
+                  composição.
                 </p>
                 <a
                   className="mini"
@@ -114,8 +113,8 @@ export default async function ConselhoPage() {
                   Deliberar sobre o Fundo Municipal
                 </h4>
                 <p style={{ fontSize: '.9rem', color: 'var(--ink-2)' }}>
-                  Definir prioridades e deliberar sobre a aplicação dos recursos, com controle
-                  social e publicidade dos atos.
+                  Definir prioridades e deliberar sobre a aplicação dos recursos. Os atos devem ser
+                  públicos e submetidos ao controle social.
                 </p>
               </div>
               <div style={{ padding: '24px 20px', borderBottom: '1px solid var(--line)' }}>
@@ -130,7 +129,7 @@ export default async function ConselhoPage() {
                   Registrar e acompanhar entidades
                 </h4>
                 <p style={{ fontSize: '.9rem', color: 'var(--ink-2)' }}>
-                  Conforme os arts. 90 e 91 do ECA, registrar e fiscalizar as organizações da área.
+                  Registrar e fiscalizar entidades e programas, conforme os arts. 90 e 91 do ECA.
                 </p>
               </div>
               <div style={{ padding: '24px 20px', borderBottom: '1px solid var(--line)' }}>
@@ -162,20 +161,20 @@ export default async function ConselhoPage() {
                 <span className="eyebrow">Composição</span>
                 <h2>Diretoria e colegiado</h2>
                 <p>
-                  A gestão 2025–2027 tomou posse em junho de 2025. A relação nominal deve ser
-                  conferida no ato de nomeação e na publicação oficial antes de qualquer reprodução.
+                  Consulte a publicação oficial para verificar nomes, representação e vigência da
+                  composição atual.
                 </p>
               </div>
             </div>
             <div className="lead-box" style={{ maxWidth: 560 }}>
               <span className="k">Lista nominal paritária</span>
               <p style={{ marginTop: 8, color: 'var(--ink-2)', fontSize: '.92rem' }}>
-                Consulte a{' '}
+                Acesse a{' '}
                 <a href={COMPOSICAO_URL} target="_blank" rel="noopener noreferrer">
                   notícia oficial da cerimônia de posse
                 </a>{' '}
-                e o ato municipal correspondente. O site não replica uma lista nominal sem revisão
-                de grafia e vigência.
+                e o ato municipal correspondente. Esta página não reproduz a lista nominal sem
+                confirmação de grafia e vigência.
               </p>
             </div>
           </Reveal>

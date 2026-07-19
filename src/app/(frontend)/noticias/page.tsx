@@ -11,9 +11,9 @@ import type { Noticia } from '@/payload-types'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Notícias do CMDCA de Pindamonhangaba | Comunicados e Agenda',
+  title: 'Notícias do CMDCA | Pindamonhangaba',
   description:
-    'Acompanhe comunicados, campanhas, reuniões, conferências e ações do CMDCA de Pindamonhangaba.',
+    'Acompanhe comunicados e informações publicadas pelo CMDCA de Pindamonhangaba. Para atos oficiais, consulte resoluções e editais.',
   path: '/noticias',
 })
 
@@ -42,8 +42,8 @@ export default async function NoticiasPage() {
               <span className="eyebrow">Publicações do conselho</span>
               <h1>Notícias</h1>
               <p>
-                Comunicados, campanhas, atividades e informações de interesse público. Para atos com
-                efeito oficial, consulte também <Link href="/resolucoes">Resoluções</Link> e{' '}
+                Comunicados, campanhas e informações de interesse público. Para atos oficiais,
+                consulte também <Link href="/resolucoes">Resoluções</Link> e{' '}
                 <Link href="/editais">Editais</Link>.
               </p>
             </div>

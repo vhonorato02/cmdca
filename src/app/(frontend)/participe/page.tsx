@@ -10,9 +10,9 @@ import { publicHref, publicText } from '@/lib/site'
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
-  title: 'Participe do CMDCA | Reuniões, Entidades e Contato',
+  title: 'Como Participar do CMDCA | Pindamonhangaba',
   description:
-    'Veja como acompanhar reuniões públicas, buscar orientação sobre registro de entidade, conhecer o Fundo e falar com o CMDCA.',
+    'Saiba como acompanhar reuniões e atos do CMDCA, consultar entidades registradas e buscar os canais institucionais.',
   path: '/participe',
 })
 
@@ -31,9 +31,9 @@ export default async function ParticipePage() {
   return (
     <>
       <Hero
-        eyebrow="Sua voz conta"
-        titulo="Participe do conselho"
-        texto="A participação social ajuda a definir prioridades, acompanhar decisões e fortalecer a política municipal de direitos."
+        eyebrow="Acompanhe e participe"
+        titulo="Participe do CMDCA"
+        texto="Acompanhe reuniões, atos e recursos. A participação social também ajuda a definir prioridades para a política de direitos."
       />
 
       <section className="band">
@@ -51,15 +51,15 @@ export default async function ParticipePage() {
                     lineHeight: 1.1,
                   }}
                 >
-                  Há muitas formas de fazer parte.
+                  Comece pela informação pública.
                 </h2>
                 <p>
-                  Consulte quais <Link href="/reunioes">reuniões são públicas</Link>, acompanhe a{' '}
-                  <Link href="/transparencia">transparência</Link> dos recursos, registre sua
-                  entidade com orientação do CMDCA, conheça as{' '}
-                  <Link href="/entidades">entidades registradas</Link> ou destine parte do seu{' '}
-                  <Link href="/fmdca">Imposto de Renda</Link> ao FMDCA. Se precisar de proteção ou
-                  quiser denunciar, comece pela página <Link href="/ajuda">Preciso de ajuda</Link>.
+                  Consulte quais <Link href="/reunioes">reuniões são públicas</Link>, acompanhe os
+                  documentos de <Link href="/transparencia">transparência</Link> e conheça as{' '}
+                  <Link href="/entidades">entidades registradas</Link>. Para registro ou renovação,
+                  busque orientação nos canais do conselho. Para destinar Imposto de Renda ao Fundo,
+                  confira as regras na página do <Link href="/fmdca">FMDCA</Link>. Em uma situação
+                  de proteção ou denúncia, acesse <Link href="/ajuda">Preciso de ajuda</Link>.
                 </p>
               </div>
               <div className="lead-box">
@@ -119,7 +119,7 @@ export default async function ParticipePage() {
               </Link>
               <Link href="/fmdca">
                 <h4>Destinar IR ao FMDCA</h4>
-                <p>Transforme parte do imposto em projeto local.</p>
+                <p>Confira regras e fontes oficiais para a destinação ao Fundo.</p>
               </Link>
               <Link href="/ajuda">
                 <h4>Pedir ajuda / denunciar</h4>

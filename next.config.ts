@@ -18,15 +18,12 @@ try {
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  // O runtime serverless precisa receber o binário e o libvips do sharp. Em
-  // instalações pnpm, o libvips fica em um pacote opcional irmão dentro de
-  // `@img`, que o rastreamento automático pode não seguir até o artefato.
+  // O binding do sharp é rastreado automaticamente, mas o libvips carregado
+  // dinamicamente pode ficar fora do artefato serverless. Incluímos somente o
+  // arquivo nativo ausente; globs amplos em `.pnpm` capturam symlinks inválidos.
   outputFileTracingIncludes: {
     '/*': [
-      'node_modules/sharp/**/*',
-      'node_modules/.pnpm/sharp@*/node_modules/sharp/**/*',
-      'node_modules/.pnpm/@img+sharp-linux-x64@*/node_modules/@img/sharp-linux-x64/**/*',
-      'node_modules/.pnpm/@img+sharp-libvips-linux-x64@*/node_modules/@img/sharp-libvips-linux-x64/**/*',
+      'node_modules/.pnpm/@img+sharp-libvips-linux-x64@1.3.2/node_modules/@img/sharp-libvips-linux-x64/lib/libvips-cpp.so.8.18.3',
     ],
   },
   images: {

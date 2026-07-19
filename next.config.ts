@@ -45,8 +45,10 @@ const nextConfig: NextConfig = {
   async headers() {
     const securityHeaders = [
       { key: 'X-Content-Type-Options', value: 'nosniff' },
+      { key: 'X-DNS-Prefetch-Control', value: 'off' },
       // O preview editorial do Payload pode usar iframe na mesma origem.
       { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+      { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
       { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
       {
         key: 'Permissions-Policy',

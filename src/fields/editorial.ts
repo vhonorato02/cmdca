@@ -84,8 +84,10 @@ export const editorialControlField = (): Field => ({
       relationTo: 'users',
       admin: { readOnly: true },
       access: {
-        create: isAdminOrJuridicoFieldLevel,
-        update: isAdminOrJuridicoFieldLevel,
+        // O hook de publicação registra a pessoa autenticada. Não aceite um
+        // identificador fornecido pelo cliente, nem mesmo do jurídico.
+        create: () => false,
+        update: () => false,
       },
     },
     {

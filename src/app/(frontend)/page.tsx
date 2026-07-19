@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 
 import { HomeSlider, type Slide } from '@/components/home/HomeSlider'
@@ -322,11 +323,11 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationLd) }}
       />
-      <section className="band" aria-labelledby="inicio-titulo">
+      <section className="home-entry" aria-labelledby="inicio-titulo">
         <div className="wrap">
           <Reveal>
-            <div className="about">
-              <div>
+            <div className="home-entry-grid">
+              <div className="home-entry-copy">
                 <span className="eyebrow">Informação pública para a cidade</span>
                 <h1
                   id="inicio-titulo"
@@ -345,18 +346,27 @@ export default async function HomePage() {
                   Saiba também como acompanhar as decisões do CMDCA.
                 </p>
               </div>
-              <div className="lead-box">
-                <span className="k">Precisa de proteção?</span>
-                <div className="nm">Comece pelo canal adequado à situação</div>
-                <p className="ro" style={{ marginTop: 8 }}>
-                  Em perigo imediato, ligue 190. Para denunciar violações de direitos, use o Disque
-                  100.
-                </p>
-                <Link className="btn" href="/ajuda" style={{ marginTop: 16 }}>
-                  Preciso de ajuda
-                </Link>
+              <div className="home-entry-image">
+                <Image
+                  src="/images/institucional/cuidado-coletivo-cmdca.png"
+                  alt="Adultos e crianças caminham juntos em um espaço comunitário, vistos de costas."
+                  fill
+                  priority
+                  sizes="(max-width: 880px) 100vw, 52vw"
+                />
+                <span>Imagem ilustrativa</span>
               </div>
             </div>
+            <aside className="home-help" aria-label="Orientação para situações urgentes">
+              <div>
+                <span className="k">Precisa de proteção?</span>
+                <strong>Comece pelo canal adequado à situação.</strong>
+              </div>
+              <p>Em perigo imediato, ligue 190. Para denunciar violações de direitos, use o Disque 100.</p>
+              <Link className="btn" href="/ajuda">
+                Buscar ajuda
+              </Link>
+            </aside>
           </Reveal>
         </div>
       </section>

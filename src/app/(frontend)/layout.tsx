@@ -78,7 +78,9 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
         </a>
         <A11yBar />
         <SiteHeader />
-        <main id="main">{children}</main>
+        <main id="main" tabIndex={-1}>
+          {children}
+        </main>
         <SiteFooter />
         <GrainFilter />
         <VLibras />

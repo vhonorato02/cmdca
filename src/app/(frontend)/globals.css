@@ -128,6 +128,10 @@ html.contrast main :where(p, li) a:not(.btn, .mini, .news, .news-lead, .place-ro
   box-shadow: 0 0 0 2px var(--paper);
 }
 
+main:focus {
+  outline: none;
+}
+
 .wrap {
   width: min(100%, var(--maxw));
   margin-inline: auto;
@@ -163,6 +167,32 @@ html.contrast main :where(p, li) a:not(.btn, .mini, .news, .news-lead, .place-ro
 
 .skip:focus {
   transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 3px;
+  }
+
+  .skip {
+    border: 1px solid CanvasText;
+  }
 }
 
 .icn {
@@ -627,6 +657,113 @@ html.contrast .map-tools button.on {
 section.band {
   padding-block: clamp(48px, 6vw, 76px);
   border-bottom: 1px solid var(--line);
+}
+
+/* Chegada da home: uma porta de entrada clara, humana e orientada à ação. */
+.home-entry {
+  padding-block: clamp(32px, 4vw, 58px) clamp(44px, 5vw, 70px);
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 100% 0%, rgb(201 162 39 / 14%), transparent 32%),
+    var(--paper);
+}
+
+.home-entry-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.94fr) minmax(320px, 1.06fr);
+  gap: clamp(28px, 5vw, 68px);
+  align-items: center;
+}
+
+.home-entry-copy {
+  padding-block: clamp(16px, 3vw, 38px);
+}
+
+.home-entry-copy h1 {
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.home-entry-copy p {
+  max-width: 57ch;
+  color: var(--ink-2);
+  font-size: clamp(1rem, 1.5vw, 1.13rem);
+}
+
+.home-entry-image {
+  position: relative;
+  min-height: clamp(310px, 34vw, 460px);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--paper-2);
+  box-shadow: var(--shadow-md);
+}
+
+.home-entry-image::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgb(21 19 47 / 26%), transparent 46%);
+  content: '';
+  pointer-events: none;
+}
+
+.home-entry-image img {
+  object-fit: cover;
+}
+
+.home-entry-image span {
+  position: absolute;
+  z-index: 1;
+  right: 12px;
+  bottom: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 56%);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.home-help {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) minmax(250px, 1.4fr) auto;
+  gap: 22px;
+  align-items: center;
+  margin-top: clamp(22px, 3vw, 34px);
+  padding: 19px clamp(20px, 3vw, 30px);
+  border: 1px solid rgb(40 36 91 / 24%);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+}
+
+.home-help .k {
+  display: block;
+  color: var(--ink-2);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.home-help strong {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.home-help p {
+  color: var(--ink-2);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.home-help .btn {
+  white-space: nowrap;
 }
 
 .sec-head {
@@ -2291,6 +2428,23 @@ footer a:hover {
     grid-template-columns: 1fr;
   }
 
+  .home-entry-grid,
+  .home-help {
+    grid-template-columns: 1fr;
+  }
+
+  .home-entry-copy {
+    padding-bottom: 0;
+  }
+
+  .home-entry-image {
+    min-height: min(68vw, 440px);
+  }
+
+  .home-help {
+    gap: 12px;
+  }
+
   .links,
   .stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2358,6 +2512,19 @@ footer a:hover {
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
+  }
+
+  .home-entry {
+    padding-top: 22px;
+  }
+
+  .home-entry-image {
+    min-height: 290px;
+    border-radius: var(--radius);
+  }
+
+  .home-help .btn {
+    width: 100%;
   }
 
   .links,

@@ -41,6 +41,7 @@ const FONTE_CONSELHO_TUTELAR_URL =
   'https://pindamonhangaba.sp.gov.br/conselho-tutelar-de-moreira-cesar-passa-a-atuar-em-nova-sede-a-partir-do-dia-9-de-junho'
 const NOTICIA_DESATUALIZADA_SLUG =
   'conferencia-municipal-dos-direitos-da-crianca-e-do-adolescente-e-agendada-para-2026'
+const BOOTSTRAP_MARKER = '[apply-confirmados:2026-07-19]'
 
 type Ponto = {
   nome: string
@@ -178,7 +179,9 @@ async function upsertPonto(
   const [latest, published] = await Promise.all([
     payload.find({
       collection: 'rede-protecao',
-      where: { nome: { equals: ponto.nome } },
+      where: {
+        and: [{ nome: { equals: ponto.nome } }, { _status: { equals: 'published' } }],
+      },
       limit: 2,
       depth: 0,
       draft: true,
@@ -197,6 +200,34 @@ async function upsertPonto(
   ])
   if (latest.docs.length > 1 || published.docs.length > 1) {
     throw new Error('Duplicata em rede-protecao: ' + ponto.nome)
+  }
+  let current = latest.docs[0]
+  if (!current) {
+    const historical = await payload.findVersions({
+      collection: 'rede-protecao',
+      where: { 'version.nome': { equals: ponto.nome } },
+      limit: 30,
+      depth: 0,
+      overrideAccess: true,
+      req,
+    })
+    const parentIDs = Array.from(new Set(historical.docs.map((version) => version.parent)))
+    if (parentIDs.length > 1) {
+      throw new Error('Mais de um histórico usa o mesmo nome em rede-protecao: ' + ponto.nome)
+    }
+    if (parentIDs[0] !== undefined) {
+      current = await payload.findByID({
+        collection: 'rede-protecao',
+        id: parentIDs[0],
+        draft: true,
+        depth: 0,
+        overrideAccess: true,
+        req,
+      })
+    }
+  }
+  if (current && published.docs[0] && current.id !== published.docs[0].id) {
+    throw new Error('IDs divergentes em rede-protecao: ' + ponto.nome)
   }
 
   const { publicar = true } = ponto
@@ -222,7 +253,6 @@ async function upsertPonto(
         : 'Registro importado para o CMS, mas mantido fora do portal até nova confirmação institucional.',
     },
   }
-  const current = latest.docs[0]
   if (current?._status === 'draft' && !sameSubset(current, data) && !allowReplaceDrafts) {
     throw new Error(
       'Existe rascunho pendente em rede-protecao: ' +
@@ -323,7 +353,8 @@ async function publishConfiguracoes(
       statusRevisao: 'aprovada' as const,
       revisadoPor: reviewer.id,
       observacoesInternas:
-        'Publicação inicial autorizada para dados institucionais e bases legais. Dados bancários não confirmados e indicadores permanecem protegidos pelos controles próprios.',
+        BOOTSTRAP_MARKER +
+        ' Publicação inicial autorizada para dados institucionais e bases legais. Dados bancários não confirmados e indicadores permanecem protegidos pelos controles próprios.',
     },
     _status: 'published' as const,
   }
@@ -341,7 +372,11 @@ async function publishConfiguracoes(
   return 'atualizado'
 }
 
-async function removePlaceholders(payload: Payload, req: PayloadRequest): Promise<number> {
+async function removePlaceholders(
+  payload: Payload,
+  req: PayloadRequest,
+  allowReplaceDrafts: boolean,
+): Promise<number> {
   let removidos = 0
   for (const nome of ['CRAS (unidades)', 'CREAS']) {
     const found = await payload.find({
@@ -354,6 +389,11 @@ async function removePlaceholders(payload: Payload, req: PayloadRequest): Promis
       req,
     })
     for (const doc of found.docs) {
+      if (doc._status === 'draft' && !allowReplaceDrafts) {
+        throw new Error(
+          'Existe rascunho pendente no placeholder ' + nome + '; exclusão interrompida.',
+        )
+      }
       await payload.delete({
         collection: 'rede-protecao',
         id: doc.id,
@@ -366,7 +406,11 @@ async function removePlaceholders(payload: Payload, req: PayloadRequest): Promis
   return removidos
 }
 
-async function unpublishOutdatedNews(payload: Payload, req: PayloadRequest): Promise<number> {
+async function unpublishOutdatedNews(
+  payload: Payload,
+  req: PayloadRequest,
+  allowReplaceDrafts: boolean,
+): Promise<number> {
   const found = await payload.find({
     collection: 'noticias',
     where: {
@@ -379,6 +423,17 @@ async function unpublishOutdatedNews(payload: Payload, req: PayloadRequest): Pro
     req,
   })
   for (const noticia of found.docs) {
+    const latest = await payload.findByID({
+      collection: 'noticias',
+      id: noticia.id,
+      draft: true,
+      depth: 0,
+      overrideAccess: true,
+      req,
+    })
+    if (latest._status === 'draft' && !allowReplaceDrafts) {
+      throw new Error('Existe rascunho pendente na notícia antiga; despublicação interrompida.')
+    }
     await payload.update({
       collection: 'noticias',
       id: noticia.id,
@@ -411,8 +466,23 @@ async function main() {
     if (!transactionStarted) throw new Error('Não foi possível iniciar a transação do seed.')
 
     const allowReplaceDrafts = process.env.ALLOW_REPLACE_DRAFTS === 'true'
+    const bootstrapState = (await payload.findGlobal({
+      slug: 'configuracoes',
+      draft: true,
+      depth: 0,
+      showHiddenFields: true,
+      overrideAccess: true,
+      req,
+    })) as Configuracoe
+    if (bootstrapState.controleEditorial?.observacoesInternas?.includes(BOOTSTRAP_MARKER)) {
+      await commitTransaction(req)
+      transactionStarted = false
+      payload.logger.info('Lote oficial de 19/07/2026 já aplicado; nenhuma alteração necessária.')
+      return
+    }
+
     const configResult = await publishConfiguracoes(payload, req, reviewer, allowReplaceDrafts)
-    const removidos = await removePlaceholders(payload, req)
+    const removidos = await removePlaceholders(payload, req, allowReplaceDrafts)
     const resultados: Array<{ nome: string; resultado: Resultado }> = []
     for (const ponto of PONTOS) {
       resultados.push({
@@ -420,7 +490,7 @@ async function main() {
         resultado: await upsertPonto(payload, ponto, req, reviewer, allowReplaceDrafts),
       })
     }
-    const noticiasDespublicadas = await unpublishOutdatedNews(payload, req)
+    const noticiasDespublicadas = await unpublishOutdatedNews(payload, req, allowReplaceDrafts)
 
     await commitTransaction(req)
     transactionStarted = false

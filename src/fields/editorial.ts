@@ -36,21 +36,22 @@ export const editorialControlField = (): Field => ({
   access: { read: isLoggedInFieldLevel },
   admin: {
     position: 'sidebar',
-    description: 'Controle interno. Estes dados não aparecem no site público.',
+    description:
+      'Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.',
   },
   fields: [
     {
       name: 'fonte',
       label: 'Fonte da informação',
       type: 'text',
-      admin: { description: 'Órgão, processo, documento ou página oficial consultada.' },
+      admin: { description: 'Informe o órgão e o documento, processo ou página que comprova a informação.' },
     },
     {
       name: 'fonteURL',
       label: 'Link da fonte',
       type: 'text',
       validate: validateExternalURL,
-      admin: { description: 'Opcional. Use uma página oficial com https://.' },
+      admin: { description: 'Quando houver link, use a página ou o documento oficial em https://.' },
     },
     {
       name: 'verificadoEm',
@@ -91,7 +92,7 @@ export const editorialControlField = (): Field => ({
       name: 'observacoesInternas',
       label: 'Observações internas',
       type: 'textarea',
-      admin: { description: 'Pendências, justificativas e instruções para a próxima revisão.' },
+      admin: { description: 'Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.' },
     },
   ],
 })

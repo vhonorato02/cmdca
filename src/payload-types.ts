@@ -188,22 +188,22 @@ export interface Noticia {
   destaque?: boolean | null;
   data: string;
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
@@ -241,22 +241,22 @@ export interface Media {
    */
   referenciaConsentimento?: string | null;
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
@@ -377,22 +377,22 @@ export interface Reunioe {
    */
   ata?: (number | null) | Media;
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
@@ -432,22 +432,22 @@ export interface Resolucoe {
    */
   linkTribuna?: string | null;
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
@@ -489,22 +489,22 @@ export interface Editai {
    */
   linkTribuna?: string | null;
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
@@ -534,22 +534,22 @@ export interface Entidade {
    */
   documentos: (number | Media)[];
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
@@ -594,22 +594,22 @@ export interface RedeProtecao {
    */
   lng?: number | null;
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
@@ -647,22 +647,22 @@ export interface Depoimento {
    */
   autorizacaoPublicacao?: boolean | null;
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
@@ -718,22 +718,22 @@ export interface Faq {
   contexto: 'ajuda' | 'fmdca' | 'geral';
   ordem: number;
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
@@ -1277,22 +1277,22 @@ export interface Configuracoe {
    */
   tribunaUrl?: string | null;
   /**
-   * Controle interno. Estes dados não aparecem no site público.
+   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
    */
   controleEditorial: {
     /**
-     * Órgão, processo, documento ou página oficial consultada.
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
     fonte?: string | null;
     /**
-     * Opcional. Use uma página oficial com https://.
+     * Quando houver link, use a página ou o documento oficial em https://.
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
     statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
     revisadoPor?: (number | null) | User;
     /**
-     * Pendências, justificativas e instruções para a próxima revisão.
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };

@@ -11,12 +11,12 @@ const shortcuts: Shortcut[] = [
   {
     href: '/admin/collections/noticias/create',
     title: 'Preparar notícia',
-    description: 'Crie o texto, indique a fonte e salve como rascunho.',
+    description: 'Escreva o texto, confirme a fonte e salve como rascunho.',
   },
   {
     href: '/admin/collections/reunioes/create',
     title: 'Cadastrar reunião',
-    description: 'Informe natureza, acesso, horário, modalidade e pauta.',
+    description: 'Informe data, horário, acesso, modalidade, local e pauta.',
   },
   {
     href: '/admin/collections/resolucoes',
@@ -27,7 +27,7 @@ const shortcuts: Shortcut[] = [
   {
     href: '/admin/collections/editais',
     title: 'Revisar editais',
-    description: 'Valide arquivo, prazo, situação e eventual retificação.',
+    description: 'Valide documento, prazo, situação e eventuais retificações.',
     roles: ['admin', 'juridico'],
   },
   {
@@ -38,13 +38,13 @@ const shortcuts: Shortcut[] = [
   {
     href: '/admin/globals/configuracoes',
     title: 'Dados institucionais',
-    description: 'Revise contatos, FMDCA e base legal antes de publicar.',
+    description: 'Revise contatos, FMDCA e base legal antes de tornar dados públicos.',
     roles: ['admin', 'juridico'],
   },
   {
     href: '/admin/globals/indicadores',
     title: 'Conferir indicadores',
-    description: 'Só libere números com período, fonte e verificação.',
+    description: 'Só publique números com período, fonte, método e verificação.',
     roles: ['admin', 'juridico'],
   },
 ]
@@ -68,16 +68,16 @@ export default function BeforeDashboard() {
       </div>
 
       <div className="cmdca-workflow" aria-label="Fluxo editorial">
-        <div><b>1. Preparar</b><span>Preencha conteúdo e fonte.</span></div>
-        <div><b>2. Conferir</b><span>Elimine pendências e anexos errados.</span></div>
-        <div><b>3. Revisar</b><span>Jurídico registra a aprovação.</span></div>
-        <div><b>4. Publicar</b><span>Somente após a conferência final.</span></div>
+        <div><b>1. Preparar</b><span>Escreva com base em uma fonte identificada.</span></div>
+        <div><b>2. Conferir</b><span>Revise datas, nomes, links e anexos.</span></div>
+        <div><b>3. Revisar</b><span>O jurídico registra a decisão de publicação.</span></div>
+        <div><b>4. Publicar</b><span>Confira a prévia antes de liberar ao público.</span></div>
       </div>
 
       <p className="cmdca-dashboard__notice" role="note">
         {canPublish
-          ? 'Antes de publicar, confira a fonte, a data de verificação e a prévia. Campos marcados como pendentes bloqueiam a publicação.'
-          : 'Seu acesso prepara rascunhos. Quando terminar, registre a fonte e avise o jurídico; publicar e excluir ficam bloqueados para editores.'}
+          ? 'Antes de publicar, confira fonte, data de verificação, status jurídico e prévia. Marcadores como “a confirmar” e “texto de teste” bloqueiam a publicação.'
+          : 'Seu acesso cria rascunhos. Quando terminar, registre a fonte, confira a prévia e encaminhe para a revisão jurídica. Publicar e excluir permanecem bloqueados.'}
       </p>
 
       <nav className="cmdca-shortcuts" aria-label="Atalhos do painel">

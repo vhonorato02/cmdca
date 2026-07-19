@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   isNonEmptyRichText,
+  containsPlaceholder,
   isSafeURL,
   validateCoordinatePair,
   validateDateNotBefore,
@@ -31,6 +32,12 @@ describe('validações editoriais', () => {
     expect(
       isNonEmptyRichText({ root: { children: [{ children: [{ text: 'Conteúdo confirmado' }] }] } }),
     ).toBe(true)
+  })
+
+  it('bloqueia marcadores editoriais inclusive dentro de texto rico', () => {
+    expect(containsPlaceholder('Texto de teste')).toBe(true)
+    expect(containsPlaceholder({ root: { children: [{ text: 'Data a confirmar' }] } })).toBe(true)
+    expect(containsPlaceholder({ root: { children: [{ text: 'Informação confirmada' }] } })).toBe(false)
   })
 
   it('impede prazo anterior à publicação', () => {

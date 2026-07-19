@@ -4,3 +4,11 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+# Patches transitivos de segurança ainda não incorporados por todas as
+# dependências do Payload. Remover quando o upstream passar a resolver versões
+# iguais ou superiores.
+overrides:
+  dompurify: 3.4.11
+  esbuild: 0.28.1
+  postcss: 8.5.10

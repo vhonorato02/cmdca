@@ -18,7 +18,20 @@ const TIPO: Record<string, { label: string; cls: string }> = {
   reservada: { label: 'Reservada', cls: 'ext' },
 }
 
-const MESES_ABBR = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+const MESES_ABBR = [
+  'JAN',
+  'FEV',
+  'MAR',
+  'ABR',
+  'MAI',
+  'JUN',
+  'JUL',
+  'AGO',
+  'SET',
+  'OUT',
+  'NOV',
+  'DEZ',
+]
 
 export function ReunioesLista({ reunioes }: { reunioes: ReuniaoItem[] }) {
   const [year, setYear] = useState('all')
@@ -32,63 +45,83 @@ export function ReunioesLista({ reunioes }: { reunioes: ReuniaoItem[] }) {
     return Array.from(set).sort((a, b) => b - a)
   }, [reunioes])
 
-  const filtered = reunioes.filter(
-    (r) =>
-      (year === 'all' || (r.data && String(new Date(r.data).getUTCFullYear()) === year)) &&
-      (type === 'all' || r.tipo === type),
+  const filtered = useMemo(
+    () =>
+      reunioes.filter(
+        (r) =>
+          (year === 'all' || (r.data && String(new Date(r.data).getUTCFullYear()) === year)) &&
+          (type === 'all' || r.tipo === type),
+      ),
+    [reunioes, type, year],
   )
 
   return (
     <>
       <div className="filters">
-        <select value={year} onChange={(e) => setYear(e.target.value)} aria-label="Filtrar por ano">
-          <option value="all">Todos os anos</option>
-          {years.map((y) => (
-            <option key={y} value={String(y)}>
-              {y}
-            </option>
-          ))}
-        </select>
-        <select value={type} onChange={(e) => setType(e.target.value)} aria-label="Filtrar por tipo">
-          <option value="all">Todos os tipos</option>
-          <option value="ordinaria">Ordinária</option>
-          <option value="extraordinaria">Extraordinária</option>
-          <option value="publica">Pública</option>
-          <option value="reservada">Reservada</option>
-        </select>
+        <label className="filter-field">
+          <span>Ano</span>
+          <select value={year} onChange={(e) => setYear(e.target.value)}>
+            <option value="all">Todos os anos</option>
+            {years.map((y) => (
+              <option key={y} value={String(y)}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="filter-field">
+          <span>Tipo de reunião</span>
+          <select value={type} onChange={(e) => setType(e.target.value)}>
+            <option value="all">Todos os tipos</option>
+            <option value="ordinaria">Ordinária</option>
+            <option value="extraordinaria">Extraordinária</option>
+            <option value="publica">Pública</option>
+            <option value="reservada">Reservada</option>
+          </select>
+        </label>
       </div>
+      <p className="results-status" aria-live="polite">
+        {filtered.length} {filtered.length === 1 ? 'reunião encontrada' : 'reuniões encontradas'}
+      </p>
       {filtered.length ? (
-        filtered.map((r) => {
-          const d = r.data ? new Date(r.data) : null
-          const ti = TIPO[r.tipo] || { label: r.tipo, cls: 'ord' }
-          return (
-            <div className="meet" key={r.id}>
-              <div className="dt">
-                <b>{d ? String(d.getUTCDate()).padStart(2, '0') : '--'}</b>
-                <span>{d ? `${MESES_ABBR[d.getUTCMonth()]} ${d.getUTCFullYear()}` : ''}</span>
-              </div>
-              <div className="info">
-                <h4>
-                  {r.titulo} <span className={`pill ${ti.cls}`}>{ti.label}</span>
-                </h4>
-                {r.local ? <div className="meta">{r.local}</div> : null}
-              </div>
-              <div className="acts">
-                {r.ataUrl ? (
-                  <a className="mini" href={r.ataUrl} target="_blank" rel="noopener noreferrer">
-                    Ata (PDF)
-                  </a>
-                ) : (
-                  <span className="mini" style={{ opacity: 0.5 }}>
-                    Ata em breve
-                  </span>
-                )}
-              </div>
-            </div>
-          )
-        })
+        <ul className="meeting-list">
+          {filtered.map((r) => {
+            const parsedDate = r.data ? new Date(r.data) : null
+            const d = parsedDate && !Number.isNaN(parsedDate.getTime()) ? parsedDate : null
+            const ti = TIPO[r.tipo] || { label: r.tipo, cls: 'ord' }
+            return (
+              <li className="meet" key={r.id}>
+                <time className="dt" dateTime={r.data || undefined}>
+                  <b>{d ? String(d.getUTCDate()).padStart(2, '0') : '--'}</b>
+                  <span>{d ? `${MESES_ABBR[d.getUTCMonth()]} ${d.getUTCFullYear()}` : ''}</span>
+                </time>
+                <div className="info">
+                  <h3>
+                    {r.titulo} <span className={`pill ${ti.cls}`}>{ti.label}</span>
+                  </h3>
+                  {r.local ? <p className="meta">{r.local}</p> : null}
+                </div>
+                <div className="acts">
+                  {r.ataUrl ? (
+                    <a
+                      className="mini"
+                      href={r.ataUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Abrir ata em PDF de ${r.titulo} em nova aba`}
+                    >
+                      Ata em PDF <span aria-hidden="true">↗</span>
+                    </a>
+                  ) : (
+                    <span className="document-status">Ata ainda não disponível</span>
+                  )}
+                </div>
+              </li>
+            )
+          })}
+        </ul>
       ) : (
-        <p style={{ color: 'var(--ink-2)' }}>Nenhuma reunião neste filtro.</p>
+        <p className="empty-state">Nenhuma reunião neste filtro.</p>
       )}
     </>
   )

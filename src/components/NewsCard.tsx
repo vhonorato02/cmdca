@@ -26,17 +26,21 @@ export function NewsCard({ noticia }: { noticia: Noticia }) {
             alt={capa.alt || noticia.title}
             fill
             sizes="(max-width:880px) 100vw, 360px"
-            style={{ objectFit: 'cover' }}
           />
         ) : (
           <Illustration theme={noticia.tema || 'familia'} />
         )}
+        {capa?.credito ? <span className="credit">{capa.credito}</span> : null}
       </div>
       <div className="b">
         <span className="tag">{CATEGORIA_LABEL[noticia.categoria] || 'Notícia'}</span>
-        <h4>{noticia.title}</h4>
+        <h3>{noticia.title}</h3>
         <p>{noticia.resumo}</p>
-        {noticia.data ? <span className="date">{formatDate(noticia.data)}</span> : null}
+        {noticia.data ? (
+          <time className="date" dateTime={noticia.data}>
+            {formatDate(noticia.data)}
+          </time>
+        ) : null}
       </div>
     </Link>
   )

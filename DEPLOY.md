@@ -1,104 +1,85 @@
-# Guia de deploy no Render — passo a passo
+# Entrega em produção — Vercel
 
-Guia didático para colocar o site no ar. Você só precisa de um navegador e do seu
-arquivo `.env.local` (o que já roda o projeto na sua máquina).
+Este projeto usa a integração GitHub → Vercel. A branch `main` é a produção e cada _push_ nela inicia uma nova entrega. Neon e Cloudflare R2 continuam serviços independentes; a Vercel executa a aplicação.
 
-## O que JÁ está pronto (não precisa fazer nada)
+## Variáveis da Vercel
 
-- ✅ Código no GitHub (`github.com/vhonorato02/cmdca`, branch `main`).
-- ✅ Banco **Neon** migrado e com os dados (é o mesmo de dev e produção).
-- ✅ Mídia no **Cloudflare R2** (pública).
-- ✅ `render.yaml` pronto (define o serviço, build e variáveis).
+Cadastre valores separados por ambiente quando aplicável. Segredos nunca entram no Git.
 
-> Como Neon e R2 são os mesmos em dev e produção, o deploy só **liga o site num
-> endereço público**. Nada de dado/imagem “muda de lugar”.
-
----
-
-## Parte 1 — Conta no Render + GitHub (≈ 5 min)
-
-1. Abra <https://render.com> e clique em **Get Started** / **Sign in**.
-2. Escolha **GitHub** e entre com a conta **vhonorato02**.
-3. Autorize o Render. Pode restringir o acesso só ao repositório **cmdca**.
-
-## Parte 2 — Criar o serviço pelo `render.yaml` (Blueprint)
-
-1. No painel do Render, clique em **New +** (canto superior direito) → **Blueprint**.
-2. Selecione o repositório **vhonorato02/cmdca**.
-3. O Render lê o `render.yaml` sozinho e mostra um serviço chamado **cmdca**.
-4. Ele vai pedir os valores das **variáveis secretas** (Parte 3). **Preencha antes
-   de mandar o deploy.**
-
-## Parte 3 — Preencher os segredos (copie do seu `.env.local`)
-
-Abra o arquivo **`.env.local`** (na raiz do projeto) e copie cada valor para o
-campo de mesmo nome no Render:
-
-| Variável (no Render) | De onde copiar | Obrigatória |
+| Variável | Produção | Observação |
 | --- | --- | --- |
-| `PAYLOAD_SECRET` | `.env.local` | ✅ |
-| `PREVIEW_SECRET` | `.env.local` | ✅ |
-| `DATABASE_URI` | `.env.local` | ✅ |
-| `DATABASE_URI_UNPOOLED` | `.env.local` | ✅ |
-| `S3_ENDPOINT` | `.env.local` | ✅ |
-| `S3_ACCESS_KEY_ID` | `.env.local` | ✅ |
-| `S3_SECRET_ACCESS_KEY` | `.env.local` | ✅ |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM_NAME`, `EMAIL_FROM_ADDRESS` | só se quiser e-mail de “esqueci a senha” | ⬜ opcional |
+| `NEXT_PUBLIC_SERVER_URL` | obrigatória | URL HTTPS canônica, sem barra final. Atualize ao ligar o domínio próprio. |
+| `PAYLOAD_SECRET` | obrigatória | Valor aleatório com pelo menos 32 caracteres. |
+| `DATABASE_URI` | obrigatória | Conexão _pooled_ do Neon. |
+| `DATABASE_URI_UNPOOLED` | obrigatória | Conexão _direct_; usada pelo comando de migração do build. |
+| `S3_BUCKET` | obrigatória | Bucket de mídia do R2. |
+| `S3_ENDPOINT` | obrigatória | Endpoint S3 da conta R2. |
+| `S3_ACCESS_KEY_ID` | obrigatória | Chave com o menor escopo possível no bucket. |
+| `S3_SECRET_ACCESS_KEY` | obrigatória | Segredo correspondente. |
+| `S3_REGION` | recomendada | `auto` para R2. |
+| `NEXT_PUBLIC_R2_PUBLIC_URL` | obrigatória | Host público HTTPS das mídias. |
+| `SMTP_HOST` | obrigatória | Servidor do provedor de e-mail. |
+| `SMTP_PORT` / `SMTP_SECURE` | obrigatórias | Normalmente `587/false` ou `465/true`, conforme o provedor. |
+| `SMTP_USER` / `SMTP_PASS` | conforme provedor | Credencial SMTP; não é a senha pessoal de uma caixa postal. |
+| `EMAIL_FROM_NAME` | recomendada | Nome exibido do remetente. |
+| `EMAIL_FROM_ADDRESS` | obrigatória | Endereço em domínio validado no provedor. |
 
-As variáveis **não secretas** (`NEXT_PUBLIC_SERVER_URL`, `NEXT_PUBLIC_R2_PUBLIC_URL`,
-`S3_BUCKET`, `S3_REGION`, `NODE_VERSION`) **já vêm preenchidas** pelo `render.yaml`.
+Não configure `SEED_ALLOW_LOCAL` nem credenciais de seed na Vercel. Variáveis `VERCEL_*` são fornecidas pela própria plataforma.
 
-> ⚠️ Nunca cole esses valores em e-mail, chat ou print. Só no painel do Render.
+## Domínio e e-mail
 
-## Parte 4 — Primeiro deploy
+Um endereço `*.vercel.app` permite validar a aplicação, mas a entrega institucional requer o domínio definitivo. Adicione o domínio no projeto Vercel, aplique no DNS exatamente os registros indicados pela plataforma, aguarde o certificado e ajuste `NEXT_PUBLIC_SERVER_URL`; então faça novo deploy.
 
-1. Com os segredos preenchidos, clique em **Apply** / **Create**.
-2. O Render executa automaticamente:
-   `corepack enable && pnpm install --frozen-lockfile && pnpm migrate && pnpm build`
-   e depois `pnpm start`.
-3. Acompanhe em **Logs**. O primeiro build leva ~3–6 minutos.
-4. Quando o status ficar **Live** (verde), abra **https://cmdca.onrender.com**.
-5. Teste rápido: **home**, **/ajuda** (deve listar os 10 pontos da rede), **/admin** (login).
+SMTP não está “pronto” apenas porque as variáveis existem. O domínio remetente precisa estar validado no provedor, com os registros DNS exigidos (normalmente SPF e DKIM, e DMARC recomendado), e um envio real de recuperação de senha precisa chegar à caixa de teste. Sem domínio e SMTP válidos, a recuperação de acesso permanece pendente.
 
-## Parte 5 — IMPORTANTE depois do 1º deploy
+## Checklist antes do push
 
-- **Trocar as senhas de exemplo:** entre em `/admin` (admin@cmdca-pinda.local),
-  vá em **Usuários** e troque a senha do **admin** e do **editor**.
-- **(Opcional) E-mail de reset de senha:** preencha as variáveis `SMTP_*` no Render
-  (**Environment → Save**, que dispara um redeploy). Sem SMTP, o reset só aparece no log.
+1. Confirme que nenhum outro deploy ou alteração editorial crítica está em andamento.
+2. Se houve mudança de schema, gere e revise uma única migração versionada. Ela será aplicada diretamente no Neon de produção.
+3. Confira que `git status` contém apenas arquivos esperados e que nenhum `.env` foi incluído.
+4. Execute:
 
-## Parte 6 — Domínio próprio no Wix (quando quiser)
+   ```powershell
+   pnpm install --frozen-lockfile
+   git diff --check
+   ```
 
-1. No Render: serviço **cmdca → Settings → Custom Domains → Add Custom Domain**.
-   Adicione o apex (ex.: `cmdca.org.br`) e o `www` (ex.: `www.cmdca.org.br`).
-2. O Render mostra o destino. No **Wix** (Domínios → Gerenciar DNS):
-   - `www` → registro **CNAME** → valor: `cmdca.onrender.com`
-   - apex `@` → registro **A** ou **ALIAS/ANAME** conforme o Render indicar.
-3. Aguarde a propagação (minutos a horas). O **SSL (HTTPS)** é emitido automaticamente
-   pelo Render. Force HTTPS e padronize `www` ↔ apex (301) nas opções do domínio.
+5. Faça um único commit coerente na `main` e envie:
 
-## Parte 7 — Atualizar o endereço público
+   ```powershell
+   git add --all
+   git commit -m "release: descreva a entrega"
+   git push origin main
+   ```
 
-Quando o domínio estiver funcionando:
+6. Não faça outro push até o deployment atual chegar a **Ready** ou falhar de modo conclusivo.
 
-1. Render → serviço **cmdca → Environment** → edite **`NEXT_PUBLIC_SERVER_URL`** para
-   `https://seudominio` → **Save** (dispara redeploy).
-2. Isso atualiza canonical, `sitemap.xml` e Open Graph (prévia de links compartilhados).
+## O que acontece no deploy
 
-## Parte 8 — Cold start (plano free)
+A Vercel instala as dependências com lockfile, aplica as migrações versionadas usando `DATABASE_URI_UNPOOLED` e gera o build Next.js. Por isso:
 
-No plano **free**, o serviço hiberna após ~15 min sem acesso; a primeira visita depois
-disso leva alguns segundos para “acordar”. Já está mitigado com ISR/cache. Para eliminar,
-faça upgrade para um plano pago no Render mais tarde.
+- migração deve ser idempotente e revisada antes do push;
+- duas entregas simultâneas são proibidas operacionalmente;
+- mudanças destrutivas de schema não devem acompanhar código que ainda lê o formato antigo;
+- o build não executa seed.
 
----
+## Verificação obrigatória em produção
 
-## ✅ Checklist final
+Depois de **Ready**, valide a URL canônica, não apenas a URL temporária do deployment:
 
-- [ ] Conta Render criada e GitHub conectado
-- [ ] Blueprint criado a partir do `render.yaml`
-- [ ] 7 segredos preenchidos (do `.env.local`)
-- [ ] Deploy com status **Live**
-- [ ] `/admin` abre e `/ajuda` lista os pontos
-- [ ] Senhas de exemplo trocadas
-- [ ] (depois) Domínio + SSL + `NEXT_PUBLIC_SERVER_URL` atualizado
+- home, notícias, conselho, reuniões, transparência, ajuda, privacidade e acessibilidade;
+- `/admin` mostra a tela de login e autentica com uma conta válida;
+- editor salva rascunho, jurídico publica, visitante anônimo vê só o publicado;
+- upload e exibição de uma mídia de teste no R2;
+- recuperação de senha recebida por e-mail;
+- `sitemap.xml` e `robots.txt` usam o domínio final;
+- console do navegador, rede, logs de função e logs do deployment sem erros;
+- navegação por teclado e larguras móvel e desktop.
+
+O roteiro detalhado está em [`docs/QA.md`](docs/QA.md).
+
+## Falha e rollback
+
+Se o deploy falhar antes de ficar **Ready**, corrija a causa e envie um novo commit; a produção anterior continua servida. Se o deploy ficou **Ready** mas apresenta regressão, promova novamente o último deployment saudável na Vercel e faça uma correção direta na `main`.
+
+Rollback da Vercel restaura código, não desfaz dados nem schema. Se a migração alterou dados, siga o plano de recuperação do Neon em [`docs/OPERACOES.md`](docs/OPERACOES.md). Nunca restaure a base por tentativa: preserve evidências, confirme o ponto de recuperação e registre a janela de perda de dados antes da ação.

@@ -14,8 +14,10 @@ type SlugOptions = {
 export const slugField = ({ trackingField = 'title' }: SlugOptions = {}): Field => ({
   name: 'slug',
   type: 'text',
+  required: true,
   index: true,
   unique: true,
+  maxLength: 140,
   admin: {
     position: 'sidebar',
     description:
@@ -37,4 +39,8 @@ export const slugField = ({ trackingField = 'title' }: SlugOptions = {}): Field 
       },
     ],
   },
+  validate: (value: unknown) =>
+    typeof value === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
+      ? true
+      : 'O slug deve conter apenas letras minúsculas, números e hífens.',
 })

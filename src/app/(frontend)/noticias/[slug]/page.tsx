@@ -8,6 +8,16 @@ import { CATEGORIA_LABEL } from '@/components/NewsCard'
 import { Illustration } from '@/components/Illustration'
 import { formatDateLong } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
+import { breadcrumbJsonLd, serializeJsonLd } from '@/lib/seo'
+import {
+  absoluteUrl,
+  containsUnverifiedMarker,
+  ORGANIZATION_ID,
+  ORGANIZATION_NAME,
+  publicHref,
+  publicText,
+  SITE_NAME,
+} from '@/lib/site'
 import type { Noticia } from '@/payload-types'
 
 export const revalidate = 300
@@ -22,7 +32,15 @@ async function getPost(slug: string): Promise<Noticia | null> {
       depth: 1,
     })
     .catch(() => ({ docs: [] as Noticia[] }))
-  return (res.docs[0] as Noticia) || null
+  const post = (res.docs[0] as Noticia) || null
+  if (
+    !post ||
+    !publicText(post.title) ||
+    containsUnverifiedMarker([post.title, post.resumo, post.corpo])
+  ) {
+    return null
+  }
+  return post
 }
 
 export async function generateStaticParams() {
@@ -31,12 +49,17 @@ export async function generateStaticParams() {
     .find({
       collection: 'noticias',
       where: { _status: { equals: 'published' } },
-      limit: 200,
+      limit: 500,
       depth: 0,
       pagination: false,
     })
     .catch(() => ({ docs: [] as Noticia[] }))
-  return (res.docs as Noticia[]).filter((n) => n.slug).map((n) => ({ slug: n.slug as string }))
+  return (res.docs as Noticia[])
+    .filter(
+      (n) =>
+        n.slug && publicText(n.title) && !containsUnverifiedMarker([n.title, n.resumo, n.corpo]),
+    )
+    .map((n) => ({ slug: n.slug as string }))
 }
 
 export async function generateMetadata({
@@ -46,28 +69,53 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const post = await getPost(slug)
-  if (!post) return { title: 'Notícia não encontrada' }
+  if (!post) {
+    return {
+      title: { absolute: 'Notícia não encontrada | CMDCA de Pindamonhangaba' },
+      robots: { index: false, follow: false },
+    }
+  }
   const capa = typeof post.capa === 'object' && post.capa ? post.capa : null
-  const url = `/noticias/${slug}`
-  const description = post.resumo || undefined
-  const images = capa?.url ? [{ url: capa.url, alt: capa.alt || post.title }] : undefined
+  const path = `/noticias/${encodeURIComponent(slug)}`
+  const url = absoluteUrl(path)
+  const description = publicText(post.resumo) || `Notícia publicada pelo ${ORGANIZATION_NAME}.`
+  const imagePath = publicHref(capa?.url)
+  const imageUrl = imagePath ? absoluteUrl(imagePath) : absoluteUrl('/opengraph-image')
+  const images = [
+    {
+      url: imageUrl,
+      alt: publicText(capa?.alt) || post.title,
+      width: capa?.width || 1200,
+      height: capa?.height || 630,
+    },
+  ]
   return {
-    title: post.title,
+    title: { absolute: `${post.title} | ${SITE_NAME}` },
     description,
     alternates: { canonical: url },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+    },
     openGraph: {
       title: post.title,
       description,
       type: 'article',
       url,
       publishedTime: post.data || undefined,
-      authors: post.autor ? [post.autor] : undefined,
+      modifiedTime: post.updatedAt || post.data || undefined,
+      authors: [ORGANIZATION_NAME],
+      section: CATEGORIA_LABEL[post.categoria] || 'Notícias',
+      siteName: SITE_NAME,
+      locale: 'pt_BR',
       images,
     },
     twitter: {
-      card: images ? 'summary_large_image' : 'summary',
+      card: 'summary_large_image',
       title: post.title,
       description,
+      images: [imageUrl],
     },
   }
 }
@@ -78,48 +126,73 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   if (!post) notFound()
 
   const capa = typeof post.capa === 'object' && post.capa ? post.capa : null
-
-  const base = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  const canonical = absoluteUrl(`/noticias/${encodeURIComponent(slug)}`)
+  const imagePath = publicHref(capa?.url)
+  const imageUrl = imagePath ? absoluteUrl(imagePath) : absoluteUrl('/opengraph-image')
+  const category = CATEGORIA_LABEL[post.categoria] || 'Notícia'
   const articleLd = {
     '@context': 'https://schema.org',
-    '@type': 'NewsArticle',
-    headline: post.title,
-    description: post.resumo || undefined,
-    datePublished: post.data || undefined,
-    dateModified: post.updatedAt || post.data || undefined,
-    author: post.autor ? { '@type': 'Organization', name: post.autor } : undefined,
-    image: capa?.url ? [capa.url] : undefined,
-    publisher: {
-      '@type': 'GovernmentOrganization',
-      name: 'CMDCA Pindamonhangaba',
-      logo: { '@type': 'ImageObject', url: `${base}/brand/logo-cmdca.jpg` },
-    },
-    mainEntityOfPage: `${base}/noticias/${slug}`,
+    '@graph': [
+      {
+        '@type': 'NewsArticle',
+        '@id': `${canonical}#article`,
+        headline: post.title,
+        description: publicText(post.resumo) || undefined,
+        datePublished: post.data || undefined,
+        dateModified: post.updatedAt || post.data || undefined,
+        inLanguage: 'pt-BR',
+        articleSection: category,
+        author: { '@id': ORGANIZATION_ID() },
+        publisher: {
+          '@type': 'GovernmentOrganization',
+          '@id': ORGANIZATION_ID(),
+          name: ORGANIZATION_NAME,
+          url: absoluteUrl('/'),
+          logo: { '@type': 'ImageObject', url: absoluteUrl('/brand/logo-cmdca.jpg') },
+        },
+        image: [imageUrl],
+        mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+      },
+      breadcrumbJsonLd([
+        { name: 'Início', path: '/' },
+        { name: 'Notícias', path: '/noticias' },
+        { name: post.title, path: `/noticias/${encodeURIComponent(slug)}` },
+      ]),
+    ],
   }
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleLd) }}
       />
       <div className="wrap post-head">
-        <Link className="mini" href="/noticias" style={{ marginBottom: 16, display: 'inline-block' }}>
-          ← Voltar às notícias
-        </Link>
+        <nav aria-label="Navegação estrutural" style={{ marginBottom: 16 }}>
+          <Link href="/">Início</Link> <span aria-hidden="true">/</span>{' '}
+          <Link href="/noticias">Notícias</Link>
+        </nav>
         <div style={{ height: 10 }} />
-        <span className="tag">{CATEGORIA_LABEL[post.categoria] || 'Notícia'}</span>
+        <span className="tag">{category}</span>
         <h1>{post.title}</h1>
         <div className="post-meta">
           {post.data ? <span>{formatDateLong(post.data)}</span> : null}
-          {post.autor ? <span>{post.autor}</span> : null}
-          <span>Leitura rápida</span>
+          {publicText(post.autor) ? <span>{publicText(post.autor)}</span> : null}
+          {post.updatedAt && post.updatedAt !== post.data ? (
+            <span>Atualizado em {formatDateLong(post.updatedAt)}</span>
+          ) : null}
         </div>
       </div>
       <div className="wrap">
         <div className="post-cover vis">
-          {capa?.url ? (
-            <Image src={capa.url} alt={capa.alt || post.title} fill style={{ objectFit: 'cover' }} sizes="(max-width:1140px) 100vw, 1100px" />
+          {imagePath ? (
+            <Image
+              src={imagePath}
+              alt={publicText(capa?.alt) || post.title}
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="(max-width:1140px) 100vw, 1100px"
+            />
           ) : (
             <>
               <Illustration theme={post.tema || 'familia'} />
@@ -129,9 +202,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         </div>
       </div>
       <div className="wrap">
-        <div className="post-body">
-          {post.corpo ? <RichText data={post.corpo} /> : null}
-        </div>
+        <div className="post-body">{post.corpo ? <RichText data={post.corpo} /> : null}</div>
       </div>
       <div style={{ height: 36 }} />
     </>

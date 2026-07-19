@@ -34,9 +34,45 @@ dotenvConfig({ path: path.resolve(dirname, '../.env.local') })
 // App usa a string POOLED (Neon -pooler). Migrations/seed usam a UNPOOLED (direct),
 // acionada pelo env DATABASE_MIGRATION=true definido nos scripts migrate/seed.
 const isMigrating = process.env.DATABASE_MIGRATION === 'true'
-const connectionString = isMigrating
-  ? process.env.DATABASE_URI_UNPOOLED || process.env.DATABASE_URI
-  : process.env.DATABASE_URI
+const isHostedProduction =
+  process.env.VERCEL_ENV === 'production' || process.env.ENFORCE_PRODUCTION_ENV === 'true'
+
+function requiredInHostedProduction(name: string, minimumLength = 1): string | undefined {
+  const value = process.env[name]?.trim()
+  if (isHostedProduction && (!value || value.length < minimumLength)) {
+    throw new Error(`Variável obrigatória ausente ou inválida em produção: ${name}`)
+  }
+  return value
+}
+
+const pooledDatabaseURI = requiredInHostedProduction('DATABASE_URI')
+const directDatabaseURI = process.env.DATABASE_URI_UNPOOLED?.trim()
+if (isMigrating && !directDatabaseURI) {
+  throw new Error(
+    'DATABASE_URI_UNPOOLED é obrigatória para migrations; a conexão pooled não pode ser usada como fallback.',
+  )
+}
+const connectionString = isMigrating ? directDatabaseURI : pooledDatabaseURI
+
+const payloadSecret = requiredInHostedProduction('PAYLOAD_SECRET', 32) || process.env.PAYLOAD_SECRET || ''
+const vercelProductionURL = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim()
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.trim()}`
+  : undefined
+const publicServerURL = process.env.NEXT_PUBLIC_SERVER_URL?.trim() || vercelProductionURL
+if (isHostedProduction && !publicServerURL) {
+  throw new Error(
+    'Defina NEXT_PUBLIC_SERVER_URL ou disponibilize VERCEL_PROJECT_PRODUCTION_URL em produção.',
+  )
+}
+const r2PublicURL = requiredInHostedProduction('NEXT_PUBLIC_R2_PUBLIC_URL')
+const s3Bucket = requiredInHostedProduction('S3_BUCKET')
+const s3Endpoint = requiredInHostedProduction('S3_ENDPOINT')
+const s3AccessKeyID = requiredInHostedProduction('S3_ACCESS_KEY_ID')
+const s3SecretAccessKey = requiredInHostedProduction('S3_SECRET_ACCESS_KEY')
+
+if (isHostedProduction && publicServerURL && !publicServerURL.startsWith('https://')) {
+  throw new Error('NEXT_PUBLIC_SERVER_URL deve usar https:// em produção.')
+}
 
 // O driver `pg` avisa que `sslmode=require/prefer/verify-ca` é tratado, hoje,
 // como `verify-full`. Tornamos isso explícito: mesmo comportamento (o Neon usa
@@ -75,14 +111,19 @@ const emailAdapter = process.env.SMTP_HOST
 // origem da requisição não bate com as origens permitidas.
 const serverURL =
   process.env.NODE_ENV === 'production'
-    ? process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+    ? publicServerURL || 'http://localhost:3000'
     : 'http://localhost:3000'
 
 // Origens autorizadas para CSRF (cookies de auth) e CORS. Ao usar domínio
 // próprio, atualize NEXT_PUBLIC_SERVER_URL para o domínio final.
 const allowedOrigins = Array.from(
   new Set(
-    ['http://localhost:3000', serverURL, process.env.NEXT_PUBLIC_SERVER_URL].filter(Boolean),
+    [
+      'http://localhost:3000',
+      serverURL,
+      publicServerURL,
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+    ].filter(Boolean),
   ),
 ) as string[]
 
@@ -131,13 +172,18 @@ export default buildConfig({
   ],
   globals: [Configuracoes, PaginaInicial, Indicadores],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: payloadSecret,
+  graphQL: { disable: true },
+  maxDepth: 5,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
     pool: {
       connectionString: secureConnectionString,
+      max: 5,
+      connectionTimeoutMillis: 10_000,
+      idleTimeoutMillis: 10_000,
     },
     // Schema controlado por migrations (não usar push automático com o Neon).
     push: false,
@@ -146,24 +192,24 @@ export default buildConfig({
   sharp,
   plugins: [
     // Mídia no Cloudflare R2 (S3-compatible). disableLocalStorage = true por padrão,
-    // então uploads nunca tocam o filesystem efêmero do Render.
+    // então uploads nunca dependem do filesystem efêmero da função Vercel.
     s3Storage({
       collections: {
         media: {
           // Servir a partir da URL pública do bucket R2 (pub-*.r2.dev).
           generateFileURL: ({ filename, prefix }) =>
-            [process.env.NEXT_PUBLIC_R2_PUBLIC_URL, prefix, filename]
+            [r2PublicURL, prefix, filename]
               .filter(Boolean)
               .join('/'),
         },
       },
-      bucket: process.env.S3_BUCKET || '',
+      bucket: s3Bucket || '',
       config: {
-        endpoint: process.env.S3_ENDPOINT,
+        endpoint: s3Endpoint,
         region: process.env.S3_REGION || 'auto',
         credentials: {
-          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+          accessKeyId: s3AccessKeyID || '',
+          secretAccessKey: s3SecretAccessKey || '',
         },
         // R2 funciona de forma confiável com path-style.
         forcePathStyle: true,

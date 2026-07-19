@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { HomeSlider, type Slide } from '@/components/home/HomeSlider'
@@ -5,83 +6,163 @@ import { Vozes, type Voz } from '@/components/home/Vozes'
 import { CATEGORIA_LABEL, NewsCard } from '@/components/NewsCard'
 import { Illustration } from '@/components/Illustration'
 import { Reveal } from '@/components/Reveal'
-import { StatsBand } from '@/components/StatsBand'
 import { formatDate } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
+import { createMetadata, serializeJsonLd } from '@/lib/seo'
+import {
+  absoluteUrl,
+  containsUnverifiedMarker,
+  ORGANIZATION_ID,
+  ORGANIZATION_NAME,
+  publicHref,
+  publicText,
+  SITE_NAME,
+  WEBSITE_ID,
+} from '@/lib/site'
 import type { Depoimento, Destaque, Noticia } from '@/payload-types'
 
 export const revalidate = 300
 
-const DEFAULT_BLOCOS = ['slider', 'sobre', 'atalhos', 'indicadores', 'vozes', 'noticias']
+export const metadata: Metadata = createMetadata({
+  title: 'CMDCA de Pindamonhangaba | Direitos da Criança e do Adolescente',
+  description:
+    'Acesse reuniões, resoluções, editais, entidades registradas, Fundo e canais de proteção à criança e ao adolescente em Pindamonhangaba.',
+  path: '/',
+})
+
+const DEFAULT_BLOCOS = ['slider', 'sobre', 'atalhos', 'vozes', 'noticias']
 
 export default async function HomePage() {
   const payload = await getPayloadClient()
 
-  const [pagina, config, destaques, depoimentos, indicadores, noticias] = await Promise.all([
+  const [pagina, config, destaques, depoimentos, noticias] = await Promise.all([
     payload.findGlobal({ slug: 'pagina-inicial' }).catch(() => null),
     payload.findGlobal({ slug: 'configuracoes' }).catch(() => null),
     payload
-      .find({ collection: 'destaques', where: { _status: { equals: 'published' } }, sort: 'ordem', limit: 20, depth: 0 })
+      .find({
+        collection: 'destaques',
+        where: { _status: { equals: 'published' } },
+        sort: 'ordem',
+        limit: 20,
+        depth: 0,
+      })
       .catch(() => ({ docs: [] as Destaque[] })),
     payload
-      .find({ collection: 'depoimentos', where: { _status: { equals: 'published' } }, limit: 20, depth: 0 })
+      .find({
+        collection: 'depoimentos',
+        where: { _status: { equals: 'published' } },
+        limit: 20,
+        depth: 0,
+      })
       .catch(() => ({ docs: [] as Depoimento[] })),
-    payload.findGlobal({ slug: 'indicadores' }).catch(() => null),
     payload
-      .find({ collection: 'noticias', where: { _status: { equals: 'published' } }, sort: '-data', limit: 4, depth: 1 })
+      .find({
+        collection: 'noticias',
+        where: { _status: { equals: 'published' } },
+        sort: '-data',
+        limit: 4,
+        depth: 1,
+      })
       .catch(() => ({ docs: [] as Noticia[] })),
   ])
 
   const blocosCfg = (pagina?.blocos && pagina.blocos.length ? pagina.blocos : null) as
-    | { tipo: string; ativo?: boolean | null }[]
-    | null
-  const ordem = blocosCfg ? blocosCfg.filter((b) => b.ativo !== false).map((b) => b.tipo) : DEFAULT_BLOCOS
+    { tipo: string; ativo?: boolean | null }[] | null
+  const ordem = blocosCfg
+    ? blocosCfg.filter((b) => b.ativo !== false).map((b) => b.tipo)
+    : DEFAULT_BLOCOS
 
-  const slides: Slide[] = (destaques.docs as Destaque[]).map((d) => ({
-    kicker: d.kicker,
-    titulo: d.titulo,
-    texto: d.texto,
-    cta: d.cta,
-    tema: d.tema,
-  }))
-  const vozes: Voz[] = (depoimentos.docs as Depoimento[]).map((d) => ({
-    frase: d.frase,
-    autor: d.autor,
-    papel: d.papel,
-  }))
+  const slides: Slide[] = (destaques.docs as Destaque[]).flatMap((d) => {
+    const titulo = publicText(d.titulo)
+    const texto = publicText(d.texto)
+    const ctaLabel = publicText(d.cta?.label)
+    const ctaHref = publicHref(d.cta?.href)
+    const combined = [d.kicker, d.titulo, d.texto, d.cta?.label].filter(Boolean).join(' ')
+
+    if (!titulo || containsUnverifiedMarker(combined) || /transmiss[aã]o online/i.test(combined)) {
+      return []
+    }
+
+    return [
+      {
+        kicker: publicText(d.kicker),
+        titulo,
+        texto,
+        cta: ctaLabel && ctaHref ? { label: ctaLabel, href: ctaHref } : undefined,
+        tema: d.tema,
+      },
+    ]
+  })
+  const vozes: Voz[] = (depoimentos.docs as Depoimento[]).flatMap((d) => {
+    const frase = publicText(d.frase)
+    const autor = publicText(d.autor)
+    const papel = publicText(d.papel)
+    if (!frase || !autor || containsUnverifiedMarker([d.frase, d.autor, d.papel])) return []
+    return [{ frase, autor, papel }]
+  })
   const dir = config?.diretoria
-  const ind = indicadores
 
-  const stats = ind
-    ? [
-        { value: ind.alcancados ?? 0, label: 'crianças e adolescentes alcançados' },
-        { value: ind.projetos ?? 0, label: 'projetos apoiados pelo FMDCA' },
-        { value: ind.entidades ?? 0, label: 'entidades registradas' },
-        { value: ind.reunioesNoAno ?? 0, label: 'reuniões realizadas no ano' },
-      ]
-    : []
-
-  const news = noticias.docs as Noticia[]
+  const news = (noticias.docs as Noticia[]).filter(
+    (item) =>
+      publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
+  )
   const lead = news.find((n) => n.destaque) || news[0]
   const rest = lead ? news.filter((n) => n.id !== lead.id).slice(0, 3) : []
 
-  const base = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
-  const orgLd = {
+  const email = publicText(config?.contato?.email)
+  const telephone = publicText(config?.contato?.telefone)
+  const postalCode = publicText(config?.contato?.cep)
+  const instagram = publicHref(config?.redes?.instagramUrl)
+  const organizationLd = {
     '@context': 'https://schema.org',
-    '@type': 'GovernmentOrganization',
-    name: config?.nomeConselho || 'CMDCA Pindamonhangaba',
-    url: base,
-    logo: `${base}/brand/logo-cmdca.jpg`,
-    email: config?.contato?.email || undefined,
-    telephone: config?.contato?.telefone || undefined,
-    sameAs: config?.redes?.instagramUrl ? [config.redes.instagramUrl] : undefined,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Pindamonhangaba',
-      addressRegion: 'SP',
-      addressCountry: 'BR',
-      postalCode: config?.contato?.cep || undefined,
-    },
+    '@graph': [
+      {
+        '@type': 'GovernmentOrganization',
+        '@id': ORGANIZATION_ID(),
+        name: publicText(config?.nomeConselho) || ORGANIZATION_NAME,
+        alternateName: 'CMDCA de Pindamonhangaba',
+        description:
+          'Conselho municipal responsável por deliberar e controlar ações da política de atendimento aos direitos da criança e do adolescente.',
+        url: absoluteUrl('/'),
+        logo: {
+          '@type': 'ImageObject',
+          url: absoluteUrl('/brand/logo-cmdca.jpg'),
+        },
+        email,
+        telephone,
+        contactPoint:
+          email || telephone
+            ? {
+                '@type': 'ContactPoint',
+                contactType: 'atendimento institucional',
+                availableLanguage: 'Portuguese',
+                email,
+                telephone,
+              }
+            : undefined,
+        sameAs: instagram ? [instagram] : undefined,
+        areaServed: {
+          '@type': 'City',
+          name: 'Pindamonhangaba',
+          containedInPlace: { '@type': 'State', name: 'São Paulo' },
+        },
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Pindamonhangaba',
+          addressRegion: 'SP',
+          addressCountry: 'BR',
+          postalCode,
+        },
+      },
+      {
+        '@type': 'WebSite',
+        '@id': WEBSITE_ID(),
+        name: SITE_NAME,
+        url: absoluteUrl('/'),
+        inLanguage: 'pt-BR',
+        publisher: { '@id': ORGANIZATION_ID() },
+      },
+    ],
   }
 
   const blocos: Record<string, React.ReactNode> = {
@@ -103,25 +184,29 @@ export default async function HomePage() {
                     lineHeight: 1.1,
                   }}
                 >
-                  Quem garante os direitos da infância em Pindamonhangaba.
+                  Participação social na defesa de direitos.
                 </h2>
                 <p>
-                  O <b>CMDCA</b> é o órgão deliberativo, consultivo e fiscalizador da política de
-                  proteção à criança e ao adolescente na <b>Princesa do Norte</b>. É <b>paritário</b>:
-                  reúne, em igual número, representantes do poder público e da sociedade civil — todos
-                  atuando de forma voluntária. Gere o orçamento do <b>FMDCA</b>, registra e acompanha as
-                  entidades da área e fiscaliza a escolha dos conselheiros tutelares.
+                  O <b>CMDCA</b> é um órgão colegiado e paritário: poder público e sociedade civil
+                  participam em igual número das decisões sobre a política municipal de atendimento.
+                  O conselho delibera sobre prioridades, acompanha organizações e programas, gere o
+                  Fundo Municipal e organiza o processo de escolha do Conselho Tutelar, sob
+                  fiscalização do Ministério Público.
                 </p>
               </div>
               <div className="lead-box">
-                <span className="k">{dir?.gestaoLabel || 'Gestão 2025–2027'}</span>
-                <div className="nm">{dir?.presidenteNome || 'Dr. Rodolfo Brockhof'}</div>
-                <div className="ro">{dir?.presidenteCargo || 'Presidente'}</div>
-                <hr />
-                <div className="nm" style={{ fontSize: '1.05rem' }}>
-                  {dir?.viceNome || 'Andrea Campos Sales Martins'}
-                </div>
-                <div className="ro">{dir?.viceCargo || 'Vice-presidente'}</div>
+                <span className="k">{publicText(dir?.gestaoLabel) || 'Gestão 2025–2027'}</span>
+                <div className="nm">Composição paritária</div>
+                <p className="ro" style={{ marginTop: 8 }}>
+                  Consulte a composição da gestão e a fonte oficial na página institucional.
+                </p>
+                <Link
+                  className="mini"
+                  href="/conselho"
+                  style={{ marginTop: 14, display: 'inline-flex' }}
+                >
+                  Conhecer o conselho
+                </Link>
               </div>
             </div>
           </Reveal>
@@ -167,7 +252,7 @@ export default async function HomePage() {
                   <path d="M4 12v6a1 1 0 0 0 1 1h3v-7M8 12 4 9l8-5 8 5v9a1 1 0 0 1-1 1h-3v-7" />
                 </svg>
                 <h4>Destinar seu IR</h4>
-                <p>Transforme parte do seu imposto em projeto.</p>
+                <p>Entenda limites, prazos e formas oficiais de destinação.</p>
               </Link>
             </div>
           </Reveal>
@@ -175,24 +260,8 @@ export default async function HomePage() {
       </section>
     ),
 
-    indicadores: stats.length ? (
-      <section className="band" key="indicadores">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-head">
-              <div>
-                <span className="eyebrow">Transparência viva</span>
-                <h2>O conselho em números</h2>
-              </div>
-              <Link className="more" href="/transparencia">
-                Ver painel completo →
-              </Link>
-            </div>
-            <StatsBand stats={stats} />
-          </Reveal>
-        </div>
-      </section>
-    ) : null,
+    // Indicadores só voltarão ao site quando houver fonte, período e metodologia verificáveis no CMS.
+    indicadores: null,
 
     vozes: vozes.length ? (
       <section className="band" key="vozes">
@@ -252,11 +321,46 @@ export default async function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationLd) }}
       />
-      <h1 className="sr-only">
-        Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba
-      </h1>
+      <section className="band" aria-labelledby="inicio-titulo">
+        <div className="wrap">
+          <Reveal>
+            <div className="about">
+              <div>
+                <span className="eyebrow">Informação e serviço público</span>
+                <h1
+                  id="inicio-titulo"
+                  style={{
+                    fontFamily: 'var(--serif)',
+                    fontSize: 'clamp(2rem,4vw,3.15rem)',
+                    lineHeight: 1.05,
+                    margin: '12px 0 16px',
+                    maxWidth: '20ch',
+                  }}
+                >
+                  Direitos da criança e do adolescente em Pindamonhangaba
+                </h1>
+                <p>
+                  Encontre canais de proteção, reuniões, atos oficiais, informações sobre o Fundo e
+                  formas de participar das decisões do CMDCA.
+                </p>
+              </div>
+              <div className="lead-box">
+                <span className="k">Precisa de proteção?</span>
+                <div className="nm">Veja o canal certo para cada situação</div>
+                <p className="ro" style={{ marginTop: 8 }}>
+                  Em perigo imediato, ligue 190. Para denunciar violações de direitos, use o Disque
+                  100.
+                </p>
+                <Link className="btn" href="/ajuda" style={{ marginTop: 16 }}>
+                  Preciso de ajuda
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
       {ordem.map((tipo) => blocos[tipo] ?? null)}
     </>
   )

@@ -144,7 +144,7 @@ export interface UserAuthOperations {
   };
 }
 /**
- * Blog do conselho. Salve como rascunho e publique quando aprovado.
+ * Prepare o texto como rascunho. Jurídico ou administração conferem e publicam.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "noticias".
@@ -155,13 +155,13 @@ export interface Noticia {
   /**
    * Gerado automaticamente a partir do título. Edite apenas se necessário — altera a URL pública.
    */
-  slug?: string | null;
+  slug: string;
   categoria: 'noticia' | 'conferencia' | 'evento' | 'gestao' | 'fmdca' | 'orientacao' | 'nota-tecnica';
   /**
-   * Chamada curta exibida nas listagens e no compartilhamento.
+   * Chamada objetiva entre 40 e 320 caracteres.
    */
-  resumo?: string | null;
-  corpo?: {
+  resumo: string;
+  corpo: {
     root: {
       type: string;
       children: {
@@ -175,24 +175,45 @@ export interface Noticia {
       version: number;
     };
     [k: string]: unknown;
-  } | null;
+  };
   /**
-   * Opcional. Sem capa, usamos uma ilustração autoral (campo Tema).
+   * Somente JPG, PNG, WebP ou GIF. PDF não pode ser usado como capa.
    */
   capa?: (number | null) | Media;
   /**
-   * Ilustração usada quando não há imagem de capa.
+   * Usado quando não houver capa.
    */
   tema?: ('familia' | 'maos' | 'cidade' | 'encontro' | 'escudo' | 'doc') | null;
-  autor?: string | null;
+  autor: string;
   destaque?: boolean | null;
-  data?: string | null;
+  data: string;
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Imagens e PDFs. Imagem de menor identificável exige cuidado (LGPD/ECA).
+ * Imagens e PDFs públicos. Nunca envie documentos com dados pessoais, termos de autorização ou conteúdo sigiloso.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
@@ -200,23 +221,49 @@ export interface Noticia {
 export interface Media {
   id: number;
   /**
-   * Descreva a imagem para leitores de tela.
+   * Obrigatório para imagens. Em PDFs, informe apenas se ajudar a identificar o documento.
    */
-  alt: string;
+  alt?: string | null;
   /**
-   * Autoria/fonte da imagem.
+   * Autoria que pode aparecer junto da imagem.
    */
   credito?: string | null;
   /**
-   * Por padrão NÃO publique imagem de criança/adolescente identificável. Marque apenas se houver termo de consentimento assinado.
+   * Marque quando rosto, voz, nome, uniforme ou contexto permitir identificação.
+   */
+  envolveMenorIdentificavel?: boolean | null;
+  /**
+   * Marque somente após conferir o termo assinado e sua validade para publicação.
    */
   consentimentoMenor?: boolean | null;
   /**
-   * Obrigatório quando o consentimento estiver marcado (nº/arquivo do termo).
+   * Número de processo/arquivo interno. Não envie o termo para esta biblioteca pública.
    */
   referenciaConsentimento?: string | null;
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
   url?: string | null;
   thumbnailURL?: string | null;
   filename?: string | null;
@@ -254,212 +301,8 @@ export interface Media {
   };
 }
 /**
- * Calendário, pautas e atas das reuniões.
+ * Contas do painel. Mantenha sempre pelo menos dois administradores ativos.
  *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "reunioes".
- */
-export interface Reunioe {
-  id: number;
-  /**
-   * Ex.: "Reunião Ordinária — Março/2026".
-   */
-  titulo: string;
-  data: string;
-  tipo: 'ordinaria' | 'extraordinaria' | 'publica' | 'reservada';
-  local?: string | null;
-  pauta?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Anexe o PDF da ata aprovada, quando disponível.
-   */
-  ata?: (number | null) | Media;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Atos normativos do conselho. Também publicados na Tribuna do Norte.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "resolucoes".
- */
-export interface Resolucoe {
-  id: number;
-  /**
-   * Ex.: "01/2026".
-   */
-  numero: string;
-  titulo: string;
-  data?: string | null;
-  arquivo?: (number | null) | Media;
-  /**
-   * Opcional. URL da publicação oficial.
-   */
-  linkTribuna?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Chamamentos, processos do conselho tutelar e demais editais.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "editais".
- */
-export interface Editai {
-  id: number;
-  /**
-   * Ex.: "01/2026".
-   */
-  numero?: string | null;
-  titulo: string;
-  tipo: 'chamamento' | 'conselho_tutelar' | 'fmdca' | 'outro';
-  data?: string | null;
-  /**
-   * Data limite para inscrição/manifestação, quando houver.
-   */
-  prazo?: string | null;
-  arquivo?: (number | null) | Media;
-  /**
-   * Opcional. URL da publicação oficial.
-   */
-  linkTribuna?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Registro e acompanhamento de organizações da área da infância (arts. 90 e 91 do ECA).
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "entidades".
- */
-export interface Entidade {
-  id: number;
-  nome: string;
-  area?: ('educacao' | 'saude' | 'cultura_esporte' | 'assistencia' | 'acolhimento' | 'outro') | null;
-  /**
-   * Ex.: "Registro nº 05/2025".
-   */
-  registro?: string | null;
-  validade?: string | null;
-  /**
-   * Certificado de registro, estatuto, etc.
-   */
-  documentos?: (number | Media)[] | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Pontos da rede de proteção exibidos no mapa e na lista acessível da página Ajuda.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "rede-protecao".
- */
-export interface RedeProtecao {
-  id: number;
-  nome: string;
-  tipo: 'ct' | 'cras' | 'creas' | 'casa' | 'outro';
-  endereco?: string | null;
-  telefone?: string | null;
-  email?: string | null;
-  horario?: string | null;
-  /**
-   * Ex.: plantão fora do horário, regras de atendimento.
-   */
-  obs?: string | null;
-  /**
-   * Coordenada para o mapa (ex.: -22.9239). [A CONFIRMAR] se ausente.
-   */
-  lat?: number | null;
-  /**
-   * Coordenada para o mapa (ex.: -45.4617).
-   */
-  lng?: number | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Vozes exibidas no carrossel da página inicial.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "depoimentos".
- */
-export interface Depoimento {
-  id: number;
-  frase: string;
-  autor: string;
-  /**
-   * Ex.: "Presidente do CMDCA · biênio 2025–2027".
-   */
-  papel?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Slides do banner principal da página inicial. Ordene pelo campo "Ordem".
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "destaques".
- */
-export interface Destaque {
-  id: number;
-  /**
-   * Texto curto acima do título. Ex.: "Conferência 2026".
-   */
-  kicker?: string | null;
-  titulo: string;
-  texto?: string | null;
-  cta?: {
-    label?: string | null;
-    /**
-     * Ex.: "/transparencia" ou "https://...".
-     */
-    href?: string | null;
-  };
-  /**
-   * Ilustração autoral exibida no slide.
-   */
-  tema?: ('familia' | 'maos' | 'cidade' | 'encontro' | 'escudo' | 'doc') | null;
-  ordem?: number | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Perguntas frequentes exibidas nas páginas (Ajuda, FMDCA, etc.).
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faq".
- */
-export interface Faq {
-  id: number;
-  pergunta: string;
-  resposta: string;
-  contexto?: ('ajuda' | 'fmdca' | 'geral') | null;
-  ordem?: number | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -467,9 +310,9 @@ export interface User {
   id: number;
   name: string;
   /**
-   * Editor: CRUD de conteúdo. Administrador: acesso total (inclui Usuários e Configurações).
+   * Editor prepara rascunhos. Jurídico revisa e publica. Administrador também gerencia contas e exclusões.
    */
-  role: 'admin' | 'editor';
+  role: 'admin' | 'editor' | 'juridico';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -488,6 +331,416 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * Cadastre natureza, acesso, forma de participação, pauta e ata separadamente.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reunioes".
+ */
+export interface Reunioe {
+  id: number;
+  /**
+   * Ex.: “Reunião Ordinária — março de 2026”.
+   */
+  titulo: string;
+  data: string;
+  /**
+   * Formato 24 horas, por exemplo 14:30.
+   */
+  hora: string;
+  tipo: 'ordinaria' | 'extraordinaria';
+  /**
+   * Reuniões reservadas nunca são retornadas pela API pública.
+   */
+  acesso: 'publica' | 'reservada';
+  modalidade: 'presencial' | 'online' | 'hibrida';
+  local?: string | null;
+  linkTransmissao?: string | null;
+  pauta?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Anexe somente depois da aprovação da ata.
+   */
+  ata?: (number | null) | Media;
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Atos normativos do conselho. O jurídico confere número, vigência, fonte e PDF antes da publicação.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resolucoes".
+ */
+export interface Resolucoe {
+  id: number;
+  /**
+   * Identificador oficial, exatamente como consta no ato. Ex.: “01/2026”.
+   */
+  numero: string;
+  titulo: string;
+  data: string;
+  /**
+   * Atualize quando o ato for alterado, revogado ou perder efeito.
+   */
+  situacaoJuridica: 'vigente' | 'alterada' | 'revogada' | 'sem_efeito';
+  /**
+   * A publicação exige o documento oficial em formato PDF.
+   */
+  arquivo: number | Media;
+  /**
+   * Relacione os atos anteriores afetados por esta resolução, quando houver.
+   */
+  retifica?: (number | Resolucoe)[] | null;
+  /**
+   * Opcional. URL completa da publicação oficial.
+   */
+  linkTribuna?: string | null;
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Chamamentos e processos oficiais. O jurídico confere prazo, situação, fonte e PDF antes da publicação.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "editais".
+ */
+export interface Editai {
+  id: number;
+  /**
+   * Identificador oficial, exatamente como consta no edital. Ex.: “01/2026”.
+   */
+  numero: string;
+  titulo: string;
+  tipo: 'chamamento' | 'conselho_tutelar' | 'fmdca' | 'outro';
+  situacaoJuridica: 'vigente' | 'encerrado' | 'suspenso' | 'revogado' | 'anulado';
+  data: string;
+  /**
+   * Data limite, quando houver. Nunca pode anteceder a publicação.
+   */
+  prazo?: string | null;
+  /**
+   * A publicação exige o edital oficial em formato PDF.
+   */
+  arquivo: number | Media;
+  /**
+   * Relacione os editais anteriores afetados por esta retificação.
+   */
+  retifica?: (number | Editai)[] | null;
+  /**
+   * Opcional. URL completa da publicação oficial.
+   */
+  linkTribuna?: string | null;
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Registro público de organizações da área da infância. Publique somente dados conferidos e documentos sem informação restrita.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "entidades".
+ */
+export interface Entidade {
+  id: number;
+  nome: string;
+  area: 'educacao' | 'saude' | 'cultura_esporte' | 'assistencia' | 'acolhimento' | 'outro';
+  /**
+   * Use o identificador oficial. Ex.: “Registro nº 05/2025”.
+   */
+  registro: string;
+  validade: string;
+  situacaoRegistro: 'ativo' | 'vencido' | 'suspenso' | 'cancelado';
+  /**
+   * Anexe certificado, resolução ou outro documento público. Não envie documentos com dados pessoais ou restritos.
+   */
+  documentos: (number | Media)[];
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Serviços exibidos no mapa e na lista acessível da página Ajuda. Confirme os canais diretamente com o órgão antes de publicar.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rede-protecao".
+ */
+export interface RedeProtecao {
+  id: number;
+  nome: string;
+  tipo: 'ct' | 'cras' | 'creas' | 'casa' | 'outro';
+  /**
+   * Inclua logradouro, número, bairro e referência quando disponíveis.
+   */
+  endereco?: string | null;
+  /**
+   * Informe DDD e identifique WhatsApp ou plantão.
+   */
+  telefone?: string | null;
+  email?: string | null;
+  /**
+   * Ex.: “segunda a sexta, das 8h às 17h”.
+   */
+  horario?: string | null;
+  /**
+   * Ex.: plantão fora do horário ou regras de atendimento.
+   */
+  obs?: string | null;
+  /**
+   * Coordenada entre -90 e 90. Ex.: -22.9239.
+   */
+  lat?: number | null;
+  /**
+   * Coordenada entre -180 e 180. Ex.: -45.4617.
+   */
+  lng?: number | null;
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Vozes exibidas na página inicial. Registre a origem e só publique após confirmar a autorização.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "depoimentos".
+ */
+export interface Depoimento {
+  id: number;
+  /**
+   * Transcreva fielmente e evite dados pessoais desnecessários.
+   */
+  frase: string;
+  /**
+   * Use nome, iniciais ou descrição autorizada.
+   */
+  autor: string;
+  /**
+   * Ex.: “Presidente do CMDCA · biênio 2025–2027”.
+   */
+  papel?: string | null;
+  /**
+   * Controle interno. Informe onde o termo ou consentimento está arquivado, sem inserir dados pessoais sensíveis.
+   */
+  origem?: string | null;
+  /**
+   * Somente jurídico ou administração pode confirmar esta autorização.
+   */
+  autorizacaoPublicacao?: boolean | null;
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Slides do banner principal. Editor prepara o rascunho; jurídico ou administração publica.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "destaques".
+ */
+export interface Destaque {
+  id: number;
+  /**
+   * Texto curto acima do título. Ex.: “Conferência 2026”.
+   */
+  kicker?: string | null;
+  titulo: string;
+  texto?: string | null;
+  /**
+   * Preencha texto e link juntos, ou deixe os dois campos vazios.
+   */
+  cta?: {
+    label?: string | null;
+    /**
+     * Ex.: “/transparencia” ou “https://...”.
+     */
+    href?: string | null;
+  };
+  /**
+   * Ilustração autoral exibida no slide.
+   */
+  tema?: ('familia' | 'maos' | 'cidade' | 'encontro' | 'escudo' | 'doc') | null;
+  ordem: number;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Respostas exibidas em Ajuda e FMDCA. Registre a fonte usada e revise sempre que a orientação mudar.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  pergunta: string;
+  resposta: string;
+  contexto: 'ajuda' | 'fmdca' | 'geral';
+  ordem: number;
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -614,8 +867,19 @@ export interface NoticiasSelect<T extends boolean = true> {
   autor?: T;
   destaque?: T;
   data?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -625,12 +889,27 @@ export interface NoticiasSelect<T extends boolean = true> {
 export interface ReunioesSelect<T extends boolean = true> {
   titulo?: T;
   data?: T;
+  hora?: T;
   tipo?: T;
+  acesso?: T;
+  modalidade?: T;
   local?: T;
+  linkTransmissao?: T;
   pauta?: T;
   ata?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -641,10 +920,23 @@ export interface ResolucoesSelect<T extends boolean = true> {
   numero?: T;
   titulo?: T;
   data?: T;
+  situacaoJuridica?: T;
   arquivo?: T;
+  retifica?: T;
   linkTribuna?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -655,12 +947,25 @@ export interface EditaisSelect<T extends boolean = true> {
   numero?: T;
   titulo?: T;
   tipo?: T;
+  situacaoJuridica?: T;
   data?: T;
   prazo?: T;
   arquivo?: T;
+  retifica?: T;
   linkTribuna?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -672,9 +977,21 @@ export interface EntidadesSelect<T extends boolean = true> {
   area?: T;
   registro?: T;
   validade?: T;
+  situacaoRegistro?: T;
   documentos?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -691,8 +1008,19 @@ export interface RedeProtecaoSelect<T extends boolean = true> {
   obs?: T;
   lat?: T;
   lng?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -703,8 +1031,21 @@ export interface DepoimentosSelect<T extends boolean = true> {
   frase?: T;
   autor?: T;
   papel?: T;
+  origem?: T;
+  autorizacaoPublicacao?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -725,6 +1066,7 @@ export interface DestaquesSelect<T extends boolean = true> {
   ordem?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -736,8 +1078,19 @@ export interface FaqSelect<T extends boolean = true> {
   resposta?: T;
   contexto?: T;
   ordem?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -747,10 +1100,23 @@ export interface FaqSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   credito?: T;
+  envolveMenorIdentificavel?: T;
   consentimentoMenor?: T;
   referenciaConsentimento?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
   url?: T;
   thumbnailURL?: T;
   filename?: T;
@@ -860,15 +1226,15 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * Contatos, redes, parâmetros do FMDCA e base legal. Visível somente a administradores.
+ * Dados institucionais e legais. Alterações são salvas como rascunho e só entram no site depois da publicação.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "configuracoes".
  */
 export interface Configuracoe {
   id: number;
-  nomeConselho?: string | null;
-  municipio?: string | null;
+  nomeConselho: string;
+  municipio: string;
   diretoria?: {
     gestaoLabel?: string | null;
     presidenteNome?: string | null;
@@ -876,8 +1242,8 @@ export interface Configuracoe {
     viceNome?: string | null;
     viceCargo?: string | null;
   };
-  contato?: {
-    email?: string | null;
+  contato: {
+    email: string;
     telefone?: string | null;
     cep?: string | null;
     casaConselhosTelefone?: string | null;
@@ -888,29 +1254,54 @@ export interface Configuracoe {
     instagramHandle?: string | null;
     instagramUrl?: string | null;
   };
+  /**
+   * Dados bancários ficam ocultos da API pública enquanto não forem confirmados.
+   */
   fmdca?: {
+    dadosBancariosConfirmados?: boolean | null;
     cnpj?: string | null;
     conta?: string | null;
     /**
-     * Percentual ILUSTRATIVO usado no simulador. Confirme os limites legais com seu contador.
+     * Confirme a regra aplicável e a data de verificação antes de publicar.
      */
     percentualDeducaoIR?: number | null;
     comoDestinar?: string | null;
   };
-  baseLegal?: {
-    leiCMDCA?: string | null;
-    leiFMDCA?: string | null;
+  baseLegal: {
+    leiCMDCA: string;
+    leiFMDCA: string;
     regimento?: string | null;
   };
   /**
-   * Onde os atos oficiais do conselho são publicados.
+   * Endereço usado para consultar publicações oficiais.
    */
   tribunaUrl?: string | null;
+  /**
+   * Controle interno. Estes dados não aparecem no site público.
+   */
+  controleEditorial: {
+    /**
+     * Órgão, processo, documento ou página oficial consultada.
+     */
+    fonte?: string | null;
+    /**
+     * Opcional. Use uma página oficial com https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    revisadoPor?: (number | null) | User;
+    /**
+     * Pendências, justificativas e instruções para a próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
- * Quais blocos aparecem na home e em que ordem.
+ * Organize os blocos. Editor salva rascunho; jurídico ou administração publicam.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pagina-inicial".
@@ -918,7 +1309,7 @@ export interface Configuracoe {
 export interface PaginaInicial {
   id: number;
   /**
-   * Arraste para reordenar. Desmarque "Ativo" para ocultar sem remover.
+   * Arraste para reordenar. Desative para ocultar sem perder a configuração.
    */
   blocos?:
     | {
@@ -927,24 +1318,35 @@ export interface PaginaInicial {
         id?: string | null;
       }[]
     | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
- * Números do painel "O conselho em números" e dos gráficos. Editar aqui atualiza contadores e gráficos no site.
+ * Os números ficam ocultos do público até “Publicar indicadores” ser marcado e a fonte ser aprovada.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "indicadores".
  */
 export interface Indicadore {
   id: number;
+  /**
+   * Deixe desligado até conferir período, fonte e todos os totais.
+   */
+  publicar?: boolean | null;
+  /**
+   * Ex.: janeiro a dezembro de 2025.
+   */
+  periodoReferencia?: string | null;
+  fonte?: string | null;
+  fonteURL?: string | null;
+  verificadoEm?: string | null;
+  statusRevisao?: ('pendente' | 'aprovada') | null;
+  observacoesInternas?: string | null;
   alcancados?: number | null;
   projetos?: number | null;
   entidades?: number | null;
   reunioesNoAno?: number | null;
-  /**
-   * Ex.: projetos apoiados por ano.
-   */
   serieAnual?:
     | {
         ano: string;
@@ -953,7 +1355,7 @@ export interface Indicadore {
       }[]
     | null;
   /**
-   * Percentual de recursos aplicados por área. Some ~100%.
+   * Quando preenchidos, os percentuais devem somar 100%.
    */
   aplicacaoPorArea?:
     | {
@@ -962,10 +1364,8 @@ export interface Indicadore {
         id?: string | null;
       }[]
     | null;
-  /**
-   * Aviso exibido junto ao painel enquanto os números forem ilustrativos.
-   */
   observacao?: string | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1004,6 +1404,7 @@ export interface ConfiguracoesSelect<T extends boolean = true> {
   fmdca?:
     | T
     | {
+        dadosBancariosConfirmados?: T;
         cnpj?: T;
         conta?: T;
         percentualDeducaoIR?: T;
@@ -1017,6 +1418,17 @@ export interface ConfiguracoesSelect<T extends boolean = true> {
         regimento?: T;
       };
   tribunaUrl?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1033,6 +1445,7 @@ export interface PaginaInicialSelect<T extends boolean = true> {
         ativo?: T;
         id?: T;
       };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1042,6 +1455,13 @@ export interface PaginaInicialSelect<T extends boolean = true> {
  * via the `definition` "indicadores_select".
  */
 export interface IndicadoresSelect<T extends boolean = true> {
+  publicar?: T;
+  periodoReferencia?: T;
+  fonte?: T;
+  fonteURL?: T;
+  verificadoEm?: T;
+  statusRevisao?: T;
+  observacoesInternas?: T;
   alcancados?: T;
   projetos?: T;
   entidades?: T;
@@ -1061,6 +1481,7 @@ export interface IndicadoresSelect<T extends boolean = true> {
         id?: T;
       };
   observacao?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -1,94 +1,93 @@
+'use client'
+
+import { useAuth } from '@payloadcms/ui'
 import Link from 'next/link'
 import React from 'react'
 
-/**
- * Painel de boas-vindas exibido no topo do dashboard do Payload.
- * Atalhos para as tarefas mais comuns da coordenação/comunicação.
- * Todos os destinos são acessíveis tanto a Administrador quanto a Editor.
- */
+type Role = 'admin' | 'editor' | 'juridico'
+type Shortcut = { href: string; title: string; description: string; roles?: Role[] }
 
-type Atalho = { href: string; titulo: string; desc: string }
-
-const atalhos: Atalho[] = [
+const shortcuts: Shortcut[] = [
   {
     href: '/admin/collections/noticias/create',
-    titulo: 'Criar notícia',
-    desc: 'Escrever e publicar uma nova notícia.',
+    title: 'Preparar notícia',
+    description: 'Crie o texto, indique a fonte e salve como rascunho.',
   },
   {
     href: '/admin/collections/reunioes/create',
-    titulo: 'Cadastrar reunião',
-    desc: 'Nova reunião com pauta e ata em PDF.',
+    title: 'Cadastrar reunião',
+    description: 'Informe natureza, acesso, horário, modalidade e pauta.',
   },
   {
-    href: '/admin/collections/resolucoes/create',
-    titulo: 'Enviar resolução',
-    desc: 'Adicionar uma resolução do colegiado.',
+    href: '/admin/collections/resolucoes',
+    title: 'Revisar resoluções',
+    description: 'Confira número, data, PDF, situação e revisão jurídica.',
+    roles: ['admin', 'juridico'],
   },
   {
-    href: '/admin/collections/editais/create',
-    titulo: 'Publicar edital',
-    desc: 'Novo edital ou chamamento público.',
+    href: '/admin/collections/editais',
+    title: 'Revisar editais',
+    description: 'Valide arquivo, prazo, situação e eventual retificação.',
+    roles: ['admin', 'juridico'],
   },
   {
     href: '/admin/collections/rede-protecao',
-    titulo: 'Rede de proteção',
-    desc: 'Conselhos Tutelares, CRAS e CREAS do mapa.',
+    title: 'Atualizar rede de proteção',
+    description: 'Confirme contatos, endereço, horário e fonte oficial.',
+  },
+  {
+    href: '/admin/globals/configuracoes',
+    title: 'Dados institucionais',
+    description: 'Revise contatos, FMDCA e base legal antes de publicar.',
+    roles: ['admin', 'juridico'],
   },
   {
     href: '/admin/globals/indicadores',
-    titulo: 'Editar indicadores',
-    desc: 'Números e gráficos da página inicial.',
+    title: 'Conferir indicadores',
+    description: 'Só libere números com período, fonte e verificação.',
+    roles: ['admin', 'juridico'],
   },
 ]
 
 export default function BeforeDashboard() {
+  const { user } = useAuth()
+  const role = ((user as { role?: Role } | null)?.role ?? 'editor') as Role
+  const canPublish = role === 'admin' || role === 'juridico'
+  const visibleShortcuts = shortcuts.filter((shortcut) => !shortcut.roles || shortcut.roles.includes(role))
+
   return (
-    <section
-      aria-label="Boas-vindas e atalhos"
-      style={{
-        marginBottom: 'var(--base, 1.5rem)',
-        padding: '1.25rem 1.5rem',
-        borderRadius: 8,
-        border: '1px solid var(--theme-elevation-100)',
-        borderLeft: '4px solid #C9A227',
-        background: 'var(--theme-elevation-50)',
-      }}
-    >
-      <h2 style={{ margin: '0 0 0.25rem', fontSize: '1.1rem' }}>
-        Bem-vindo(a) ao painel do CMDCA Pindamonhangaba
-      </h2>
-      <p style={{ margin: '0 0 1rem', color: 'var(--theme-elevation-650)', maxWidth: '60ch' }}>
-        Use os atalhos abaixo para as tarefas mais comuns. Salve como{' '}
-        <strong>rascunho</strong> enquanto revisa — o site público mostra apenas o que está{' '}
-        <strong>publicado</strong>. Há histórico e possibilidade de reverter cada documento.
+    <section className="cmdca-dashboard" aria-labelledby="cmdca-dashboard-title">
+      <div className="cmdca-dashboard__header">
+        <div>
+          <span className="cmdca-dashboard__eyebrow">Painel editorial seguro</span>
+          <h2 id="cmdca-dashboard-title">CMDCA Pindamonhangaba</h2>
+        </div>
+        <span className={`cmdca-dashboard__role cmdca-dashboard__role--${role}`}>
+          {role === 'admin' ? 'Administração' : role === 'juridico' ? 'Revisão jurídica' : 'Editor de rascunhos'}
+        </span>
+      </div>
+
+      <div className="cmdca-workflow" aria-label="Fluxo editorial">
+        <div><b>1. Preparar</b><span>Preencha conteúdo e fonte.</span></div>
+        <div><b>2. Conferir</b><span>Elimine pendências e anexos errados.</span></div>
+        <div><b>3. Revisar</b><span>Jurídico registra a aprovação.</span></div>
+        <div><b>4. Publicar</b><span>Somente após a conferência final.</span></div>
+      </div>
+
+      <p className="cmdca-dashboard__notice" role="note">
+        {canPublish
+          ? 'Antes de publicar, confira a fonte, a data de verificação e a prévia. Campos marcados como pendentes bloqueiam a publicação.'
+          : 'Seu acesso prepara rascunhos. Quando terminar, registre a fonte e avise o jurídico; publicar e excluir ficam bloqueados para editores.'}
       </p>
-      <div
-        style={{
-          display: 'grid',
-          gap: '0.75rem',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-        }}
-      >
-        {atalhos.map((a) => (
-          <Link
-            key={a.href}
-            href={a.href}
-            style={{
-              display: 'block',
-              padding: '0.85rem 1rem',
-              borderRadius: 6,
-              border: '1px solid var(--theme-elevation-100)',
-              background: 'var(--theme-elevation-0)',
-              textDecoration: 'none',
-              color: 'inherit',
-            }}
-          >
-            <strong style={{ display: 'block', marginBottom: 2 }}>{a.titulo}</strong>
-            <span style={{ fontSize: '0.85rem', color: 'var(--theme-elevation-650)' }}>{a.desc}</span>
+
+      <nav className="cmdca-shortcuts" aria-label="Atalhos do painel">
+        {visibleShortcuts.map((shortcut) => (
+          <Link className="cmdca-shortcut" key={shortcut.href} href={shortcut.href}>
+            <strong>{shortcut.title}</strong>
+            <span>{shortcut.description}</span>
           </Link>
         ))}
-      </div>
+      </nav>
     </section>
   )
 }

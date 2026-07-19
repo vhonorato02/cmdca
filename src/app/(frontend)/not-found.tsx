@@ -1,6 +1,15 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Hero } from '@/components/Hero'
+import { createMetadata } from '@/lib/seo'
+
+export const metadata: Metadata = createMetadata({
+  title: 'Página não encontrada | CMDCA de Pindamonhangaba',
+  description: 'O endereço solicitado não foi encontrado.',
+  path: '/404',
+  noIndex: true,
+})
 
 export default function NotFound() {
   return (
@@ -34,7 +43,11 @@ export default function NotFound() {
             </Link>
             <Link href="/transparencia">
               <h4>Transparência</h4>
-              <p>Indicadores, gráficos e recursos do FMDCA.</p>
+              <p>Atos, documentos e informações sobre o Fundo Municipal.</p>
+            </Link>
+            <Link href="/mapa-do-site">
+              <h4>Mapa do site</h4>
+              <p>Ver todas as áreas públicas disponíveis.</p>
             </Link>
           </div>
         </div>

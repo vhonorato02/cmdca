@@ -1,28 +1,36 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { Hero } from '@/components/Hero'
 import { Reveal } from '@/components/Reveal'
 import { getPayloadClient } from '@/lib/payload'
-import { isConfirm } from '@/utilities/isConfirm'
+import { createMetadata } from '@/lib/seo'
+import { publicText } from '@/lib/site'
 
 export const revalidate = 300
 
-export const metadata: Metadata = {
-  title: 'O Conselho',
+export const metadata: Metadata = createMetadata({
+  title: 'Sobre o CMDCA de Pindamonhangaba | Composição e Competências',
   description:
-    'Órgão paritário, deliberativo, consultivo e fiscalizador (art. 88 do ECA). Composição, atribuições e base legal do CMDCA de Pindamonhangaba.',
-}
+    'Conheça a gestão 2025–2027, as competências, a composição paritária, a base legal e o funcionamento do CMDCA de Pindamonhangaba.',
+  path: '/conselho',
+})
 
-function Valor({ value }: { value?: string | null }) {
-  return isConfirm(value) ? <span className="confirm">a confirmar</span> : <>{value}</>
-}
+const ECA_URL = 'https://www.planalto.gov.br/ccivil_03/leis/l8069compilado.htm'
+const COMPOSICAO_URL =
+  'https://pindamonhangaba.sp.gov.br/prefeitura-recebe-cerimonia-de-posse-do-cmdca'
+const FUNDO_LEI_SOURCE_URL =
+  'https://sapl.pindamonhangaba.sp.leg.br/pysc/download_materia_pysc?cod_materia=MzI0MDE%3D&texto_original=1'
 
 export default async function ConselhoPage() {
   const payload = await getPayloadClient()
   const config = await payload.findGlobal({ slug: 'configuracoes' }).catch(() => null)
   const dir = config?.diretoria
   const base = config?.baseLegal
+  const leiCMDCA = publicText(base?.leiCMDCA) || 'Lei Municipal nº 2.626/1991'
+  const leiFundo = publicText(base?.leiFMDCA) || 'Lei Municipal nº 4.140/2004'
+  const regimento = publicText(base?.regimento)
 
   return (
     <>
@@ -30,7 +38,7 @@ export default async function ConselhoPage() {
         deep
         eyebrow="Institucional"
         titulo="O Conselho Municipal dos Direitos da Criança e do Adolescente"
-        texto="Órgão paritário, deliberativo e fiscalizador, previsto no art. 88 do ECA (Lei Federal 8.069/1990)."
+        texto="Órgão paritário, deliberativo e controlador das ações da política municipal de atendimento, conforme o art. 88 do ECA."
       />
 
       <section className="band">
@@ -51,25 +59,33 @@ export default async function ConselhoPage() {
                   Participação social, em igual peso.
                 </h2>
                 <p>
-                  O CMDCA é <b>paritário</b>: poder público e sociedade civil dividem, em igual número,
-                  as cadeiras do colegiado, em mandato voluntário de dois anos. As reuniões podem ser{' '}
-                  <b>ordinárias</b>, <b>extraordinárias</b>, <b>públicas</b> ou <b>reservadas</b>.
+                  O CMDCA é <b>paritário</b>: poder público e sociedade civil dividem, em igual
+                  número, as cadeiras do colegiado, em mandato voluntário de dois anos. As reuniões
+                  podem ser ordinárias ou extraordinárias; a forma de acesso, pública ou reservada,
+                  depende da natureza da pauta e das regras aplicáveis.
                 </p>
                 <p style={{ marginTop: 16 }}>
-                  Entre as atribuições: gerir o orçamento do <b>FMDCA</b>, registrar e acompanhar as
-                  organizações da área (arts. 90 e 91 do ECA) e fiscalizar o processo de escolha dos
-                  conselheiros tutelares.
+                  Entre as atribuições estão deliberar sobre a aplicação dos recursos do Fundo,
+                  registrar e acompanhar organizações e programas e conduzir o processo de escolha
+                  do Conselho Tutelar, sob fiscalização do Ministério Público.
                 </p>
               </div>
               <div className="lead-box">
-                <span className="k">{dir?.gestaoLabel || 'Gestão 2025–2027'}</span>
-                <div className="nm">{dir?.presidenteNome || 'Dr. Rodolfo Brockhof'}</div>
-                <div className="ro">{dir?.presidenteCargo || 'Presidente'}</div>
-                <hr />
-                <div className="nm" style={{ fontSize: '1.05rem' }}>
-                  {dir?.viceNome || 'Andrea Campos Sales Martins'}
-                </div>
-                <div className="ro">{dir?.viceCargo || 'Vice-presidente'}</div>
+                <span className="k">{publicText(dir?.gestaoLabel) || 'Gestão 2025–2027'}</span>
+                <div className="nm">Representação paritária</div>
+                <p className="ro" style={{ marginTop: 8 }}>
+                  A Prefeitura publicou a relação de titulares e suplentes da gestão. Para preservar
+                  a fidelidade dos nomes, consulte a fonte oficial e o ato de nomeação.
+                </p>
+                <a
+                  className="mini"
+                  href={COMPOSICAO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'inline-flex', marginTop: 14 }}
+                >
+                  Ver composição publicada pela Prefeitura
+                </a>
               </div>
             </div>
           </Reveal>
@@ -87,15 +103,30 @@ export default async function ConselhoPage() {
             </div>
             <div className="links" style={{ borderTop: '1px solid var(--line)' }}>
               <div style={{ padding: '24px 20px', borderBottom: '1px solid var(--line)' }}>
-                <h4 style={{ fontFamily: 'var(--serif)', fontWeight: 600, fontSize: '1.12rem', marginBottom: 5 }}>
-                  Gerir o FMDCA
+                <h4
+                  style={{
+                    fontFamily: 'var(--serif)',
+                    fontWeight: 600,
+                    fontSize: '1.12rem',
+                    marginBottom: 5,
+                  }}
+                >
+                  Deliberar sobre o Fundo Municipal
                 </h4>
                 <p style={{ fontSize: '.9rem', color: 'var(--ink-2)' }}>
-                  Deliberar sobre o orçamento e a aplicação dos recursos do Fundo Municipal.
+                  Definir prioridades e deliberar sobre a aplicação dos recursos, com controle
+                  social e publicidade dos atos.
                 </p>
               </div>
               <div style={{ padding: '24px 20px', borderBottom: '1px solid var(--line)' }}>
-                <h4 style={{ fontFamily: 'var(--serif)', fontWeight: 600, fontSize: '1.12rem', marginBottom: 5 }}>
+                <h4
+                  style={{
+                    fontFamily: 'var(--serif)',
+                    fontWeight: 600,
+                    fontSize: '1.12rem',
+                    marginBottom: 5,
+                  }}
+                >
                   Registrar e acompanhar entidades
                 </h4>
                 <p style={{ fontSize: '.9rem', color: 'var(--ink-2)' }}>
@@ -103,11 +134,19 @@ export default async function ConselhoPage() {
                 </p>
               </div>
               <div style={{ padding: '24px 20px', borderBottom: '1px solid var(--line)' }}>
-                <h4 style={{ fontFamily: 'var(--serif)', fontWeight: 600, fontSize: '1.12rem', marginBottom: 5 }}>
-                  Fiscalizar a escolha dos conselheiros tutelares
+                <h4
+                  style={{
+                    fontFamily: 'var(--serif)',
+                    fontWeight: 600,
+                    fontSize: '1.12rem',
+                    marginBottom: 5,
+                  }}
+                >
+                  Organizar o processo de escolha do Conselho Tutelar
                 </h4>
                 <p style={{ fontSize: '.9rem', color: 'var(--ink-2)' }}>
-                  Regulamentar e acompanhar o processo de escolha dos membros do Conselho Tutelar.
+                  Regulamentar e conduzir o processo, que ocorre sob fiscalização do Ministério
+                  Público, conforme o art. 139 do ECA.
                 </p>
               </div>
             </div>
@@ -123,16 +162,20 @@ export default async function ConselhoPage() {
                 <span className="eyebrow">Composição</span>
                 <h2>Diretoria e colegiado</h2>
                 <p>
-                  A diretoria atual conduz os trabalhos do biênio. A composição nominal completa e
-                  paritária (titulares e suplentes, por segmento) está em atualização.
+                  A gestão 2025–2027 tomou posse em junho de 2025. A relação nominal deve ser
+                  conferida no ato de nomeação e na publicação oficial antes de qualquer reprodução.
                 </p>
               </div>
             </div>
             <div className="lead-box" style={{ maxWidth: 560 }}>
               <span className="k">Lista nominal paritária</span>
               <p style={{ marginTop: 8, color: 'var(--ink-2)', fontSize: '.92rem' }}>
-                Relação completa de conselheiros (governamental e sociedade civil):{' '}
-                <span className="confirm">a confirmar</span>
+                Consulte a{' '}
+                <a href={COMPOSICAO_URL} target="_blank" rel="noopener noreferrer">
+                  notícia oficial da cerimônia de posse
+                </a>{' '}
+                e o ato municipal correspondente. O site não replica uma lista nominal sem revisão
+                de grafia e vigência.
               </p>
             </div>
           </Reveal>
@@ -151,27 +194,35 @@ export default async function ConselhoPage() {
             <div className="panel" style={{ maxWidth: 620 }}>
               <div className="ver">
                 <span>Lei municipal do CMDCA</span>
-                <span>
-                  <Valor value={base?.leiCMDCA} />
-                </span>
+                <span>{leiCMDCA}</span>
               </div>
               <div className="ver">
-                <span>Lei municipal do FMDCA</span>
+                <span>Lei municipal do Fundo</span>
                 <span>
-                  <Valor value={base?.leiFMDCA} />
+                  <a href={FUNDO_LEI_SOURCE_URL} target="_blank" rel="noopener noreferrer">
+                    {leiFundo}
+                  </a>
                 </span>
               </div>
-              <div className="ver">
-                <span>Regimento interno</span>
-                <span>
-                  <Valor value={base?.regimento} />
-                </span>
-              </div>
+              {regimento ? (
+                <div className="ver">
+                  <span>Regimento interno</span>
+                  <span>{regimento}</span>
+                </div>
+              ) : null}
               <div className="ver" style={{ borderBottom: 'none' }}>
                 <span>Base federal</span>
-                <span>ECA — Lei 8.069/1990 (art. 88)</span>
+                <span>
+                  <a href={ECA_URL} target="_blank" rel="noopener noreferrer">
+                    ECA — Lei Federal nº 8.069/1990
+                  </a>
+                </span>
               </div>
             </div>
+            <p style={{ color: 'var(--ink-2)', marginTop: 16 }}>
+              Atos complementares e versões publicadas do regimento podem ser consultados em{' '}
+              <Link href="/resolucoes">Resoluções</Link>.
+            </p>
           </Reveal>
         </div>
       </section>

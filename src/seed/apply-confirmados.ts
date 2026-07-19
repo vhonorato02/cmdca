@@ -1,5 +1,5 @@
 /**
- * Aplica na base de produção SOMENTE os dados confirmados em fonte oficial
+ * Prepara como RASCUNHO dados confirmados em fonte oficial
  * (endereços da rede de proteção, telefone/endereço da Casa dos Conselhos e a
  * lei de criação do CMDCA). Fontes em CONTEUDO.md.
  *
@@ -7,7 +7,7 @@
  * (CNPJ/conta do FMDCA), nem nos indicadores ou na página inicial.
  * `configuracoes` tem versionamento — dá para reverter pelo painel.
  *
- * Rodar: pnpm apply:confirmados
+ * Exige APPLY_CONFIRMED_DATA=true. O jurídico deve revisar e publicar no painel.
  */
 import type { Payload } from 'payload'
 import { getPayload } from 'payload'
@@ -18,6 +18,7 @@ const CASA_ENDERECO =
   'Rua Dr. Laerte Machado Guimarães, 590 — Vila Borghese, Pindamonhangaba/SP (na Secretaria de Assistência Social)'
 const CASA_TELEFONE = '(12) 3643-1607 (ramal 6037) · (12) 3643-1609'
 const LEI_CMDCA = 'Lei Municipal nº 2.626, de 19/12/1991'
+const LEI_FMDCA = 'Lei Municipal nº 4.140, de 23/03/2004'
 
 type Ponto = {
   nome: string
@@ -101,29 +102,48 @@ async function upsertPonto(payload: Payload, p: Ponto): Promise<'criado' | 'atua
     collection: 'rede-protecao',
     where: { nome: { equals: p.nome } },
     limit: 1,
+    overrideAccess: true,
   })
-  const data = { ...p, _status: 'published' as const }
+  const data = { ...p, _status: 'draft' as const }
   if (existing.docs.length) {
-    await payload.update({ collection: 'rede-protecao', id: existing.docs[0].id, data })
+    await payload.update({
+      collection: 'rede-protecao',
+      id: existing.docs[0].id,
+      data,
+      draft: true,
+      overrideAccess: true,
+    })
     return 'atualizado'
   }
-  await payload.create({ collection: 'rede-protecao', data })
+  await payload.create({
+    collection: 'rede-protecao',
+    data,
+    draft: true,
+    overrideAccess: true,
+  })
   return 'criado'
 }
 
 async function main() {
+  if (process.env.APPLY_CONFIRMED_DATA !== 'true') {
+    throw new Error('Operação bloqueada. Defina APPLY_CONFIRMED_DATA=true após conferir o banco alvo.')
+  }
   const payload = await getPayload({ config: await configPromise })
-  payload.logger.info('=== Aplicando dados confirmados (produção) ===')
+  payload.logger.info('=== Preparando dados confirmados como rascunho ===')
 
   // 1) Configurações: somente lei do CMDCA + endereço/telefone da Casa.
   //    Mantém todo o resto (inclui FMDCA pendente) intacto via spread.
   const cfg = (await payload.findGlobal({
     slug: 'configuracoes',
+    overrideAccess: true,
   })) as unknown as Record<string, unknown>
   await payload.updateGlobal({
     slug: 'configuracoes',
+    draft: true,
+    overrideAccess: true,
     data: {
       ...cfg,
+      _status: 'draft',
       contato: {
         ...(cfg.contato as Record<string, unknown>),
         casaConselhosEndereco: CASA_ENDERECO,
@@ -132,6 +152,7 @@ async function main() {
       baseLegal: {
         ...(cfg.baseLegal as Record<string, unknown>),
         leiCMDCA: LEI_CMDCA,
+        leiFMDCA: LEI_FMDCA,
       },
     },
   })
@@ -143,9 +164,10 @@ async function main() {
       collection: 'rede-protecao',
       where: { nome: { equals: nome } },
       limit: 50,
+      overrideAccess: true,
     })
     for (const d of found.docs) {
-      await payload.delete({ collection: 'rede-protecao', id: d.id })
+      await payload.delete({ collection: 'rede-protecao', id: d.id, overrideAccess: true })
       payload.logger.info(`• removido placeholder: ${nome}`)
     }
   }

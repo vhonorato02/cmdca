@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Newsreader, Public_Sans } from 'next/font/google'
 import React from 'react'
 
 import { A11yBar } from '@/components/A11yBar'
@@ -6,28 +7,55 @@ import { GrainFilter } from '@/components/GrainFilter'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
 import { VLibras } from '@/components/VLibras'
+import { absoluteUrl, DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from '@/lib/site'
 
 import './globals.css'
 
+const publicSans = Public_Sans({
+  display: 'swap',
+  subsets: ['latin'],
+  variable: '--font-public-sans',
+})
+
+const newsreader = Newsreader({
+  display: 'swap',
+  subsets: ['latin'],
+  variable: '--font-newsreader',
+})
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'),
+  metadataBase: getSiteUrl(),
   title: {
-    default: 'CMDCA Pindamonhangaba',
-    template: '%s · CMDCA Pindamonhangaba',
+    default: 'CMDCA de Pindamonhangaba | Direitos da Criança e do Adolescente',
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    'Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba — proteção, participação e transparência para a infância.',
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
+  category: 'governo',
   icons: { icon: '/brand/favicon.svg' },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'CMDCA Pindamonhangaba',
-    title: 'CMDCA Pindamonhangaba',
-    description:
-      'Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba.',
-    images: ['/brand/logo-cmdca.jpg'],
+    siteName: SITE_NAME,
+    title: 'CMDCA de Pindamonhangaba | Direitos da Criança e do Adolescente',
+    description: DEFAULT_DESCRIPTION,
+    url: absoluteUrl('/'),
+    images: [
+      {
+        url: absoluteUrl('/opengraph-image'),
+        width: 1200,
+        height: 630,
+        alt: `Identidade institucional do ${SITE_NAME}`,
+      },
+    ],
   },
-  twitter: { card: 'summary' },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CMDCA de Pindamonhangaba | Direitos da Criança e do Adolescente',
+    description: DEFAULT_DESCRIPTION,
+    images: [absoluteUrl('/opengraph-image')],
+  },
+  formatDetection: { address: false, email: false, telephone: false },
 }
 
 // Antes da pintura: marca .js (para a animação reveal) e reaplica as preferências
@@ -36,16 +64,12 @@ const A11Y_INIT = `(function(){try{var d=document.documentElement;d.classList.ad
 
 export default function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html
+      lang="pt-BR"
+      className={`${publicSans.variable} ${newsreader.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Fontes carregadas no layout raiz (aplicam a todo o site) — regra do pages router não se aplica. */}
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Public+Sans:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
         <script dangerouslySetInnerHTML={{ __html: A11Y_INIT }} />
       </head>
       <body>

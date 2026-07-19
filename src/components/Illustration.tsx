@@ -2,12 +2,19 @@ import React from 'react'
 
 export type IllTheme = 'familia' | 'maos' | 'cidade' | 'encontro' | 'escudo' | 'doc'
 
+const ILL_THEMES = new Set<IllTheme>(['familia', 'maos', 'cidade', 'encontro', 'escudo', 'doc'])
+
+function normalizeTheme(theme: string): IllTheme {
+  return ILL_THEMES.has(theme as IllTheme) ? (theme as IllTheme) : 'doc'
+}
+
 /**
  * Ilustrações SVG autorais — PORTADO VERBATIM da função ill(theme) da prévia.
  * Motivo da órbita do logo. Não alterar o SVG. (A variável "L" da prévia não era
  * usada dentro de ill() e foi omitida; não muda a saída.)
  */
 export function illSvg(theme: string): string {
+  theme = normalizeTheme(theme)
   const I = '#262357',
     A = '#C9A227',
     P = '#F4F2EB',

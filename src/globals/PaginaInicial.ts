@@ -1,6 +1,11 @@
 import type { GlobalConfig } from 'payload'
 
-import { anyone, isAdminOrEditor } from '../access'
+import { canManageContent, publishedOrLoggedIn } from '../access'
+import {
+  EDITORIAL_VERSIONS,
+  GLOBAL_EDITORIAL_COMPONENTS,
+} from '../fields/editorial'
+import { enforceGlobalEditorDraftOnly } from '../hooks/editorialPolicy'
 import { revalidateGlobal } from '../hooks/revalidate'
 
 export const PaginaInicial: GlobalConfig = {
@@ -8,22 +13,30 @@ export const PaginaInicial: GlobalConfig = {
   label: 'Página inicial',
   admin: {
     group: 'Configuração',
-    description: 'Quais blocos aparecem na home e em que ordem.',
+    description: 'Organize os blocos. Editor salva rascunho; jurídico ou administração publicam.',
+    components: GLOBAL_EDITORIAL_COMPONENTS,
   },
-  versions: true,
-  hooks: revalidateGlobal(['/']),
-  access: {
-    read: anyone,
-    update: isAdminOrEditor,
+  versions: EDITORIAL_VERSIONS,
+  hooks: {
+    beforeOperation: [enforceGlobalEditorDraftOnly],
+    ...revalidateGlobal(['/']),
   },
+  access: { read: publishedOrLoggedIn, update: canManageContent },
   fields: [
     {
       name: 'blocos',
-      label: 'Blocos (na ordem de exibição)',
+      label: 'Blocos na ordem de exibição',
       type: 'array',
       labels: { singular: 'Bloco', plural: 'Blocos' },
+      minRows: 1,
+      maxRows: 6,
+      validate: (value: unknown) => {
+        if (!Array.isArray(value)) return 'Inclua pelo menos um bloco.'
+        const types = value.map((row) => (row as { tipo?: unknown }).tipo).filter(Boolean)
+        return new Set(types).size === types.length ? true : 'Cada tipo de bloco pode aparecer uma única vez.'
+      },
       admin: {
-        description: 'Arraste para reordenar. Desmarque "Ativo" para ocultar sem remover.',
+        description: 'Arraste para reordenar. Desative para ocultar sem perder a configuração.',
         initCollapsed: true,
       },
       defaultValue: [
@@ -42,10 +55,10 @@ export const PaginaInicial: GlobalConfig = {
           required: true,
           options: [
             { label: 'Slider de destaques', value: 'slider' },
-            { label: 'O Conselho (sobre + diretoria)', value: 'sobre' },
-            { label: 'Acesso rápido (atalhos)', value: 'atalhos' },
-            { label: 'Indicadores (números)', value: 'indicadores' },
-            { label: 'Vozes (depoimentos)', value: 'vozes' },
+            { label: 'O Conselho', value: 'sobre' },
+            { label: 'Acesso rápido', value: 'atalhos' },
+            { label: 'Indicadores', value: 'indicadores' },
+            { label: 'Vozes', value: 'vozes' },
             { label: 'Notícias recentes', value: 'noticias' },
           ],
         },

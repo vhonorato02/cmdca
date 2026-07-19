@@ -1,18 +1,25 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { NewsCard } from '@/components/NewsCard'
 import { Hero } from '@/components/Hero'
 import { Reveal } from '@/components/Reveal'
 import { getPayloadClient } from '@/lib/payload'
+import { createMetadata } from '@/lib/seo'
+import { containsUnverifiedMarker, publicText } from '@/lib/site'
 import type { Noticia } from '@/payload-types'
 
 export const revalidate = 300
 
-export const metadata: Metadata = {
-  title: 'Conferências e Fóruns',
+export const metadata: Metadata = createMetadata({
+  title: 'Conferências dos Direitos da Criança e do Adolescente | Pindamonhangaba',
   description:
-    'Conferência Municipal dos Direitos da Criança e do Adolescente e a Semana Municipal em Pindamonhangaba.',
-}
+    'Consulte notícias, documentos e resultados das conferências e dos fóruns municipais sobre infância e adolescência em Pindamonhangaba.',
+  path: '/conferencias',
+})
+
+const SEMANA_2025_URL =
+  'https://pindamonhangaba.sp.gov.br/semana-municipal-destaca-desafios-e-avancos-na-defesa-dos-direitos-da-crianca-e-do-adolescente'
 
 export default async function ConferenciasPage() {
   const payload = await getPayloadClient()
@@ -25,7 +32,10 @@ export default async function ConferenciasPage() {
       depth: 1,
     })
     .catch(() => ({ docs: [] as Noticia[] }))
-  const relacionadas = res.docs as Noticia[]
+  const relacionadas = (res.docs as Noticia[]).filter(
+    (item) =>
+      publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
+  )
 
   return (
     <>
@@ -41,7 +51,7 @@ export default async function ConferenciasPage() {
           <Reveal>
             <div className="about">
               <div>
-                <span className="eyebrow">Próxima etapa</span>
+                <span className="eyebrow">Participação social</span>
                 <h2
                   style={{
                     fontFamily: 'var(--serif)',
@@ -51,22 +61,35 @@ export default async function ConferenciasPage() {
                     lineHeight: 1.1,
                   }}
                 >
-                  Conferência Municipal agendada para 2026.
+                  Acompanhe convocações e documentos oficiais.
                 </h2>
                 <p>
-                  A Conferência Municipal dos Direitos da Criança e do Adolescente está agendada para{' '}
-                  <b>2026</b>. É um momento de avaliar serviços, debater prioridades e apontar diretrizes,
-                  com a participação do poder público, das entidades e da sociedade civil. Datas, local e
-                  programação serão divulgados nos canais oficiais.
+                  As conferências avaliam políticas públicas, debatem prioridades e formulam
+                  diretrizes com participação do poder público e da sociedade civil. Uma nova edição
+                  só será tratada como confirmada neste site depois da publicação de convocação,
+                  data, local e programação nos canais oficiais.
+                </p>
+                <p style={{ marginTop: 16 }}>
+                  Consulte os <Link href="/editais">editais</Link> e as{' '}
+                  <Link href="/noticias">notícias</Link> para verificar convocações vigentes.
                 </p>
               </div>
               <div className="lead-box">
-                <span className="k">Semana Municipal — 2025</span>
+                <span className="k">Registro histórico — 2025</span>
                 <p style={{ marginTop: 8, color: 'var(--ink-2)', fontSize: '.92rem' }}>
-                  De <b>22 a 26 de setembro de 2025</b>, a Semana Municipal dos Direitos da Criança e do
-                  Adolescente ocorreu no Centro Social Salesiano, marcando os 35 anos do ECA, com a
-                  Camerata Jovem do Projeto Jataí.
+                  De <b>22 a 26 de setembro de 2025</b>, a Semana Municipal dos Direitos da Criança
+                  e do Adolescente ocorreu no Centro Social Salesiano, marcando os 35 anos do ECA,
+                  com a Camerata Jovem do Projeto Jataí.
                 </p>
+                <a
+                  className="mini"
+                  href={SEMANA_2025_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'inline-flex', marginTop: 14 }}
+                >
+                  Ler a notícia oficial de 2025
+                </a>
               </div>
             </div>
           </Reveal>

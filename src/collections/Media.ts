@@ -1,23 +1,82 @@
 import type { CollectionConfig } from 'payload'
 
-import { anyone, isAdminOrEditor } from '../access'
+import {
+  canDeleteContent,
+  canManageContent,
+  isLoggedInFieldLevel,
+  publishedOrLoggedIn,
+} from '../access'
+import {
+  COLLECTION_EDITORIAL_COMPONENTS,
+  EDITORIAL_VERSIONS,
+  editorialControlField,
+} from '../fields/editorial'
+import { enforceEditorDraftOnly, validatePublication } from '../hooks/editorialPolicy'
+import { revalidateCollection } from '../hooks/revalidate'
+
+const revalidation = revalidateCollection(() => [
+  '/',
+  '/noticias',
+  '/conferencias',
+  '/reunioes',
+  '/resolucoes',
+  '/editais',
+  '/entidades',
+  '/ajuda',
+  '/transparencia',
+])
 
 export const Media: CollectionConfig = {
   slug: 'media',
   labels: { singular: 'Mídia', plural: 'Mídia' },
   admin: {
     group: 'Mídia',
-    description: 'Imagens e PDFs. Imagem de menor identificável exige cuidado (LGPD/ECA).',
+    description:
+      'Imagens e PDFs públicos. Nunca envie documentos com dados pessoais, termos de autorização ou conteúdo sigiloso.',
+    defaultColumns: ['filename', 'mimeType', '_status', 'updatedAt'],
+    components: COLLECTION_EDITORIAL_COMPONENTS,
+  },
+  versions: EDITORIAL_VERSIONS,
+  trash: true,
+  hooks: {
+    beforeOperation: [enforceEditorDraftOnly],
+    beforeChange: [
+      validatePublication([
+        {
+          path: 'alt',
+          label: 'texto alternativo para imagens',
+          optional: true,
+          validate: (value, document) =>
+            !String(document.mimeType ?? '').startsWith('image/') ||
+            (typeof value === 'string' && Boolean(value.trim())),
+        },
+        { path: 'controleEditorial.fonte', label: 'fonte/crédito confirmado', rejectPlaceholder: true },
+        { path: 'controleEditorial.verificadoEm', label: 'data de verificação' },
+        {
+          path: 'consentimentoMenor',
+          label: 'consentimento formal do responsável',
+          optional: true,
+          validate: (value, document) => !document.envolveMenorIdentificavel || value === true,
+        },
+        {
+          path: 'referenciaConsentimento',
+          label: 'referência interna do termo de consentimento',
+          optional: true,
+          validate: (value, document) =>
+            !document.envolveMenorIdentificavel ||
+            (typeof value === 'string' && Boolean(value.trim())),
+        },
+      ]),
+    ],
+    ...revalidation,
   },
   access: {
-    read: anyone,
-    create: isAdminOrEditor,
-    update: isAdminOrEditor,
-    delete: isAdminOrEditor,
+    read: publishedOrLoggedIn,
+    create: canManageContent,
+    update: canManageContent,
+    delete: canDeleteContent,
   },
   upload: {
-    // Armazenamento vai para o R2 (storage-s3, disableLocalStorage por padrão).
-    // Formatos raster seguros + PDF. SVG fica de fora (vetor de XSS se servido inline).
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'],
     imageSizes: [
       { name: 'thumbnail', width: 400 },
@@ -30,43 +89,47 @@ export const Media: CollectionConfig = {
   fields: [
     {
       name: 'alt',
-      label: 'Texto alternativo (alt)',
+      label: 'Texto alternativo da imagem',
       type: 'text',
-      required: true,
-      admin: { description: 'Descreva a imagem para leitores de tela.' },
+      admin: { description: 'Obrigatório para imagens. Em PDFs, informe apenas se ajudar a identificar o documento.' },
     },
     {
       name: 'credito',
-      label: 'Crédito',
+      label: 'Crédito público',
       type: 'text',
-      admin: { description: 'Autoria/fonte da imagem.' },
+      admin: { description: 'Autoria que pode aparecer junto da imagem.' },
+    },
+    {
+      name: 'envolveMenorIdentificavel',
+      label: 'Há criança ou adolescente identificável',
+      type: 'checkbox',
+      defaultValue: false,
+      access: { read: isLoggedInFieldLevel },
+      admin: {
+        description: 'Marque quando rosto, voz, nome, uniforme ou contexto permitir identificação.',
+      },
     },
     {
       name: 'consentimentoMenor',
-      label: 'Menor identificável com consentimento',
+      label: 'Consentimento formal conferido',
       type: 'checkbox',
       defaultValue: false,
+      access: { read: isLoggedInFieldLevel },
       admin: {
-        description:
-          'Por padrão NÃO publique imagem de criança/adolescente identificável. Marque apenas se houver termo de consentimento assinado.',
+        condition: (data) => Boolean(data?.envolveMenorIdentificavel),
+        description: 'Marque somente após conferir o termo assinado e sua validade para publicação.',
       },
     },
     {
       name: 'referenciaConsentimento',
-      label: 'Referência do termo de consentimento',
+      label: 'Referência interna do consentimento',
       type: 'text',
+      access: { read: isLoggedInFieldLevel },
       admin: {
-        condition: (data) => Boolean(data?.consentimentoMenor),
-        description: 'Obrigatório quando o consentimento estiver marcado (nº/arquivo do termo).',
-      },
-      validate: (val: string | null | undefined, options: unknown) => {
-        const sibling = (options as { siblingData?: { consentimentoMenor?: boolean } } | undefined)
-          ?.siblingData
-        if (sibling?.consentimentoMenor && (!val || !String(val).trim())) {
-          return 'Informe a referência do termo de consentimento.'
-        }
-        return true
+        condition: (data) => Boolean(data?.envolveMenorIdentificavel),
+        description: 'Número de processo/arquivo interno. Não envie o termo para esta biblioteca pública.',
       },
     },
+    editorialControlField(),
   ],
 }

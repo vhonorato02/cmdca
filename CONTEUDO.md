@@ -1,90 +1,83 @@
-# Conteúdo: dados pesquisados, fontes e pendências
+# Política de conteúdo e fontes
 
-Este documento registra, de forma honesta, **o que foi confirmado e preenchido**,
-**o que foi encontrado apenas em fonte secundária** e **o que continua pendente** —
-incluindo onde se pesquisou. Regra seguida: _dado não confirmado em fonte confiável
-não é publicado como fato_ (especialmente dados financeiros e legais).
+O portal publica informação institucional que pode orientar cidadãos, organizações e decisões financeiras. A regra é simples: **sem fonte verificável, não há publicação como fato**.
 
-> **Aplicado na produção** em 2026-06-01 via `pnpm apply:confirmados` (script
-> idempotente e reversível — `configuracoes` tem versionamento): endereços da
-> rede de proteção (10 pontos), endereço/telefone da Casa dos Conselhos e a lei
-> do CMDCA. Os dados **pendentes** (CNPJ/conta do FMDCA) **não** foram tocados.
-> Os mesmos valores também são default no seed (`src/seed/index.ts`) para bases novas.
+## Registro mínimo no CMS
 
----
+Antes de publicar, registre no bloco **Fonte e revisão**:
 
-## 1. Confirmado em fonte oficial e preenchido
+1. órgão, processo ou documento consultado;
+2. URL oficial em HTTPS, quando existir;
+3. data em que a informação foi verificada;
+4. estado da revisão jurídica;
+5. observação interna sobre validade, prazo ou pendência.
 
-### Endereços e contatos
+Uma página antiga em domínio oficial não comprova que endereço, telefone, composição ou calendário ainda estejam vigentes. Para dados operacionais, confirme novamente com a unidade responsável e registre a data.
 
-| Dado | Valor | Fonte |
+## Fatos institucionais confirmados
+
+| Informação | Evidência oficial | Uso editorial |
 | --- | --- | --- |
-| Casa dos Conselhos (provisório) | Rua Dr. Laerte Machado Guimarães, 590 — Vila Borghese (na Secretaria de Assistência Social) · (12) 3643-1607 ramal 6037 / (12) 3643-1609 | Prefeitura — notícia "Casa dos Conselhos passa a funcionar provisoriamente…" |
-| 2º Conselho Tutelar (Moreira César) | Av. das Hortências, 168 — Vale das Acácias · (12) 3641-1688 | Prefeitura — notícia do novo endereço (atendimento desde 09/06/2025) |
-| CRAS Araretama | Rua José Alves Pereira Sobrinho, 36 — Araretama, CEP 12426-320 · (12) 3643-4209 (r. 9026/9027) | Prefeitura — página oficial de CRAS |
-| CRAS Castolira | Rua Regina Célia Pestana César, 276 — Castolira, CEP 12405-490 · (12) 3645-3672 (r. 8850) | idem |
-| CRAS Centro | Rua Dr. Laerte de Assunção Júnior, 51 — Campo Alegre, CEP 12412-040 · (12) 3642-1302 (r. 8804/8805) | idem |
-| CRAS Cidade Nova | Av. Rio de Janeiro, 475 — Cidade Nova, CEP 12414-080 · (12) 3645-6949 (r. 8964/8965) | idem |
-| CRAS Moreira César | Rua Carlos Augusto Machado, 63 — Moreira César, CEP 12441-020 · (12) 3637-5386 (r. 9132/9133) | idem |
-| CREAS Centro | Av. Fortunato Moreira, 341 — Centro · (12) 3642-6856 / (12) 3642-6403 (r. 7090/7091) · seg–sex 8h–17h | Prefeitura — página oficial de CREAS |
-| CREAS Moreira César | Rua Joaquim Santana Salvador, 105 — Moreira César · (12) 3550-3608 / (12) 3550-3609 (r. 9198/9199) | idem |
+| CMDCA criado pela Lei Municipal nº 2.626, de 19/12/1991 | [publicação do CMDCA hospedada pela Prefeitura](https://www.pindamonhangaba.sp.gov.br/site/wp-content/uploads/2019/10/Publica%C3%A7%C3%A3o-Local-e-Hor%C3%A1rio-de-Prova_01Ago19-FINAL.pdf) | Pode constar como base legal. O texto integral e alterações posteriores devem acompanhar atos jurídicos que dependam do teor da lei. |
+| FMDCA criado pela Lei Municipal nº 4.140, de 23/03/2004 | [documento oficial no SAPL da Câmara](https://sapl.pindamonhangaba.sp.leg.br/pysc/download_materia_pysc?cod_materia=MzI0MDE%3D&texto_original=1) | Pode constar como referência de criação. Não substituir a leitura do texto integral da lei em pareceres. |
+| ECA — Lei Federal nº 8.069/1990 | [texto compilado no Planalto](https://www.planalto.gov.br/ccivil_03/leis/l8069compilado.htm) | Fonte principal para afirmações sobre o Estatuto. Verifique a redação compilada na data de publicação. |
+| Gestão municipal 2025–2027 empossada em 2025 | [notícia oficial da Prefeitura](https://pindamonhangaba.sp.gov.br/prefeitura-recebe-cerimonia-de-posse-do-cmdca) | Use a fonte para contexto da posse; nomes, representação e vigência devem ser conferidos no ato de nomeação antes de exibir composição nominal. |
 
-### Base legal
+### Destinação do Imposto de Renda
 
-| Dado | Valor | Fonte |
-| --- | --- | --- |
-| Lei de criação do CMDCA | **Lei Municipal nº 2.626, de 19/12/1991** | Documento oficial da Prefeitura ("Criado pela Lei Municipal nº 2.626 de 19/12/1991"); corroborado pela Câmara de Vereadores (sp.leg.br) |
+A [Receita Federal](https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/preenchimento/manual-mir/destinacao-na-declaracao) informa que, na declaração com deduções legais, a pessoa física pode destinar até 3% do imposto devido aos fundos dos direitos da criança e do adolescente. Esse limite na declaração não deve ser confundido com o limite global aplicável a incentivos nem com destinações feitas no ano-calendário.
 
-Fontes (URLs):
+O portal pode explicar e simular o limite informado pelo usuário, mas não deve afirmar elegibilidade individual, calcular benefício fiscal garantido nem substituir Receita Federal ou profissional contábil. Regras, prazos, códigos de DARF e percentuais devem ser revistos a cada exercício.
 
-- https://pindamonhangaba.sp.gov.br/noticias/assistencia-social/casa-dos-conselhos-passa-a-funcionar-provisoriamente-na-secretaria-de-assistencia-social
-- https://pindamonhangaba.sp.gov.br/cras-centro-de-referencia-da-assistencia-social
-- https://pindamonhangaba.sp.gov.br/creas-enderecos-e-telefones
-- https://www.pindamonhangaba.sp.gov.br/site/wp-content/uploads/2019/10/Publica%C3%A7%C3%A3o-Local-e-Hor%C3%A1rio-de-Prova_01Ago19-FINAL.pdf (cita a Lei nº 2.626 de 19/12/1991)
-- https://www.pindamonhangaba.sp.leg.br/proposicoes/Leis-Ordinarias (Câmara — texto oficial das leis)
+## Dados que exigem confirmação atual
 
-> A confirmar ainda: **CEP/horário exatos** da Casa dos Conselhos e **coordenadas
-> (lat/lng)** dos pontos para fixar os pinos do mapa (ver §3).
+Não publique estes itens apenas com base no conteúdo legado:
 
----
+- endereço, CEP, horário, telefone e e-mail da Casa dos Conselhos;
+- composição nominal, função, segmento, titularidade e vigência de conselheiros;
+- agenda, pauta, local, link de transmissão e natureza pública/reservada de reuniões;
+- CNPJ, banco, agência, conta, chave ou instrução de depósito do Fundo;
+- indicadores, totais, séries históricas e metodologia;
+- registro e validade de entidades;
+- endereço, contato e coordenadas dos equipamentos da rede de proteção;
+- datas futuras de conferências, editais e campanhas;
+- regimento interno e alterações posteriores das leis municipais.
 
-## 2. Encontrado em fonte secundária — PENDENTE de confirmação oficial
+Dados bancários pedem confirmação formal do órgão gestor em canal independente. Não valide conta por mensagem encaminhada, captura de tela ou página de terceiro.
 
-Não publicar como fato sem validar em fonte oficial (Receita Federal, Prefeitura,
-Diário Oficial). Mantidos como `[A CONFIRMAR]` nos campos do CMS.
+## Imagens de crianças e adolescentes
 
-| Dado | Valor encontrado | Onde apareceu | Falta |
-| --- | --- | --- | --- |
-| FMDCA — CNPJ | 19.140.909/0001-73 | Página do IA3 | Comprovante de inscrição (Receita Federal) / material oficial do município |
-| FMDCA — conta bancária | Banco do Brasil, ag. 0574-6, c/c 53.078-6 | Página do IA3 | Publicação oficial da Prefeitura/CMDCA (ex.: campanha de destinação) |
+Antes do upload, confirme finalidade pública, autoria/crédito, base legal e autorização adequada. No CMS:
 
-> **Dados financeiros não foram inseridos no site.** Risco institucional, contábil
-> e jurídico exige fonte oficial. Quando confirmados, preencher em _Configurações › FMDCA_.
+- evite identificação quando ela não for indispensável;
+- preencha crédito e fonte;
+- marque se há criança ou adolescente identificável;
+- registre internamente a comprovação de consentimento/autorização, sem expor o documento ao público;
+- não publique arquivo com localização, documento, escola, rotina ou outro dado que aumente risco;
+- diante de dúvida, use imagem institucional sem pessoa identificável.
 
----
+Excluir o registro do CMS não é sinônimo de apagar cópias já distribuídas, caches ou versões do bucket. Solicitações de retirada devem seguir o procedimento de incidente em [`docs/OPERACOES.md`](docs/OPERACOES.md).
 
-## 3. Pendente — não localizado com segurança
+## Linguagem
 
-Pesquisado em fontes oficiais (Prefeitura) sem confirmação suficiente:
+- escreva para o cidadão: ação primeiro, frase curta e termo jurídico explicado;
+- use data absoluta (`19 de julho de 2026`), não “hoje” ou “em breve”;
+- identifique órgão responsável, prazo, canal e documento necessário;
+- não use “garantido”, “oficial” ou “atualizado” sem evidência;
+- não publique placeholder, texto de teste, número ilustrativo ou depoimento inventado;
+- diferencie denúncia emergencial, orientação, participação social e solicitação administrativa;
+- links devem dizer o destino, não “clique aqui”.
 
-- **Lei municipal do FMDCA** (nº/ano) e **regimento interno** do CMDCA.
-- **Percentual dedutível do IR** — hoje **6% ilustrativo** no simulador. A regra real
-  difere entre pessoa física (limite no modelo completo) e pessoa jurídica (lucro real);
-  o texto do simulador já orienta a confirmar com contador. Confirmar limite vigente na
-  Receita Federal antes de afirmar percentuais.
-- **Composição nominal completa e paritária** (titulares/suplentes por segmento).
-- **Coordenadas (lat/lng)** dos Conselhos Tutelares, CRAS e CREAS para os pinos do mapa
-  (endereços já confirmados acima; coordenadas não publicadas para evitar erro — podem
-  ser geocodificadas e conferidas uma a uma antes de publicar).
-- **Calendário oficial de reuniões 2026**, pautas e atas em PDF.
-- **Números reais dos indicadores** (hoje ilustrativos).
+## Revisão periódica
 
----
+| Conteúdo | Frequência máxima sugerida |
+| --- | --- |
+| emergência, telefones e endereços | mensal e após aviso do órgão |
+| calendário, editais e prazos | antes de publicar e semanal enquanto vigentes |
+| composição do Conselho | a cada ato de nomeação ou substituição |
+| dados bancários e orientação de IR | antes de cada campanha/exercício |
+| indicadores | a cada nova competência, sempre com período e metodologia |
+| leis, resoluções e regimento | após publicação de novo ato |
+| política de privacidade e integrações | semestral e a cada fornecedor novo |
 
-## 4. As 6 notícias (rascunho)
-
-Estão como **rascunho** no CMS (Apêndice B), coerentes com fatos públicos
-(posse 2025–2027, Semana Municipal/35 anos do ECA, FMDCA, Conselho Tutelar, nota de
-imagem). **Revisar e publicar manualmente** após conferência editorial. A notícia do
-FMDCA mantém `[A CONFIRMAR]` no trecho de dados bancários — não publicar esse trecho
-sem os dados oficiais.
+Conteúdo vencido deve ser despublicado ou claramente marcado como histórico; não basta alterar a data.

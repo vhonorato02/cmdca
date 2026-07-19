@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { Illustration } from '@/components/Illustration'
 
@@ -16,33 +16,29 @@ export type Slide = {
 export function HomeSlider({ slides }: { slides: Slide[] }) {
   const [cur, setCur] = useState(0)
   const n = slides.length
-  const go = useCallback((i: number) => setCur((i + n) % n), [n])
-
-  useEffect(() => {
-    if (n <= 1) return
-    // Não autoavança se o usuário pediu menos movimento (WCAG 2.2.2 / 2.3.3).
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
-    const t = setInterval(() => setCur((c) => (c + 1) % n), 6000)
-    return () => clearInterval(t)
-  }, [n])
 
   if (!n) return null
 
+  const activeIndex = Math.min(cur, n - 1)
+  const go = (index: number) => setCur((index + n) % n)
+
   return (
-    <div className="slider" id="slider">
+    <section className="slider" id="slider" aria-label="Destaques" aria-roledescription="carrossel">
+      <p className="sr-only" aria-live="polite">
+        Destaque {activeIndex + 1} de {n}: {slides[activeIndex]?.titulo}
+      </p>
       {slides.map((d, i) => {
         const href = d.cta?.href || ''
         const isInternal = href.startsWith('/')
         return (
-          <div
-            className={i === cur ? 'slide on' : 'slide'}
-            key={i}
-            inert={i !== cur ? true : undefined}
+          <article
+            className={i === activeIndex ? 'slide on' : 'slide'}
+            key={`${d.titulo}-${i}`}
+            hidden={i !== activeIndex}
+            inert={i !== activeIndex ? true : undefined}
+            aria-label={`${i + 1} de ${n}`}
+            aria-roledescription="slide"
           >
-            <div className="vis">
-              <Illustration theme={d.tema || 'cidade'} />
-              <span className="credit">ilustração CMDCA</span>
-            </div>
             <div className="txt">
               {d.kicker ? <span className="kick">{d.kicker}</span> : null}
               <h2>{d.titulo}</h2>
@@ -54,36 +50,61 @@ export function HomeSlider({ slides }: { slides: Slide[] }) {
                       {d.cta.label}
                     </Link>
                   ) : (
-                    <a className="btn ghost-w" href={href} target="_blank" rel="noopener noreferrer">
-                      {d.cta.label}
+                    <a
+                      className="btn ghost-w"
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {d.cta.label} <span aria-hidden="true">↗</span>
                     </a>
                   )}
                 </div>
               ) : null}
             </div>
-          </div>
+            <div className="vis" aria-hidden="true">
+              <Illustration theme={d.tema || 'cidade'} />
+              <span className="credit">ilustração CMDCA</span>
+            </div>
+          </article>
         )
       })}
-      <button className="sl-arrow prev" aria-label="Slide anterior" onClick={() => go(cur - 1)}>
-        <svg className="icn" viewBox="0 0 24 24">
-          <path d="M15 6l-6 6 6 6" />
-        </svg>
-      </button>
-      <button className="sl-arrow next" aria-label="Próximo slide" onClick={() => go(cur + 1)}>
-        <svg className="icn" viewBox="0 0 24 24">
-          <path d="M9 6l6 6-6 6" />
-        </svg>
-      </button>
-      <div className="sl-dots">
-        {slides.map((_, i) => (
+      {n > 1 ? (
+        <div className="slider-controls" role="group" aria-label="Controles dos destaques">
           <button
-            key={i}
-            className={i === cur ? 'on' : undefined}
-            aria-label={`Ir para o slide ${i + 1}`}
-            onClick={() => go(i)}
-          />
-        ))}
-      </div>
-    </div>
+            type="button"
+            className="sl-arrow prev"
+            aria-label="Destaque anterior"
+            onClick={() => go(activeIndex - 1)}
+          >
+            <svg className="icn" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 6l-6 6 6 6" />
+            </svg>
+          </button>
+          <div className="sl-dots">
+            {slides.map((slide, i) => (
+              <button
+                type="button"
+                key={`${slide.titulo}-${i}`}
+                className={i === activeIndex ? 'on' : undefined}
+                aria-current={i === activeIndex ? 'true' : undefined}
+                aria-label={`Ir para o destaque ${i + 1}: ${slide.titulo}`}
+                onClick={() => go(i)}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            className="sl-arrow next"
+            aria-label="Próximo destaque"
+            onClick={() => go(activeIndex + 1)}
+          >
+            <svg className="icn" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      ) : null}
+    </section>
   )
 }

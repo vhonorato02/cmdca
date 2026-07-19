@@ -1,45 +1,24 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { Charts } from '@/components/Charts'
 import { Reveal } from '@/components/Reveal'
-import { SimuladorIR } from '@/components/SimuladorIR'
-import { StatsBand } from '@/components/StatsBand'
 import { getPayloadClient } from '@/lib/payload'
+import { createMetadata } from '@/lib/seo'
+import { publicHref } from '@/lib/site'
 
 export const revalidate = 300
 
-export const metadata: Metadata = {
-  title: 'Transparência',
+export const metadata: Metadata = createMetadata({
+  title: 'Transparência do Fundo | Receitas, Projetos e Prestação de Contas',
   description:
-    'Indicadores, gráficos e simulador de destinação de Imposto de Renda ao FMDCA de Pindamonhangaba.',
-}
+    'Acompanhe atos, projetos, planos de aplicação e prestações de contas do Fundo da Criança e do Adolescente em Pindamonhangaba.',
+  path: '/transparencia',
+})
 
 export default async function TransparenciaPage() {
   const payload = await getPayloadClient()
-  const [ind, config] = await Promise.all([
-    payload.findGlobal({ slug: 'indicadores' }).catch(() => null),
-    payload.findGlobal({ slug: 'configuracoes' }).catch(() => null),
-  ])
-
-  const stats = ind
-    ? [
-        { value: ind.alcancados ?? 0, label: 'crianças e adolescentes alcançados' },
-        { value: ind.projetos ?? 0, label: 'projetos apoiados pelo FMDCA' },
-        { value: ind.entidades ?? 0, label: 'entidades registradas' },
-        { value: ind.reunioesNoAno ?? 0, label: 'reuniões realizadas no ano' },
-      ]
-    : []
-
-  const serieAnual = (ind?.serieAnual || [])
-    .filter((s) => s.ano && typeof s.valor === 'number')
-    .map((s) => ({ ano: String(s.ano), valor: s.valor as number }))
-  const aplicacao = (ind?.aplicacaoPorArea || [])
-    .filter((a) => a.area && typeof a.percentual === 'number')
-    .map((a) => ({ area: String(a.area), percentual: a.percentual as number }))
-
-  const percentual = config?.fmdca?.percentualDeducaoIR ?? 6
-  const tribuna = config?.tribunaUrl || 'https://www.jornaltribunadonorte.com.br'
+  const config = await payload.findGlobal({ slug: 'configuracoes' }).catch(() => null)
+  const tribuna = publicHref(config?.tribunaUrl) || 'https://www.jornaltribunadonorte.com.br'
 
   return (
     <>
@@ -48,26 +27,35 @@ export default async function TransparenciaPage() {
           <Reveal>
             <div className="sec-head">
               <div>
-                <span className="eyebrow">Transparência viva</span>
-                <h1>O que fazemos, em números e gráficos</h1>
+                <span className="eyebrow">Controle social</span>
+                <h1>Transparência do Fundo e do conselho</h1>
                 <p>
-                  Todos os valores vêm do painel e são editáveis pela coordenação e pelo jurídico.{' '}
-                  {ind?.observacao || 'Dados ilustrativos.'}
+                  Consulte os atos que orientam as decisões do CMDCA e os documentos disponíveis
+                  sobre a aplicação dos recursos. Números consolidados só são exibidos quando
+                  acompanhados de período de referência, metodologia e fonte verificável.
                 </p>
               </div>
             </div>
-            {stats.length ? <StatsBand stats={stats} style={{ marginBottom: 30 }} /> : null}
-            {serieAnual.length || aplicacao.length ? (
-              <Charts serieAnual={serieAnual} aplicacaoPorArea={aplicacao} />
-            ) : null}
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="band">
-        <div className="wrap">
-          <Reveal>
-            <SimuladorIR percentual={percentual} />
+            <div className="links">
+              <Link href="/resolucoes">
+                <h2>Resoluções</h2>
+                <p>Deliberações e atos normativos publicados pelo colegiado.</p>
+              </Link>
+              <Link href="/editais">
+                <h2>Editais</h2>
+                <p>Chamamentos, processos, prazos, anexos e resultados disponíveis.</p>
+              </Link>
+              <Link href="/reunioes">
+                <h2>Reuniões e atas</h2>
+                <p>Calendário e atas disponibilizadas após aprovação.</p>
+              </Link>
+              <Link href="/entidades">
+                <h2>Entidades registradas</h2>
+                <p>
+                  Relação pública mantida pelo CMDCA, com registro e validade quando informados.
+                </p>
+              </Link>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -80,18 +68,22 @@ export default async function TransparenciaPage() {
                 <span className="eyebrow">Documentos</span>
                 <h2>Prestação de contas e planos de aplicação</h2>
                 <p>
-                  Os documentos do FMDCA serão disponibilizados aqui. Os atos oficiais do conselho
-                  também são publicados na{' '}
+                  Esta área deve reunir planos de aplicação, receitas, saldos, projetos financiados
+                  e prestações de contas à medida que os documentos forem oficialmente publicados.
+                  Não apresentamos estimativas ou valores sem fonte documental.
+                </p>
+                <p style={{ marginTop: 12 }}>
+                  Para pesquisar as edições do órgão de imprensa oficial, acesse o portal da{' '}
                   <a href={tribuna} target="_blank" rel="noopener noreferrer">
                     Tribuna do Norte
                   </a>
-                  .
+                  . Sempre prefira, nas listas de atos, o link direto para a publicação específica.
                 </p>
               </div>
             </div>
             <p style={{ color: 'var(--ink-2)' }}>
-              Consulte também as <Link href="/resolucoes">Resoluções</Link> e os{' '}
-              <Link href="/editais">Editais</Link> do conselho.
+              Quer entender a destinação do Imposto de Renda? Consulte os limites e as fontes
+              oficiais na página do <Link href="/fmdca">Fundo Municipal</Link>.
             </p>
           </Reveal>
         </div>

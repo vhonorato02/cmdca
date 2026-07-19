@@ -23,7 +23,7 @@ export function A11yBar() {
   const fontStep = useCallback((d: number) => {
     const root = document.documentElement
     const current = parseInt(getComputedStyle(root).getPropertyValue('--fs'), 10) || 100
-    const fs = Math.max(85, Math.min(135, current + d * 8))
+    const fs = Math.max(90, Math.min(130, current + d * 10))
     root.style.setProperty('--fs', fs + '%')
     try {
       localStorage.setItem('cmdca-fs', String(fs))
@@ -48,7 +48,7 @@ export function A11yBar() {
   }, [])
 
   return (
-    <div className="a11y">
+    <aside className="a11y" aria-label="Recursos de acessibilidade">
       <div className="wrap">
         <span className="lbl">Acessibilidade</span>
         <button type="button" onClick={() => fontStep(-1)} aria-label="Diminuir tamanho da fonte">
@@ -57,13 +57,18 @@ export function A11yBar() {
         <button type="button" onClick={() => fontStep(1)} aria-label="Aumentar tamanho da fonte">
           A+
         </button>
-        <button type="button" onClick={toggleContrast} aria-pressed={contrast}>
-          Alto contraste
+        <button
+          type="button"
+          onClick={toggleContrast}
+          aria-pressed={contrast}
+          aria-label={contrast ? 'Desativar alto contraste' : 'Ativar alto contraste'}
+        >
+          Contraste
         </button>
-        <button type="button" onClick={openVLibras} title="Tradução para Libras">
+        <button type="button" onClick={openVLibras} aria-label="Abrir tradução para Libras">
           VLibras
         </button>
       </div>
-    </div>
+    </aside>
   )
 }

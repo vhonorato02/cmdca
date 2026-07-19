@@ -1,16 +1,21 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { Reveal } from '@/components/Reveal'
 import { formatDate } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
+import { createMetadata } from '@/lib/seo'
+import { publicHref, publicText } from '@/lib/site'
 import type { Configuracoe, Editai } from '@/payload-types'
 
 export const revalidate = 300
 
-export const metadata: Metadata = {
-  title: 'Editais',
-  description: 'Editais, chamamentos públicos e processos de escolha do CMDCA de Pindamonhangaba.',
-}
+export const metadata: Metadata = createMetadata({
+  title: 'Editais do CMDCA | Chamamentos, Prazos e Resultados',
+  description:
+    'Consulte editais, prazos, anexos e publicações oficiais de chamamentos e processos do CMDCA de Pindamonhangaba.',
+  path: '/editais',
+})
 
 const TIPO_LABEL: Record<string, string> = {
   chamamento: 'Chamamento público',
@@ -33,8 +38,8 @@ export default async function EditaisPage() {
       .catch(() => ({ docs: [] as Editai[] })),
     payload.findGlobal({ slug: 'configuracoes' }).catch(() => null as Configuracoe | null),
   ])
-  const docs = res.docs as Editai[]
-  const tribuna = config?.tribunaUrl || 'https://www.jornaltribunadonorte.com.br'
+  const docs = (res.docs as Editai[]).filter((item) => publicText(item.titulo))
+  const tribuna = publicHref(config?.tribunaUrl) || 'https://www.jornaltribunadonorte.com.br'
 
   return (
     <section className="band">
@@ -45,7 +50,9 @@ export default async function EditaisPage() {
               <span className="eyebrow">Chamamentos e processos</span>
               <h1>Editais</h1>
               <p>
-                Publicados também na{' '}
+                Consulte o documento, os anexos, os prazos e eventuais retificações. Quando
+                disponível, use o link direto para a publicação oficial; para pesquisar outras
+                edições, acesse a{' '}
                 <a href={tribuna} target="_blank" rel="noopener noreferrer">
                   Tribuna do Norte
                 </a>
@@ -56,27 +63,43 @@ export default async function EditaisPage() {
           {docs.length ? (
             docs.map((e) => {
               const arquivo = typeof e.arquivo === 'object' && e.arquivo ? e.arquivo : null
+              const titulo = publicText(e.titulo) as string
+              const numero = publicText(e.numero)
+              const linkTribuna = publicHref(e.linkTribuna)
+              const arquivoUrl = publicHref(arquivo?.url)
               return (
                 <div className="meet" key={e.id}>
                   <div className="dt">
-                    <b>{e.numero || '—'}</b>
+                    <b>{numero || 'Edital'}</b>
                     <span>{e.data ? formatDate(e.data) : ''}</span>
                   </div>
                   <div className="info">
                     <h4>
-                      {e.titulo} <span className="pill ord">{TIPO_LABEL[e.tipo] || 'Edital'}</span>
+                      {titulo} <span className="pill ord">{TIPO_LABEL[e.tipo] || 'Edital'}</span>
                     </h4>
                     {e.prazo ? <div className="meta">Prazo: {formatDate(e.prazo)}</div> : null}
                   </div>
                   <div className="acts">
-                    {arquivo?.url ? (
-                      <a className="mini" href={arquivo.url} target="_blank" rel="noopener noreferrer">
-                        PDF
+                    {arquivoUrl ? (
+                      <a
+                        className="mini"
+                        href={arquivoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Abrir PDF do edital${numero ? ` ${numero}` : ''}: ${titulo}`}
+                      >
+                        Abrir PDF
                       </a>
                     ) : null}
-                    {e.linkTribuna ? (
-                      <a className="mini" href={e.linkTribuna} target="_blank" rel="noopener noreferrer">
-                        Tribuna
+                    {linkTribuna ? (
+                      <a
+                        className="mini"
+                        href={linkTribuna}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Ver publicação oficial do edital${numero ? ` ${numero}` : ''}`}
+                      >
+                        Publicação oficial
                       </a>
                     ) : null}
                   </div>
@@ -86,6 +109,10 @@ export default async function EditaisPage() {
           ) : (
             <p style={{ color: 'var(--ink-2)' }}>Nenhum edital publicado até o momento.</p>
           )}
+          <p style={{ color: 'var(--ink-2)', marginTop: 24 }}>
+            Veja também as <Link href="/resolucoes">resoluções</Link> e a página de{' '}
+            <Link href="/transparencia">transparência</Link>.
+          </p>
         </Reveal>
       </div>
     </section>

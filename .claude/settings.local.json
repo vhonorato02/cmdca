@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(Get-ChildItem -Force | Select-Object Name, Length, Mode | Format-Table -AutoSize; Write-Output \"---PREVIA SIZE---\"; \\(Get-Item previa-cmdca-pinda.html\\).Length; Write-Output \"---LINE COUNT---\"; \\(Get-Content previa-cmdca-pinda.html | Measure-Object -Line\\).Lines)",
-      "PowerShell(foreach \\($c in 'node','npm','pnpm','corepack','git','gh'\\) { $cmd = Get-Command $c -ErrorAction SilentlyContinue; if \\($cmd\\) { try { $v = \\(& $c --version 2>$null | Select-Object -First 1\\) } catch { $v = '\\(falhou\\)' }; \"{0,-9}: {1}\" -f $c, $v } else { \"{0,-9}: NAO ENCONTRADO\" -f $c } })"
-    ]
-  }
-}

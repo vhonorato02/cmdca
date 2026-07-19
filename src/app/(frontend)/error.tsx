@@ -19,8 +19,8 @@ export default function Error({
       <Hero
         deep
         eyebrow="Ops"
-        titulo="Algo deu errado ao carregar esta página"
-        texto="Tivemos um problema temporário. Você pode tentar de novo ou seguir por um dos caminhos abaixo."
+        titulo="Não foi possível carregar esta página"
+        texto="Tente novamente. Se o problema continuar, use um dos caminhos abaixo."
       />
       <section className="band">
         <div className="wrap">
@@ -32,7 +32,7 @@ export default function Error({
           <div className="links">
             <Link href="/">
               <h4>Início</h4>
-              <p>Voltar à página inicial do conselho.</p>
+              <p>Volte à página inicial do conselho.</p>
             </Link>
             <Link href="/ajuda">
               <h4>Preciso de ajuda</h4>
@@ -40,7 +40,7 @@ export default function Error({
             </Link>
             <Link href="/mapa-do-site">
               <h4>Mapa do site</h4>
-              <p>Acessar todas as áreas públicas.</p>
+              <p>Acesse todas as áreas públicas do portal.</p>
             </Link>
           </div>
         </div>

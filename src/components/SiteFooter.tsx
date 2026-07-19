@@ -3,11 +3,6 @@ import Link from 'next/link'
 
 import { getPayloadClient } from '@/lib/payload'
 
-const FALLBACK = {
-  casaTel: '(12) 3643-1607 · (12) 3643-1609',
-  instagramUrl: 'https://www.instagram.com/cmdca_pindamonhangaba',
-}
-
 const splitPhones = (value: string) => value.split(/\s*[·;]\s*/).filter(Boolean)
 
 const phoneHref = (value: string) => {
@@ -16,16 +11,16 @@ const phoneHref = (value: string) => {
 }
 
 export async function SiteFooter() {
-  let casaTel = FALLBACK.casaTel
-  let instagramUrl = FALLBACK.instagramUrl
+  let casaTel: string | null = null
+  let instagramUrl: string | null = null
   try {
     const payload = await getPayloadClient()
     const cfg = (await payload.findGlobal({ slug: 'configuracoes' })) as {
       contato?: { casaConselhosTelefone?: string | null }
       redes?: { instagramUrl?: string | null }
     }
-    casaTel = cfg?.contato?.casaConselhosTelefone || casaTel
-    instagramUrl = cfg?.redes?.instagramUrl || instagramUrl
+    casaTel = cfg?.contato?.casaConselhosTelefone?.trim() || null
+    instagramUrl = cfg?.redes?.instagramUrl?.trim() || null
   } catch {
     /* usa fallback se o banco estiver indisponível */
   }
@@ -45,22 +40,21 @@ export async function SiteFooter() {
                 height={42}
               />
             </div>
-            <p>
-              Conselho Municipal dos Direitos da Criança e do Adolescente. Casa dos Conselhos —
-              Secretaria de Assistência Social.
-            </p>
-            <p className="footer-phones">
-              {splitPhones(casaTel).map((phone, index) => (
-                <span key={`${phone}-${index}`}>
-                  {index ? (
-                    <span className="phone-separator" aria-hidden="true">
-                      {' · '}
-                    </span>
-                  ) : null}
-                  <a href={phoneHref(phone)}>{phone}</a>
-                </span>
-              ))}
-            </p>
+            <p>Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba.</p>
+            {casaTel ? (
+              <p className="footer-phones">
+                {splitPhones(casaTel).map((phone, index) => (
+                  <span key={`${phone}-${index}`}>
+                    {index ? (
+                      <span className="phone-separator" aria-hidden="true">
+                        {' · '}
+                      </span>
+                    ) : null}
+                    <a href={phoneHref(phone)}>{phone}</a>
+                  </span>
+                ))}
+              </p>
+            ) : null}
           </div>
           <nav aria-label="Navegação institucional">
             <h5>Navegação</h5>
@@ -81,9 +75,11 @@ export async function SiteFooter() {
             <Link href="/creditos">Créditos de imagens</Link>
             <Link href="/privacidade">Privacidade (LGPD)</Link>
             <Link href="/acessibilidade">Acessibilidade</Link>
-            <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
-              Instagram <span aria-hidden="true">↗</span>
-            </a>
+            {instagramUrl ? (
+              <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
+                Instagram <span aria-hidden="true">↗</span>
+              </a>
+            ) : null}
           </nav>
         </div>
         <div className="foot-end">

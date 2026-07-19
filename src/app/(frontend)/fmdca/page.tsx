@@ -68,7 +68,7 @@ export default async function FmdcaPage() {
         deep
         eyebrow="Fundo da infância"
         titulo="Fundo Municipal dos Direitos da Criança e do Adolescente"
-        texto="Conheça as formas previstas em lei para destinar parte do Imposto de Renda devido e consulte sempre os documentos oficiais antes de concluir a operação."
+        texto="Entenda as modalidades previstas em lei para destinar parte do Imposto de Renda devido. Antes de concluir, confirme o procedimento nos canais oficiais."
       />
 
       {faqLd ? (
@@ -102,9 +102,9 @@ export default async function FmdcaPage() {
                   apoiados e à prestação de contas.
                 </p>
                 <p style={{ marginTop: 16 }}>
-                  A destinação não aumenta o imposto devido: ela direciona ao Fundo uma parcela que,
-                  dentro dos limites legais, seria recolhida à União. A forma de fazer e o limite
-                  mudam conforme o momento da destinação e o perfil do contribuinte.
+                  A destinação pode direcionar ao Fundo uma parcela do imposto devido, dentro dos
+                  limites legais. A modalidade, o prazo e o limite aplicável variam conforme o
+                  momento da destinação e a situação tributária da pessoa ou empresa.
                 </p>
               </div>
               <div className="lead-box">
@@ -174,8 +174,9 @@ export default async function FmdcaPage() {
               </div>
             </div>
             <p style={{ color: 'var(--ink-2)', marginTop: 18 }}>
-              Empresas tributadas pelo lucro real seguem regra própria. Em todos os casos, confirme
-              o enquadramento com profissional de contabilidade.
+              Empresas tributadas pelo lucro real seguem regras próprias. Antes de destinar, confirme
+              o enquadramento, o prazo e a documentação exigida com a Receita Federal ou profissional
+              de contabilidade.
             </p>
           </Reveal>
         </div>

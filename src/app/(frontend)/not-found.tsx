@@ -18,20 +18,20 @@ export default function NotFound() {
         deep
         eyebrow="Erro 404"
         titulo="Página não encontrada"
-        texto="O endereço que você procurou não existe, mudou de lugar ou foi removido."
+        texto="Confira o endereço ou escolha um dos caminhos abaixo."
       />
       <section className="band">
         <div className="wrap">
           <div className="sec-head">
             <div>
               <span className="eyebrow">Por onde seguir</span>
-              <h2>Talvez um destes caminhos ajude</h2>
+              <h2>Encontre o que você precisa</h2>
             </div>
           </div>
           <div className="links">
             <Link href="/">
               <h4>Início</h4>
-              <p>Voltar à página inicial do conselho.</p>
+              <p>Volte à página inicial do conselho.</p>
             </Link>
             <Link href="/ajuda">
               <h4>Preciso de ajuda</h4>
@@ -47,7 +47,7 @@ export default function NotFound() {
             </Link>
             <Link href="/mapa-do-site">
               <h4>Mapa do site</h4>
-              <p>Ver todas as áreas públicas disponíveis.</p>
+              <p>Veja todas as áreas públicas disponíveis.</p>
             </Link>
           </div>
         </div>

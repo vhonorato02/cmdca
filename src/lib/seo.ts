@@ -22,7 +22,7 @@ function metadataImage(image?: string) {
     url,
     width: 1200,
     height: 630,
-    alt: `Identidade institucional do ${SITE_NAME}`,
+    alt: `CMDCA de Pindamonhangaba — direitos da criança e do adolescente`,
   }
 }
 
@@ -39,6 +39,12 @@ export function createMetadata({
   return {
     title: { absolute: title },
     description,
+    keywords: [
+      'CMDCA Pindamonhangaba',
+      'direitos da criança e do adolescente',
+      'Conselho Tutelar Pindamonhangaba',
+      'FMDCA Pindamonhangaba',
+    ],
     alternates: noIndex ? undefined : { canonical },
     robots: noIndex
       ? { index: false, follow: false }
@@ -75,6 +81,17 @@ export function organizationReference() {
     '@id': `${absoluteUrl('/')}#organization`,
     name: ORGANIZATION_NAME,
     url: absoluteUrl('/'),
+  }
+}
+
+export function websiteReference() {
+  return {
+    '@type': 'WebSite',
+    '@id': `${absoluteUrl('/')}#website`,
+    name: SITE_NAME,
+    url: absoluteUrl('/'),
+    inLanguage: 'pt-BR',
+    publisher: { '@id': `${absoluteUrl('/')}#organization` },
   }
 }
 

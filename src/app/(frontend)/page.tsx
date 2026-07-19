@@ -26,7 +26,7 @@ export const revalidate = 300
 export const metadata: Metadata = createMetadata({
   title: 'CMDCA de Pindamonhangaba | Direitos da Criança e do Adolescente',
   description:
-    'Acesse reuniões, resoluções, editais, entidades registradas, Fundo e canais de proteção à criança e ao adolescente em Pindamonhangaba.',
+    'Encontre canais de proteção, reuniões, resoluções, editais, entidades registradas e informações do FMDCA em Pindamonhangaba.',
   path: '/',
 })
 
@@ -184,21 +184,19 @@ export default async function HomePage() {
                     lineHeight: 1.1,
                   }}
                 >
-                  Participação social na defesa de direitos.
+                  Decisões públicas para proteger direitos.
                 </h2>
                 <p>
-                  O <b>CMDCA</b> é um órgão colegiado e paritário: poder público e sociedade civil
-                  participam em igual número das decisões sobre a política municipal de atendimento.
-                  O conselho delibera sobre prioridades, acompanha organizações e programas, gere o
-                  Fundo Municipal e organiza o processo de escolha do Conselho Tutelar, sob
-                  fiscalização do Ministério Público.
+                  O <b>CMDCA</b> reúne poder público e sociedade civil em número igual. O conselho
+                  define prioridades da política municipal, acompanha organizações e programas,
+                  delibera sobre o Fundo Municipal e conduz o processo de escolha do Conselho Tutelar.
                 </p>
               </div>
               <div className="lead-box">
                 <span className="k">{publicText(dir?.gestaoLabel) || 'Gestão 2025–2027'}</span>
                 <div className="nm">Composição paritária</div>
                 <p className="ro" style={{ marginTop: 8 }}>
-                  Consulte a composição da gestão e a fonte oficial na página institucional.
+                  Consulte a composição, as atribuições e a base legal do conselho.
                 </p>
                 <Link
                   className="mini"
@@ -230,7 +228,7 @@ export default async function HomePage() {
                   <path d="M12 21C7 17.5 4 14 4 9.5 4 6.5 6.2 4.5 9 4.5c1.7 0 3 .9 3 .9s1.3-.9 3-.9c2.8 0 5 2 5 5C20 14 17 17.5 12 21Z" />
                 </svg>
                 <h4>Pedir ajuda</h4>
-                <p>Denunciar, orientar-se ou agir numa emergência.</p>
+                <p>Saiba qual canal usar em uma emergência, denúncia ou pedido de orientação.</p>
               </Link>
               <Link href="/reunioes">
                 <svg className="icn ic" viewBox="0 0 24 24">
@@ -245,7 +243,7 @@ export default async function HomePage() {
                   <path d="M5 19V9M12 19V5M19 19v-7M3 21h18" />
                 </svg>
                 <h4>Transparência</h4>
-                <p>Recursos do FMDCA, projetos e contas.</p>
+                <p>Atos, documentos e informações sobre a aplicação dos recursos.</p>
               </Link>
               <Link href="/fmdca">
                 <svg className="icn ic" viewBox="0 0 24 24">
@@ -309,7 +307,7 @@ export default async function HomePage() {
                 ) : null}
               </>
             ) : (
-              <p style={{ color: 'var(--ink-2)' }}>Novas publicações em breve.</p>
+              <p style={{ color: 'var(--ink-2)' }}>Não há notícias publicadas no momento.</p>
             )}
           </Reveal>
         </div>
@@ -343,7 +341,7 @@ export default async function HomePage() {
                 </h1>
                 <p>
                   Encontre canais de proteção, reuniões, atos oficiais, informações sobre o Fundo e
-                  formas de participar das decisões do CMDCA.
+                  maneiras de acompanhar e participar das decisões do CMDCA.
                 </p>
               </div>
               <div className="lead-box">

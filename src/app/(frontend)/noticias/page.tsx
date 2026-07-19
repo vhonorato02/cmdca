@@ -56,7 +56,7 @@ export default async function NoticiasPage() {
             </div>
           ) : (
             <p style={{ color: 'var(--ink-2)' }}>
-              Ainda não há notícias publicadas. Os conteúdos estão em preparação — volte em breve.
+              Não há notícias publicadas no momento.
             </p>
           )}
         </Reveal>

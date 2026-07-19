@@ -82,7 +82,7 @@ export function SiteHeader() {
           </span>
         </Link>
         <Link className="help-link mobile-help" href="/ajuda">
-          Ajuda
+          Preciso de ajuda
         </Link>
         <nav
           ref={navRef}

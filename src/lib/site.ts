@@ -4,7 +4,7 @@ export const SITE_NAME = 'CMDCA de Pindamonhangaba'
 export const ORGANIZATION_NAME =
   'Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba'
 export const DEFAULT_DESCRIPTION =
-  'Informações, atos oficiais, reuniões e canais de proteção à criança e ao adolescente em Pindamonhangaba.'
+  'Portal do CMDCA de Pindamonhangaba: proteção de crianças e adolescentes, atos oficiais, reuniões, transparência e participação social.'
 
 const UNVERIFIED_PATTERN =
   /\[?\s*a confirmar\s*\]?|dado(?:s)? ilustrativo(?:s)?|conte[uú]do ilustrativo|depoimento ilustrativo|percentual ilustrativo/i

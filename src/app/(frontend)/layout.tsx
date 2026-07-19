@@ -26,7 +26,7 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   metadataBase: getSiteUrl(),
   title: {
-    default: 'CMDCA de Pindamonhangaba | Direitos da Criança e do Adolescente',
+    default: 'CMDCA de Pindamonhangaba — Direitos da Criança e do Adolescente',
     template: `%s | ${SITE_NAME}`,
   },
   description: DEFAULT_DESCRIPTION,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'pt_BR',
     siteName: SITE_NAME,
-    title: 'CMDCA de Pindamonhangaba | Direitos da Criança e do Adolescente',
+    title: 'CMDCA de Pindamonhangaba — Direitos da Criança e do Adolescente',
     description: DEFAULT_DESCRIPTION,
     url: absoluteUrl('/'),
     images: [
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
         url: absoluteUrl('/opengraph-image'),
         width: 1200,
         height: 630,
-        alt: `Identidade institucional do ${SITE_NAME}`,
+        alt: 'CMDCA de Pindamonhangaba — direitos da criança e do adolescente',
       },
     ],
   },

@@ -29,17 +29,18 @@ export default function Error({
               Tentar novamente
             </button>
           </div>
+          <h2 className="sr-only">Outros caminhos do site</h2>
           <div className="links">
             <Link href="/">
-              <h4>Início</h4>
+              <h3>Início</h3>
               <p>Volte à página inicial do conselho.</p>
             </Link>
             <Link href="/ajuda">
-              <h4>Preciso de ajuda</h4>
+              <h3>Preciso de ajuda</h3>
               <p>Emergência (190), Disque 100 e Conselho Tutelar.</p>
             </Link>
             <Link href="/mapa-do-site">
-              <h4>Mapa do site</h4>
+              <h3>Mapa do site</h3>
               <p>Acesse todas as áreas públicas do portal.</p>
             </Link>
           </div>

@@ -229,7 +229,7 @@ export default async function HomePage() {
                 <svg className="icn ic" viewBox="0 0 24 24">
                   <path d="M12 21C7 17.5 4 14 4 9.5 4 6.5 6.2 4.5 9 4.5c1.7 0 3 .9 3 .9s1.3-.9 3-.9c2.8 0 5 2 5 5C20 14 17 17.5 12 21Z" />
                 </svg>
-                <h4>Pedir ajuda</h4>
+                <h3>Pedir ajuda</h3>
                 <p>Encontre o canal adequado para emergência, denúncia ou orientação.</p>
               </Link>
               <Link href="/reunioes">
@@ -237,21 +237,21 @@ export default async function HomePage() {
                   <rect x="4" y="5" width="16" height="16" rx="2" />
                   <path d="M8 3v4M16 3v4M4 10h16" />
                 </svg>
-                <h4>Reuniões e atas</h4>
+                <h3>Reuniões e atas</h3>
                 <p>Consulte calendário, pautas e atas já publicadas.</p>
               </Link>
               <Link href="/transparencia">
                 <svg className="icn ic" viewBox="0 0 24 24">
                   <path d="M5 19V9M12 19V5M19 19v-7M3 21h18" />
                 </svg>
-                <h4>Transparência</h4>
+                <h3>Transparência</h3>
                 <p>Acesse atos, documentos e informações que já estão disponíveis.</p>
               </Link>
               <Link href="/fmdca">
                 <svg className="icn ic" viewBox="0 0 24 24">
                   <path d="M4 12v6a1 1 0 0 0 1 1h3v-7M8 12 4 9l8-5 8 5v9a1 1 0 0 1-1 1h-3v-7" />
                 </svg>
-                <h4>Destinar seu IR</h4>
+                <h3>Destinar seu IR</h3>
                 <p>Confira regras, limites e fontes oficiais antes de destinar.</p>
               </Link>
             </div>
@@ -325,49 +325,47 @@ export default async function HomePage() {
       />
       <section className="home-entry" aria-labelledby="inicio-titulo">
         <div className="wrap">
-          <Reveal>
-            <div className="home-entry-grid">
-              <div className="home-entry-copy">
-                <span className="eyebrow">Informação pública para a cidade</span>
-                <h1
-                  id="inicio-titulo"
-                  style={{
-                    fontFamily: 'var(--serif)',
-                    fontSize: 'clamp(2rem,4vw,3.15rem)',
-                    lineHeight: 1.05,
-                    margin: '12px 0 16px',
-                    maxWidth: '20ch',
-                  }}
-                >
-                  Direitos de crianças e adolescentes em Pindamonhangaba
-                </h1>
-                <p>
-                  Encontre canais de proteção, atos oficiais, reuniões e informações sobre o Fundo.
-                  Saiba também como acompanhar as decisões do CMDCA.
-                </p>
-              </div>
-              <div className="home-entry-image">
-                <Image
-                  src="/images/institucional/cuidado-coletivo-cmdca.png"
-                  alt="Adultos e crianças caminham juntos em um espaço comunitário, vistos de costas."
-                  fill
-                  priority
-                  sizes="(max-width: 880px) 100vw, 52vw"
-                />
-                <span>Imagem ilustrativa</span>
-              </div>
+          <div className="home-entry-grid">
+            <div className="home-entry-copy">
+              <span className="eyebrow">Informação pública para a cidade</span>
+              <h1
+                id="inicio-titulo"
+                style={{
+                  fontFamily: 'var(--serif)',
+                  fontSize: 'clamp(2rem,4vw,3.15rem)',
+                  lineHeight: 1.05,
+                  margin: '12px 0 16px',
+                  maxWidth: '20ch',
+                }}
+              >
+                Direitos de crianças e adolescentes em Pindamonhangaba
+              </h1>
+              <p>
+                Encontre canais de proteção, atos oficiais, reuniões e informações sobre o Fundo.
+                Saiba também como acompanhar as decisões do CMDCA.
+              </p>
             </div>
-            <aside className="home-help" aria-label="Orientação para situações urgentes">
-              <div>
-                <span className="k">Precisa de proteção?</span>
-                <strong>Comece pelo canal adequado à situação.</strong>
-              </div>
-              <p>Em perigo imediato, ligue 190. Para denunciar violações de direitos, use o Disque 100.</p>
-              <Link className="btn" href="/ajuda">
-                Buscar ajuda
-              </Link>
-            </aside>
-          </Reveal>
+            <div className="home-entry-image">
+              <Image
+                src="/images/institucional/cuidado-coletivo-cmdca.webp"
+                alt="Adultos e crianças caminham juntos em um espaço comunitário, vistos de costas."
+                fill
+                priority
+                sizes="(max-width: 880px) 100vw, 52vw"
+              />
+              <span>Imagem ilustrativa</span>
+            </div>
+          </div>
+          <aside className="home-help" aria-label="Orientação para situações urgentes">
+            <div>
+              <span className="k">Precisa de proteção?</span>
+              <strong>Comece pelo canal adequado à situação.</strong>
+            </div>
+            <p>Em perigo imediato, ligue 190. Para denunciar violações de direitos, use o Disque 100.</p>
+            <Link className="btn" href="/ajuda">
+              Buscar ajuda
+            </Link>
+          </aside>
         </div>
       </section>
       {ordem.map((tipo) => blocos[tipo] ?? null)}

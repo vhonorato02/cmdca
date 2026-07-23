@@ -65,7 +65,11 @@ export function A11yBar() {
         >
           Contraste
         </button>
-        <button type="button" onClick={openVLibras} aria-label="Abrir tradução para Libras">
+        <button
+          type="button"
+          onClick={openVLibras}
+          aria-label="VLibras: abrir tradução para Libras"
+        >
           VLibras
         </button>
       </div>

@@ -27,16 +27,16 @@ export default function CreditosPage() {
         <div className="wrap">
           <Reveal>
             <div className="post-body" style={{ margin: 0 }}>
-              <h3>Ilustrações</h3>
+              <h2>Ilustrações</h2>
               <p>
                 O site prioriza ilustrações e imagens não identificáveis para reduzir a exposição de
                 crianças e adolescentes. As artes da interface usam formas e cores inspiradas na
                 identidade visual do conselho. Créditos específicos de mídia, quando aplicáveis,
                 devem acompanhar o respectivo arquivo ou publicação.
               </p>
-              <h3>Identidade visual</h3>
+              <h2>Identidade visual</h2>
               <p>Logotipo oficial do CMDCA Pindamonhangaba, cedido pelo conselho.</p>
-              <h3>Mapa</h3>
+              <h2>Mapa</h2>
               <p>
                 Mapas e dados geográficos por{' '}
                 <a
@@ -48,12 +48,12 @@ export default function CreditosPage() {
                 </a>{' '}
                 e colaboradores.
               </p>
-              <h3>Tipografia</h3>
+              <h2>Tipografia</h2>
               <p>
                 Fontes <b>Newsreader</b> e <b>Public Sans</b> (Google Fonts, licença SIL Open Font
                 License).
               </p>
-              <h3>Tecnologia</h3>
+              <h2>Tecnologia</h2>
               <p>
                 Site construído com Next.js e Payload CMS. Consulte também o{' '}
                 <Link href="/privacidade">aviso de privacidade</Link> e a{' '}

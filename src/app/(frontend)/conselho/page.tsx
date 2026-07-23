@@ -102,7 +102,7 @@ export default async function ConselhoPage() {
             </div>
             <div className="links" style={{ borderTop: '1px solid var(--line)' }}>
               <div style={{ padding: '24px 20px', borderBottom: '1px solid var(--line)' }}>
-                <h4
+                <h3
                   style={{
                     fontFamily: 'var(--serif)',
                     fontWeight: 600,
@@ -111,14 +111,14 @@ export default async function ConselhoPage() {
                   }}
                 >
                   Deliberar sobre o Fundo Municipal
-                </h4>
+                </h3>
                 <p style={{ fontSize: '.9rem', color: 'var(--ink-2)' }}>
                   Definir prioridades e deliberar sobre a aplicação dos recursos. Os atos devem ser
                   públicos e submetidos ao controle social.
                 </p>
               </div>
               <div style={{ padding: '24px 20px', borderBottom: '1px solid var(--line)' }}>
-                <h4
+                <h3
                   style={{
                     fontFamily: 'var(--serif)',
                     fontWeight: 600,
@@ -127,13 +127,13 @@ export default async function ConselhoPage() {
                   }}
                 >
                   Registrar e acompanhar entidades
-                </h4>
+                </h3>
                 <p style={{ fontSize: '.9rem', color: 'var(--ink-2)' }}>
                   Registrar e fiscalizar entidades e programas, conforme os arts. 90 e 91 do ECA.
                 </p>
               </div>
               <div style={{ padding: '24px 20px', borderBottom: '1px solid var(--line)' }}>
-                <h4
+                <h3
                   style={{
                     fontFamily: 'var(--serif)',
                     fontWeight: 600,
@@ -142,7 +142,7 @@ export default async function ConselhoPage() {
                   }}
                 >
                   Organizar o processo de escolha do Conselho Tutelar
-                </h4>
+                </h3>
                 <p style={{ fontSize: '.9rem', color: 'var(--ink-2)' }}>
                   Regulamentar e conduzir o processo, que ocorre sob fiscalização do Ministério
                   Público, conforme o art. 139 do ECA.

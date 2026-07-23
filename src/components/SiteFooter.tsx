@@ -1,14 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { phoneHref } from '@/lib/contact'
 import { getPayloadClient } from '@/lib/payload'
 
 const splitPhones = (value: string) => value.split(/\s*[·;]\s*/).filter(Boolean)
-
-const phoneHref = (value: string) => {
-  const number = value.replace(/[^\d+]/g, '')
-  return number ? `tel:${number}` : undefined
-}
 
 export async function SiteFooter() {
   let casaTel: string | null = null
@@ -57,21 +53,21 @@ export async function SiteFooter() {
             ) : null}
           </div>
           <nav aria-label="Navegação institucional">
-            <h5>Navegação</h5>
+            <h2>Navegação</h2>
             <Link href="/conselho">Sobre o CMDCA</Link>
             <Link href="/reunioes">Reuniões</Link>
             <Link href="/transparencia">Transparência</Link>
             <Link href="/noticias">Notícias</Link>
           </nav>
           <nav aria-label="Canais de proteção">
-            <h5>Proteção</h5>
+            <h2>Proteção</h2>
             <Link href="/ajuda">Buscar ajuda</Link>
             <Link href="/ajuda#emergencia">Disque 100 e emergência</Link>
             <Link href="/ajuda#rede">Conselho Tutelar</Link>
             <Link href="/ajuda#rede">Rede de proteção</Link>
           </nav>
           <nav aria-label="Transparência e redes sociais">
-            <h5>Transparência</h5>
+            <h2>Transparência</h2>
             <Link href="/creditos">Créditos de imagens</Link>
             <Link href="/privacidade">Privacidade (LGPD)</Link>
             <Link href="/acessibilidade">Acessibilidade</Link>

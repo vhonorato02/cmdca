@@ -39,20 +39,20 @@ export default async function TransparenciaPage() {
             <div className="links">
               <Link href="/resolucoes">
                 <h2>Resoluções</h2>
-                <p>Deliberações e atos normativos já publicados pelo colegiado.</p>
+                <p>Deliberações e atos normativos, quando publicados pelo colegiado.</p>
               </Link>
               <Link href="/editais">
                 <h2>Editais</h2>
-                <p>Chamamentos, processos, prazos, anexos e resultados já disponíveis.</p>
+                <p>Chamamentos, processos, prazos, anexos e resultados, quando publicados.</p>
               </Link>
               <Link href="/reunioes">
                 <h2>Reuniões e atas</h2>
-                <p>Calendário e atas disponibilizadas após aprovação.</p>
+                <p>Calendário e atas, disponibilizados conforme publicação e aprovação.</p>
               </Link>
               <Link href="/entidades">
                 <h2>Entidades registradas</h2>
                 <p>
-                  Relação pública mantida pelo CMDCA, com registro e validade quando informados.
+                  Registros disponibilizados pelo CMDCA, com número e validade quando informados.
                 </p>
               </Link>
             </div>

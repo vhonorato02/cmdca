@@ -110,23 +110,23 @@ export default async function ParticipePage() {
             </div>
             <div className="links">
               <Link href="/reunioes">
-                <h4>Acompanhar reuniões</h4>
+                <h3>Acompanhar reuniões</h3>
                 <p>Veja calendário, classificação e atas publicadas.</p>
               </Link>
               <Link href="/entidades">
-                <h4>Orientação para entidades</h4>
+                <h3>Orientação para entidades</h3>
                 <p>Conheça a relação pública e fale com o conselho sobre registro e renovação.</p>
               </Link>
               <Link href="/fmdca">
-                <h4>Destinar IR ao FMDCA</h4>
+                <h3>Destinar IR ao FMDCA</h3>
                 <p>Confira regras e fontes oficiais para a destinação ao Fundo.</p>
               </Link>
               <Link href="/ajuda">
-                <h4>Pedir ajuda / denunciar</h4>
+                <h3>Pedir ajuda / denunciar</h3>
                 <p>Emergência, Disque 100 e Conselho Tutelar.</p>
               </Link>
               <Link href="/mapa-do-site">
-                <h4>Mapa do site</h4>
+                <h3>Mapa do site</h3>
                 <p>Acesse todas as áreas institucionais e de serviço.</p>
               </Link>
             </div>

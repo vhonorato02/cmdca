@@ -3,6 +3,9 @@ import { ImageResponse } from 'next/og'
 export const alt = 'CMDCA de Pindamonhangaba: proteção, participação e transparência'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
+// Gera a imagem no runtime em vez de passar pelo Sharp/libvips no prerender,
+// evitando a falha `colourspace: parameter space not set` do pipeline Windows.
+export const dynamic = 'force-dynamic'
 
 export default function OpenGraphImage() {
   return new ImageResponse(

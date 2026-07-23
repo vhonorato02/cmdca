@@ -30,23 +30,23 @@ export default function NotFound() {
           </div>
           <div className="links">
             <Link href="/">
-              <h4>Início</h4>
+              <h3>Início</h3>
               <p>Volte à página inicial do conselho.</p>
             </Link>
             <Link href="/ajuda">
-              <h4>Preciso de ajuda</h4>
+              <h3>Preciso de ajuda</h3>
               <p>Emergência (190), Disque 100 e Conselho Tutelar.</p>
             </Link>
             <Link href="/noticias">
-              <h4>Notícias</h4>
+              <h3>Notícias</h3>
               <p>Comunicados e publicações do conselho.</p>
             </Link>
             <Link href="/transparencia">
-              <h4>Transparência</h4>
+              <h3>Transparência</h3>
               <p>Atos, documentos e informações sobre o Fundo Municipal.</p>
             </Link>
             <Link href="/mapa-do-site">
-              <h4>Mapa do site</h4>
+              <h3>Mapa do site</h3>
               <p>Veja todas as áreas públicas disponíveis.</p>
             </Link>
           </div>

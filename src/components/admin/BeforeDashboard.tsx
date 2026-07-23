@@ -5,7 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 
 type Role = 'admin' | 'editor' | 'juridico'
-type Shortcut = { href: string; title: string; description: string; roles?: Role[] }
+type Shortcut = { href: string; title: string; description: string }
 
 const shortcuts: Shortcut[] = [
   {
@@ -20,15 +20,13 @@ const shortcuts: Shortcut[] = [
   },
   {
     href: '/admin/collections/resolucoes',
-    title: 'Revisar resoluções',
-    description: 'Confira número, data, PDF, situação e revisão jurídica.',
-    roles: ['admin', 'juridico'],
+    title: 'Gerenciar resoluções',
+    description: 'Confira número, data, PDF e situação antes de publicar.',
   },
   {
     href: '/admin/collections/editais',
-    title: 'Revisar editais',
+    title: 'Gerenciar editais',
     description: 'Valide documento, prazo, situação e eventuais retificações.',
-    roles: ['admin', 'juridico'],
   },
   {
     href: '/admin/collections/rede-protecao',
@@ -38,46 +36,40 @@ const shortcuts: Shortcut[] = [
   {
     href: '/admin/globals/configuracoes',
     title: 'Dados institucionais',
-    description: 'Revise contatos, FMDCA e base legal antes de tornar dados públicos.',
-    roles: ['admin', 'juridico'],
+    description: 'Atualize contatos, FMDCA e base legal quando necessário.',
   },
   {
     href: '/admin/globals/indicadores',
-    title: 'Conferir indicadores',
-    description: 'Só publique números com período, fonte, método e verificação.',
-    roles: ['admin', 'juridico'],
+    title: 'Atualizar indicadores',
+    description: 'Registre período, fonte e método quando essas informações estiverem disponíveis.',
   },
 ]
 
 export default function BeforeDashboard() {
   const { user } = useAuth()
   const role = ((user as { role?: Role } | null)?.role ?? 'editor') as Role
-  const canPublish = role === 'admin' || role === 'juridico'
-  const visibleShortcuts = shortcuts.filter((shortcut) => !shortcut.roles || shortcut.roles.includes(role))
+  const visibleShortcuts = shortcuts
 
   return (
     <section className="cmdca-dashboard" aria-labelledby="cmdca-dashboard-title">
       <div className="cmdca-dashboard__header">
         <div>
-          <span className="cmdca-dashboard__eyebrow">Painel editorial seguro</span>
+          <span className="cmdca-dashboard__eyebrow">Painel de conteúdo</span>
           <h2 id="cmdca-dashboard-title">CMDCA Pindamonhangaba</h2>
         </div>
         <span className={`cmdca-dashboard__role cmdca-dashboard__role--${role}`}>
-          {role === 'admin' ? 'Administração' : role === 'juridico' ? 'Revisão jurídica' : 'Editor de rascunhos'}
+          {role === 'admin' ? 'Administração' : role === 'juridico' ? 'Conteúdo jurídico' : 'Editor'}
         </span>
       </div>
 
       <div className="cmdca-workflow" aria-label="Fluxo editorial">
-        <div><b>1. Preparar</b><span>Escreva com base em uma fonte identificada.</span></div>
-        <div><b>2. Conferir</b><span>Revise datas, nomes, links e anexos.</span></div>
-        <div><b>3. Revisar</b><span>O jurídico registra a decisão de publicação.</span></div>
-        <div><b>4. Publicar</b><span>Confira a prévia antes de liberar ao público.</span></div>
+        <div><b>1. Criar</b><span>Escreva ou atualize o conteúdo.</span></div>
+        <div><b>2. Conferir</b><span>Use a prévia para verificar a apresentação.</span></div>
+        <div><b>3. Publicar</b><span>Quem edita decide quando liberar ao público.</span></div>
       </div>
 
       <p className="cmdca-dashboard__notice" role="note">
-        {canPublish
-          ? 'Antes de publicar, confira fonte, data de verificação, status jurídico e prévia. Marcadores como “a confirmar” e “texto de teste” bloqueiam a publicação.'
-          : 'Seu acesso cria rascunhos. Quando terminar, registre a fonte, confira a prévia e encaminhe para a revisão jurídica. Publicar e excluir permanecem bloqueados.'}
+        Você pode salvar rascunhos ou publicar diretamente. Os campos de fonte e conferência são opcionais e não bloqueiam a publicação.
       </p>
 
       <nav className="cmdca-shortcuts" aria-label="Atalhos do painel">

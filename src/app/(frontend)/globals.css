@@ -907,7 +907,7 @@ html.contrast .links .ic {
   color: var(--accent);
 }
 
-.links h4 {
+.links h3 {
   margin: 15px 0 6px;
   font-family: var(--serif);
   font-size: 1.18rem;
@@ -1664,7 +1664,7 @@ html.contrast .hc.urgent {
   color: var(--alert);
 }
 
-.hc h3 {
+.hc h2 {
   margin-bottom: 6px;
   font-family: var(--serif);
   font-size: 1.3rem;
@@ -2035,6 +2035,7 @@ html.contrast .meet .dt b {
   flex: 1;
 }
 
+.meet .info h2,
 .meet .info h3,
 .meet .info h4 {
   display: flex;
@@ -2254,7 +2255,7 @@ footer {
   border-bottom: 1px solid rgb(255 255 255 / 16%);
 }
 
-footer h5 {
+footer h2 {
   margin-bottom: 14px;
   font-family: var(--serif);
   font-size: 1.05rem;

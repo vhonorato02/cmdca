@@ -102,7 +102,7 @@ export default async function AjudaPage() {
                 <path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
               </svg>
               <div>
-                <h3>É uma emergência</h3>
+                <h2>É uma emergência</h2>
                 <p>Risco imediato à vida ou à integridade de uma criança ou adolescente.</p>
                 <div className="num">
                   <a href="tel:190" aria-label="Ligar para a Polícia Militar no número 190">
@@ -117,7 +117,7 @@ export default async function AjudaPage() {
                 <path d="M3 11l18-5v12L3 18zM11 9v6" />
               </svg>
               <div>
-                <h3>Quero denunciar uma violação de direitos</h3>
+                <h2>Quero denunciar uma violação de direitos</h2>
                 <p>Use este canal em casos de violência, negligência, abuso ou suspeita.</p>
                 <div className="num">
                   <a href="tel:100" aria-label="Ligar para o Disque 100">
@@ -135,7 +135,7 @@ export default async function AjudaPage() {
                 <path d="M12 10v6m-4 5 4-5 4 5" />
               </svg>
               <div>
-                <h3>Sou criança ou adolescente e preciso falar com alguém</h3>
+                <h2>Sou criança ou adolescente e preciso falar com alguém</h2>
                 <p>
                   Se algo está machucando, assustando ou ameaçando você, peça ajuda. A culpa não é
                   sua.
@@ -154,7 +154,7 @@ export default async function AjudaPage() {
                 <circle cx="12" cy="10" r="2.5" />
               </svg>
               <div>
-                <h3>Conselhos Tutelares</h3>
+                <h2>Conselhos Tutelares</h2>
                 <p>
                   <b>1º Conselho Tutelar:</b> atendimento pelos telefones oficiais.
                 </p>

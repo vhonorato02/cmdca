@@ -23,6 +23,7 @@ import { Faq } from './collections/Faq'
 import { Configuracoes } from './globals/Configuracoes'
 import { PaginaInicial } from './globals/PaginaInicial'
 import { Indicadores } from './globals/Indicadores'
+import { buildAllowedOrigins } from './security/origins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -116,16 +117,12 @@ const serverURL =
 
 // Origens autorizadas para CSRF (cookies de auth) e CORS. Ao usar domínio
 // próprio, atualize NEXT_PUBLIC_SERVER_URL para o domínio final.
-const allowedOrigins = Array.from(
-  new Set(
-    [
-      'http://localhost:3000',
-      serverURL,
-      publicServerURL,
-      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
-    ].filter(Boolean),
-  ),
-) as string[]
+const allowedOrigins = buildAllowedOrigins({
+  nodeEnv: process.env.NODE_ENV,
+  serverURL,
+  publicServerURL,
+  vercelURL: process.env.VERCEL_URL,
+})
 
 export default buildConfig({
   serverURL,
@@ -144,6 +141,7 @@ export default buildConfig({
       icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/brand/favicon.svg' }],
     },
     components: {
+      providers: ['/components/admin/AdminA11yProvider'],
       graphics: {
         Logo: '/components/admin/Logo',
         Icon: '/components/admin/Icon',

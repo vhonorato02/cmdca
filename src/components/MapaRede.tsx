@@ -3,6 +3,8 @@
 import dynamic from 'next/dynamic'
 import { useMemo, useState } from 'react'
 
+import { phoneHref } from '@/lib/contact'
+
 const RedeMapInner = dynamic(() => import('./RedeMapInner'), {
   ssr: false,
   loading: () => (
@@ -40,9 +42,17 @@ const TIPOS = [
 
 const TIPO_LABEL = Object.fromEntries(TIPOS.map(({ t, label }) => [t, label]))
 
-const phoneHref = (value: string) => {
-  const number = value.replace(/[^\d+]/g, '')
-  return number ? `tel:${number}` : undefined
+// Coordenadas aproximadas das ruas divulgadas na lista pública, usadas enquanto
+// o CMS ainda não tiver latitude/longitude cadastradas. A lista acessível e o
+// link para rota continuam sendo a referência para confirmar o endereço.
+const COORDENADAS_APROXIMADAS: Record<string, [number, number]> = {
+  'CRAS Araretama': [-22.9481387, -45.4960189],
+  'CRAS Castolira': [-22.924871, -45.437798],
+  'CRAS Centro': [-22.9392412, -45.4607149],
+  'CRAS Cidade Nova': [-22.9444915, -45.408434],
+  'CRAS Moreira César': [-22.9183166, -45.3645229],
+  'CREAS Centro': [-22.9279614, -45.4565787],
+  'CREAS Moreira César': [-22.9191887, -45.3604353],
 }
 
 const splitPhones = (value: string) => value.split(/\s*[·;]\s*/).filter(Boolean)
@@ -65,17 +75,21 @@ export function MapaRede({ pontos }: { pontos: Ponto[] }) {
 
   const comCoords = useMemo(
     () =>
-      visiveis
-        .filter((p) => typeof p.lat === 'number' && typeof p.lng === 'number')
-        .map((p) => ({
+      visiveis.flatMap((p) => {
+        const fallback = COORDENADAS_APROXIMADAS[p.nome]
+        const lat = typeof p.lat === 'number' ? p.lat : fallback?.[0]
+        const lng = typeof p.lng === 'number' ? p.lng : fallback?.[1]
+        if (lat === undefined || lng === undefined) return []
+        return {
           id: p.id,
           nome: p.nome,
-          lat: p.lat as number,
-          lng: p.lng as number,
+          lat,
+          lng,
           color: TIPO_COR[p.tipo] || TIPO_COR.outro,
           endereco: p.endereco,
           telefone: p.telefone,
-        })),
+        }
+      }),
     [visiveis],
   )
 

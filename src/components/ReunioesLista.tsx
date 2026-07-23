@@ -96,9 +96,9 @@ export function ReunioesLista({ reunioes }: { reunioes: ReuniaoItem[] }) {
                   <span>{d ? `${MESES_ABBR[d.getUTCMonth()]} ${d.getUTCFullYear()}` : ''}</span>
                 </time>
                 <div className="info">
-                  <h3>
+                  <h2>
                     {r.titulo} <span className={`pill ${ti.cls}`}>{ti.label}</span>
-                  </h3>
+                  </h2>
                   {r.local ? <p className="meta">{r.local}</p> : null}
                 </div>
                 <div className="acts">

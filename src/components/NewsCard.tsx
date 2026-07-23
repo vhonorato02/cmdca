@@ -15,8 +15,15 @@ export const CATEGORIA_LABEL: Record<string, string> = {
   'nota-tecnica': 'Nota técnica',
 }
 
-export function NewsCard({ noticia }: { noticia: Noticia }) {
+export function NewsCard({
+  noticia,
+  headingLevel = 3,
+}: {
+  noticia: Noticia
+  headingLevel?: 2 | 3
+}) {
   const capa = typeof noticia.capa === 'object' && noticia.capa ? noticia.capa : null
+  const Heading: 'h2' | 'h3' = headingLevel === 2 ? 'h2' : 'h3'
   return (
     <Link className="news" href={`/noticias/${noticia.slug}`}>
       <div className="vis">
@@ -34,7 +41,7 @@ export function NewsCard({ noticia }: { noticia: Noticia }) {
       </div>
       <div className="b">
         <span className="tag">{CATEGORIA_LABEL[noticia.categoria] || 'Notícia'}</span>
-        <h3>{noticia.title}</h3>
+        <Heading>{noticia.title}</Heading>
         <p>{noticia.resumo}</p>
         {noticia.data ? (
           <time className="date" dateTime={noticia.data}>

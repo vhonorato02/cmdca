@@ -17,6 +17,7 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "typecheck": "cross-env NODE_OPTIONS=--no-deprecation tsc --noEmit",
     "test": "cross-env NODE_OPTIONS=--no-deprecation vitest run",
+    "test:a11y": "playwright test tests/e2e/accessibility.spec.ts",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation DATABASE_MIGRATION=true payload migrate",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation DATABASE_MIGRATION=true payload migrate:create",
@@ -45,6 +46,8 @@
     "sharp": "0.35.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.61.1",
     "@types/leaflet": "^1.9.21",
     "@types/node": "24.13.3",
     "@types/react": "19.2.17",

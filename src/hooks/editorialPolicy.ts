@@ -7,7 +7,6 @@ import type {
 } from 'payload'
 import { APIError } from 'payload'
 
-import { roleOf } from '../access'
 import { containsPlaceholder, isBlank, isNonEmptyRichText } from '../utilities/validation'
 
 type AnyDoc = Record<string, unknown>
@@ -35,70 +34,10 @@ export function isPublishingRequest(
   return true
 }
 
-/** Garante no servidor que editor só crie/atualize usando o modo draft. */
-export const enforceEditorDraftOnly: CollectionBeforeOperationHook = ({ args, operation, req }) => {
-  if (roleOf(req.user) !== 'editor') return args
-  if (operation === 'restoreVersion') {
-    throw new APIError(
-      'Editores não podem restaurar versões. Peça ao jurídico ou à administração para avaliar o histórico.',
-      403,
-    )
-  }
-  if (operation !== 'create' && operation !== 'update') return args
+/** A publicação é uma decisão de quem edita o conteúdo; não há etapa obrigatória de revisão. */
+export const enforceEditorDraftOnly: CollectionBeforeOperationHook = ({ args }) => args
 
-  const operationArgs = (args ?? {}) as {
-    data?: AnyDoc
-    draft?: boolean
-    publishAllLocales?: boolean
-    publishSpecificLocale?: string
-    unpublishAllLocales?: boolean | string
-  }
-  const attemptsPublication =
-    !flag(operationArgs.draft) ||
-    operationArgs.data?._status === 'published' ||
-    flag(operationArgs.publishAllLocales) ||
-    Boolean(operationArgs.publishSpecificLocale) ||
-    flag(operationArgs.unpublishAllLocales)
-
-  if (attemptsPublication) {
-    throw new APIError(
-      'Editores podem salvar somente rascunhos. Envie o conteúdo para revisão jurídica antes de publicar.',
-      403,
-    )
-  }
-  return args
-}
-
-export const enforceGlobalEditorDraftOnly: GlobalBeforeOperationHook = ({ args, operation, req }) => {
-  if (roleOf(req.user) !== 'editor') return args
-  if (operation === 'restoreVersion') {
-    throw new APIError(
-      'Editores não podem restaurar versões. Peça ao jurídico ou à administração para avaliar o histórico.',
-      403,
-    )
-  }
-  if (operation !== 'update') return args
-  const operationArgs = (args ?? {}) as {
-    data?: AnyDoc
-    draft?: boolean
-    publishAllLocales?: boolean
-    publishSpecificLocale?: string
-    unpublishAllLocales?: boolean | string
-  }
-  if (
-    !flag(operationArgs.draft) ||
-    operationArgs.data?._status === 'published' ||
-    flag(operationArgs.publishAllLocales) ||
-    Boolean(operationArgs.publishSpecificLocale) ||
-    flag(operationArgs.unpublishAllLocales)
-  ) {
-    throw new APIError(
-      'Editores podem salvar somente rascunhos. A publicação deve ser feita pelo jurídico ou por um administrador.',
-      403,
-    )
-  }
-  return args
-}
+export const enforceGlobalEditorDraftOnly: GlobalBeforeOperationHook = ({ args }) => args
 
 function deepMerge(base: AnyDoc = {}, patch: AnyDoc = {}): AnyDoc {
   const result: AnyDoc = { ...base }
@@ -127,6 +66,8 @@ export function valueAtPath(document: AnyDoc, path: string): unknown {
 async function validateRules(document: AnyDoc, rules: PublicationRule[], req: PayloadRequest) {
   const errors: string[] = []
   for (const rule of rules) {
+    // O status de revisão é somente informativo: nunca bloqueia publicação.
+    if (rule.path === 'statusRevisao' || rule.path.endsWith('.statusRevisao')) continue
     const value = valueAtPath(document, rule.path)
     const present = rule.optional || (rule.richText ? isNonEmptyRichText(value) : !isBlank(value))
     const clean = !rule.rejectPlaceholder || !containsPlaceholder(value)
@@ -138,46 +79,11 @@ async function validateRules(document: AnyDoc, rules: PublicationRule[], req: Pa
   }
 }
 
-function stampReview(document: AnyDoc, data: AnyDoc, req: PayloadRequest) {
-  const role = roleOf(req.user)
-  const control = document.controleEditorial as AnyDoc | undefined
-  if (
-    (role === 'admin' || role === 'juridico') &&
-    (control?.statusRevisao === 'aprovada' || control?.statusRevisao === 'dispensada')
-  ) {
-    data.controleEditorial = {
-      ...(data.controleEditorial as AnyDoc | undefined),
-      revisadoPor: (req.user as { id?: string | number } | null)?.id,
-      verificadoEm: control.verificadoEm || new Date().toISOString(),
-    }
-  }
-}
-
-/**
- * Todo documento que usa o bloco editorial precisa de uma decisão explícita
- * antes de ir ao público. O campo é protegido no nível do campo, portanto um
- * editor não consegue aprovar o próprio material por uma chamada à API.
- */
-function validateEditorialApproval(document: AnyDoc) {
-  const control = document.controleEditorial
-  if (!control || typeof control !== 'object') return
-
-  const status = (control as AnyDoc).statusRevisao
-  if (status !== 'aprovada' && status !== 'dispensada') {
-    throw new APIError(
-      'Antes de publicar, a revisão jurídica deve ser aprovada ou formalmente dispensada.',
-      400,
-    )
-  }
-}
-
 export const validatePublication = (rules: PublicationRule[]): CollectionBeforeChangeHook =>
   async ({ data, originalDoc, req }) => {
     const merged = deepMerge((originalDoc ?? {}) as AnyDoc, data as AnyDoc)
-    stampReview(merged, data as AnyDoc, req)
     const document = deepMerge(merged, data as AnyDoc)
     if (isPublishingRequest(data as AnyDoc, originalDoc as AnyDoc | undefined, req)) {
-      validateEditorialApproval(document)
       await validateRules(document, rules, req)
     }
     return data
@@ -186,10 +92,8 @@ export const validatePublication = (rules: PublicationRule[]): CollectionBeforeC
 export const validateGlobalPublication = (rules: PublicationRule[]): GlobalBeforeChangeHook =>
   async ({ data, originalDoc, req }) => {
     const merged = deepMerge((originalDoc ?? {}) as AnyDoc, data as AnyDoc)
-    stampReview(merged, data as AnyDoc, req)
     const document = deepMerge(merged, data as AnyDoc)
     if (isPublishingRequest(data as AnyDoc, originalDoc as AnyDoc | undefined, req)) {
-      validateEditorialApproval(document)
       await validateRules(document, rules, req)
     }
     return data

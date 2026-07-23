@@ -43,7 +43,7 @@ export default async function PrivacidadePage() {
                 <b>Última atualização:</b> 19 de julho de 2026.
               </p>
 
-              <h3>Quem é responsável pelo tratamento</h3>
+              <h2>Quem é responsável pelo tratamento</h2>
               <p>
                 O tratamento relacionado a este serviço institucional é realizado no âmbito do
                 Município de Pindamonhangaba, por meio do CMDCA. A identidade e o canal atualizado
@@ -54,7 +54,7 @@ export default async function PrivacidadePage() {
                 .
               </p>
 
-              <h3>Quais dados podem ser tratados</h3>
+              <h2>Quais dados podem ser tratados</h2>
               <p>
                 A navegação pública não exige cadastro. A infraestrutura de hospedagem e segurança
                 pode registrar endereço IP, data e hora, página solicitada, navegador, dispositivo,
@@ -74,7 +74,7 @@ export default async function PrivacidadePage() {
                 revisão e publicação de conteúdo.
               </p>
 
-              <h3>Finalidades e bases legais</h3>
+              <h2>Finalidades e bases legais</h2>
               <p>
                 Os dados são usados para entregar e proteger o serviço, responder solicitações,
                 administrar conteúdo oficial, cumprir deveres legais e regulatórios, executar
@@ -87,7 +87,7 @@ export default async function PrivacidadePage() {
                 direitos e consentimento quando ele for juridicamente necessário.
               </p>
 
-              <h3>Cookies e armazenamento no dispositivo</h3>
+              <h2>Cookies e armazenamento no dispositivo</h2>
               <p>
                 O código público atual não inclui publicidade comportamental nem ferramenta própria
                 de analytics. As preferências de contraste e tamanho de fonte são guardadas no
@@ -96,7 +96,7 @@ export default async function PrivacidadePage() {
                 técnico conforme suas próprias políticas.
               </p>
 
-              <h3>Fornecedores e compartilhamento</h3>
+              <h2>Fornecedores e compartilhamento</h2>
               <p>
                 Para operar o serviço, dados técnicos podem ser processados por fornecedores de
                 hospedagem e entrega da aplicação (Vercel), banco de dados (Neon), armazenamento de
@@ -112,7 +112,7 @@ export default async function PrivacidadePage() {
                 direitos. O Município não comercializa dados pessoais tratados por este site.
               </p>
 
-              <h3>Retenção e segurança</h3>
+              <h2>Retenção e segurança</h2>
               <p>
                 Os dados são mantidos pelo tempo necessário à finalidade, aos prazos legais, às
                 regras de arquivo público e à defesa de direitos. Registros técnicos são conservados
@@ -122,7 +122,7 @@ export default async function PrivacidadePage() {
                 comunicados conforme a LGPD e as orientações da ANPD.
               </p>
 
-              <h3>Crianças e adolescentes</h3>
+              <h2>Crianças e adolescentes</h2>
               <p>
                 Qualquer tratamento envolvendo crianças e adolescentes deve respeitar seu melhor
                 interesse, a necessidade, a minimização e a proteção de imagem, identidade e
@@ -136,7 +136,7 @@ export default async function PrivacidadePage() {
                 exposição, riscos e autorizações aplicáveis.
               </p>
 
-              <h3>Direitos do titular</h3>
+              <h2>Direitos do titular</h2>
               <p>
                 Nos limites da legislação e das regras próprias do poder público, você pode
                 solicitar confirmação do tratamento, acesso, correção, informação sobre
@@ -146,7 +146,7 @@ export default async function PrivacidadePage() {
                 exclusão.
               </p>
 
-              <h3>Como falar sobre privacidade</h3>
+              <h2>Como falar sobre privacidade</h2>
               <p>
                 Consulte o canal do encarregado na{' '}
                 <a href={MUNICIPIO_LGPD_URL} target="_blank" rel="noopener noreferrer">
@@ -163,7 +163,7 @@ export default async function PrivacidadePage() {
                 além do necessário.
               </p>
 
-              <h3>Atualizações deste aviso</h3>
+              <h2>Atualizações deste aviso</h2>
               <p>
                 O aviso pode ser atualizado para refletir mudanças legais, técnicas ou operacionais.
                 A versão vigente e sua data ficam sempre publicadas nesta página.

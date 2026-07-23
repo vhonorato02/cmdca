@@ -72,7 +72,7 @@ export function SiteHeader() {
   return (
     <header className={scrolled ? 'top scrolled' : 'top'}>
       <div className="wrap">
-        <Link className="brand" href="/" aria-label="Página inicial do CMDCA de Pindamonhangaba">
+        <Link className="brand" href="/" aria-label="CMDCA Pindamonhangaba — página inicial">
           <span className="mk">
             <Image src="/brand/emblema.jpg" alt="Símbolo do CMDCA" width={40} height={40} priority />
           </span>

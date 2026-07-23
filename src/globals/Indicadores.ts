@@ -3,7 +3,6 @@ import { APIError } from 'payload'
 
 import {
   canManageContent,
-  isAdminOrJuridicoFieldLevel,
   isLoggedInFieldLevel,
   publishedOrLoggedIn,
 } from '../access'
@@ -131,17 +130,13 @@ export const Indicadores: GlobalConfig = {
     },
     {
       name: 'statusRevisao',
-      label: 'Revisão jurídica',
+      label: 'Revisão interna (opcional)',
       type: 'select',
-      defaultValue: 'pendente',
       options: [
         { label: 'Pendente', value: 'pendente' },
         { label: 'Aprovada', value: 'aprovada' },
       ],
-      access: {
-        create: isAdminOrJuridicoFieldLevel,
-        update: isAdminOrJuridicoFieldLevel,
-      },
+      access: { create: isLoggedInFieldLevel, update: isLoggedInFieldLevel },
     },
     {
       name: 'observacoesInternas',

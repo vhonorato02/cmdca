@@ -51,7 +51,7 @@ export default async function NoticiasPage() {
           {news.length ? (
             <div className="news-list">
               {news.map((n) => (
-                <NewsCard key={n.id} noticia={n} />
+                <NewsCard key={n.id} noticia={n} headingLevel={2} />
               ))}
             </div>
           ) : (

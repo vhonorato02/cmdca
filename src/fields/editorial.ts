@@ -1,6 +1,6 @@
 import type { Field } from 'payload'
 
-import { isAdminOrJuridicoFieldLevel, isLoggedInFieldLevel } from '../access'
+import { isLoggedInFieldLevel } from '../access'
 import { validateExternalURL } from '../utilities/validation'
 
 export const EDITORIAL_VERSIONS = {
@@ -28,16 +28,16 @@ export const GLOBAL_EDITORIAL_COMPONENTS = {
   },
 } as const
 
-/** Metadados internos usados para comprovar fonte, conferência e revisão. */
+/** Metadados internos opcionais para registrar a origem das informações. */
 export const editorialControlField = (): Field => ({
   name: 'controleEditorial',
-  label: 'Fonte e revisão',
+  label: 'Fonte e informações internas',
   type: 'group',
   access: { read: isLoggedInFieldLevel },
   admin: {
     position: 'sidebar',
     description:
-      'Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.',
+      'Campos opcionais de apoio interno. Eles não impedem salvar ou publicar o conteúdo.',
   },
   fields: [
     {
@@ -63,19 +63,14 @@ export const editorialControlField = (): Field => ({
     },
     {
       name: 'statusRevisao',
-      label: 'Revisão jurídica',
+      label: 'Revisão interna (opcional)',
       type: 'select',
-      required: true,
-      defaultValue: 'pendente',
       options: [
         { label: 'Pendente', value: 'pendente' },
         { label: 'Aprovada', value: 'aprovada' },
         { label: 'Dispensada pelo jurídico', value: 'dispensada' },
       ],
-      access: {
-        create: isAdminOrJuridicoFieldLevel,
-        update: isAdminOrJuridicoFieldLevel,
-      },
+      access: { create: isLoggedInFieldLevel, update: isLoggedInFieldLevel },
     },
     {
       name: 'revisadoPor',

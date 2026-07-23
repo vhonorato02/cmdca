@@ -61,7 +61,7 @@ export default async function ReunioesPage() {
           </div>
           <ReunioesLista reunioes={reunioes} />
           <div className="participate">
-            <h3>Como acompanhar</h3>
+            <h2>Como acompanhar</h2>
             <p>
               Reuniões marcadas como públicas podem ser acompanhadas pela comunidade conforme as
               informações divulgadas no calendário. Reuniões reservadas podem ocorrer quando a pauta

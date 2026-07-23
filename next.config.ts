@@ -27,7 +27,11 @@ const nextConfig: NextConfig = {
     ],
   },
   images: {
-    localPatterns: [{ pathname: '/api/media/file/**' }, { pathname: '/brand/**' }],
+    localPatterns: [
+      { pathname: '/api/media/file/**' },
+      { pathname: '/brand/**' },
+      { pathname: '/images/**' },
+    ],
     remotePatterns: r2Hostname ? [{ protocol: 'https', hostname: r2Hostname }] : [],
   },
   webpack: (webpackConfig) => {

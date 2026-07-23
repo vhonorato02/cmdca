@@ -3,6 +3,8 @@
 import 'leaflet/dist/leaflet.css'
 import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet'
 
+import { phoneHref } from '@/lib/contact'
+
 export type MapPoint = {
   id: string | number
   nome: string
@@ -11,11 +13,6 @@ export type MapPoint = {
   color: string
   endereco?: string | null
   telefone?: string | null
-}
-
-const phoneHref = (value: string) => {
-  const number = value.replace(/[^\d+]/g, '')
-  return number ? `tel:${number}` : undefined
 }
 
 const splitPhones = (value: string) => value.split(/\s*[·;]\s*/).filter(Boolean)

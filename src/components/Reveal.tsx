@@ -21,8 +21,8 @@ export function Reveal({ children, className }: { children: ReactNode; className
           if (entry.isIntersecting) {
             animation = el.animate(
               [
-                { opacity: 0.72, transform: 'translateY(12px)' },
-                { opacity: 1, transform: 'translateY(0)' },
+                { transform: 'translateY(12px)' },
+                { transform: 'translateY(0)' },
               ],
               { duration: 460, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'both' },
             )

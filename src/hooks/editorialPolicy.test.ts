@@ -12,7 +12,7 @@ const req = (role?: 'admin' | 'editor' | 'juridico') =>
   ({ user: role ? { role } : null, query: {} }) as never
 
 describe('política editorial', () => {
-  it('editor só pode usar create/update em modo draft', () => {
+  it('editor pode publicar sem uma etapa obrigatória de revisão', () => {
     expect(() =>
       enforceEditorDraftOnly({
         args: { draft: true, data: { _status: 'draft' } },
@@ -26,10 +26,24 @@ describe('política editorial', () => {
         operation: 'update',
         req: req('editor'),
       } as never),
-    ).toThrow(/somente rascunhos/i)
+    ).not.toThrow()
+    expect(() =>
+      enforceEditorDraftOnly({
+        args: { draft: true, data: { _status: 'published' } },
+        operation: 'update',
+        req: req('editor'),
+      } as never),
+    ).not.toThrow()
+    expect(() =>
+      enforceEditorDraftOnly({
+        args: {},
+        operation: 'restoreVersion',
+        req: req('editor'),
+      } as never),
+    ).not.toThrow()
   })
 
-  it('jurídico pode publicar', () => {
+  it('jurídico também pode publicar', () => {
     expect(() =>
       enforceEditorDraftOnly({
         args: { draft: false, data: { _status: 'published' } },
@@ -47,7 +61,7 @@ describe('política editorial', () => {
     )
   })
 
-  it('não publica conteúdo sem decisão jurídica explícita', async () => {
+  it('publica conteúdo sem decisão de revisão', async () => {
     const hook = validatePublication([{ path: 'titulo', label: 'título' }])
     await expect(
       hook({
@@ -55,10 +69,14 @@ describe('política editorial', () => {
         originalDoc: undefined,
         req: req('juridico'),
       } as never),
-    ).rejects.toThrow(/revisão jurídica/i)
+    ).resolves.toEqual({
+      _status: 'published',
+      titulo: 'Ata',
+      controleEditorial: { statusRevisao: 'pendente' },
+    })
   })
 
-  it('aceita publicação aprovada e registra o responsável autenticado', async () => {
+  it('aceita publicação com status opcional sem alterar os dados', async () => {
     const hook = validatePublication([{ path: 'titulo', label: 'título' }])
     const data = {
       _status: 'published',
@@ -72,7 +90,7 @@ describe('política editorial', () => {
         req: { user: { id: 7, role: 'juridico' }, query: {} },
       } as never),
     ).resolves.toBe(data)
-    expect(data.controleEditorial).toMatchObject({ revisadoPor: 7 })
+    expect(data.controleEditorial).toMatchObject({ statusRevisao: 'aprovada' })
   })
 
   it('não permite relacionar mídia em rascunho a conteúdo público', async () => {

@@ -73,9 +73,9 @@ export default async function EditaisPage() {
                     <span>{e.data ? formatDate(e.data) : ''}</span>
                   </div>
                   <div className="info">
-                    <h4>
+                    <h2>
                       {titulo} <span className="pill ord">{TIPO_LABEL[e.tipo] || 'Edital'}</span>
-                    </h4>
+                    </h2>
                     {e.prazo ? <div className="meta">Prazo: {formatDate(e.prazo)}</div> : null}
                   </div>
                   <div className="acts">

@@ -68,7 +68,7 @@ export default async function ResolucoesPage() {
                     <span>{r.data ? formatDate(r.data) : ''}</span>
                   </div>
                   <div className="info">
-                    <h4>{titulo}</h4>
+                    <h2>{titulo}</h2>
                   </div>
                   <div className="acts">
                     {arquivoUrl ? (

@@ -23,7 +23,14 @@ const eslintConfig = [
     },
   },
   {
-    ignores: ['src/payload-types.ts', 'src/payload-generated-schema.ts', 'src/migrations/**'],
+    ignores: [
+      'src/payload-types.ts',
+      'src/payload-generated-schema.ts',
+      'src/migrations/**',
+      'test-results/**',
+      'playwright-report/**',
+      'blob-report/**',
+    ],
   },
 ]
 

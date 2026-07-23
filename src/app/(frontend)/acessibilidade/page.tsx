@@ -43,7 +43,7 @@ export default async function AcessibilidadePage() {
                 contínuas, inclusive testes manuais e com tecnologias assistivas.
               </p>
 
-              <h3>Referências adotadas</h3>
+              <h2>Referências adotadas</h2>
               <p>
                 O desenvolvimento considera o{' '}
                 <a href={EMAG_URL} target="_blank" rel="noopener noreferrer">
@@ -56,14 +56,14 @@ export default async function AcessibilidadePage() {
                 . Elas orientam melhorias, mas não são um selo nem garantem ausência de barreiras.
               </p>
 
-              <h3>Recursos disponíveis</h3>
+              <h2>Recursos disponíveis</h2>
               <p>
                 Na barra superior você encontra ferramentas de acessibilidade: aumentar e diminuir o
                 tamanho da fonte (A+ / A−), ativar o <b>alto contraste</b> e abrir o tradutor de
                 Libras (<b>VLibras</b>). As preferências de fonte e contraste ficam salvas no seu
                 navegador.
               </p>
-              <h3>Navegação</h3>
+              <h2>Navegação</h2>
               <p>
                 A interface oferece o atalho “Pular para o conteúdo”, estrutura de títulos e
                 indicação de foco nos controles interativos. O objetivo é manter navegação por
@@ -71,7 +71,7 @@ export default async function AcessibilidadePage() {
                 o <Link href="/mapa-do-site">mapa do site</Link>.
               </p>
 
-              <h3>Limitações conhecidas</h3>
+              <h2>Limitações conhecidas</h2>
               <p>
                 Documentos antigos em PDF podem não ter estrutura adequada para leitores de tela. O
                 mapa, o VLibras e outros recursos de terceiros possuem comportamento próprio e podem
@@ -79,7 +79,7 @@ export default async function AcessibilidadePage() {
                 recurso não estiver acessível, solicite uma alternativa pelo canal abaixo.
               </p>
 
-              <h3>Encontrou uma barreira?</h3>
+              <h2>Encontrou uma barreira?</h2>
               <p>
                 Informe a página ou o documento, descreva a barreira e, se souber, diga qual
                 navegador e tecnologia assistiva utiliza.

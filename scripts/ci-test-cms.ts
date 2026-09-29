@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { randomBytes } from 'node:crypto'
+import { appendFile } from 'node:fs/promises'
 
 // Refuse operational databases before importing config (which reads .env.local).
 assert.equal(process.env.GITHUB_ACTIONS, 'true', 'CMS fixtures run only in GitHub Actions')
@@ -16,6 +17,9 @@ console.log('CMS initialized against the isolated runner database.')
 
 try {
   const password = randomBytes(24).toString('base64url')
+  assert.ok(process.env.GITHUB_ENV, 'Runner environment file is required')
+  console.log(`::add-mask::${password}`)
+  await appendFile(process.env.GITHUB_ENV, `CMS_TEST_PASSWORD=${password}\n`)
   const admin = await payload.create({
     collection: 'users',
     data: { name: 'CI administrator', email: 'admin@example.test', password, role: 'admin' },
@@ -78,6 +82,22 @@ try {
   }))
   // Selecting media exercises the new object key column, without contacting R2.
   assert.equal((await payload.find({ collection: 'media', ...publicOptions })).totalDocs, 0)
+  for (const acesso of ['publica', 'reservada'] as const) {
+    await payload.create({
+      collection: 'reunioes', overrideAccess: false, user: editor,
+      data: {
+        titulo: acesso === 'publica' ? 'CI public meeting' : 'CI reserved meeting',
+        data: '2026-09-29T00:00:00.000Z', hora: '14:30', tipo: 'ordinaria',
+        acesso, modalidade: 'online', linkTransmissao: 'https://example.test/meeting',
+        _status: 'published',
+        controleEditorial: { fonte: 'CI isolated fixture', verificadoEm: new Date().toISOString() },
+      },
+    })
+  }
+  const meetings = await payload.find({ collection: 'reunioes', ...publicOptions })
+  assert.equal(meetings.totalDocs, 1, 'Reserved published meetings remain private')
+  assert.equal(meetings.docs[0].acesso, 'publica')
+  console.log('Reserved meeting isolation passed.')
   console.log('CMS integration passed: migrations, authentication, roles, drafts, publication, history and media schema.')
 } finally {
   console.log('CMS cleanup:', {

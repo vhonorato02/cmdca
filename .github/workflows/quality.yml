@@ -18,6 +18,7 @@ concurrency:
 jobs:
   quality:
     name: Migrations, verificacoes e build
+    timeout-minutes: 25
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -72,6 +73,7 @@ jobs:
         run: pnpm migrate
 
       - name: Verificar CMS e permissoes no banco isolado
+        timeout-minutes: 5
         run: pnpm exec tsx scripts/ci-test-cms.ts
 
       - name: Executar verificacoes de qualidade
@@ -89,7 +91,7 @@ jobs:
         run: |
           pnpm start > /tmp/cmdca-server.log 2>&1 &
           node scripts/ci-smoke-production.mjs
-          pnpm test:a11y
+          pnpm exec playwright test
         env:
           SMOKE_BASE_URL: http://localhost:3000
           PLAYWRIGHT_BASE_URL: http://localhost:3000

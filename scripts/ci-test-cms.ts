@@ -12,6 +12,7 @@ process.env.DATABASE_MIGRATION = 'true'
 const { getPayload } = await import('payload')
 const { default: config } = await import('../src/payload.config')
 const payload = await getPayload({ config })
+console.log('CMS initialized against the isolated runner database.')
 
 try {
   const password = randomBytes(24).toString('base64url')
@@ -24,6 +25,7 @@ try {
     data: { name: 'CI editor', email: 'editor@example.test', password, role: 'editor' },
   })
   const login = await payload.login({ collection: 'users', data: { email: editor.email, password } })
+  console.log('Fixture users created and editor authenticated.')
   assert.ok(login.token, 'Persisted editor can authenticate')
   await assert.rejects(payload.login({
     collection: 'users', data: { email: editor.email, password: 'invalid-password' },
@@ -42,6 +44,7 @@ try {
   })
   const unchanged = await payload.findByID({ collection: 'users', id: editor.id })
   assert.equal(unchanged.role, 'editor', 'Editor cannot elevate their own role')
+  console.log('User isolation and role elevation checks passed.')
 
   const draft = await payload.create({
     collection: 'faq', draft: true, overrideAccess: false, user: editor,
@@ -66,6 +69,7 @@ try {
   assert.equal(published.totalDocs, 1)
   assert.equal(published.docs[0]._status, 'published')
   assert.equal(published.docs[0].controleEditorial, undefined, 'Internal provenance stays private')
+  console.log('Draft isolation and validated publication checks passed.')
   await assert.rejects(payload.findVersions({ collection: 'faq', ...publicOptions }))
   const versions = await payload.findVersions({ collection: 'faq', overrideAccess: false, user: editor })
   assert.ok(versions.totalDocs > 0, 'Known editor can read history')

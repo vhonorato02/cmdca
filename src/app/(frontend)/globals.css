@@ -2733,6 +2733,8 @@ main .num a,
 main .when a,
 main .ph a,
 main .contact a,
+main .lead-box .ro a,
+main .lead-box a,
 main .post-body a,
 footer a {
   display: inline-flex;

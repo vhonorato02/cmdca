@@ -144,7 +144,7 @@ export interface UserAuthOperations {
   };
 }
 /**
- * Prepare o texto como rascunho. Jurídico ou administração conferem e publicam.
+ * Prepare, confira e publique o texto quando as informações estiverem completas.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "noticias".
@@ -311,7 +311,7 @@ export interface User {
   id: number;
   name: string;
   /**
-   * Editor prepara rascunhos. Jurídico revisa e publica. Administrador também gerencia contas e exclusões.
+   * Editor e jurídico podem preparar e publicar conteúdo. Administrador também gerencia contas e exclusões.
    */
   role: 'admin' | 'editor' | 'juridico';
   updatedAt: string;
@@ -674,7 +674,7 @@ export interface Depoimento {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Slides do banner principal. Editor prepara o rascunho; jurídico ou administração publica.
+ * Slides do banner principal. A equipe editorial pode preparar, conferir e publicar o conteúdo.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "destaques".

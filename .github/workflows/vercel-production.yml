@@ -71,4 +71,7 @@ jobs:
         run: vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
 
       - name: Confirmar URL canonica de producao
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Verificar paginas e login publicados
         run: node scripts/ci-smoke-production.mjs

@@ -68,3 +68,14 @@ Próxima ação: integrar a revisão dos especialistas e executar Qualidade no G
 - Risco de rollback da migração: down remove colunas adicionadas; não executar rollback de schema sobre produção sem backup/revisão. Up e snapshot revisados independentemente e executados com sucesso no PostgreSQL efêmero.
 
 Próxima ação: publicar encerramento correto do teste CMS, acompanhar Actions até build e navegador, corrigir os achados remanescentes. Token Vercel, SMTP e upload real continuam pendentes.
+
+## Verificação adicional em 29/09/2026
+- Commits 6981dba e d69ade8 publicados. Actions 36590251825 passou migrations, integração CMS, lint/tipos/testes e build de produção. Etapa HTTP/Playwright ainda em execução, não afirmar pipeline completo aprovado.
+- Auditoria corrente encontrou 4 avisos novos no lock anterior; corrigidos fast-uri 3.1.7, undici 7.29.1 e nodemailer 10.0.2. pnpm install --frozen-lockfile e pnpm audit concluídos, zero vulnerabilidades reportadas em test-results/dependency-audit-current.json.
+- Nodemailer 10 integrado por createTransport tipado. Adaptador Payload validado com JSON transport em memória, sem envio SMTP. pnpm check novamente aprovado com 58 testes.
+- Playwright público mobile: 39/39 aprovados, incluindo axe nas 16 páginas públicas. CMS local excluído explicitamente por depender da migração operacional ainda não aplicada.
+- Interações desktop/mobile: 4+4 aprovadas. 404 novamente aprovada após título específico, HTTP404 e robots noindex/nofollow.
+- Verifier concluiu revalidação Participe e 404 em 1440/1024/768/390: zero alvos menores que44 e sem overflow. Evidências current-audit-summary.json e capturas portal-audit. Relatório antigo não comprova inspeção visual de todas as páginas/notícias individuais; cobertura adicional ainda precisa concluir.
+- Todos os especialistas desta rodada encerrados. Produção ainda não recebeu deploy nem migração. VERCEL_TOKEN continua ausente; IDs já cadastrados.
+
+Próxima ação: obter resultado do Actions36590251825 e corrigir o que falhar antes de publicar produção; concluir cobertura visual e integrações reais.

@@ -89,7 +89,8 @@ jobs:
 
       - name: Verificar paginas e login no artefato de producao
         run: |
-          pnpm start > /tmp/cmdca-server.log 2>&1 &
+          mkdir -p test-results
+          pnpm start > test-results/server.log 2>&1 &
           node scripts/ci-smoke-production.mjs
           pnpm exec playwright test
         env:

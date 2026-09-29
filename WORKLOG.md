@@ -57,3 +57,14 @@ Concluir Playwright/API e corrigir achados, repetir capturas finais e preparar C
 - QA visual continua com verifier; não considerar CMS local aprovado enquanto schema operacional estiver sem migração.
 
 Próxima ação: integrar a revisão dos especialistas e executar Qualidade no GitHub Actions; resolver falhas com evidência do runner.
+
+## CI remoto e interações verificadas
+- Commits 4a5da01 e f0e4c03 publicados na main. Git HTTPS rejeitou workflows por falta de escopo OAuth workflow; o conector GitHub da mesma conta publicou os commits por atualização fast-forward, confirmada por API e fetch. Nenhum force-push.
+- Actions 36588206664 aplicou todas as migrações e aprovou integração CMS (log 15:11:48 UTC). O processo não encerrou após as asserções; run cancelado automaticamente pela revisão seguinte. Identificado lifecycle persistente do Payload, correção encerra pool e processo somente após sucesso.
+- Actions 36589062772 iniciou para f0e4c03. Build/deploy ainda não aprovados.
+- Novos testes de interação: 4 desktop + 4 mobile aprovados, cobrindo simulador vazio/negativo/extremo, falha de rede VLibras, menu resize e recuperação 404.
+- Playwright mudou default para localhost, origem aceita pelo servidor de desenvolvimento. Catch-all público agora usa a página 404 institucional; antes retornava fallback em inglês.
+- CSS dos contatos de Participe corrigido; verifier revalida quatro larguras e capturas da 404.
+- Risco de rollback da migração: down remove colunas adicionadas; não executar rollback de schema sobre produção sem backup/revisão. Up e snapshot revisados independentemente e executados com sucesso no PostgreSQL efêmero.
+
+Próxima ação: publicar encerramento correto do teste CMS, acompanhar Actions até build e navegador, corrigir os achados remanescentes. Token Vercel, SMTP e upload real continuam pendentes.

@@ -20,7 +20,9 @@ supportedArchitectures:
 # dependências do Payload. Remover quando o upstream passar a resolver versões
 # iguais ou superiores.
 overrides:
-  fast-uri: 3.1.6
+  fast-uri: 3.1.7
+  undici: 7.29.1
+  nodemailer: 10.0.2
   'brace-expansion@^1': 1.1.18
   'brace-expansion@^5': 5.0.9
   js-yaml: 4.3.2

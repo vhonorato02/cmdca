@@ -8,6 +8,7 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import nodemailer from 'nodemailer'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -94,7 +95,7 @@ const emailAdapter = process.env.SMTP_HOST
   ? nodemailerAdapter({
       defaultFromName: process.env.EMAIL_FROM_NAME || 'CMDCA Pindamonhangaba',
       defaultFromAddress: process.env.EMAIL_FROM_ADDRESS || 'nao-responder@cmdca-pinda.local',
-      transportOptions: {
+      transport: nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT || 587),
         secure: process.env.SMTP_SECURE === 'true',
@@ -102,7 +103,7 @@ const emailAdapter = process.env.SMTP_HOST
           process.env.SMTP_USER && process.env.SMTP_PASS
             ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
             : undefined,
-      },
+      }),
     })
   : undefined
 

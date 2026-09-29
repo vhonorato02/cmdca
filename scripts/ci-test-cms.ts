@@ -80,9 +80,14 @@ try {
   assert.equal((await payload.find({ collection: 'media', ...publicOptions })).totalDocs, 0)
   console.log('CMS integration passed: migrations, authentication, roles, drafts, publication, history and media schema.')
 } finally {
-  await payload.db.pool.end()
+  console.log('CMS cleanup:', {
+    connections: payload.db.pool.totalCount,
+    idleConnections: payload.db.pool.idleCount,
+    waitingConnections: payload.db.pool.waitingCount,
+    activeTransactions: Object.keys(payload.db.sessions ?? {}).length,
+  })
   await payload.destroy()
 }
 // Payload and its plugins are designed for a long-lived server. Exit only after
-// all assertions and database cleanup succeed, as the Payload CLI itself does.
+// all assertions and adapter cleanup succeed, as the Payload CLI itself does.
 process.exit(0)

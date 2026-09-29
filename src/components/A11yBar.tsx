@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState, useSyncExternalStore } from 'react'
+import Link from 'next/link'
 
 /** Assina mudanças na classe do <html> para refletir o alto contraste. */
 function subscribeContrast(onChange: () => void) {
@@ -82,7 +83,7 @@ export function A11yBar() {
       {translationUnavailable ? (
         <p role="status" className="wrap">
           Tradutor indisponível ou ainda carregando. Tente novamente ou consulte a{' '}
-          <a href="/acessibilidade">página de acessibilidade</a>.
+          <Link href="/acessibilidade">página de acessibilidade</Link>.
         </p>
       ) : null}
     </aside>

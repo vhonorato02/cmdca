@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
   // arquivo nativo ausente; globs amplos em `.pnpm` capturam symlinks inválidos.
   outputFileTracingIncludes: {
     '/*': [
-      'node_modules/.pnpm/@img+sharp-libvips-linux-x64@1.3.2/node_modules/@img/sharp-libvips-linux-x64/lib/libvips-cpp.so.8.18.3',
+      'node_modules/.pnpm/@img+sharp-libvips-linux-x64@*/node_modules/@img/sharp-libvips-linux-x64/lib/*.so.*',
     ],
   },
   images: {

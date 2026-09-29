@@ -28,8 +28,8 @@ export function isPublishingRequest(
   originalDoc: AnyDoc | undefined,
   req: PayloadRequest,
 ): boolean {
-  if (data?._status === 'draft' || flag(req.query?.draft)) return false
   if (data?._status === 'published') return true
+  if (data?._status === 'draft' || flag(req.query?.draft)) return false
   if (originalDoc?._status === 'published') return true
   return true
 }
@@ -42,6 +42,7 @@ export const enforceGlobalEditorDraftOnly: GlobalBeforeOperationHook = ({ args }
 function deepMerge(base: AnyDoc = {}, patch: AnyDoc = {}): AnyDoc {
   const result: AnyDoc = { ...base }
   for (const [key, value] of Object.entries(patch)) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue
     const previous = result[key]
     result[key] =
       value &&
@@ -59,6 +60,7 @@ function deepMerge(base: AnyDoc = {}, patch: AnyDoc = {}): AnyDoc {
 export function valueAtPath(document: AnyDoc, path: string): unknown {
   return path.split('.').reduce<unknown>((value, key) => {
     if (!value || typeof value !== 'object') return undefined
+    if (!Object.prototype.hasOwnProperty.call(value, key)) return undefined
     return (value as AnyDoc)[key]
   }, document)
 }

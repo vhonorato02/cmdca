@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { canDeleteContent, canManageContent, publishedOrLoggedIn } from '../access'
+import { canDeleteContent, canManageContent, isAuthenticated, publishedOrLoggedIn } from '../access'
 import {
   COLLECTION_EDITORIAL_COMPONENTS,
   EDITORIAL_VERSIONS,
@@ -76,6 +76,7 @@ export const Editais: CollectionConfig = {
   },
   access: {
     read: publishedOrLoggedIn,
+    readVersions: isAuthenticated,
     create: canManageContent,
     update: canManageContent,
     delete: canDeleteContent,

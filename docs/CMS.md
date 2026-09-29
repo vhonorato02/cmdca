@@ -18,7 +18,7 @@ Se o e-mail não chegar, confira spam e peça ao Administrador para verificar os
 | Criar e editar conteúdo | sim | sim | sim |
 | Salvar rascunho | sim | sim | sim |
 | Alterar aprovação jurídica | não | sim | sim |
-| Publicar ou despublicar | não | sim | sim |
+| Publicar ou despublicar | sim | sim | sim |
 | Excluir/enviar à lixeira | não | não | sim |
 | Editar configurações institucionais | não | sim | sim |
 | Gerenciar usuários e papéis | não | não | sim |
@@ -36,9 +36,9 @@ O painel impede a exclusão da própria conta administrativa e a remoção do ú
 5. Clique em **Salvar rascunho**. O autosave reduz perda de trabalho, mas confirme que o estado exibido é rascunho antes de sair.
 6. Avise o Jurídico pelo canal interno adotado pelo Conselho, incluindo o título exato do item. Não envie senha nem arquivo sigiloso pelo aviso.
 
-O Editor não consegue publicar, mesmo por API. Se o sistema recusar o salvamento, leia a mensagem: normalmente falta campo obrigatório, formato de URL/data ou o comando usado tentaria publicar.
+O Editor pode publicar ou despublicar, inclusive pela API autenticada. Se o sistema recusar o salvamento ou a publicação, leia a mensagem: normalmente falta campo obrigatório, formato de URL/data ou a validação editorial do conteúdo.
 
-### 2. Jurídico revisa
+### 2. Revisão jurídica, quando aplicável
 
 1. Abra o rascunho indicado e consulte a fonte primária.
 2. Compare nomes, número e data do ato, vigência, anexos, prazos e competência do órgão.
@@ -47,7 +47,7 @@ O Editor não consegue publicar, mesmo por API. Se o sistema recusar o salvament
 5. Altere **Revisão jurídica** para **Aprovada** somente quando houver suporte documental.
 6. Publique e abra a página pública em janela anônima.
 
-Uma validação de servidor bloqueia publicação incompleta. Não contorne removendo fonte ou mudando a categoria. Corrija a informação ou mantenha o rascunho.
+A revisão jurídica é informativa e não é uma etapa técnica obrigatória para publicação. Uma validação de servidor bloqueia publicação incompleta. Não contorne removendo fonte ou mudando a categoria. Corrija a informação ou mantenha o rascunho.
 
 ### 3. Depois de publicar
 

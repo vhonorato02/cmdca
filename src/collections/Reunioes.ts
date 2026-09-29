@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import {
   canDeleteContent,
   canManageContent,
+  isAuthenticated,
   publishedPublicMeetingOrLoggedIn,
 } from '../access'
 import {
@@ -76,6 +77,7 @@ export const Reunioes: CollectionConfig = {
   },
   access: {
     read: publishedPublicMeetingOrLoggedIn,
+    readVersions: isAuthenticated,
     create: canManageContent,
     update: canManageContent,
     delete: canDeleteContent,

@@ -48,7 +48,9 @@ const shortcuts: Shortcut[] = [
 export default function BeforeDashboard() {
   const { user } = useAuth()
   const role = ((user as { role?: Role } | null)?.role ?? 'editor') as Role
-  const visibleShortcuts = shortcuts
+  const visibleShortcuts = shortcuts.filter(
+    (shortcut) => role !== 'editor' || shortcut.href !== '/admin/globals/configuracoes',
+  )
 
   return (
     <section className="cmdca-dashboard" aria-labelledby="cmdca-dashboard-title">
@@ -69,7 +71,8 @@ export default function BeforeDashboard() {
       </div>
 
       <p className="cmdca-dashboard__notice" role="note">
-        Você pode salvar rascunhos ou publicar diretamente. Os campos de fonte e conferência são opcionais e não bloqueiam a publicação.
+        Você pode salvar rascunhos ou publicar diretamente. Antes de publicar, confira os campos
+        obrigatórios, a fonte e os documentos. A revisão interna é informativa.
       </p>
 
       <nav className="cmdca-shortcuts" aria-label="Atalhos do painel">

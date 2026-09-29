@@ -27,7 +27,6 @@ export default async function ReunioesPage() {
       limit: 200,
       depth: 1,
     })
-    .catch(() => ({ docs: [] as Reunioe[] }))
 
   const reunioes: ReuniaoItem[] = (res.docs as Reunioe[]).flatMap((r) => {
     const titulo = publicText(r.titulo)
@@ -39,6 +38,10 @@ export default async function ReunioesPage() {
         titulo,
         data: r.data,
         tipo: r.tipo,
+        hora: publicText(r.hora),
+        modalidade: r.modalidade,
+        linkTransmissao: publicHref(r.linkTransmissao),
+        pauta: r.pauta,
         local: publicText(r.local),
         ataUrl: typeof r.ata === 'object' && r.ata ? publicHref(r.ata.url) : null,
       },
@@ -54,8 +57,8 @@ export default async function ReunioesPage() {
               <span className="eyebrow">Agenda do colegiado</span>
               <h1>Calendário e atas</h1>
               <p>
-                Filtre por ano e classificação. Abra cada registro para confirmar data, local e
-                forma de acesso. As atas são incluídas após aprovação e publicação.
+                Filtre por ano e tipo. Confira data, horário, local e forma de acesso em cada
+                reunião. As atas são incluídas após aprovação e publicação.
               </p>
             </div>
           </div>

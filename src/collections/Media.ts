@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import {
   canDeleteContent,
   canManageContent,
+  isAuthenticated,
   isLoggedInFieldLevel,
   publishedOrLoggedIn,
 } from '../access'
@@ -72,6 +73,7 @@ export const Media: CollectionConfig = {
   },
   access: {
     read: publishedOrLoggedIn,
+    readVersions: isAuthenticated,
     create: canManageContent,
     update: canManageContent,
     delete: canDeleteContent,

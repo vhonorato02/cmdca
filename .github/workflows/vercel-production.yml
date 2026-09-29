@@ -1,0 +1,74 @@
+name: Qualidade e deploy Vercel
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-production-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  quality:
+    uses: ./.github/workflows/quality.yml
+
+  production:
+    needs: quality
+    if: github.repository == 'vhonorato02/cmdca' && github.ref == 'refs/heads/main'
+    name: Qualidade, migracao e deploy de producao
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Obter codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar pnpm 11.15.0
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.15.0
+          run_install: false
+
+      - name: Configurar Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Validar versoes
+        run: node scripts/ci-validate-versions.mjs
+
+      - name: Validar segredos e vinculo Vercel
+        run: node scripts/ci-validate-vercel.mjs
+
+      - name: Instalar dependencias pelo lockfile
+        run: pnpm install --frozen-lockfile --prod=false
+
+      - name: Executar verificacoes de qualidade
+        run: |
+          git diff --check
+          pnpm check
+
+      - name: Instalar Vercel CLI 60.1.3
+        run: npm install --global vercel@60.1.3
+
+      - name: Baixar ambiente de producao
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Aplicar migracoes de producao
+        run: node scripts/ci-run-production-migrate.mjs
+
+      - name: Gerar artefato de producao
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Publicar artefato prebuilt em producao
+        run: vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
+
+      - name: Confirmar URL canonica de producao
+        run: node scripts/ci-smoke-production.mjs

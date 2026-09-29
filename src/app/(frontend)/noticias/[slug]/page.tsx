@@ -31,7 +31,6 @@ async function getPost(slug: string): Promise<Noticia | null> {
       limit: 1,
       depth: 1,
     })
-    .catch(() => ({ docs: [] as Noticia[] }))
   const post = (res.docs[0] as Noticia) || null
   if (
     !post ||
@@ -53,7 +52,6 @@ export async function generateStaticParams() {
       depth: 0,
       pagination: false,
     })
-    .catch(() => ({ docs: [] as Noticia[] }))
   return (res.docs as Noticia[])
     .filter(
       (n) =>

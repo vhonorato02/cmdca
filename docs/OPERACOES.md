@@ -4,7 +4,7 @@
 
 | Frequência | Verificação |
 | --- | --- |
-| a cada deploy | status Vercel, logs, smoke público/admin, migrações, e-mail de recuperação |
+| a cada deploy do GitHub Actions | status do workflow e Vercel, logs, smoke público/admin, migrações, e-mail de recuperação |
 | semanal | falhas 4xx/5xx anormais, contas administrativas, conteúdo com prazo próximo |
 | mensal | restaurabilidade do backup Neon, inventário R2, contatos/emergência e dependências |
 | trimestral | rotação de credenciais conforme política, revisão de acessos e recuperação simulada |
@@ -14,7 +14,7 @@ Registre data, responsável e resultado. Não guarde segredo no registro.
 
 ## Migração segura do banco
 
-Migrations são código de produção. Use este fluxo mesmo trabalhando direto na `main`:
+Migrations são código de produção. Aplique-as exclusivamente pelo workflow de produção do GitHub Actions:
 
 1. Altere o schema do Payload.
 2. Gere tipos e uma única migração com nome descritivo:
@@ -25,22 +25,13 @@ Migrations são código de produção. Use este fluxo mesmo trabalhando direto n
    ```
 
 3. Revise o arquivo gerado. Procure `DROP`, alteração de tipo, coluna obrigatória sem valor padrão e reescrita de tabela.
-4. Confirme que não há outro deploy ou migração em andamento.
-5. Quando necessário, execute diretamente:
-
-   ```powershell
-   pnpm migrate:status
-   pnpm migrate
-   pnpm check
-   pnpm build
-   ```
-
-6. Envie um único deploy. A configuração da Vercel aplica a migração com a conexão direta antes do build.
-7. Verifique a produção e registre o horário da migração para eventual recuperação pelo histórico do Neon.
+4. Confirme que não há outro workflow de produção ou migração em andamento.
+5. Envie a alteração pelo repositório e inicie o workflow de produção do GitHub Actions. Ele executa as verificações, aplica a migração com a conexão direta e publica na Vercel, uma entrega por vez.
+6. Verifique a produção e registre o horário da migração para eventual recuperação pelo histórico do Neon.
 
 Para mudança incompatível, use expansão e contração em entregas separadas: primeiro adicione campos/tabelas compatíveis, depois migre e confira dados, só em uma entrega posterior remova o formato antigo. Rollback de código não resolve schema destrutivo.
 
-Não execute migration manualmente na base principal ao mesmo tempo que um deployment. Não use `db push`, sincronização automática de schema ou SQL improvisado.
+Nunca execute `pnpm migrate`, `pnpm seed` ou `pnpm apply:confirmados` como rotina local contra a base principal. Não use `db push`, sincronização automática de schema ou SQL improvisado. O build e o deploy de produção também são exclusivos do GitHub Actions.
 
 ## Camadas de backup
 
@@ -67,8 +58,8 @@ Git preserva código e migrações. Vercel preserva deployments dentro dos limit
 
 1. Pare novos pushes e alterações editoriais.
 2. Registre commit/deployment defeituoso e evidências.
-3. Promova o último deployment saudável na Vercel.
-4. Corrija na `main`, execute QA e publique novo commit.
+3. Use o procedimento de rollback autorizado no GitHub Actions para restaurar o último artefato saudável.
+4. Corrija na `main`, execute QA no workflow e publique novo commit.
 
 ### Migração aplicada, aplicação incompatível
 
@@ -101,7 +92,7 @@ Em vazamento real ou suspeito, assuma comprometimento:
 3. rotacione senha/role do Neon e atualize as duas URIs;
 4. rotacione chave limitada do R2 e revogue a anterior;
 5. rotacione SMTP e contas administrativas afetadas;
-6. faça redeploy e teste runtime, migração, upload e recuperação de senha;
+6. execute novo workflow de produção e teste runtime, migração, upload e recuperação de senha;
 7. procure o valor antigo no histórico Git, logs, artifacts e canais de comunicação;
 8. documente alcance, período e medidas sem copiar o segredo.
 
@@ -115,7 +106,7 @@ Localmente, `pnpm clean` remove somente artefatos gerados seguros. Em produção
 - confirme a linha no Neon e o objeto no R2;
 - consulte a resposta HTTP e o deployment que a serviu;
 - revalide a rota pelo fluxo normal de publicação;
-- só então invalide cache ou faça novo deployment.
+- só então invalide cache ou execute novo workflow de produção.
 
 Uma limpeza ampla pode aumentar latência e esconder a causa. Nunca apague `.vercel`, bucket ou dados Neon como método de troubleshooting.
 

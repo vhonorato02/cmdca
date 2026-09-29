@@ -32,4 +32,23 @@ describe('origens do CMS', () => {
       }),
     ).toEqual(['https://cmdca.vercel.app'])
   })
+
+  it('aceita somente origens HTTP e HTTPS', () => {
+    expect(
+      buildAllowedOrigins({
+        nodeEnv: 'production',
+        serverURL: 'javascript:alert(1)',
+        publicServerURL: 'ftp://example.com',
+        vercelURL: 'https://cmdca-preview.vercel.app/admin',
+      }),
+    ).toEqual(['https://cmdca-preview.vercel.app'])
+
+    expect(
+      buildAllowedOrigins({
+        nodeEnv: 'production',
+        serverURL: 'https://cmdca.vercel.app',
+        vercelURL: 'ftp://preview.example.com',
+      }),
+    ).toEqual(['https://cmdca.vercel.app'])
+  })
 })

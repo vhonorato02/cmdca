@@ -1,0 +1,103 @@
+name: Qualidade
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Migrations, verificacoes e build
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: cmdca_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d cmdca_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URI: postgresql://postgres:postgres@localhost:5432/cmdca_test?sslmode=disable
+      DATABASE_URI_UNPOOLED: postgresql://postgres:postgres@localhost:5432/cmdca_test?sslmode=disable
+      ENFORCE_PRODUCTION_ENV: "false"
+      NEXT_PUBLIC_R2_PUBLIC_URL: https://media.example.test
+      NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+      PAYLOAD_SECRET: quality-only-payload-secret-with-at-least-thirty-two-characters
+      S3_ACCESS_KEY_ID: quality-only-access-key
+      S3_BUCKET: cmdca-quality
+      S3_ENDPOINT: https://r2.example.test
+      S3_REGION: auto
+      S3_SECRET_ACCESS_KEY: quality-only-secret-key
+
+    steps:
+      - name: Obter codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar pnpm 11.15.0
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.15.0
+          run_install: false
+
+      - name: Configurar Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Validar versoes
+        run: node scripts/ci-validate-versions.mjs
+
+      - name: Instalar dependencias pelo lockfile
+        run: pnpm install --frozen-lockfile --prod=false
+
+      - name: Aplicar migrations no PostgreSQL efemero
+        run: pnpm migrate
+
+      - name: Verificar CMS e permissoes no banco isolado
+        run: pnpm exec tsx scripts/ci-test-cms.ts
+
+      - name: Executar verificacoes de qualidade
+        run: |
+          git diff --check
+          pnpm check
+
+      - name: Gerar build com banco migrado
+        run: pnpm build
+
+      - name: Instalar Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Verificar paginas e login no artefato de producao
+        run: |
+          pnpm start > /tmp/cmdca-server.log 2>&1 &
+          node scripts/ci-smoke-production.mjs
+          pnpm test:a11y
+        env:
+          SMOKE_BASE_URL: http://localhost:3000
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+
+      - name: Guardar evidencias do navegador
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-browser
+          path: test-results/
+          retention-days: 14

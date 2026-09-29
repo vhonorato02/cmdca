@@ -4,6 +4,7 @@ import {
   canDeleteContent,
   canManageContent,
   isAdminOrJuridicoFieldLevel,
+  isAuthenticated,
   isLoggedInFieldLevel,
   publishedOrLoggedIn,
 } from '../access'
@@ -59,6 +60,7 @@ export const Depoimentos: CollectionConfig = {
   },
   access: {
     read: publishedOrLoggedIn,
+    readVersions: isAuthenticated,
     create: canManageContent,
     update: canManageContent,
     delete: canDeleteContent,

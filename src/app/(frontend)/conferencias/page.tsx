@@ -31,7 +31,6 @@ export default async function ConferenciasPage() {
       limit: 12,
       depth: 1,
     })
-    .catch(() => ({ docs: [] as Noticia[] }))
   const relacionadas = (res.docs as Noticia[]).filter(
     (item) =>
       publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),

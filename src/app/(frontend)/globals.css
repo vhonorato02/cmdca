@@ -2720,3 +2720,37 @@ footer a:hover {
     text-decoration: underline !important;
   }
 }
+
+/* Keep links usable by touch, including references embedded in text. */
+main a:not(.news):not(.news-lead):not(.btn):not(.mini):not(.place-route),
+footer a {
+  min-width: 44px;
+  min-height: 44px;
+}
+main p a,
+main .ver a,
+main .num a,
+main .when a,
+main .ph a,
+main .contact a,
+main .post-body a,
+footer a {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+footer nav a {
+  display: flex;
+  min-height: 44px;
+}
+.sim-number input { min-height: 44px; }
+.meeting-agenda summary {
+  min-height: 44px;
+  display: list-item;
+  padding-block: 9px;
+  cursor: pointer;
+}
+.meeting-agenda { margin-top: 8px; }
+.meeting-agenda p { margin-block: 8px; }
+.meet .acts { display: flex; flex-wrap: wrap; gap: 8px; }

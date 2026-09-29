@@ -1,6 +1,7 @@
 import * as migration_20260531_062721_initial from './20260531_062721_initial';
 import * as migration_20260531_190858_add_diretoria from './20260531_190858_add_diretoria';
 import * as migration_20260719_194302_editorial_safety from './20260719_194302_editorial_safety';
+import * as migration_20260929_150216_payload_upgrade_compatibility from './20260929_150216_payload_upgrade_compatibility';
 
 export const migrations = [
   {
@@ -16,6 +17,11 @@ export const migrations = [
   {
     up: migration_20260719_194302_editorial_safety.up,
     down: migration_20260719_194302_editorial_safety.down,
-    name: '20260719_194302_editorial_safety'
+    name: '20260719_194302_editorial_safety',
+  },
+  {
+    up: migration_20260929_150216_payload_upgrade_compatibility.up,
+    down: migration_20260929_150216_payload_upgrade_compatibility.down,
+    name: '20260929_150216_payload_upgrade_compatibility'
   },
 ];

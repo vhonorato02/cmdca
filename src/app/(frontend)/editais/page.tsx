@@ -34,8 +34,7 @@ export default async function EditaisPage() {
         sort: '-data',
         limit: 200,
         depth: 1,
-      })
-      .catch(() => ({ docs: [] as Editai[] })),
+      }),
     payload.findGlobal({ slug: 'configuracoes' }).catch(() => null as Configuracoe | null),
   ])
   const docs = (res.docs as Editai[]).filter((item) => publicText(item.titulo))

@@ -188,9 +188,9 @@ export interface Noticia {
   destaque?: boolean | null;
   data: string;
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -200,7 +200,7 @@ export interface Noticia {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
@@ -241,9 +241,9 @@ export interface Media {
    */
   referenciaConsentimento?: string | null;
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -253,13 +253,14 @@ export interface Media {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
      */
     observacoesInternas?: string | null;
   };
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -320,6 +321,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -377,9 +379,9 @@ export interface Reunioe {
    */
   ata?: (number | null) | Media;
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -389,7 +391,7 @@ export interface Reunioe {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
@@ -432,9 +434,9 @@ export interface Resolucoe {
    */
   linkTribuna?: string | null;
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -444,7 +446,7 @@ export interface Resolucoe {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
@@ -489,9 +491,9 @@ export interface Editai {
    */
   linkTribuna?: string | null;
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -501,7 +503,7 @@ export interface Editai {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
@@ -534,9 +536,9 @@ export interface Entidade {
    */
   documentos: (number | Media)[];
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -546,7 +548,7 @@ export interface Entidade {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
@@ -594,9 +596,9 @@ export interface RedeProtecao {
    */
   lng?: number | null;
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -606,7 +608,7 @@ export interface RedeProtecao {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
@@ -647,9 +649,9 @@ export interface Depoimento {
    */
   autorizacaoPublicacao?: boolean | null;
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -659,7 +661,7 @@ export interface Depoimento {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
@@ -718,9 +720,9 @@ export interface Faq {
   contexto: 'ajuda' | 'fmdca' | 'geral';
   ordem: number;
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -730,7 +732,7 @@ export interface Faq {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
@@ -1113,6 +1115,7 @@ export interface MediaSelect<T extends boolean = true> {
         revisadoPor?: T;
         observacoesInternas?: T;
       };
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -1175,6 +1178,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -1277,9 +1281,9 @@ export interface Configuracoe {
    */
   tribunaUrl?: string | null;
   /**
-   * Checklist obrigatório para publicação. Estes dados não aparecem no site público, mas registram de onde a informação veio e quem a conferiu.
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
-  controleEditorial: {
+  controleEditorial?: {
     /**
      * Informe o órgão e o documento, processo ou página que comprova a informação.
      */
@@ -1289,7 +1293,7 @@ export interface Configuracoe {
      */
     fonteURL?: string | null;
     verificadoEm?: string | null;
-    statusRevisao: 'pendente' | 'aprovada' | 'dispensada';
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
     revisadoPor?: (number | null) | User;
     /**
      * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
@@ -1301,7 +1305,7 @@ export interface Configuracoe {
   createdAt?: string | null;
 }
 /**
- * Organize os blocos. Editor salva rascunho; jurídico ou administração publicam.
+ * Organize os blocos, salve rascunhos e publique quando o conteúdo estiver conferido.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pagina-inicial".

@@ -8,15 +8,15 @@ flowchart LR
   V -->|"runtime pooled"| N["Neon PostgreSQL"]
   V -->|"upload e leitura"| R["Cloudflare R2"]
   V -->|"recuperação de senha"| E["Provedor SMTP"]
-  G["GitHub: main"] -->|"deploy automático"| V
-  V -. "migration direct" .-> N
+  G["GitHub Actions"] -->|"qualidade, migration e deploy"| V
+  G -. "migration direct" .-> N
 ```
 
 ## Responsabilidade de cada serviço
 
 | Serviço | Mantém | Não mantém |
 | --- | --- | --- |
-| GitHub | código, migrações e documentação | segredos, dados do CMS e uploads |
+| GitHub Actions | qualidade, build, migração e deploy de produção | segredos exibidos em log, dados do CMS e uploads |
 | Vercel | builds, deployments, funções, logs e domínio | banco durável e arquivos enviados |
 | Neon | conteúdo, usuários, versões e metadados do CMS | arquivos binários do R2 |
 | Cloudflare R2 | imagens e PDFs | registros editoriais e permissões do CMS |
@@ -24,7 +24,7 @@ flowchart LR
 
 ## Conexões do Neon
 
-`DATABASE_URI` é _pooled_ e atende o runtime serverless. `DATABASE_URI_UNPOOLED` é direta e existe para migrações. A conexão direta nunca é usada como padrão do runtime. Neste projeto, desenvolvimento e produção usam a mesma base por decisão operacional explícita.
+`DATABASE_URI` é _pooled_ e atende o runtime serverless. `DATABASE_URI_UNPOOLED` é direta e existe para migrações. A conexão direta nunca é usada como padrão do runtime. As migrações de produção são executadas exclusivamente pelo GitHub Actions; desenvolvimento e produção usam a mesma base por decisão operacional explícita, portanto nenhuma migração ou seed rotineira deve ser feita localmente.
 
 O schema é controlado por arquivos de migração; `push` automático do ORM permanece desabilitado. Dados e schema precisam de backup antes de uma alteração de produção.
 
@@ -34,7 +34,7 @@ O Payload grava mídia com protocolo S3 no R2 e mantém metadados no Neon. Uma r
 
 ## Cache e atualização
 
-Páginas públicas podem usar renderização estática incremental. Ao publicar ou despublicar, hooks revalidam as rotas afetadas. Isso melhora desempenho, mas significa que diagnóstico precisa separar quatro camadas: documento no CMS, registro no Neon, objeto no R2 e resposta/caches da Vercel/CDN.
+Páginas públicas podem usar renderização estática incremental. Ao publicar ou despublicar, hooks revalidam as rotas afetadas. Editor, Jurídico e Administrador podem publicar ou despublicar, e a revisão jurídica registrada no CMS é informativa. Isso melhora desempenho, mas significa que diagnóstico precisa separar quatro camadas: documento no CMS, registro no Neon, objeto no R2 e resposta/caches da Vercel/CDN.
 
 Não “limpe tudo” por reflexo em incidente. Primeiro identifique a camada, preserve logs e invalide somente o necessário.
 

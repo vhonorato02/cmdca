@@ -1,6 +1,6 @@
 import type { FieldAccess, GlobalConfig } from 'payload'
 
-import { isAdminOrJuridico, publishedOrLoggedIn } from '../access'
+import { isAdminOrJuridico, isAuthenticated, publishedOrLoggedIn, roleOf } from '../access'
 import {
   EDITORIAL_VERSIONS,
   GLOBAL_EDITORIAL_COMPONENTS,
@@ -11,7 +11,7 @@ import { revalidateGlobal } from '../hooks/revalidate'
 import { validateEmail, validateExternalURL } from '../utilities/validation'
 
 const readConfirmedBankData: FieldAccess = ({ doc, req }) =>
-  Boolean(req.user) ||
+  Boolean(roleOf(req.user)) ||
   Boolean((doc as { fmdca?: { dadosBancariosConfirmados?: boolean } } | undefined)?.fmdca?.dadosBancariosConfirmados)
 
 const revalidation = revalidateGlobal([
@@ -56,7 +56,11 @@ export const Configuracoes: GlobalConfig = {
     ],
     ...revalidation,
   },
-  access: { read: publishedOrLoggedIn, update: isAdminOrJuridico },
+  access: {
+    read: publishedOrLoggedIn,
+    readVersions: isAuthenticated,
+    update: isAdminOrJuridico,
+  },
   fields: [
     {
       type: 'row',

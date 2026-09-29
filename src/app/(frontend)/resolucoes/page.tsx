@@ -27,8 +27,7 @@ export default async function ResolucoesPage() {
         sort: '-data',
         limit: 200,
         depth: 1,
-      })
-      .catch(() => ({ docs: [] as Resolucoe[] })),
+      }),
     payload.findGlobal({ slug: 'configuracoes' }).catch(() => null as Configuracoe | null),
   ])
   const docs = (res.docs as Resolucoe[]).filter(

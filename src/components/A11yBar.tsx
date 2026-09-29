@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useSyncExternalStore } from 'react'
+import { useCallback, useState, useSyncExternalStore } from 'react'
 
 /** Assina mudanças na classe do <html> para refletir o alto contraste. */
 function subscribeContrast(onChange: () => void) {
@@ -16,6 +16,7 @@ const getContrast = () => document.documentElement.classList.contains('contrast'
  * em localStorage; o script inline no <head> reaplica antes da pintura.
  */
 export function A11yBar() {
+  const [translationUnavailable, setTranslationUnavailable] = useState(false)
   // Estado real do alto contraste (lido da classe do <html>, aplicada pelo script
   // inline a partir do localStorage) para o aria-pressed correto no leitor de tela.
   const contrast = useSyncExternalStore(subscribeContrast, getContrast, () => false)
@@ -44,7 +45,12 @@ export function A11yBar() {
 
   const openVLibras = useCallback(() => {
     const btn = document.querySelector('[vw-access-button]') as HTMLElement | null
-    btn?.click()
+    if (!btn || document.documentElement.dataset.translationState !== 'ready') {
+      setTranslationUnavailable(true)
+      return
+    }
+    setTranslationUnavailable(false)
+    btn.click()
   }, [])
 
   return (
@@ -73,6 +79,12 @@ export function A11yBar() {
           VLibras
         </button>
       </div>
+      {translationUnavailable ? (
+        <p role="status" className="wrap">
+          Tradutor indisponível ou ainda carregando. Tente novamente ou consulte a{' '}
+          <a href="/acessibilidade">página de acessibilidade</a>.
+        </p>
+      ) : null}
     </aside>
   )
 }

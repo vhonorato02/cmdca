@@ -86,11 +86,20 @@ export const Users: CollectionConfig = {
   },
   access: {
     admin: ({ req: { user } }) => Boolean(roleOf(user)),
-    read: ({ req: { user } }) =>
-      roleOf(user) === 'admin' ? true : { id: { equals: idOf(user) } },
+    read: ({ req: { user } }) => {
+      const role = roleOf(user)
+      const id = idOf(user)
+      if (role === 'admin') return true
+      return role && id !== undefined ? { id: { equals: id } } : false
+    },
     create: isAdmin,
-    update: ({ req: { user } }) =>
-      roleOf(user) === 'admin' ? true : { id: { equals: idOf(user) } },
+    update: ({ req: { user } }) => {
+      const role = roleOf(user)
+      const id = idOf(user)
+      if (role === 'admin') return true
+      return role && id !== undefined ? { id: { equals: id } } : false
+    },
+    unlock: isAdmin,
     delete: isAdmin,
   },
   fields: [
@@ -103,13 +112,13 @@ export const Users: CollectionConfig = {
       defaultValue: 'editor',
       options: [
         { label: 'Administrador', value: 'admin' },
-        { label: 'Editor de rascunhos', value: 'editor' },
+        { label: 'Editor', value: 'editor' },
         { label: 'Revisão jurídica e publicação', value: 'juridico' },
       ],
       access: { create: isAdminFieldLevel, update: isAdminFieldLevel },
       admin: {
         description:
-          'Editor prepara rascunhos. Jurídico revisa e publica. Administrador também gerencia contas e exclusões.',
+          'Editor e jurídico podem preparar e publicar conteúdo. Administrador também gerencia contas e exclusões.',
       },
     },
   ],

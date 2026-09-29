@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { phoneHref } from '@/lib/contact'
 import { getPayloadClient } from '@/lib/payload'
+import { publicHref, publicText } from '@/lib/site'
 
 const splitPhones = (value: string) => value.split(/\s*[·;]\s*/).filter(Boolean)
 
@@ -15,8 +16,8 @@ export async function SiteFooter() {
       contato?: { casaConselhosTelefone?: string | null }
       redes?: { instagramUrl?: string | null }
     }
-    casaTel = cfg?.contato?.casaConselhosTelefone?.trim() || null
-    instagramUrl = cfg?.redes?.instagramUrl?.trim() || null
+    casaTel = publicText(cfg?.contato?.casaConselhosTelefone) || null
+    instagramUrl = publicHref(cfg?.redes?.instagramUrl) || null
   } catch {
     /* usa fallback se o banco estiver indisponível */
   }
@@ -34,6 +35,7 @@ export async function SiteFooter() {
                 alt="CMDCA Pindamonhangaba"
                 width={175}
                 height={42}
+                style={{ height: 'auto' }}
               />
             </div>
             <p>Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba.</p>

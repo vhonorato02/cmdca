@@ -1,6 +1,6 @@
 # Qualidade antes e depois da entrega
 
-Uma release só está concluída quando código, CMS, dados e URL canônica foram verificados. Build local verde, isoladamente, não comprova produção.
+Uma release só está concluída quando código, CMS, dados e URL canônica foram verificados. Build aprovado no GitHub Actions, isoladamente, não comprova produção.
 
 ## 1. Verificação automatizada local
 
@@ -9,14 +9,11 @@ Com as variáveis operacionais do projeto:
 ```powershell
 corepack enable
 pnpm install --frozen-lockfile
-pnpm clean
-pnpm migrate:status
 pnpm check
-pnpm build
 git diff --check
 ```
 
-Critérios: todos os comandos terminam com código zero, sem migration pendente e sem whitespace inválido.
+Critérios locais: todos os comandos terminam com código zero e sem whitespace inválido. Build, migrações e testes com gravação em banco são executados pelo GitHub Actions. Fixtures usam somente o PostgreSQL efêmero do runner.
 
 Confira ainda:
 
@@ -28,7 +25,7 @@ Confira ainda:
 
 ## 2. Site local no navegador
 
-Inicie `pnpm devsafe` e teste ao menos em 390 × 844 e 1440 × 900:
+Inicie `pnpm dev` e confira todas as páginas relevantes nas larguras 1440, 1024, 768 e 390 pixels:
 
 - home e todas as rotas do cabeçalho/rodapé;
 - notícias (lista, detalhe e conteúdo ausente);
@@ -42,7 +39,7 @@ Inicie `pnpm devsafe` e teste ao menos em 390 × 844 e 1440 × 900:
 - gráficos possuem alternativa textual ou tabular;
 - nenhum erro/hidratação no console.
 
-Não aceite rolagem horizontal, texto cortado, controle menor que a área de toque prevista pelo design ou conteúdo invisível sem JavaScript.
+Não aceite rolagem horizontal, texto cortado, controle com área de toque menor que 44 por 44 pixels ou conteúdo invisível sem JavaScript. Confira proporção e recortes de imagens, sobreposições, espaçamento, contraste, alt, headings, links, título, descrição e Open Graph em cada largura.
 
 ## 3. Matriz do CMS
 
@@ -53,7 +50,8 @@ Use três contas de teste sem compartilhar senha:
 | anônimo consulta API/conteúdo | vê somente publicado e campos públicos |
 | anônimo consulta reunião reservada | não recebe o documento |
 | Editor salva rascunho | permitido |
-| Editor tenta publicar/despublicar/excluir | bloqueado no servidor |
+| Editor publica/despublica | permitido após validações |
+| Editor tenta excluir | bloqueado no servidor |
 | Jurídico aprova e publica | permitido após validações |
 | Jurídico tenta gerenciar usuários/excluir | bloqueado |
 | Administrador gerencia usuário | permitido |

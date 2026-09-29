@@ -27,23 +27,23 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "3.86.0",
-    "@payloadcms/email-nodemailer": "3.86.0",
-    "@payloadcms/next": "3.86.0",
-    "@payloadcms/richtext-lexical": "3.86.0",
-    "@payloadcms/storage-s3": "3.86.0",
-    "@payloadcms/translations": "3.86.0",
-    "@payloadcms/ui": "3.86.0",
+    "@payloadcms/db-postgres": "3.90.2",
+    "@payloadcms/email-nodemailer": "3.90.2",
+    "@payloadcms/next": "3.90.2",
+    "@payloadcms/richtext-lexical": "3.90.2",
+    "@payloadcms/storage-s3": "3.90.2",
+    "@payloadcms/translations": "3.90.2",
+    "@payloadcms/ui": "3.90.2",
     "cross-env": "^10.1.0",
     "dotenv": "17.4.2",
     "graphql": "^16.14.2",
     "leaflet": "^1.9.4",
-    "next": "16.2.10",
-    "payload": "3.86.0",
+    "next": "16.3.6",
+    "payload": "3.90.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-leaflet": "^5.0.0",
-    "sharp": "0.35.3"
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",
@@ -53,12 +53,12 @@
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "eslint": "^9.39.5",
-    "eslint-config-next": "16.2.10",
+    "eslint-config-next": "16.3.6",
     "prettier": "^3.9.5",
     "rimraf": "^6.1.2",
     "tsx": "4.23.1",
     "typescript": "6.0.3",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
   },
   "engines": {
     "node": ">=24 <25",

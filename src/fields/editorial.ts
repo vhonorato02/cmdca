@@ -37,7 +37,7 @@ export const editorialControlField = (): Field => ({
   admin: {
     position: 'sidebar',
     description:
-      'Campos opcionais de apoio interno. Eles não impedem salvar ou publicar o conteúdo.',
+      'Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.',
   },
   fields: [
     {

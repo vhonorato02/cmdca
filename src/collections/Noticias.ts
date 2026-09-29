@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { canDeleteContent, canManageContent, publishedOrLoggedIn } from '../access'
+import { canDeleteContent, canManageContent, isAuthenticated, publishedOrLoggedIn } from '../access'
 import {
   COLLECTION_EDITORIAL_COMPONENTS,
   EDITORIAL_VERSIONS,
@@ -31,7 +31,7 @@ export const Noticias: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'categoria', 'data', '_status'],
     group: 'Conteúdo editorial',
-    description: 'Prepare o texto como rascunho. Jurídico ou administração conferem e publicam.',
+    description: 'Prepare, confira e publique o texto quando as informações estiverem completas.',
     components: COLLECTION_EDITORIAL_COMPONENTS,
   },
   versions: EDITORIAL_VERSIONS,
@@ -66,6 +66,7 @@ export const Noticias: CollectionConfig = {
   },
   access: {
     read: publishedOrLoggedIn,
+    readVersions: isAuthenticated,
     create: canManageContent,
     update: canManageContent,
     delete: canDeleteContent,

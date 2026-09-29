@@ -1,12 +1,18 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { RichText } from '@payloadcms/richtext-lexical/react'
+import type { Reunioe } from '@/payload-types'
 
 export type ReuniaoItem = {
   id: string | number
   titulo: string
   data?: string | null
   tipo: string
+  hora?: string | null
+  modalidade?: Reunioe['modalidade']
+  linkTransmissao?: string | null
+  pauta?: Reunioe['pauta']
   local?: string | null
   ataUrl?: string | null
 }
@@ -14,8 +20,6 @@ export type ReuniaoItem = {
 const TIPO: Record<string, { label: string; cls: string }> = {
   ordinaria: { label: 'Ordinária', cls: 'ord' },
   extraordinaria: { label: 'Extraordinária', cls: 'ext' },
-  publica: { label: 'Pública', cls: 'ord' },
-  reservada: { label: 'Reservada', cls: 'ext' },
 }
 
 const MESES_ABBR = [
@@ -40,7 +44,8 @@ export function ReunioesLista({ reunioes }: { reunioes: ReuniaoItem[] }) {
   const years = useMemo(() => {
     const set = new Set<number>()
     reunioes.forEach((r) => {
-      if (r.data) set.add(new Date(r.data).getUTCFullYear())
+      const value = r.data ? new Date(r.data).getUTCFullYear() : NaN
+      if (Number.isFinite(value)) set.add(value)
     })
     return Array.from(set).sort((a, b) => b - a)
   }, [reunioes])
@@ -75,8 +80,6 @@ export function ReunioesLista({ reunioes }: { reunioes: ReuniaoItem[] }) {
             <option value="all">Todos os tipos</option>
             <option value="ordinaria">Ordinária</option>
             <option value="extraordinaria">Extraordinária</option>
-            <option value="publica">Pública</option>
-            <option value="reservada">Reservada</option>
           </select>
         </label>
       </div>
@@ -100,8 +103,23 @@ export function ReunioesLista({ reunioes }: { reunioes: ReuniaoItem[] }) {
                     {r.titulo} <span className={`pill ${ti.cls}`}>{ti.label}</span>
                   </h2>
                   {r.local ? <p className="meta">{r.local}</p> : null}
+                  <p className="meta">
+                    {r.hora ? `Horário: ${r.hora}. ` : ''}
+                    {r.modalidade === 'online' ? 'Online' : r.modalidade === 'hibrida' ? 'Híbrida' : 'Presencial'}
+                  </p>
+                  {r.pauta?.root?.children?.length ? (
+                    <details className="meeting-agenda">
+                      <summary>Consultar pauta</summary>
+                      <RichText data={r.pauta} />
+                    </details>
+                  ) : null}
                 </div>
                 <div className="acts">
+                  {r.linkTransmissao ? (
+                    <a className="mini" href={r.linkTransmissao} target="_blank" rel="noopener noreferrer">
+                      Acessar reunião <span aria-hidden="true">↗</span>
+                    </a>
+                  ) : null}
                   {r.ataUrl ? (
                     <a
                       className="mini"

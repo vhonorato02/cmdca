@@ -27,7 +27,6 @@ export default async function NoticiasPage() {
       limit: 60,
       depth: 1,
     })
-    .catch(() => ({ docs: [] as Noticia[] }))
   const news = (res.docs as Noticia[]).filter(
     (item) =>
       publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),

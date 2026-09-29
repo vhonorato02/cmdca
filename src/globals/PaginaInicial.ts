@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
-import { canManageContent, publishedOrLoggedIn } from '../access'
+import { canManageContent, isAuthenticated, publishedOrLoggedIn } from '../access'
 import {
   EDITORIAL_VERSIONS,
   GLOBAL_EDITORIAL_COMPONENTS,
@@ -13,7 +13,7 @@ export const PaginaInicial: GlobalConfig = {
   label: 'Página inicial',
   admin: {
     group: 'Configuração',
-    description: 'Organize os blocos. Editor salva rascunho; jurídico ou administração publicam.',
+    description: 'Organize os blocos, salve rascunhos e publique quando o conteúdo estiver conferido.',
     components: GLOBAL_EDITORIAL_COMPONENTS,
   },
   versions: EDITORIAL_VERSIONS,
@@ -21,7 +21,11 @@ export const PaginaInicial: GlobalConfig = {
     beforeOperation: [enforceGlobalEditorDraftOnly],
     ...revalidateGlobal(['/']),
   },
-  access: { read: publishedOrLoggedIn, update: canManageContent },
+  access: {
+    read: publishedOrLoggedIn,
+    readVersions: isAuthenticated,
+    update: canManageContent,
+  },
   fields: [
     {
       name: 'blocos',

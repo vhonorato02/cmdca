@@ -15,6 +15,32 @@ const request = (userID: number, adminCount = 1) =>
   }) as never
 
 describe('proteções de administradores', () => {
+  it('nega leitura e atualização da própria conta a papéis desconhecidos', () => {
+    const invalid = { req: { user: { id: 7, role: 'intruso' } } } as never
+    const readAccess = Users.access?.read
+    const updateAccess = Users.access?.update
+
+    expect(typeof readAccess).toBe('function')
+    expect(typeof updateAccess).toBe('function')
+    if (typeof readAccess !== 'function' || typeof updateAccess !== 'function') {
+      throw new Error('A coleção users precisa definir acesso de leitura e atualização.')
+    }
+    expect(readAccess(invalid)).toBe(false)
+    expect(updateAccess(invalid)).toBe(false)
+  })
+
+  it('permite desbloquear contas somente a administradores', () => {
+    const unlockAccess = Users.access?.unlock
+
+    expect(typeof unlockAccess).toBe('function')
+    if (typeof unlockAccess !== 'function') {
+      throw new Error('A coleção users precisa definir acesso explícito de desbloqueio.')
+    }
+    expect(unlockAccess({ req: { user: { id: 1, role: 'admin' } } } as never)).toBe(true)
+    expect(unlockAccess({ req: { user: { id: 2, role: 'editor' } } } as never)).toBe(false)
+    expect(unlockAccess({ req: { user: { id: 3, role: 'intruso' } } } as never)).toBe(false)
+  })
+
   it('permite que o administrador atualize o próprio nome sem alterar papel', async () => {
     await expect(
       beforeChange?.({

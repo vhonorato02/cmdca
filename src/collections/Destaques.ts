@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { canDeleteContent, canManageContent, publishedOrLoggedIn } from '../access'
+import { canDeleteContent, canManageContent, isAuthenticated, publishedOrLoggedIn } from '../access'
 import { COLLECTION_EDITORIAL_COMPONENTS, EDITORIAL_VERSIONS } from '../fields/editorial'
 import { TEMA_OPTIONS } from '../fields/tema'
 import { enforceEditorDraftOnly, validatePublication } from '../hooks/editorialPolicy'
@@ -24,7 +24,7 @@ export const Destaques: CollectionConfig = {
     defaultColumns: ['titulo', 'ordem', '_status'],
     group: 'Rede e participação',
     description:
-      'Slides do banner principal. Editor prepara o rascunho; jurídico ou administração publica.',
+      'Slides do banner principal. A equipe editorial pode preparar, conferir e publicar o conteúdo.',
     components: COLLECTION_EDITORIAL_COMPONENTS,
   },
   defaultSort: 'ordem',
@@ -59,6 +59,7 @@ export const Destaques: CollectionConfig = {
   },
   access: {
     read: publishedOrLoggedIn,
+    readVersions: isAuthenticated,
     create: canManageContent,
     update: canManageContent,
     delete: canDeleteContent,

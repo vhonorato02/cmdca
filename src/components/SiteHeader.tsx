@@ -45,6 +45,9 @@ export function SiteHeader() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') closeMenu(true)
     }
+    const onResize = () => {
+      if (!window.matchMedia('(max-width: 880px)').matches) closeMenu()
+    }
 
     const onPointerDown = (event: PointerEvent) => {
       if (!(event.target instanceof Node)) return
@@ -58,12 +61,14 @@ export function SiteHeader() {
 
     document.addEventListener('keydown', onKeyDown)
     document.addEventListener('pointerdown', onPointerDown)
+    window.addEventListener('resize', onResize)
 
     return () => {
       if (focusFrame !== undefined) cancelAnimationFrame(focusFrame)
       document.body.style.overflow = previousOverflow
       document.removeEventListener('keydown', onKeyDown)
       document.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('resize', onResize)
     }
   }, [open])
 

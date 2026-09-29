@@ -21,15 +21,14 @@ Pré-requisitos: Node.js 24, Corepack e acesso às variáveis do projeto. Por de
 corepack enable
 pnpm install --frozen-lockfile
 Copy-Item .env.example .env.local
-# preencha .env.local com as credenciais operacionais fornecidas pela Vercel
-pnpm migrate
+# preencha .env.local somente para desenvolvimento e diagnóstico autorizados
 pnpm devsafe
 ```
 
 - Site: <http://localhost:3000>
 - Painel: <http://localhost:3000/admin>
 
-`pnpm devsafe` remove apenas caches gerados (`.next` e `tsconfig.tsbuildinfo`) antes de iniciar o servidor. Para criar dados locais mínimos, configure `SEED_ALLOW_LOCAL=true`, `SEED_ADMIN_EMAIL` e uma senha aleatória de pelo menos 14 caracteres; depois execute `pnpm seed`. O seed recusa produção e não contém credenciais públicas.
+`pnpm devsafe` remove apenas caches gerados (`.next` e `tsconfig.tsbuildinfo`) antes de iniciar o servidor. Este ambiente local aponta para os serviços operacionais por decisão do projeto: não execute `pnpm migrate`, `pnpm seed` nem `pnpm apply:confirmados` como rotina local. Migrações de produção são executadas uma única vez pelo workflow do GitHub Actions. Seeds só podem ser usados em banco isolado e descartável, com autorização explícita.
 
 ## Comandos
 
@@ -39,36 +38,29 @@ pnpm devsafe
 | `pnpm devsafe` | Limpa caches gerados e inicia o desenvolvimento. |
 | `pnpm clean` | Remove `.next` e `tsconfig.tsbuildinfo`. |
 | `pnpm check` | Executa lint, verificação de tipos e testes unitários. |
-| `pnpm build` | Gera e valida o build de produção. |
-| `pnpm migrate:status` | Exibe o estado das migrações. |
+| `pnpm build` | Gera o build de produção, executado exclusivamente pelo GitHub Actions. |
+| `pnpm migrate:status` | Exibe o estado das migrações, para diagnóstico autorizado. |
 | `pnpm migrate:create` | Gera uma migração depois de uma alteração intencional no schema. |
-| `pnpm migrate` | Aplica migrações com `DATABASE_URI_UNPOOLED`. |
+| `pnpm migrate` | Aplica migrações com `DATABASE_URI_UNPOOLED`, exclusivo do workflow de produção. |
 | `pnpm generate:types` | Atualiza os tipos gerados do Payload. |
 | `pnpm generate:importmap` | Atualiza o mapa de componentes do painel. |
-| `pnpm seed` | Cria o baseline mínimo somente em ambiente local autorizado. |
+| `pnpm seed` | Cria dados apenas em banco isolado e descartável, nunca na produção. |
 
-Antes de qualquer entrega:
-
-```powershell
-pnpm check
-pnpm build
-```
-
-O checklist completo, inclusive navegador, responsividade, acessibilidade e produção, está em [`docs/QA.md`](docs/QA.md).
+Antes de qualquer entrega, envie o código para o repositório e acompanhe as verificações, a migração e o deploy no GitHub Actions. O build de produção não é executado localmente. O checklist completo, inclusive navegador, responsividade, acessibilidade e produção, está em [`docs/QA.md`](docs/QA.md).
 
 ## Conteúdo e CMS
 
 O painel foi desenhado para separar preparação, revisão jurídica e administração:
 
-- **Editor:** prepara e salva rascunhos; não publica nem exclui;
-- **Jurídico:** revisa fontes e documentos, aprova e publica; não administra usuários nem exclui;
+- **Editor:** prepara, salva rascunhos, publica e despublica conteúdo; não exclui;
+- **Jurídico:** revisa fontes e documentos quando aplicável, publica e despublica; não administra usuários nem exclui;
 - **Administrador:** possui todas as permissões, gerencia usuários e executa exclusões.
 
 O site público recebe somente documentos publicados e, no caso de reuniões, somente os de acesso público. Campos de fonte, data de verificação e observações internas mantêm a trilha editorial. Consulte o guia sem jargão em [`docs/CMS.md`](docs/CMS.md).
 
 ## Entrega
 
-O fluxo deliberadamente adotado é direto na `main`: um `git push origin main` inicia a produção pela integração Git da Vercel. Não abra _branch_, _pull request_ ou ambiente paralelo para o fluxo normal deste projeto. Migrações são aplicadas diretamente pelo deploy, uma entrega por vez. Veja [`DEPLOY.md`](DEPLOY.md).
+O fluxo de entrega usa exclusivamente GitHub Actions. O workflow de produção instala dependências pelo lockfile, executa as verificações, aplica a migração de produção uma única vez e publica o artefato prebuilt na Vercel. Não use a integração Git da Vercel nem comandos locais de build, migrate, seed ou deploy contra produção. Veja [`DEPLOY.md`](DEPLOY.md).
 
 ## Segredos e recuperação de acesso
 
@@ -82,7 +74,7 @@ Em suspeita de exposição, siga a ordem em [`docs/OPERACOES.md`](docs/OPERACOES
 
 ## Documentação
 
-- [`DEPLOY.md`](DEPLOY.md): configuração Vercel e entrega direta da `main`;
+- [`DEPLOY.md`](DEPLOY.md): configuração Vercel e entrega pelo GitHub Actions;
 - [`docs/CMS.md`](docs/CMS.md): manual de conteúdo para editor, jurídico e administrador;
 - [`docs/OPERACOES.md`](docs/OPERACOES.md): migrações, backup, rollback e incidentes;
 - [`docs/QA.md`](docs/QA.md): critérios objetivos para liberar produção;

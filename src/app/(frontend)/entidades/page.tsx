@@ -36,7 +36,6 @@ export default async function EntidadesPage() {
       limit: 200,
       depth: 0,
     })
-    .catch(() => ({ docs: [] as Entidade[] }))
   const docs = (res.docs as Entidade[]).filter((item) => publicText(item.nome))
 
   return (

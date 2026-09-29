@@ -55,6 +55,13 @@ describe('política editorial', () => {
 
   it('detecta publicação e lê caminhos aninhados', () => {
     expect(isPublishingRequest({ _status: 'published' }, undefined, req('juridico'))).toBe(true)
+    expect(
+      isPublishingRequest(
+        { _status: 'published' },
+        undefined,
+        { user: { role: 'editor' }, query: { draft: 'true' } } as never,
+      ),
+    ).toBe(true)
     expect(isPublishingRequest({ _status: 'draft' }, undefined, req('editor'))).toBe(false)
     expect(valueAtPath({ controle: { fonte: 'Diário Oficial' } }, 'controle.fonte')).toBe(
       'Diário Oficial',
@@ -74,6 +81,29 @@ describe('política editorial', () => {
       titulo: 'Ata',
       controleEditorial: { statusRevisao: 'pendente' },
     })
+  })
+
+  it('não deixa draft=true suprimir validações de um documento marcado como publicado', async () => {
+    const hook = validatePublication([{ path: 'titulo', label: 'título' }])
+
+    await expect(
+      hook({
+        data: { _status: 'published' },
+        originalDoc: undefined,
+        req: { user: { role: 'editor' }, query: { draft: 'true' } },
+      } as never),
+    ).rejects.toThrow(/título/i)
+  })
+
+  it('não aceita propriedades herdadas como conteúdo válido', async () => {
+    const hook = validatePublication([{ path: 'titulo', label: 'título' }])
+    const data = JSON.parse(
+      '{"_status":"published","__proto__":{"titulo":"conteúdo injetado"}}',
+    ) as Record<string, unknown>
+
+    await expect(
+      hook({ data, originalDoc: undefined, req: req('editor') } as never),
+    ).rejects.toThrow(/título/i)
   })
 
   it('aceita publicação com status opcional sem alterar os dados', async () => {

@@ -3,8 +3,10 @@ import { APIError } from 'payload'
 
 import {
   canManageContent,
+  isAuthenticated,
   isLoggedInFieldLevel,
   publishedOrLoggedIn,
+  roleOf,
 } from '../access'
 import { EDITORIAL_VERSIONS, GLOBAL_EDITORIAL_COMPONENTS } from '../fields/editorial'
 import {
@@ -16,7 +18,7 @@ import { revalidateGlobal } from '../hooks/revalidate'
 import { isBlank, validateExternalURL } from '../utilities/validation'
 
 const readWhenReleased: FieldAccess = ({ doc, req }) =>
-  Boolean(req.user) || Boolean((doc as { publicar?: boolean } | undefined)?.publicar)
+  Boolean(roleOf(req.user)) || Boolean((doc as { publicar?: boolean } | undefined)?.publicar)
 
 const validateIndicatorData: GlobalBeforeChangeHook = ({ data, originalDoc, req }) => {
   const merged = { ...(originalDoc ?? {}), ...data } as Record<string, unknown>
@@ -97,7 +99,11 @@ export const Indicadores: GlobalConfig = {
     ],
     ...revalidateGlobal(['/', '/transparencia']),
   },
-  access: { read: publishedOrLoggedIn, update: canManageContent },
+  access: {
+    read: publishedOrLoggedIn,
+    readVersions: isAuthenticated,
+    update: canManageContent,
+  },
   fields: [
     {
       name: 'publicar',

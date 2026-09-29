@@ -93,6 +93,7 @@ jobs:
           pnpm start > test-results/server.log 2>&1 &
           node scripts/ci-smoke-production.mjs
           pnpm exec playwright test
+          node scripts/ci-audit-admin.mjs
         env:
           SMOKE_BASE_URL: http://localhost:3000
           PLAYWRIGHT_BASE_URL: http://localhost:3000

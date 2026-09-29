@@ -10,6 +10,6 @@ test('reunião publicada exibe participação e filtros sem revelar reunião res
   await page.getByLabel('Tipo de reunião').selectOption('extraordinaria')
   await expect(page.getByText('Nenhuma reunião neste filtro.')).toBeVisible()
   await page.getByLabel('Tipo de reunião').selectOption('ordinaria')
-  await page.getByLabel('Ano', { exact: true }).selectOption('2026')
+  await page.getByRole('combobox', { name: /^Ano/ }).selectOption('2026')
   await expect(page.getByRole('heading', { name: /CI public meeting/ })).toBeVisible()
 })

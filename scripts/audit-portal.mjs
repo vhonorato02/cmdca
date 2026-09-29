@@ -2,9 +2,18 @@ import { chromium } from '@playwright/test'
 import fs from 'node:fs/promises'
 
 const base = process.env.AUDIT_BASE_URL || 'http://localhost:3000'
-const routes = ['/', '/ajuda', '/conselho', '/reunioes', '/transparencia', '/noticias', '/participe', '/fmdca', '/editais', '/resolucoes', '/entidades', '/conferencias', '/privacidade', '/acessibilidade', '/creditos', '/mapa-do-site', '/admin/login']
+const routes = ['/', '/ajuda', '/conselho', '/reunioes', '/transparencia', '/noticias', '/participe', '/fmdca', '/editais', '/resolucoes', '/entidades', '/conferencias', '/privacidade', '/acessibilidade', '/creditos', '/mapa-do-site', '/pagina-inexistente-ci']
+if (process.env.AUDIT_INCLUDE_ADMIN !== 'false') routes.push('/admin/login')
+if (process.env.AUDIT_NEWS === 'true') {
+  const response = await fetch(new URL('/api/noticias?limit=100&depth=0', base))
+  if (!response.ok) throw new Error(`Unable to enumerate public news: HTTP ${response.status}`)
+  const news = await response.json()
+  for (const item of news.docs) {
+    if (item.slug) routes.push(`/noticias/${encodeURIComponent(item.slug)}`)
+  }
+}
 const widths = [1440, 1024, 768, 390]
-const directory = 'test-results/portal-audit'
+const directory = process.env.AUDIT_OUTPUT_DIR || 'test-results/portal-audit'
 await fs.mkdir(directory, { recursive: true })
 const browser = await chromium.launch({ headless: true })
 const page = await browser.newPage()

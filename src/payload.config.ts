@@ -88,15 +88,20 @@ function withVerifyFullSSL(uri: string | undefined): string {
 }
 const secureConnectionString = withVerifyFullSSL(connectionString)
 
-// Adaptador de e-mail real (ex.: reset de senha) só é ativado quando há SMTP
-// configurado. Sem SMTP_HOST, o Payload usa o adaptador padrão (log no console),
-// preservando o comportamento de desenvolvimento.
-const emailAdapter = process.env.SMTP_HOST
+// PENDENCIA: configurar SMTP real e remetente validado no ambiente hospedado.
+// Impede recuperação de senha simulada e links sensíveis escritos no console.
+const smtpHost = requiredInHostedProduction('SMTP_HOST')
+const emailFromAddress = requiredInHostedProduction('EMAIL_FROM_ADDRESS')
+if (smtpHost && !emailFromAddress) {
+  throw new Error('EMAIL_FROM_ADDRESS é obrigatória quando SMTP_HOST está configurado.')
+}
+// O adaptador de console permanece restrito ao desenvolvimento e ao CI isolado.
+const emailAdapter = smtpHost
   ? nodemailerAdapter({
       defaultFromName: process.env.EMAIL_FROM_NAME || 'CMDCA Pindamonhangaba',
-      defaultFromAddress: process.env.EMAIL_FROM_ADDRESS || 'nao-responder@cmdca-pinda.local',
+      defaultFromAddress: emailFromAddress!,
       transport: nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
+        host: smtpHost,
         port: Number(process.env.SMTP_PORT || 587),
         secure: process.env.SMTP_SECURE === 'true',
         auth:

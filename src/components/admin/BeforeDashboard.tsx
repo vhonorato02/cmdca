@@ -57,7 +57,7 @@ export default function BeforeDashboard() {
       <div className="cmdca-dashboard__header">
         <div>
           <span className="cmdca-dashboard__eyebrow">Painel de conteúdo</span>
-          <h2 id="cmdca-dashboard-title">CMDCA Pindamonhangaba</h2>
+          <h1 id="cmdca-dashboard-title">CMDCA Pindamonhangaba</h1>
         </div>
         <span className={`cmdca-dashboard__role cmdca-dashboard__role--${role}`}>
           {role === 'admin' ? 'Administração' : role === 'juridico' ? 'Conteúdo jurídico' : 'Editor'}

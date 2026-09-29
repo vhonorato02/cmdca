@@ -7,7 +7,7 @@ export const DEFAULT_DESCRIPTION =
   'Portal do CMDCA de Pindamonhangaba: proteção de crianças e adolescentes, atos oficiais, reuniões, transparência e participação social.'
 
 const UNVERIFIED_PATTERN =
-  /\[?\s*a confirmar\s*\]?|dado(?:s)? ilustrativo(?:s)?|conte[uú]do ilustrativo|depoimento ilustrativo|percentual ilustrativo|pend[eê]ncia|placeholder|lorem ipsum/i
+  /\[?\s*a confirmar\s*\]?|dado(?:s)? ilustrativo(?:s)?|conte[uú]do ilustrativo|depoimento ilustrativo|percentual ilustrativo|\bpend[eê]ncias?\b|placeholder|lorem ipsum/i
 
 function withProtocol(value: string) {
   return /^https?:\/\//i.test(value) ? value : `https://${value}`

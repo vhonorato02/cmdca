@@ -13,5 +13,6 @@ describe('public content boundary', () => {
     expect(publicText('PENDENCIA: contato não informado')).toBeUndefined()
     expect(publicText('Lorem ipsum')).toBeUndefined()
     expect(publicText('Conselho Municipal')).toBe('Conselho Municipal')
+    expect(publicText('Autonomia e independência')).toBe('Autonomia e independência')
   })
 })

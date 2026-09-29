@@ -79,3 +79,13 @@ Próxima ação: publicar encerramento correto do teste CMS, acompanhar Actions 
 - Todos os especialistas desta rodada encerrados. Produção ainda não recebeu deploy nem migração. VERCEL_TOKEN continua ausente; IDs já cadastrados.
 
 Próxima ação: obter resultado do Actions36590251825 e corrigir o que falhar antes de publicar produção; concluir cobertura visual e integrações reais.
+
+## CI e revisão visual confirmados em 29/09/2026
+- Actions36597567106 (0fd8852) aprovado: migrações PostgreSQL16 efêmero, integração CMS, lint/tipos,58 testes unitários, build remoto, smoke e90 testes Playwright.
+- Actions36598320988 (f0ddba1) confirmou as mesmas etapas até build e90 testes de navegador, mas4 testes novos falharam. Diagnóstico: requisições Node do teste de sessão não incluíam Origin/Sec-Fetch-Site exigidos pelo Payload; login pelo formulário chegou ao painel. Filtro Ano tem nome acessível composto pelo label e opções, incompatível com seletor exato do teste. Correções mantêm asserções de autorização e usam fetch do navegador.
+- Verifier inspecionou88 capturas,22 rotas em1440/1024/768/390. Encontrou breadcrumbs de3 notícias abaixo de44px; CSS corrigido e revalidação em curso. Duas notícias publicadas no banco contêm [A CONFIRMAR] e o frontend as oculta com404. Pendência editorial real, conteúdo operacional preservado.
+- Regex de pendência corrigida para não rejeitar a palavra independência; regressão incluída.
+- Auditoria visual autenticada do CMS será executada no banco isolado do Actions. Capturas não devem ser confundidas com inspeção visual concluída.
+- Nenhum deploy ou migração operacional executado. GitHub ainda sem VERCEL_TOKEN; SMTP e R2 reais em verificação independente.
+
+Próxima ação: aprovar a revisão final no CI, inspecionar capturas CMS e concluir publicação quando a credencial Vercel estiver disponível.

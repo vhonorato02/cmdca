@@ -25,6 +25,8 @@ Cadastre os três segredos no repositório `vhonorato02/cmdca`. Os valores de or
 
 Os segredos nunca devem ser adicionados a arquivos, logs, comandos locais ou commits. Enquanto estiverem ausentes, a execução manual falha antes de qualquer acesso à Vercel, migração ou deploy.
 
+Na Vercel, a produção também exige `SMTP_HOST` e `EMAIL_FROM_ADDRESS` com remetente real validado, além das credenciais de SMTP quando o provedor exigir autenticação. A aplicação recusa o adaptador de e-mail de console em produção, para evitar recuperação de senha simulada e links sensíveis nos logs. O teste de recebimento real continua obrigatório após configurar o serviço.
+
 ## Executar a entrega
 
 1. Envie para `main` somente uma revisão já aprovada.

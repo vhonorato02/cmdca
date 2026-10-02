@@ -161,6 +161,8 @@ export default buildConfig({
   csrf: allowedOrigins,
   admin: {
     user: Users.slug,
+    // No third-party avatar request: Gravatar would receive a hash of each editor e-mail.
+    avatar: 'default',
     dateFormat: "dd/MM/yyyy 'às' HH:mm",
     importMap: {
       baseDir: path.resolve(dirname),

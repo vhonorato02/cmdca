@@ -31,6 +31,25 @@ function nameUnlabelledInputs() {
     .forEach((button) => {
       if (!button.textContent?.trim()) button.setAttribute('aria-label', 'Mais opções')
     })
+  // Group labels are h3 directly under the document h1; expose them as level 2.
+  document.querySelectorAll('h3.group-field__title:not([aria-level])').forEach((heading) => {
+    heading.setAttribute('aria-level', '2')
+  })
+  // Autosave creates the draft before it has a title, and Payload then shows the
+  // numeric ID as the page heading. Show an explicit placeholder in a node we own.
+  document.querySelectorAll('h1.render-title').forEach((heading) => {
+    const placeholder = heading.querySelector(':scope > .cmdca-untitled')
+    if (heading.classList.contains('render-title--has-id')) {
+      if (!placeholder) {
+        const span = document.createElement('span')
+        span.className = 'cmdca-untitled'
+        span.textContent = '[Sem título]'
+        heading.append(span)
+      }
+    } else {
+      placeholder?.remove()
+    }
+  })
 }
 
 /**

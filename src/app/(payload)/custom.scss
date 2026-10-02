@@ -167,3 +167,7 @@
 @media (prefers-reduced-motion: reduce) {
   .cmdca-shortcut { transition: none; }
 }
+
+/* Untitled drafts: AdminA11yProvider replaces the numeric ID shown as heading. */
+.render-title--has-id > .render-title__id { display: none; }
+.render-title:not(.render-title--has-id) > .cmdca-untitled { display: none; }

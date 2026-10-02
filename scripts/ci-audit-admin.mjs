@@ -140,7 +140,8 @@ async function collectPageMetrics(page) {
     const headings = [...document.querySelectorAll('h1,h2,h3,h4,h5,h6')]
       .filter(isVisible)
       .map((element) => ({
-        level: Number(element.tagName.slice(1)),
+        // aria-level is the level exposed to assistive technology.
+        level: Number(element.getAttribute('aria-level') || element.tagName.slice(1)),
         text: element.textContent?.trim().slice(0, 200) || '',
       }))
     const headingSkips = headings.flatMap((heading, index) => {
@@ -167,7 +168,9 @@ async function collectPageMetrics(page) {
       .filter(isVisible)
       .filter((element) => {
         if (element instanceof HTMLInputElement && element.type === 'hidden') return false
-        const rect = element.getBoundingClientRect()
+        // A react-select typing input sits inside its control, which is the touch target.
+        const target = element.matches('.rs__input') ? element.closest('.rs__control') || element : element
+        const rect = target.getBoundingClientRect()
         return rect.width < 44 || rect.height < 44
       })
       .slice(0, 100)

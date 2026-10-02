@@ -10,7 +10,9 @@ import { useEffect, type ReactNode } from 'react'
  */
 function nameUnlabelledInputs() {
   document.querySelectorAll<HTMLLabelElement>('.field-type label.field-label').forEach((label) => {
-    if (label.htmlFor && document.getElementById(label.htmlFor)) return
+    // Payload puts the label target id on a wrapper div for date fields.
+    const target = label.htmlFor ? document.getElementById(label.htmlFor) : null
+    if (target?.matches('input, select, textarea, button')) return
     const field = label.closest('.field-type')
     const input = field?.querySelector<HTMLInputElement>(
       'input:not([type="hidden"]):not([aria-label]):not([aria-labelledby])',

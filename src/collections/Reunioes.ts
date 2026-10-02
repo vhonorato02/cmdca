@@ -98,7 +98,7 @@ export const Reunioes: CollectionConfig = {
       label: 'Título / Referência',
       type: 'text',
       required: true,
-      admin: { description: 'Ex.: “Reunião Ordinária — março de 2026”.' },
+      admin: { description: 'Ex.: “Reunião Ordinária de março de 2026”.' },
     },
     {
       type: 'row',

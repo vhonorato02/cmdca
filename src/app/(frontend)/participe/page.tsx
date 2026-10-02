@@ -71,6 +71,12 @@ export default async function ParticipePage() {
                 ) : null}
                 {telefone ? <div className="ro">Telefone: {telefone}</div> : null}
                 {cep ? <div className="ro">CEP: {cep}</div> : null}
+                {!email && !telefone && !cep ? (
+                  // PENDENCIA: e-mail e telefone oficiais do CMDCA a confirmar pelo conselho no CMS.
+                  <div className="ro" style={{ marginTop: 8 }}>
+                    Canais oficiais em atualização. Use os dados da Casa dos Conselhos abaixo.
+                  </div>
+                ) : null}
                 <hr />
                 <span className="k">Casa dos Conselhos</span>
                 {casaTelefone ? (

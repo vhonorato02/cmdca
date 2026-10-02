@@ -97,10 +97,10 @@ export default async function PrivacidadePage() {
               </p>
 
               <h2>Fornecedores e compartilhamento</h2>
-              {/* PENDENCIA: revisar a lista de fornecedores (hospedagem e banco) quando a migração para a VPS com Coolify for concluída. */}
+              {/* PENDENCIA: revisar a lista de fornecedores (hospedagem e banco) após confirmar o provedor da VPS, a região e o contrato de tratamento de dados. */}
               <p>
                 Para operar o serviço, dados técnicos podem ser processados por fornecedores de
-                hospedagem e entrega da aplicação (Vercel), banco de dados (Neon), armazenamento de
+                hospedagem da aplicação na VPS contratada pelo projeto, banco de dados (Neon), armazenamento de
                 mídia (Cloudflare R2) e envio de e-mail, quando configurado. VLibras e mapas do
                 OpenStreetMap também podem receber dados técnicos necessários quando seus recursos
                 são carregados. As fontes tipográficas são entregues pelo próprio site, sem chamada

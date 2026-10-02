@@ -53,6 +53,9 @@ for (const [route, labels] of Object.entries(STATUS_LABELS)) {
     await page.goto(route)
     const items = page.locator('main ul.meeting-list > li')
     const count = await items.count()
+    if (process.env.GITHUB_ACTIONS === 'true') {
+      expect(count, `${route} precisa exercitar conteúdo publicado no CI`).toBeGreaterThan(0)
+    }
     if (!count) {
       await expect(page.getByText(/^Não há .+ no momento\.$/)).toBeVisible()
       return
@@ -69,6 +72,22 @@ for (const [route, labels] of Object.entries(STATUS_LABELS)) {
     }
   })
 }
+
+test('fixtures publicadas preservam situação suspensa e revogada sem listas vazias', async ({ page }) => {
+  test.skip(process.env.GITHUB_ACTIONS !== 'true', 'Only isolated CI fixtures')
+  for (const [route, name, status] of [
+    ['/entidades', 'CI suspended organization', 'Situação: Registro suspenso'],
+    ['/resolucoes', 'CI revoked resolution', 'Situação: Revogada'],
+    ['/editais', 'CI suspended public notice', 'Situação: Suspenso'],
+  ]) {
+    await page.goto(route)
+    const item = page.locator('main ul.meeting-list > li').filter({ hasText: name })
+    await expect(item).toHaveCount(1)
+    await expect(item.locator('.pill[class*="status-"]')).toHaveText(status)
+  }
+  await page.goto('/noticias')
+  await expect(page.getByRole('link', { name: /CI published institutional news/i }).first()).toBeVisible()
+})
 
 test('rodapé leva ao mapa do site e ao bloco dos Conselhos Tutelares', async ({ page }) => {
   await page.goto('/')

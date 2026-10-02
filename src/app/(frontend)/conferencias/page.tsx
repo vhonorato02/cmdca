@@ -73,7 +73,7 @@ export default async function ConferenciasPage() {
                 </p>
               </div>
               <div className="lead-box">
-                <span className="k">Registro histórico — 2025</span>
+                <span className="k">Registro histórico de 2025</span>
                 <p style={{ marginTop: 8, color: 'var(--ink-2)', fontSize: '.92rem' }}>
                   De <b>22 a 26 de setembro de 2025</b>, a Semana Municipal dos Direitos da Criança
                   e do Adolescente ocorreu no Centro Social Salesiano, marcando os 35 anos do ECA,

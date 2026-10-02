@@ -4,7 +4,7 @@
 
 | Frequência | Verificação |
 | --- | --- |
-| a cada deploy do GitHub Actions | status do workflow e Vercel, logs, smoke público/admin, migrações, e-mail de recuperação |
+| a cada deploy do GitHub Actions | status do workflow e Coolify, logs, smoke público/admin, migrações, e-mail de recuperação |
 | semanal | falhas 4xx/5xx anormais, contas administrativas, conteúdo com prazo próximo |
 | mensal | restaurabilidade do backup Neon, inventário R2, contatos/emergência e dependências |
 | trimestral | rotação de credenciais conforme política, revisão de acessos e recuperação simulada |
@@ -26,7 +26,7 @@ Migrations são código de produção. Aplique-as exclusivamente pelo workflow d
 
 3. Revise o arquivo gerado. Procure `DROP`, alteração de tipo, coluna obrigatória sem valor padrão e reescrita de tabela.
 4. Confirme que não há outro workflow de produção ou migração em andamento.
-5. Envie a alteração pelo repositório e inicie o workflow de produção do GitHub Actions. Ele executa as verificações, aplica a migração com a conexão direta e publica na Vercel, uma entrega por vez.
+5. Envie a alteração pelo repositório e inicie o workflow de produção do GitHub Actions. Ele executa as verificações, aplica a migração com a conexão direta e publica na Coolify, uma entrega por vez.
 6. Verifique a produção e registre o horário da migração para eventual recuperação pelo histórico do Neon.
 
 Para mudança incompatível, use expansão e contração em entregas separadas: primeiro adicione campos/tabelas compatíveis, depois migre e confira dados, só em uma entrega posterior remova o formato antigo. Rollback de código não resolve schema destrutivo.
@@ -43,14 +43,16 @@ Nunca execute `pnpm migrate`, `pnpm seed` ou `pnpm apply:confirmados` como rotin
 
 ### Cloudflare R2
 
+Para verificar credenciais de gravação/leitura sem alterar registros do CMS, execute `node scripts/verify-storage.mjs` com as variáveis R2 configuradas. O script registra uma chave UUID em `codex-verification/` antes de enviar um pequeno arquivo, compara os bytes lidos e remove somente o objeto comprovadamente criado. Consulte `test-results/storage-verification.json`: o resultado deve ser `passed` e a limpeza `completed`. Se o processo for interrompido, use a chave registrada para conferir o objeto antes de removê-lo. Esse teste não substitui o upload autenticado pelo CMS.
+
 - habilite versionamento ou uma política de cópia/backup compatível com a criticidade dos documentos;
 - mantenha inventário de objetos e retenção alinhada à política documental;
 - uma linha restaurada no Neon pode apontar para objeto já excluído no R2;
 - uma mídia retirada por privacidade pode continuar em versão/cache: trate remoção como procedimento completo.
 
-### GitHub e Vercel
+### GitHub, GHCR e Coolify
 
-Git preserva código e migrações. Vercel preserva deployments dentro dos limites da conta. Nenhum dos dois é backup do banco ou do bucket.
+Git preserva código e migrações. GHCR preserva imagens publicadas e o Coolify registra implantações, conforme retenção configurada. Nenhum dos dois é backup do banco ou do bucket.
 
 ## Rollback por cenário
 
@@ -88,7 +90,7 @@ Git preserva código e migrações. Vercel preserva deployments dentro dos limit
 Em vazamento real ou suspeito, assuma comprometimento:
 
 1. restrinja acesso ao painel e preserve logs;
-2. rotacione `PAYLOAD_SECRET` na Vercel, causando encerramento das sessões;
+2. rotacione `PAYLOAD_SECRET` na Coolify, causando encerramento das sessões;
 3. rotacione senha/role do Neon e atualize as duas URIs;
 4. rotacione chave limitada do R2 e revogue a anterior;
 5. rotacione SMTP e contas administrativas afetadas;
@@ -108,7 +110,7 @@ Localmente, `pnpm clean` remove somente artefatos gerados seguros. Em produção
 - revalide a rota pelo fluxo normal de publicação;
 - só então invalide cache ou execute novo workflow de produção.
 
-Uma limpeza ampla pode aumentar latência e esconder a causa. Nunca apague `.vercel`, bucket ou dados Neon como método de troubleshooting.
+Uma limpeza ampla pode aumentar latência e esconder a causa. Nunca apague volumes, bucket ou dados Neon como método de troubleshooting.
 
 ## Incidente
 
@@ -122,3 +124,4 @@ Classifique como crítico quando houver credencial exposta, dado pessoal indevid
 - validação final e medidas preventivas.
 
 Não inclua dados pessoais ou segredos no ticket/post-mortem além do estritamente necessário.
+\n\n

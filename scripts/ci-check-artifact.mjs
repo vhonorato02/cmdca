@@ -6,7 +6,7 @@ assert.equal(process.env.GITHUB_ACTIONS, 'true', 'Verificacao do artefato soment
 const secrets = ['DATABASE_URI', 'DATABASE_URI_UNPOOLED', 'PAYLOAD_SECRET', 'S3_SECRET_ACCESS_KEY',
   'S3_ACCESS_KEY_ID', 'SMTP_PASS', 'COOLIFY_TOKEN']
   .map((name) => ({ name, value: process.env[name] }))
-  .filter(({ value }) => value && value.length >= 8)
+  .filter(({ value }) => value)
 let checked = 0
 async function walk(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {

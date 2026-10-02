@@ -153,7 +153,7 @@ export interface Noticia {
   id: number;
   title: string;
   /**
-   * Gerado automaticamente a partir do título. Edite apenas se necessário — altera a URL pública.
+   * Gerado automaticamente a partir do título. Edite apenas se necessário, pois altera a URL pública.
    */
   slug: string;
   categoria: 'noticia' | 'conferencia' | 'evento' | 'gestao' | 'fmdca' | 'orientacao' | 'nota-tecnica';
@@ -343,7 +343,7 @@ export interface User {
 export interface Reunioe {
   id: number;
   /**
-   * Ex.: “Reunião Ordinária — março de 2026”.
+   * Ex.: “Reunião Ordinária de março de 2026”.
    */
   titulo: string;
   data: string;

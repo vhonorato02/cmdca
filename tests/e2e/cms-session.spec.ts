@@ -89,7 +89,9 @@ test('editor salva, publica e despublica uma FAQ pelo formulário', async ({ pag
   await page.getByRole('button', { name: /salvar rascunho/i }).click()
   await expect(page).toHaveURL(/\/admin\/collections\/faq\/\d+/)
   const documentID = new URL(page.url()).pathname.split('/').pop()!
-  const publicContext = await browser.newContext()
+  const publicContext = await browser.newContext({
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
+  })
   try {
     expect((await publicContext.request.get(`/api/faq/${documentID}?depth=0`)).status()).toBe(404)
     await page.getByRole('button', { name: /^publicar(?: alterações)?$/i }).click()

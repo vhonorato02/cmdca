@@ -10,6 +10,8 @@ try {
 }
 
 process.loadEnvFile(envFile)
+// Validate hosted requirements, including real email, before applying any SQL.
+process.env.ENFORCE_PRODUCTION_ENV = 'true'
 
 const child = spawn('pnpm', ['migrate'], {
   env: process.env,

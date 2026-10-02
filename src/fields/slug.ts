@@ -21,7 +21,7 @@ export const slugField = ({ trackingField = 'title' }: SlugOptions = {}): Field 
   admin: {
     position: 'sidebar',
     description:
-      'Gerado automaticamente a partir do título. Edite apenas se necessário — altera a URL pública.',
+      'Gerado automaticamente a partir do título. Edite apenas se necessário, pois altera a URL pública.',
   },
   hooks: {
     beforeValidate: [

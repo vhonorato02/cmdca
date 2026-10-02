@@ -79,7 +79,7 @@ Para Core Web Vitals, use dados de campo quando houver tráfego. Em laboratório
 
 ## 5. Produção na URL canônica
 
-Depois que a Vercel marcar **Ready**:
+Depois que o Coolify concluir o deploy e o container estiver saudável:
 
 1. repita o smoke das rotas públicas em janela anônima;
 2. confirme commit e deployment efetivamente servidos;
@@ -97,7 +97,7 @@ Depois que a Vercel marcar **Ready**:
 O registro final deve conter, sem segredos:
 
 - SHA do commit e branch `main`;
-- ID/URL do deployment Vercel e domínio canônico testado;
+- ID do deploy Coolify, tag da imagem e domínio canônico testado;
 - resultado e horário de `pnpm check` e `pnpm build`;
 - migration aplicada e resultado de `migrate:status`;
 - horário/ponto de recuperação Neon pré-entrega, quando aplicável;
@@ -105,4 +105,4 @@ O registro final deve conter, sem segredos:
 - resultado de login, papéis, R2 e SMTP;
 - erros conhecidos e decisão explícita sobre qualquer pendência.
 
-Não use “tudo certo” como evidência. Liste o que foi realmente executado e diferencie local, GitHub, Vercel, Neon, R2 e e-mail.
+Não use “tudo certo” como evidência. Liste o que foi realmente executado e diferencie local, GitHub, VPS/Coolify, Neon, R2 e e-mail. Capturas geradas não equivalem a inspeção visual. Os scripts agora reprovam dimensões menores que 44 px, overflow, hierarquia e erros de navegador, além de guardar as imagens para revisão.

@@ -40,7 +40,14 @@ try {
           horizontalOverflow: document.documentElement.scrollWidth > innerWidth,
           overflowing: [...document.querySelectorAll('main *')].filter(shown).filter(e => e.getBoundingClientRect().right > innerWidth + 1).slice(0,15).map(e => e.tagName + '.' + e.className),
           images: [...document.images].map(e => ({ src: e.getAttribute('src')?.split('?')[0], alt: e.getAttribute('alt'), loaded: e.complete && e.naturalWidth > 0 })),
-          smallTargets: [...document.querySelectorAll('a,button,input,select')].filter(shown).filter(e => { const r = e.getBoundingClientRect(); return r.width < 44 || r.height < 44 }).map(e => ({ text: e.textContent.trim().slice(0,80) || e.getAttribute('aria-label'), tag: e.tagName, width: e.getBoundingClientRect().width, height: e.getBoundingClientRect().height })),
+          // WCAG 2.5.8 inline exception: a link inside a sentence is constrained by line height.
+          smallTargets: [...document.querySelectorAll('a,button,input,select')].filter(shown).filter(e => {
+            if (e.tagName === 'A' && getComputedStyle(e).display === 'inline') {
+              const block = e.closest('p,li,dd,td,figcaption')
+              if (block && block.textContent.replace(/\s+/g, ' ').trim().length > e.textContent.replace(/\s+/g, ' ').trim().length + 3) return false
+            }
+            const r = e.getBoundingClientRect(); return r.width < 44 || r.height < 44
+          }).map(e => ({ text: e.textContent.trim().slice(0,80) || e.getAttribute('aria-label'), tag: e.tagName, width: e.getBoundingClientRect().width, height: e.getBoundingClientRect().height })),
           links: [...new Set([...document.querySelectorAll('a[href]')].map(e => e.href))],
           mainText: document.querySelector('main')?.textContent?.trim().slice(0,150)
         }

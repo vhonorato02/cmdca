@@ -20,11 +20,11 @@ supportedArchitectures:
 # dependências do Payload. Remover quando o upstream passar a resolver versões
 # iguais ou superiores.
 overrides:
-  fast-uri: 3.1.7
+  fast-uri: 3.1.8
   undici: 7.29.1
-  nodemailer: 10.0.2
-  'brace-expansion@^1': 1.1.18
-  'brace-expansion@^5': 5.0.9
+  nodemailer: 10.0.9
+  'brace-expansion@^1': 1.1.21
+  'brace-expansion@^5': 5.0.12
   js-yaml: 4.3.2
   browserslist: 4.28.7
   baseline-browser-mapping: 2.11.0
@@ -61,3 +61,4 @@ minimumReleaseAgeExclude:
   - '@img/sharp-win32-ia32@0.35.5'
   - '@img/sharp-win32-x64@0.35.5'
   - sharp@0.35.5
+\n\n\n

@@ -865,7 +865,30 @@ html.contrast .sec-head .more {
   border-left: 1px solid var(--line);
 }
 
-.links a {
+/* Fewer cards fill the row instead of leaving empty columns. Same specificity as
+   .links so the responsive rules declared later still win. */
+.links:where(:has(> :nth-child(3):last-child)) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.links:where(:has(> :nth-child(2):last-child)) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.links > div {
+  min-width: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.links > div > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 6px;
+}
+
+.links > a {
   position: relative;
   min-width: 0;
   min-height: 170px;
@@ -879,7 +902,7 @@ html.contrast .sec-head .more {
     transform 0.18s ease;
 }
 
-.links a::after {
+.links > a::after {
   position: absolute;
   right: 22px;
   bottom: 18px;
@@ -890,12 +913,12 @@ html.contrast .sec-head .more {
   transition: width 0.18s ease;
 }
 
-.links a:hover {
+.links > a:hover {
   z-index: 1;
   background: var(--card);
 }
 
-.links a:hover::after {
+.links > a:hover::after {
   width: 52px;
 }
 
@@ -2536,7 +2559,7 @@ footer a:hover {
     grid-template-columns: 1fr;
   }
 
-  .links a {
+  .links > a {
     min-height: 145px;
   }
 
@@ -2742,6 +2765,20 @@ footer a {
   align-items: center;
   max-width: 100%;
   overflow-wrap: anywhere;
+}
+/* Links inside running text keep the line rhythm (WCAG 2.5.8 inline exception). */
+main p a:not(.btn):not(.mini),
+main .post-body li a {
+  display: inline;
+  min-width: 0;
+  min-height: 0;
+}
+/* The official floating VLibras button covers content on small screens; the
+   accessibility bar keeps a labelled button that opens the same translator. */
+@media (max-width: 600px) {
+  html body div[vw].enabled [vw-access-button].active {
+    display: none !important;
+  }
 }
 footer nav a {
   display: flex;

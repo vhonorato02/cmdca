@@ -39,7 +39,7 @@
     "graphql": "^16.14.2",
     "leaflet": "^1.9.4",
     "next": "16.3.6",
-    "nodemailer": "10.0.2",
+    "nodemailer": "10.0.9",
     "payload": "3.90.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
@@ -66,3 +66,4 @@
     "pnpm": ">=11 <12"
   }
 }
+\n\n

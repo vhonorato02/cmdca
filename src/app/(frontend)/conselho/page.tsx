@@ -213,7 +213,7 @@ export default async function ConselhoPage() {
                 <span>Base federal</span>
                 <span>
                   <a href={ECA_URL} target="_blank" rel="noopener noreferrer">
-                    ECA — Lei Federal nº 8.069/1990
+                    ECA: Lei Federal nº 8.069/1990
                   </a>
                 </span>
               </div>

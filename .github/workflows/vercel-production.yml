@@ -1,4 +1,4 @@
-name: Qualidade e deploy Vercel
+name: Legacy Vercel delivery disabled
 
 on:
   workflow_dispatch:
@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   quality:
+    if: false # CMDCA production is exclusively delivered to the Ze Coolify VPS.
     uses: ./.github/workflows/quality.yml
 
   production:

@@ -15,11 +15,15 @@ function nameUnlabelledInputs() {
     if (target?.matches('input, select, textarea, button')) return
     const field = label.closest('.field-type')
     const input = field?.querySelector<HTMLInputElement>(
-      'input:not([type="hidden"]):not([aria-label]):not([aria-labelledby])',
+      'input:not([type="hidden"]):not([aria-labelledby]):not([aria-label]), input[data-cmdca-label]',
     )
     if (!input || input.labels?.length || input.closest('.field-type') !== field) return
     const text = label.textContent?.replace(/\*/g, '').trim()
-    if (text) input.setAttribute('aria-label', text)
+    // The marker lets reordered array rows receive their new label.
+    if (text && input.getAttribute('aria-label') !== text) {
+      input.setAttribute('aria-label', text)
+      input.setAttribute('data-cmdca-label', '')
+    }
   })
 }
 

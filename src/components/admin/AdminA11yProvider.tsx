@@ -1,7 +1,25 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
+
+/**
+ * Payload labels point to an id that the date picker and select inputs do not
+ * carry, so screen readers announce those inputs without a name. Copy the
+ * visible label text to the input when no association exists.
+ */
+function nameUnlabelledInputs() {
+  document.querySelectorAll<HTMLLabelElement>('.field-type label.field-label').forEach((label) => {
+    if (label.htmlFor && document.getElementById(label.htmlFor)) return
+    const field = label.closest('.field-type')
+    const input = field?.querySelector<HTMLInputElement>(
+      'input:not([type="hidden"]):not([aria-label]):not([aria-labelledby])',
+    )
+    if (!input || input.labels?.length || input.closest('.field-type') !== field) return
+    const text = label.textContent?.replace(/\*/g, '').trim()
+    if (text) input.setAttribute('aria-label', text)
+  })
+}
 
 /**
  * Acrescenta o landmark principal que o shell do Payload não fornece.
@@ -11,6 +29,21 @@ import type { ReactNode } from 'react'
 export default function AdminA11yProvider({ children }: { children?: ReactNode }) {
   const pathname = usePathname()
   const isLogin = pathname.endsWith('/login')
+
+  useEffect(() => {
+    let frame = 0
+    const schedule = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(nameUnlabelledInputs)
+    }
+    schedule()
+    const observer = new MutationObserver(schedule)
+    observer.observe(document.body, { childList: true, subtree: true })
+    return () => {
+      cancelAnimationFrame(frame)
+      observer.disconnect()
+    }
+  }, [])
 
   return (
     <main className="cmdca-admin-main">

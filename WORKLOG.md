@@ -116,3 +116,13 @@ Próxima ação: integrar correção de hierarquia, publicar revisão e repetir 
 - Banco Neon e armazenamento R2 operacionais preservados. Mutações de QA somente PostgreSQL efêmero no Actions.
 - Cache .next movido parcialmente ao C:; diretórios vazios readonly ficaram no Z:. Revisão automática bloqueou remoção residual. Preservados; diagnóstico usa cópia em C:\Users\Ze\.codex\tmp\cmdca-qa\runtime. Nenhum build de produção local.
 - Próxima ação: implementar artefato standalone e pipeline Coolify, executar QA remoto, integrar correções, revisar e registrar bloqueios reais.
+
+## Integração Coolify e correções visuais em 02/10/2026
+- 4fe3c9f: build standalone, Dockerfile nonroot Node 24, /api/health e Qualidade sobre o container. CI 36947460827 aprovado (94 Playwright, 68 capturas do portal sem falhas, 16 do CMS).
+- 8bd808a: privacidade editorial (ata em reunião reservada, consentimento de depoimento, marcador de pendência), CMS em português, situação de resoluções, editais e entidades, auditorias viraram gates. CI 36949074812 falhou só no typecheck de ci-test-cms.ts, corrigido.
+- 7993234: workflow manual Producao Coolify (GHCR com tag única e digest, fingerprint de env, smoke canônico), Vercel desativado, nodemailer 10.0.9, fast-uri 3.1.8, brace-expansion 1.1.21 e 5.0.12, GITHUB_ACTIONS repassado ao container de CI (revisor P1), fixtures CMS publicadas e PDF por stub S3 local.
+- Achados visuais corrigidos: grade .links estilizava links dentro dos cartões (FMDCA) e deixava colunas vazias com 2 ou 3 itens (Conselho); links dentro de frases quebravam o ritmo por altura mínima de 44 px (exceção inline WCAG 2.5.8, auditoria ajustada); botão flutuante do VLibras cobria conteúdo em 390 px (oculto até 600 px, a barra de acessibilidade abre o mesmo tradutor); travessões visíveis removidos; Participe sem contato mostra aviso em vez de bloco vazio.
+- "CI draft question" no FAQ era fixture publicada de propósito no banco efêmero, não vazamento. Renomeada para CI fixture question.
+- c521488: corrigido literal de quebra de linha acrescentado por engano ao fim de package.json e de três arquivos, que quebrou o pnpm/action-setup no CI 36950531833.
+- HANDOFF.md reescrito com pendências reais.
+- Bloqueios: SSH da VPS recusado; URL do Coolify, UUIDs, token e domínio não informados; SMTP real ausente. Nenhum deploy e nenhuma migração em produção.

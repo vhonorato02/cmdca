@@ -161,6 +161,7 @@ export default buildConfig({
   csrf: allowedOrigins,
   admin: {
     user: Users.slug,
+    dateFormat: "dd/MM/yyyy 'às' HH:mm",
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -201,6 +202,7 @@ export default buildConfig({
             thisLanguage: 'Português do Brasil',
             email: 'E-mail',
             emailAddress: 'Endereço de e-mail',
+            menu: 'Menu',
           },
         },
       },

@@ -281,8 +281,20 @@ async function captureRoute({ context, baseURL, route, width, password, authenti
     await waitForAdminReady(page)
     const finalPath = normalizePathname(page.url())
     const expectedPath = normalizePathname(new URL(route, baseURL).href)
-    if (finalPath !== expectedPath) {
+    const createdDraft = route.endsWith('/create') && /^\/admin\/collections\/noticias\/\d+$/.test(finalPath)
+    if (finalPath !== expectedPath && !createdDraft) {
       throw new Error(`Unexpected redirect from ${route} to ${finalPath}.`)
+    }
+    if (createdDraft) {
+      // Payload auto-creates a draft before rendering its edit form. This is
+      // allowed only inside the guarded ephemeral CI database, never production.
+      const draft = await page.evaluate(async (id) => {
+        const response = await fetch(`/api/noticias/${id}?depth=0&draft=true`)
+        return { status: response.status, publication: (await response.json())._status }
+      }, finalPath.split('/').at(-1))
+      if (draft.status !== 200 || draft.publication !== 'draft') {
+        throw new Error('New document must remain an unpublished CI draft.')
+      }
     }
 
     const accessibleH1s = await collectAccessibleH1s(page)

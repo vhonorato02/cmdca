@@ -1,0 +1,12 @@
+**
+!Dockerfile
+!.next
+!.next/standalone
+!.next/standalone/**
+!.next/static
+!.next/static/**
+!public
+!public/**
+**/.env*
+**/*.log
+**/test-results

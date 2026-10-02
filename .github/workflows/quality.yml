@@ -18,7 +18,7 @@ concurrency:
 jobs:
   quality:
     name: Migrations, verificacoes e build
-    timeout-minutes: 25
+    timeout-minutes: 35
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -84,19 +84,35 @@ jobs:
       - name: Gerar build com banco migrado
         run: pnpm build
 
+      - name: Montar imagem de execucao sem compilar na VPS
+        run: docker build --tag cmdca-quality:${{ github.sha }} .
+
       - name: Instalar Chromium
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Verificar paginas e login no artefato de producao
         run: |
           mkdir -p test-results
-          pnpm start > test-results/server.log 2>&1 &
+          docker run --detach --name cmdca-quality --network host \
+            -e DATABASE_URI -e DATABASE_URI_UNPOOLED -e PAYLOAD_SECRET \
+            -e NEXT_PUBLIC_SERVER_URL -e NEXT_PUBLIC_R2_PUBLIC_URL \
+            -e S3_BUCKET -e S3_ENDPOINT -e S3_REGION -e S3_ACCESS_KEY_ID \
+            -e S3_SECRET_ACCESS_KEY -e ENFORCE_PRODUCTION_ENV \
+            cmdca-quality:${{ github.sha }}
           node scripts/ci-smoke-production.mjs
           pnpm exec playwright test
           node scripts/ci-audit-admin.mjs
+          AUDIT_NEWS=true AUDIT_INCLUDE_ADMIN=false node scripts/audit-portal.mjs
         env:
           SMOKE_BASE_URL: http://localhost:3000
           PLAYWRIGHT_BASE_URL: http://localhost:3000
+
+      - name: Guardar diagnostico do container
+        if: always()
+        run: |
+          mkdir -p test-results
+          docker logs cmdca-quality > test-results/server.log 2>&1 || true
+          docker inspect --format '{{json .State}}' cmdca-quality > test-results/container-state.json || true
 
       - name: Guardar evidencias do navegador
         if: always()

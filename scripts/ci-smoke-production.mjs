@@ -1,15 +1,22 @@
 import assert from 'node:assert/strict'
 import { chromium } from '@playwright/test'
 
-const url = process.env.SMOKE_BASE_URL || 'https://cmdca.vercel.app/'
+const url = process.env.SMOKE_BASE_URL
+assert.ok(url, 'SMOKE_BASE_URL deve identificar explicitamente o destino do CMDCA')
 const attempts = 12
 const delayMs = 5_000
 
 for (let attempt = 1; attempt <= attempts; attempt += 1) {
   try {
+    const health = await fetch(new URL('/api/health', url), { signal: AbortSignal.timeout(15_000) })
+    assert.equal(health.status, 200, 'Aplicacao ou banco indisponivel')
     for (const route of ['/', '/noticias', '/reunioes']) {
       const response = await fetch(new URL(route, url), { signal: AbortSignal.timeout(15_000) })
       assert.equal(response.status, 200, `${route}: HTTP ${response.status}`)
+      if (process.env.GITHUB_SHA) {
+        assert.equal(response.headers.get('x-release-commit'), process.env.GITHUB_SHA,
+          `${route}: a URL ainda nao serve o commit desta entrega`)
+      }
       const html = await response.text()
       assert.match(html, /<title>[^<]+<\/title>/i, `${route}: titulo ausente`)
       assert.doesNotMatch(html, /Application error:|Internal Server Error/i)

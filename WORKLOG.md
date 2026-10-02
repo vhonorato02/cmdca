@@ -89,3 +89,30 @@ Próxima ação: obter resultado do Actions36590251825 e corrigir o que falhar a
 - Nenhum deploy ou migração operacional executado. GitHub ainda sem VERCEL_TOKEN; SMTP e R2 reais em verificação independente.
 
 Próxima ação: aprovar a revisão final no CI, inspecionar capturas CMS e concluir publicação quando a credencial Vercel estiver disponível.
+
+## Integrações e rastreabilidade de entrega
+- R2 real aprovado com objeto temporário único: PUT condicional, GET com comparação byte a byte e SHA256, DELETE e confirmação404. Script revisado reexecutado em29/09/2026 às16:47UTC, relatório storage-verification.json com cleanup completed. Nenhum registro CMS alterado.
+- Credencial Vercel ausente no ambiente, nos arquivos padrão da CLI e nos secrets do repositório/ambiente production. Conector get_project apresenta incompatibilidade de schema projectId/idOrName; não comprova prontidão de publicação.
+- SMTP não configurado localmente. Removido remetente fictício de fallback e bloqueado adaptador de console na produção hospedada. Ambiente Vercel ainda precisa ser conferido quando houver credencial.
+- Revalidação independente de breadcrumbs concluída:3 notícias em4 larguras, zero alvos pequenos. As2 notícias pendentes não estão na home/listagem/mapa/sitemap.
+- Commit057cdf5 publicado; CI36600019920 em andamento. Dashboard agora tem h1 e grade de3 etapas. Capturas autenticadas em16 combinações serão revisadas após baixar artefatos.
+- Em implementação: cabeçalho X-Release-Commit gerado no build remoto e validação no smoke, para impedir que uma versão antiga no domínio canônico seja aceita como entrega nova.
+
+Próxima ação: revisar o resultado do CI e as capturas CMS; publicação continua condicionada a VERCEL_TOKEN e SMTP real.
+
+## Resultado CI36600019920 e ajustes CMS
+- Os94 testes de navegador passaram, incluindo login com cookie no browser, consulta somente da própria conta, criação de administrador bloqueada, logout e reunião reservada isolada.
+- A auditoria capturou16 telas, mas classificou4 como falha porque a rota create do Payload salva um rascunho inicial e redireciona ao ID. Isso ocorreu somente no banco efêmero. O script agora verifica que o documento criado continua draft antes de aceitar o redirecionamento.
+- Medições CMS encontraram alvos abaixo de44px em login/menu/botões e salto h1→h3 no estado vazio da lista. Correção de dimensões implementada, revisão da extensão para o estado vazio em andamento. Nenhum overflow ou erro de console nas12 capturas com relatório completo.
+- Cabeçalho de revisão e validação de ambiente antes da migração preparados. Não executar produção sem credencial e configuração de e-mail real.
+
+Próxima ação: integrar correção de hierarquia, publicar revisão e repetir o CI com16 capturas completas do CMS.
+
+## Retomada em 01/10/2026: CMDCA e Coolify
+- Escopo confirmado pelo usuário: CMDCA somente; implantação na VPS do Zé com Coolify. Vercel deixa de ser o destino de entrega.
+- Preservadas 11 alterações rastreadas e 3 arquivos novos anteriores. HANDOFF antigo declarava ausência de pendências em conflito com este log, será corrigido.
+- Agentes ativos: interface (frontend), codigo (CMS/backend), rapido (baseline), revisor (auditoria independente). Coordenador: entrega, QA, integração e commits.
+- SSH para zewithane-vps recusado com as chaves disponíveis; nenhum serviço remoto alterado. URL Coolify, domínio e acesso solicitados sem pedir segredos no chat.
+- Banco Neon e armazenamento R2 operacionais preservados. Mutações de QA somente PostgreSQL efêmero no Actions.
+- Cache .next movido parcialmente ao C:; diretórios vazios readonly ficaram no Z:. Revisão automática bloqueou remoção residual. Preservados; diagnóstico usa cópia em C:\Users\Ze\.codex\tmp\cmdca-qa\runtime. Nenhum build de produção local.
+- Próxima ação: implementar artefato standalone e pipeline Coolify, executar QA remoto, integrar correções, revisar e registrar bloqueios reais.

@@ -17,6 +17,7 @@ try {
 }
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   poweredByHeader: false,
   // O binding do sharp é rastreado automaticamente, mas o libvips carregado
   // dinamicamente pode ficar fora do artefato serverless. Incluímos somente o
@@ -59,6 +60,12 @@ const nextConfig: NextConfig = {
         value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
       },
     ]
+
+    // Actions injects this immutable revision while generating the artifact.
+    // The post-deploy smoke verifies the canonical alias serves that revision.
+    if (process.env.GITHUB_SHA && /^[a-f0-9]{40}$/.test(process.env.GITHUB_SHA)) {
+      securityHeaders.push({ key: 'X-Release-Commit', value: process.env.GITHUB_SHA })
+    }
 
     if (process.env.NODE_ENV === 'production') {
       securityHeaders.push({

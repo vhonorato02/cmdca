@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict'
 import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises'
-import { createHash, randomUUID } from 'node:crypto'
+import { createHmac, randomUUID } from 'node:crypto'
 
 // API contract: coollabsio/coolify openapi.yaml, applications, envs and deployments.
 assert.equal(process.env.GITHUB_ACTIONS, 'true', 'Entrega somente pelo GitHub Actions')
 assert.equal(process.env.GITHUB_REPOSITORY, 'vhonorato02/cmdca')
 assert.equal(process.env.GITHUB_REF, 'refs/heads/main')
 const mode = process.argv[2]
-assert.ok(['prepare', 'deploy', 'verify'].includes(mode))
+assert.ok(['prepare', 'deploy', 'verify', 'rollback'].includes(mode))
 const required = (name) => {
   const value = process.env[name]?.trim()
   assert.ok(value, `Configure ${name} no environment production`)
@@ -88,8 +88,32 @@ async function inspect() {
   assert.equal(new URL(env.NEXT_PUBLIC_SERVER_URL).origin, canonical.origin)
   assert.equal(new URL(env.NEXT_PUBLIC_R2_PUBLIC_URL).protocol, 'https:')
   assert.equal(new URL(env.S3_ENDPOINT).protocol, 'https:')
-  const fingerprint = createHash('sha256').update(JSON.stringify(env)).digest('hex')
+  // Keyed digest over every production variable, so any change after the build blocks the
+  // release and the stored value cannot be used to guess secrets.
+  const allEntries = entries
+    .filter((entry) => !entry.is_preview)
+    .map((entry) => [entry.key, entry.value])
+    .sort(([a], [b]) => String(a).localeCompare(String(b)))
+  const fingerprint = createHmac('sha256', token).update(JSON.stringify(allEntries)).digest('hex')
   return { app, env, fingerprint }
+}
+
+async function waitForDeployment(deploymentID) {
+  for (let attempt = 0; attempt < 90; attempt++) {
+    const status = await api(`deployments/${encodeURIComponent(deploymentID)}`)
+    if (status.status === 'finished') return
+    assert.ok(!/fail|cancel|error/i.test(String(status.status)), `Implantacao ${status.status}`)
+    await new Promise((resolve) => setTimeout(resolve, 10_000))
+  }
+  throw new Error('Tempo excedido aguardando Coolify. Consulte release.json para diagnostico.')
+}
+
+async function deployTag(tag) {
+  await api(`applications/${appID}`, 'PATCH', { docker_registry_image_tag: tag })
+  const result = await api(`deploy?uuid=${encodeURIComponent(appID)}`, 'POST')
+  const deployment = result.deployments?.find((entry) => entry.resource_uuid === appID)
+  assert.ok(deployment?.deployment_uuid, 'Coolify nao retornou identificador de implantacao')
+  return deployment.deployment_uuid
 }
 
 const current = await inspect()
@@ -112,6 +136,19 @@ if (mode === 'prepare') {
     backupReference: backup, preparedAt: new Date().toISOString(),
   }, null, 2))
   console.log('Destino CMDCA, servidor, dominio e ambiente verificados. Nenhuma alteracao remota.')
+} else if (mode === 'rollback') {
+  const release = JSON.parse(await readFile(releasePath, 'utf8'))
+  assert.equal(release.appID, appID)
+  assert.equal(release.imageTag, imageTag)
+  if (current.app.docker_registry_image_tag !== imageTag) {
+    console.log('A aplicacao nao aponta para a tag desta entrega. Nada a reverter.')
+    process.exit(0)
+  }
+  assert.ok(release.previousTag, 'Primeira entrega sem tag anterior: reverter manualmente no Coolify')
+  release.rollbackDeploymentID = await deployTag(release.previousTag)
+  await writeFile(releasePath, JSON.stringify(release, null, 2))
+  await waitForDeployment(release.rollbackDeploymentID)
+  console.log(`Tag anterior ${release.previousTag} restaurada no Coolify.`)
 } else {
   const release = JSON.parse(await readFile(releasePath, 'utf8'))
   assert.equal(release.commit, sha)
@@ -124,24 +161,13 @@ if (mode === 'prepare') {
     release.digest = required('IMAGE_DIGEST')
     assert.match(release.digest, /^sha256:[a-f0-9]{64}$/)
     await writeFile(releasePath, JSON.stringify(release, null, 2))
-    await api(`applications/${appID}`, 'PATCH', { docker_registry_image_tag: imageTag })
-    const result = await api(`deploy?uuid=${encodeURIComponent(appID)}`, 'POST')
-    const deployment = result.deployments?.find((entry) => entry.resource_uuid === appID)
-    assert.ok(deployment?.deployment_uuid, 'Coolify nao retornou identificador de implantacao')
-    release.deploymentID = deployment.deployment_uuid
+    release.deploymentID = await deployTag(imageTag)
     await writeFile(releasePath, JSON.stringify(release, null, 2))
-    for (let attempt = 0; attempt < 90; attempt++) {
-      const status = await api(`deployments/${encodeURIComponent(release.deploymentID)}`)
-      if (status.status === 'finished') {
-        console.log(`Coolify concluiu a implantacao ${release.deploymentID}`)
-        process.exit(0)
-      }
-      assert.ok(!['failed', 'cancelled', 'canceled'].includes(status.status), `Implantacao ${status.status}`)
-      await new Promise((resolve) => setTimeout(resolve, 10_000))
-    }
-    throw new Error('Tempo excedido aguardando Coolify. Consulte release.json para diagnostico e rollback.')
+    await waitForDeployment(release.deploymentID)
+    console.log(`Coolify concluiu a implantacao ${release.deploymentID}`)
+    process.exit(0)
   }
   assert.equal(current.app.docker_registry_image_tag, imageTag)
-  assert.match(current.app.status, /^running/)
+  assert.match(String(current.app.status), /^running(?::healthy)?$/, 'Aplicacao sem saude confirmada')
   console.log('Aplicacao CMDCA em execucao com a tag esperada. Smoke HTTP deve confirmar o commit servido.')
 }

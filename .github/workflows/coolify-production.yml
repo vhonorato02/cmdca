@@ -33,7 +33,6 @@ jobs:
       COOLIFY_APP_UUID: ${{ vars.COOLIFY_APP_UUID }}
       COOLIFY_SERVER_UUID: ${{ vars.COOLIFY_SERVER_UUID }}
       CMDCA_PUBLIC_URL: ${{ vars.CMDCA_PUBLIC_URL }}
-      COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
       BACKUP_REFERENCE: ${{ inputs.backup_reference }}
       NEXT_TELEMETRY_DISABLED: '1'
       IMAGE_TAG: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
@@ -49,12 +48,17 @@ jobs:
           cache: pnpm
       - name: Validar destino e ler ambiente do CMDCA
         run: node scripts/ci-coolify.mjs prepare
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
       - name: Instalar dependencias verificadas
         run: pnpm install --frozen-lockfile --prod=false
       - name: Verificar codigo e dependencias
         run: |
           pnpm check
           pnpm audit --prod --audit-level moderate
+      # Migrations run before the build because static pages read real content. Only
+      # backward compatible migrations are allowed (DEPLOY.md), so the running version
+      # keeps working if a later step fails.
       - name: Aplicar migracoes compativeis depois do backup
         run: pnpm migrate
       - name: Gerar artefato com origem e conteudo reais
@@ -65,10 +69,11 @@ jobs:
       - name: Validar imagem final antes da publicacao
         run: |
           docker run --detach --name cmdca-release -p 3000:3000 \
-            -e DATABASE_URI -e PAYLOAD_SECRET -e NEXT_PUBLIC_SERVER_URL \
+            -e DATABASE_URI -e DATABASE_URI_UNPOOLED -e PAYLOAD_SECRET -e NEXT_PUBLIC_SERVER_URL \
             -e NEXT_PUBLIC_R2_PUBLIC_URL -e S3_BUCKET -e S3_ENDPOINT -e S3_REGION \
             -e S3_ACCESS_KEY_ID -e S3_SECRET_ACCESS_KEY -e SMTP_HOST -e SMTP_PORT \
             -e SMTP_SECURE -e SMTP_USER -e SMTP_PASS -e EMAIL_FROM_ADDRESS -e EMAIL_FROM_NAME \
+            -e ENFORCE_PRODUCTION_ENV=true \
             ghcr.io/vhonorato02/cmdca:$IMAGE_TAG
           pnpm exec playwright install --with-deps chromium
           node scripts/ci-smoke-production.mjs
@@ -86,13 +91,22 @@ jobs:
           DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vhonorato02/cmdca:$IMAGE_TAG)
           echo "IMAGE_DIGEST=${DIGEST#*@}" >> "$GITHUB_ENV"
       - name: Atualizar somente a aplicacao CMDCA e aguardar
+        id: deploy
         run: node scripts/ci-coolify.mjs deploy
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
       - name: Verificar dominio canonico e tag em execucao
         run: |
           node scripts/ci-smoke-production.mjs
           node scripts/ci-coolify.mjs verify
         env:
           SMOKE_BASE_URL: ${{ vars.CMDCA_PUBLIC_URL }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+      - name: Reverter para a tag anterior se a entrega falhar
+        if: failure() && (steps.deploy.outcome == 'success' || steps.deploy.outcome == 'failure')
+        run: node scripts/ci-coolify.mjs rollback
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
       - name: Guardar referencia de entrega e rollback
         if: always()
         uses: actions/upload-artifact@v4

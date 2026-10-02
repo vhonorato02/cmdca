@@ -42,9 +42,14 @@ try {
           images: [...document.images].map(e => ({ src: e.getAttribute('src')?.split('?')[0], alt: e.getAttribute('alt'), loaded: e.complete && e.naturalWidth > 0 })),
           // WCAG 2.5.8 inline exception: a link inside a sentence is constrained by line height.
           smallTargets: [...document.querySelectorAll('a,button,input,select')].filter(shown).filter(e => {
-            if (e.tagName === 'A' && getComputedStyle(e).display === 'inline') {
-              const block = e.closest('p,li,dd,td,figcaption')
-              if (block && block.textContent.replace(/\s+/g, ' ').trim().length > e.textContent.replace(/\s+/g, ' ').trim().length + 3) return false
+            // Only the selectors the stylesheet renders inline, and only when the block has
+            // running text outside links (not a list of links with a date or file type).
+            if (e.tagName === 'A' && getComputedStyle(e).display === 'inline' && e.matches('main p a, main .post-body li a')) {
+              const block = e.closest('p, li')
+              const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT)
+              let prose = ''
+              while (walker.nextNode()) if (!walker.currentNode.parentElement.closest('a')) prose += walker.currentNode.textContent
+              if (prose.replace(/[\s.,;:()|·-]+/g, '').length >= 20) return false
             }
             const r = e.getBoundingClientRect(); return r.width < 44 || r.height < 44
           }).map(e => ({ text: e.textContent.trim().slice(0,80) || e.getAttribute('aria-label'), tag: e.tagName, width: e.getBoundingClientRect().width, height: e.getBoundingClientRect().height })),

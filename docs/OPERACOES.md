@@ -124,4 +124,3 @@ Classifique como crítico quando houver credencial exposta, dado pessoal indevid
 - validação final e medidas preventivas.
 
 Não inclua dados pessoais ou segredos no ticket/post-mortem além do estritamente necessário.
-\n\n

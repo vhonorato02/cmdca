@@ -45,4 +45,4 @@ O artefato `cmdca-release` registra commit, servidor, aplicação, domínio, tag
 <!-- PENDENCIA: informar URL Coolify, UUID da aplicacao e servidor e dominio CMDCA; liberar acesso de implantacao. -->
 <!-- PENDENCIA: configurar SMTP/remetente, confirmar backup recuperavel e executar QA no destino real. -->
 
-SSH para `zewithane-vps` recusou autenticação em 01/10/2026. Nenhuma alteração na VPS ou implantação de produção foi confirmada nesta etapa. Consulte WORKLOG.md para resultados executados e HANDOFF.md para pendências do responsável.\n\n\n
+SSH para `zewithane-vps` recusou autenticação em 01/10/2026. Nenhuma alteração na VPS ou implantação de produção foi confirmada nesta etapa. Consulte WORKLOG.md para resultados executados e HANDOFF.md para pendências do responsável.

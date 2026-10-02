@@ -61,4 +61,3 @@ minimumReleaseAgeExclude:
   - '@img/sharp-win32-ia32@0.35.5'
   - '@img/sharp-win32-x64@0.35.5'
   - sharp@0.35.5
-\n\n\n

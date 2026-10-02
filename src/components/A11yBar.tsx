@@ -11,6 +11,8 @@ function subscribeContrast(onChange: () => void) {
 }
 const getContrast = () => document.documentElement.classList.contains('contrast')
 
+type TranslationWindow = Window & { VLibrasWidget?: { open?: () => void } }
+
 /**
  * Barra de acessibilidade (portada da prévia): ajuste de fonte (--fs),
  * alto contraste (html.contrast) e atalho para o VLibras. Persiste a escolha
@@ -45,13 +47,16 @@ export function A11yBar() {
   }, [])
 
   const openVLibras = useCallback(() => {
-    const btn = document.querySelector('[vw-access-button]') as HTMLElement | null
-    if (!btn || document.documentElement.dataset.translationState !== 'ready') {
+    const open = (window as TranslationWindow).VLibrasWidget?.open
+    if (
+      typeof open !== 'function' ||
+      document.documentElement.dataset.translationState !== 'ready'
+    ) {
       setTranslationUnavailable(true)
       return
     }
     setTranslationUnavailable(false)
-    btn.click()
+    open()
   }, [])
 
   return (

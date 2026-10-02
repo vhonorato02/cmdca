@@ -2776,9 +2776,26 @@ main .post-body li a {
 /* The official floating VLibras button covers content on small screens; the
    accessibility bar keeps a labelled button that opens the same translator. */
 @media (max-width: 600px) {
-  html body div[vw].enabled [vw-access-button].active {
+  #vlibras-access-wrapper {
     display: none !important;
   }
+}
+/* Tracked uppercase labels: kerning pairs produced visible gaps inside words
+   (e.g. "CONTAT O") in CI captures; uniform tracking needs no kerning. */
+.eyebrow,
+.confirm,
+.a11y .lbl,
+.brand .t span,
+.slide .kick,
+.home-help .k,
+.lead-box .k,
+.sim-value-row > label,
+.tag,
+.place-kind,
+.filter-field > span,
+.meet .dt span,
+.pill {
+  font-kerning: none;
 }
 footer nav a {
   display: flex;

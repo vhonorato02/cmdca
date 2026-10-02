@@ -12,8 +12,9 @@ function markTranslationState(state: 'ready' | 'error') {
 }
 
 /**
- * Widget oficial VLibras (tradução para Libras). Os atributos vw/* são
- * personalizados do plugin; passados via spread para não conflitar com o TS.
+ * Widget oficial VLibras (tradução para Libras). A versão atual do plugin cria
+ * o próprio botão flutuante em shadow DOM (#vlibras-access-wrapper) e expõe
+ * window.VLibrasWidget.open(), usado pela barra de acessibilidade.
  */
 export function VLibras() {
   useEffect(() => {
@@ -31,28 +32,20 @@ export function VLibras() {
     return () => observer.disconnect()
   }, [])
   return (
-    <>
-      <div {...{ vw: 'true' }} className="enabled" role="region" aria-label="Tradutor VLibras">
-        <div {...{ 'vw-access-button': 'true' }} className="active" />
-        <div {...{ 'vw-plugin-wrapper': 'true' }}>
-          <div className="vw-plugin-top-wrapper" />
-        </div>
-      </div>
-      <Script
-        src="https://vlibras.gov.br/app/vlibras-plugin.js"
-        strategy="afterInteractive"
-        onError={() => markTranslationState('error')}
-        onLoad={() => {
-          try {
-            const widget = (window as TranslationWindow).VLibras?.Widget
-            if (!widget) throw new Error('VLibras indisponível')
-            new widget('https://vlibras.gov.br/app')
-            markTranslationState('ready')
-          } catch {
-            markTranslationState('error')
-          }
-        }}
-      />
-    </>
+    <Script
+      src="https://vlibras.gov.br/app/vlibras-plugin.js"
+      strategy="afterInteractive"
+      onError={() => markTranslationState('error')}
+      onLoad={() => {
+        try {
+          const widget = (window as TranslationWindow).VLibras?.Widget
+          if (!widget) throw new Error('VLibras indisponível')
+          new widget('https://vlibras.gov.br/app')
+          markTranslationState('ready')
+        } catch {
+          markTranslationState('error')
+        }
+      }}
+    />
   )
 }

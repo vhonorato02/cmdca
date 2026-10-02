@@ -3,11 +3,18 @@ import { expect, test } from '@playwright/test'
 test('simulador limita valores vazios, negativos e extremos sem produzir NaN', async ({ page }) => {
   await page.goto('/fmdca')
   const amount = page.getByRole('spinbutton', { name: 'Seu imposto devido' })
-  for (const [input, expected] of [['', '0'], ['-500', '0'], ['999999999', '20000'], ['1000', '1000']]) {
+  for (const [input, expected] of [
+    ['', '0'],
+    ['-500', '0'],
+    ['999999999', '20000'],
+    ['1000', '1000'],
+  ]) {
     await amount.fill(input)
     await expect(amount).toHaveValue(expected)
     await expect(page.locator('.sim-out')).not.toContainText(/NaN|Infinity/)
-    await expect(page.getByRole('slider', { name: 'Imposto de renda devido' })).toHaveValue(expected)
+    await expect(page.getByRole('slider', { name: 'Imposto de renda devido' })).toHaveValue(
+      expected,
+    )
   }
 })
 
@@ -19,6 +26,26 @@ test('falha de rede do tradutor oferece mensagem e caminho alternativo', async (
   const status = page.getByRole('status').filter({ hasText: 'Tradutor indisponível' })
   await expect(status).toBeVisible()
   await expect(status.getByRole('link')).toHaveAttribute('href', '/acessibilidade')
+})
+
+test('tradutor carregado abre pelo atalho da barra de acessibilidade', async ({ page }) => {
+  await page.route('https://vlibras.gov.br/app/vlibras-plugin.js', (route) =>
+    route.fulfill({
+      contentType: 'application/javascript',
+      body: `window.VLibras = { Widget: function () {
+        window.VLibrasWidget = { open: function () { window.__vlibrasOpened = (window.__vlibrasOpened || 0) + 1 } }
+      } }`,
+    }),
+  )
+  await page.goto('/')
+  await expect(page.locator('html')).toHaveAttribute('data-translation-state', 'ready')
+  await page.getByRole('button', { name: 'VLibras: abrir tradução para Libras' }).click()
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as unknown as { __vlibrasOpened?: number }).__vlibrasOpened),
+    )
+    .toBe(1)
+  await expect(page.getByRole('status').filter({ hasText: 'Tradutor indisponível' })).toHaveCount(0)
 })
 
 test('menu mantém navegação visível e estado coerente ao mudar para desktop', async ({ page }) => {
@@ -67,13 +94,17 @@ for (const [route, labels] of Object.entries(STATUS_LABELS)) {
       await expect(pills).toHaveText(pattern)
     }
     const anchors = page.locator('main .meta a[href^="#"]')
-    for (const href of await anchors.evaluateAll((links) => links.map((a) => a.getAttribute('href')))) {
+    for (const href of await anchors.evaluateAll((links) =>
+      links.map((a) => a.getAttribute('href')),
+    )) {
       await expect(page.locator(href as string)).toHaveCount(1)
     }
   })
 }
 
-test('fixtures publicadas preservam situação suspensa e revogada sem listas vazias', async ({ page }) => {
+test('fixtures publicadas preservam situação suspensa e revogada sem listas vazias', async ({
+  page,
+}) => {
   test.skip(process.env.GITHUB_ACTIONS !== 'true', 'Only isolated CI fixtures')
   for (const [route, name, status] of [
     ['/entidades', 'CI suspended organization', 'Situação: Registro suspenso'],
@@ -86,13 +117,18 @@ test('fixtures publicadas preservam situação suspensa e revogada sem listas va
     await expect(item.locator('.pill[class*="status-"]')).toHaveText(status)
   }
   await page.goto('/noticias')
-  await expect(page.getByRole('link', { name: /CI published institutional news/i }).first()).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: /CI published institutional news/i }).first(),
+  ).toBeVisible()
 })
 
 test('rodapé leva ao mapa do site e ao bloco dos Conselhos Tutelares', async ({ page }) => {
   await page.goto('/')
   const footer = page.locator('footer')
-  await expect(footer.getByRole('link', { name: 'Mapa do site' })).toHaveAttribute('href', '/mapa-do-site')
+  await expect(footer.getByRole('link', { name: 'Mapa do site' })).toHaveAttribute(
+    'href',
+    '/mapa-do-site',
+  )
   await footer.getByRole('link', { name: 'Conselho Tutelar' }).click()
   await expect(page).toHaveURL(/\/ajuda#conselhos-tutelares$/)
   await expect(page.locator('#conselhos-tutelares')).toBeInViewport()

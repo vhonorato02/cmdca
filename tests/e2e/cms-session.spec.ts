@@ -102,11 +102,10 @@ test('editor salva, publica e despublica uma FAQ pelo formulário', async ({ pag
     const published = await (await publicContext.request.get(`/api/faq/${documentID}?depth=0`)).json()
     expect(published.pergunta).toBe(question)
     expect(published.controleEditorial).toBeUndefined()
-    await page.getByRole('button', { name: /^(despublicar|cancelar publicação|retirar publicação)$/i }).click()
-    const confirmation = page.getByRole('dialog')
-    if (await confirmation.isVisible()) {
-      await confirmation.getByRole('button', { name: /despublicar|cancelar publicação|retirar publicação|confirmar/i }).click()
-    }
+    // Unpublish lives in the named "more options" menu and asks for confirmation.
+    await page.getByRole('button', { name: 'Mais opções', exact: true }).click()
+    await page.getByRole('button', { name: 'Despublicar', exact: true }).click()
+    await page.getByRole('button', { name: 'Confirmar', exact: true }).click()
     await expect.poll(async () => (await publicContext.request.get(`/api/faq/${documentID}?depth=0`)).status()).toBe(404)
   } finally {
     await publicContext.close()

@@ -25,6 +25,12 @@ function nameUnlabelledInputs() {
       input.setAttribute('data-cmdca-label', '')
     }
   })
+  // Payload renders the document "more options" trigger with three empty divs.
+  document
+    .querySelectorAll<HTMLButtonElement>('button.popup-button:not([aria-label])')
+    .forEach((button) => {
+      if (!button.textContent?.trim()) button.setAttribute('aria-label', 'Mais opções')
+    })
 }
 
 /**

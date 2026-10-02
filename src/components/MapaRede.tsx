@@ -117,7 +117,7 @@ export function MapaRede({ pontos }: { pontos: Ponto[] }) {
             <RedeMapInner points={comCoords} center={CENTRO} zoom={13} />
           ) : (
             <div className="map-empty">
-              O mapa não está disponível para este filtro — consulte a lista de serviços ao lado.
+              O mapa não está disponível para este filtro. Consulte a lista de serviços.
             </div>
           )}
         </div>
@@ -131,14 +131,14 @@ export function MapaRede({ pontos }: { pontos: Ponto[] }) {
             <ul className="places-list">
               {visiveis.map((p) => (
                 <li className="place" key={p.id}>
-                  <h3>
+                  <h4>
                     <span
                       className="dot"
                       style={{ background: TIPO_COR[p.tipo] || TIPO_COR.outro }}
                       aria-hidden="true"
                     />
                     {p.nome}
-                  </h3>
+                  </h4>
                   <span className="place-kind">{TIPO_LABEL[p.tipo] || 'Outro serviço'}</span>
                   {p.endereco ? <p>{p.endereco}</p> : null}
                   {p.telefone ? (

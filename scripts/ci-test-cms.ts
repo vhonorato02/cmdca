@@ -50,6 +50,39 @@ try {
   assert.equal(unchanged.role, 'editor', 'Editor cannot elevate their own role')
   console.log('User isolation and role elevation checks passed.')
 
+  await assert.rejects(payload.forgotPassword({ collection: 'users', data: { email: editor.email } }), /indisponível/)
+  const originalEmail = payload.email
+  try {
+    payload.email = { ...originalEmail, name: 'ci-failing-email', sendEmail: async () => { throw new Error('CI transport failure') } }
+    await assert.rejects(payload.forgotPassword({ collection: 'users', data: { email: editor.email } }), /CI transport failure/)
+    let recoveryHTML = ''
+    payload.email = { ...originalEmail, name: 'ci-captured-email', sendEmail: async (message) => { recoveryHTML = String(message.html); return undefined } }
+    const token = await payload.forgotPassword({ collection: 'users', data: { email: editor.email } })
+    assert.ok(token && recoveryHTML.includes(`/admin/reset/${token}`), 'Recovery message links to the configured CMS')
+    await payload.resetPassword({ collection: 'users', data: { token, password } })
+    await assert.rejects(payload.resetPassword({ collection: 'users', data: { token, password } }), 'Recovery token cannot be reused')
+  } finally {
+    payload.email = originalEmail
+  }
+  console.log('Password recovery rejects missing/failing transport and consumes a captured token once.')
+
+  await payload.create({
+    collection: 'noticias', overrideAccess: false, user: editor,
+    data: {
+      title: 'CI published institutional news', slug: 'ci-published-institutional-news',
+      resumo: 'Controlled published news fixture for browser verification in the isolated runner.',
+      corpo: { root: { type: 'root', version: 1, format: '', indent: 0, direction: null,
+        children: [{ type: 'paragraph', version: 1, format: '', indent: 0, direction: null,
+          children: [{ type: 'text', version: 1, text: 'Confirmed content used only in the isolated CI database.',
+            format: 0, detail: 0, mode: 'normal', style: '' }] }] } },
+      categoria: 'noticia', autor: 'CI fixture author', data: new Date().toISOString(),
+      _status: 'published',
+      controleEditorial: { fonte: 'CI isolated fixture', verificadoEm: new Date().toISOString() },
+    },
+  })
+  assert.equal((await payload.find({ collection: 'noticias', overrideAccess: false, user: null,
+    where: { slug: { equals: 'ci-published-institutional-news' } } })).totalDocs, 1)
+
   const draft = await payload.create({
     collection: 'faq', draft: true, overrideAccess: false, user: editor,
     data: {
@@ -98,6 +131,23 @@ try {
   assert.equal(meetings.totalDocs, 1, 'Reserved published meetings remain private')
   assert.equal(meetings.docs[0].acesso, 'publica')
   console.log('Reserved meeting isolation passed.')
+  await assert.rejects(payload.create({
+    collection: 'reunioes', draft: true, overrideAccess: false, user: editor,
+    data: { acesso: 'reservada', ata: 999999, _status: 'draft' },
+  }), /biblioteca pública/)
+  const testimony = await payload.create({
+    collection: 'depoimentos', overrideAccess: false, user: admin,
+    data: { autor: 'CI consented author', frase: 'Controlled testimony in the isolated runner.',
+      origem: 'CI original consent', autorizacaoPublicacao: true, _status: 'published',
+      controleEditorial: { fonte: 'CI consent fixture', verificadoEm: new Date().toISOString() } },
+  })
+  await assert.rejects(payload.update({ collection: 'depoimentos', id: testimony.id,
+    overrideAccess: false, user: editor, data: { frase: 'Changed testimony without a new authorization.' },
+  }), /autorização/)
+  await payload.update({ collection: 'depoimentos', id: testimony.id,
+    overrideAccess: false, user: admin, data: { frase: 'Changed testimony with a new authorization.',
+      origem: 'CI renewed consent', autorizacaoPublicacao: true },
+  })
   console.log('CMS integration passed: migrations, authentication, roles, drafts, publication, history and media schema.')
 } finally {
   console.log('CMS cleanup:', {

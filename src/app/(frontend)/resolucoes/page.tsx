@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Reveal } from '@/components/Reveal'
+import { amendedBy, relatedActs, RESOLUCAO_SITUACAO, statusInfo } from '@/components/officialActs'
 import { formatDate } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
 import { createMetadata } from '@/lib/seo'
@@ -34,6 +35,8 @@ export default async function ResolucoesPage() {
     (item) => publicText(item.numero) && publicText(item.titulo),
   )
   const tribuna = publicHref(config?.tribunaUrl) || 'https://www.jornaltribunadonorte.com.br'
+  const listedIds = new Set(docs.map((item) => item.id))
+  const anchor = (id: number | string) => `resolucao-${id}`
 
   return (
     <section className="band">
@@ -44,8 +47,9 @@ export default async function ResolucoesPage() {
               <span className="eyebrow">Atos normativos</span>
               <h1>Resoluções</h1>
               <p>
-                Consulte o documento anexado e, quando houver, o link direto para a publicação
-                oficial. Para pesquisar outras edições, acesse o portal da{' '}
+                Cada resolução mostra a situação jurídica informada pelo conselho e os atos que ela
+                retifica ou altera. Consulte o documento anexado e, quando houver, o link direto
+                para a publicação oficial. Para pesquisar outras edições, acesse o portal da{' '}
                 <a href={tribuna} target="_blank" rel="noopener noreferrer">
                   Tribuna do Norte
                 </a>
@@ -54,20 +58,58 @@ export default async function ResolucoesPage() {
             </div>
           </div>
           {docs.length ? (
-            docs.map((r) => {
+            <ul className="meeting-list">
+            {docs.map((r) => {
               const arquivo = typeof r.arquivo === 'object' && r.arquivo ? r.arquivo : null
               const numero = publicText(r.numero) as string
               const titulo = publicText(r.titulo) as string
               const linkTribuna = publicHref(r.linkTribuna)
               const arquivoUrl = publicHref(arquivo?.url)
+              const situacao = statusInfo(RESOLUCAO_SITUACAO, r.situacaoJuridica)
+              const altera = relatedActs(r, listedIds)
+              const alteradaPor = amendedBy(r, docs)
               return (
-                <div className="meet" key={r.id}>
+                <li className="meet" key={r.id} id={anchor(r.id)}>
                   <div className="dt">
                     <b>{numero}</b>
-                    <span>{r.data ? formatDate(r.data) : ''}</span>
+                    {r.data ? (
+                      <time dateTime={r.data}>{formatDate(r.data)}</time>
+                    ) : null}
                   </div>
                   <div className="info">
-                    <h2>{titulo}</h2>
+                    <h2>
+                      {titulo}{' '}
+                      <span className={`pill status-${situacao.tone}`}>
+                        <span className="sr-only">Situação: </span>
+                        {situacao.label}
+                      </span>
+                    </h2>
+                    {altera.length ? (
+                      <p className="meta">
+                        Retifica ou altera:{' '}
+                        {altera.map((ref, index) => (
+                          <span key={ref.id}>
+                            {index ? ', ' : null}
+                            {ref.listed ? (
+                              <a href={`#${anchor(ref.id)}`}>Resolução {ref.numero}</a>
+                            ) : (
+                              <>Resolução {ref.numero}</>
+                            )}
+                          </span>
+                        ))}
+                      </p>
+                    ) : null}
+                    {alteradaPor.length ? (
+                      <p className="meta">
+                        Retificada ou alterada por:{' '}
+                        {alteradaPor.map((ref, index) => (
+                          <span key={ref.id}>
+                            {index ? ', ' : null}
+                            <a href={`#${anchor(ref.id)}`}>Resolução {ref.numero}</a>
+                          </span>
+                        ))}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="acts">
                     {arquivoUrl ? (
@@ -76,9 +118,9 @@ export default async function ResolucoesPage() {
                         href={arquivoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`Abrir PDF da resolução ${numero}: ${titulo}`}
+                        aria-label={`Abrir PDF da resolução ${numero}: ${titulo} (abre em nova aba)`}
                       >
-                        Abrir PDF
+                        Abrir PDF <span aria-hidden="true">↗</span>
                       </a>
                     ) : null}
                     {linkTribuna ? (
@@ -87,15 +129,16 @@ export default async function ResolucoesPage() {
                         href={linkTribuna}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`Ver publicação oficial da resolução ${numero}`}
+                        aria-label={`Ver publicação oficial da resolução ${numero} (abre em nova aba)`}
                       >
-                        Publicação oficial
+                        Publicação oficial <span aria-hidden="true">↗</span>
                       </a>
                     ) : null}
                   </div>
-                </div>
+                </li>
               )
-            })
+            })}
+            </ul>
           ) : (
             <p style={{ color: 'var(--ink-2)' }}>Não há resoluções publicadas nesta página no momento.</p>
           )}

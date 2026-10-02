@@ -59,17 +59,20 @@ export async function SiteFooter() {
             <Link href="/conselho">Sobre o CMDCA</Link>
             <Link href="/reunioes">Reuniões</Link>
             <Link href="/transparencia">Transparência</Link>
+            <Link href="/fmdca">Fundo Municipal</Link>
+            <Link href="/conferencias">Conferências</Link>
             <Link href="/noticias">Notícias</Link>
           </nav>
           <nav aria-label="Canais de proteção">
             <h2>Proteção</h2>
             <Link href="/ajuda">Buscar ajuda</Link>
             <Link href="/ajuda#emergencia">Disque 100 e emergência</Link>
-            <Link href="/ajuda#rede">Conselho Tutelar</Link>
+            <Link href="/ajuda#conselhos-tutelares">Conselho Tutelar</Link>
             <Link href="/ajuda#rede">Rede de proteção</Link>
           </nav>
-          <nav aria-label="Transparência e redes sociais">
-            <h2>Transparência</h2>
+          <nav aria-label="Sobre o site">
+            <h2>Sobre o site</h2>
+            <Link href="/mapa-do-site">Mapa do site</Link>
             <Link href="/creditos">Créditos de imagens</Link>
             <Link href="/privacidade">Privacidade (LGPD)</Link>
             <Link href="/acessibilidade">Acessibilidade</Link>

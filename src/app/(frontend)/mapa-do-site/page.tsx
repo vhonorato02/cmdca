@@ -21,7 +21,7 @@ const groups = [
     items: [
       {
         href: '/ajuda',
-        label: 'Preciso de ajuda',
+        label: 'Buscar ajuda',
         description: 'Emergência, Disque 100, Conselhos Tutelares e rede de proteção.',
       },
       {

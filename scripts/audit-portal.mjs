@@ -53,3 +53,14 @@ try {
     }
   }
 } finally { await browser.close() }
+
+const failures = results.filter((result) =>
+  result.status !== (result.route === '/pagina-inexistente-ci' ? 404 : 200) ||
+  result.horizontalOverflow || result.h1 !== 1 || result.headingSkips.length ||
+  result.smallTargets.length || !result.title || !result.description ||
+  (result.status === 200 && Object.values(result.og).some((value) => !value)) ||
+  result.images.some((image) => image.alt === null),
+)
+if (failures.length || issues.length) {
+  throw new Error(`Portal audit failed: ${failures.length} invalid captures, ${issues.length} browser errors. See report.json.`)
+}

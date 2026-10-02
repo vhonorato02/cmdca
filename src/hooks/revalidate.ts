@@ -27,7 +27,7 @@ function wasExplicitlyUnpublished(doc: AnyDoc, previousDoc: AnyDoc, req: Payload
   return (
     isPublished(previousDoc) &&
     !isPublished(doc) &&
-    (truthy(req.query?.unpublishAllLocales) || Boolean(doc.deletedAt))
+    (truthy(req.query?.unpublishAllLocales) || Boolean(doc.deletedAt) || !truthy(req.query?.draft))
   )
 }
 

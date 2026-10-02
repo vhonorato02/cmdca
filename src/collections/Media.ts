@@ -33,7 +33,7 @@ export const Media: CollectionConfig = {
   admin: {
     group: 'Mídia',
     description:
-      'Imagens e PDFs públicos. Nunca envie documentos com dados pessoais, termos de autorização ou conteúdo sigiloso.',
+      'Imagens e PDFs com URL pública no R2, inclusive em rascunho. Nunca envie documentos com dados pessoais, termos de autorização ou conteúdo sigiloso.',
     defaultColumns: ['filename', 'mimeType', '_status', 'updatedAt'],
     components: COLLECTION_EDITORIAL_COMPONENTS,
   },

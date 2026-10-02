@@ -36,7 +36,7 @@ export default function Error({
               <p>Volte à página inicial do conselho.</p>
             </Link>
             <Link href="/ajuda">
-              <h3>Preciso de ajuda</h3>
+              <h3>Buscar ajuda</h3>
               <p>Emergência (190), Disque 100 e Conselho Tutelar.</p>
             </Link>
             <Link href="/mapa-do-site">

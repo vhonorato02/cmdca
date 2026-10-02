@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Reveal } from '@/components/Reveal'
+import { amendedBy, EDITAL_SITUACAO, relatedActs, statusInfo } from '@/components/officialActs'
 import { formatDate } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
 import { createMetadata } from '@/lib/seo'
@@ -39,6 +40,9 @@ export default async function EditaisPage() {
   ])
   const docs = (res.docs as Editai[]).filter((item) => publicText(item.titulo))
   const tribuna = publicHref(config?.tribunaUrl) || 'https://www.jornaltribunadonorte.com.br'
+  const listedIds = new Set(docs.map((item) => item.id))
+  const anchor = (id: number | string) => `edital-${id}`
+  const refLabel = (numero: string) => `Edital ${numero}`
 
   return (
     <section className="band">
@@ -49,8 +53,9 @@ export default async function EditaisPage() {
               <span className="eyebrow">Chamamentos e processos</span>
               <h1>Editais</h1>
               <p>
-                Confira o documento, os anexos, os prazos e as retificações. Quando houver link,
-                prefira a publicação oficial. Para pesquisar outras edições, acesse a{' '}
+                Cada edital mostra a situação informada pelo conselho, o prazo e as retificações
+                relacionadas. Quando houver link, prefira a publicação oficial. Para pesquisar
+                outras edições, acesse a{' '}
                 <a href={tribuna} target="_blank" rel="noopener noreferrer">
                   Tribuna do Norte
                 </a>
@@ -59,23 +64,63 @@ export default async function EditaisPage() {
             </div>
           </div>
           {docs.length ? (
-            docs.map((e) => {
+            <ul className="meeting-list">
+            {docs.map((e) => {
               const arquivo = typeof e.arquivo === 'object' && e.arquivo ? e.arquivo : null
               const titulo = publicText(e.titulo) as string
               const numero = publicText(e.numero)
               const linkTribuna = publicHref(e.linkTribuna)
               const arquivoUrl = publicHref(arquivo?.url)
+              const situacao = statusInfo(EDITAL_SITUACAO, e.situacaoJuridica)
+              const retifica = relatedActs(e, listedIds)
+              const retificadoPor = amendedBy(e, docs)
               return (
-                <div className="meet" key={e.id}>
+                <li className="meet" key={e.id} id={anchor(e.id)}>
                   <div className="dt">
                     <b>{numero || 'Edital'}</b>
-                    <span>{e.data ? formatDate(e.data) : ''}</span>
+                    {e.data ? (
+                      <time dateTime={e.data}>{formatDate(e.data)}</time>
+                    ) : null}
                   </div>
                   <div className="info">
                     <h2>
                       {titulo} <span className="pill ord">{TIPO_LABEL[e.tipo] || 'Edital'}</span>
+                      <span className={`pill status-${situacao.tone}`}>
+                        <span className="sr-only">Situação: </span>
+                        {situacao.label}
+                      </span>
                     </h2>
-                    {e.prazo ? <div className="meta">Prazo: {formatDate(e.prazo)}</div> : null}
+                    {e.prazo ? (
+                      <p className="meta">
+                        Prazo final: <time dateTime={e.prazo}>{formatDate(e.prazo)}</time>
+                      </p>
+                    ) : null}
+                    {retifica.length ? (
+                      <p className="meta">
+                        Retifica:{' '}
+                        {retifica.map((ref, index) => (
+                          <span key={ref.id}>
+                            {index ? ', ' : null}
+                            {ref.listed ? (
+                              <a href={`#${anchor(ref.id)}`}>{refLabel(ref.numero)}</a>
+                            ) : (
+                              refLabel(ref.numero)
+                            )}
+                          </span>
+                        ))}
+                      </p>
+                    ) : null}
+                    {retificadoPor.length ? (
+                      <p className="meta">
+                        Retificado por:{' '}
+                        {retificadoPor.map((ref, index) => (
+                          <span key={ref.id}>
+                            {index ? ', ' : null}
+                            <a href={`#${anchor(ref.id)}`}>{refLabel(ref.numero)}</a>
+                          </span>
+                        ))}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="acts">
                     {arquivoUrl ? (
@@ -84,9 +129,9 @@ export default async function EditaisPage() {
                         href={arquivoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`Abrir PDF do edital${numero ? ` ${numero}` : ''}: ${titulo}`}
+                        aria-label={`Abrir PDF do edital${numero ? ` ${numero}` : ''}: ${titulo} (abre em nova aba)`}
                       >
-                        Abrir PDF
+                        Abrir PDF <span aria-hidden="true">↗</span>
                       </a>
                     ) : null}
                     {linkTribuna ? (
@@ -95,15 +140,16 @@ export default async function EditaisPage() {
                         href={linkTribuna}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`Ver publicação oficial do edital${numero ? ` ${numero}` : ''}`}
+                        aria-label={`Ver publicação oficial do edital${numero ? ` ${numero}` : ''} (abre em nova aba)`}
                       >
-                        Publicação oficial
+                        Publicação oficial <span aria-hidden="true">↗</span>
                       </a>
                     ) : null}
                   </div>
-                </div>
+                </li>
               )
-            })
+            })}
+            </ul>
           ) : (
             <p style={{ color: 'var(--ink-2)' }}>Não há editais publicados nesta página no momento.</p>
           )}

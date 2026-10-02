@@ -32,7 +32,10 @@ export const Noticias: CollectionConfig = {
     defaultColumns: ['title', 'categoria', 'data', '_status'],
     group: 'Conteúdo editorial',
     description: 'Prepare, confira e publique o texto quando as informações estiverem completas.',
-    components: COLLECTION_EDITORIAL_COMPONENTS,
+    components: {
+      ...COLLECTION_EDITORIAL_COMPONENTS,
+      beforeListTable: ['/components/admin/ListResultsHeading'],
+    },
   },
   versions: EDITORIAL_VERSIONS,
   trash: true,
@@ -40,10 +43,10 @@ export const Noticias: CollectionConfig = {
     beforeOperation: [enforceEditorDraftOnly],
     beforeChange: [
       validatePublication([
-        { path: 'title', label: 'título' },
+        { path: 'title', label: 'título', rejectPlaceholder: true },
         { path: 'slug', label: 'endereço da notícia' },
-        { path: 'resumo', label: 'resumo' },
-        { path: 'corpo', label: 'corpo da notícia', richText: true },
+        { path: 'resumo', label: 'resumo', rejectPlaceholder: true },
+        { path: 'corpo', label: 'corpo da notícia', richText: true, rejectPlaceholder: true },
         { path: 'data', label: 'data da publicação' },
         { path: 'controleEditorial.fonte', label: 'fonte confirmada', rejectPlaceholder: true },
         { path: 'controleEditorial.verificadoEm', label: 'data de verificação' },

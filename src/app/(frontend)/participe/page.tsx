@@ -59,7 +59,7 @@ export default async function ParticipePage() {
                   <Link href="/entidades">entidades registradas</Link>. Para registro ou renovação,
                   busque orientação nos canais do conselho. Para destinar Imposto de Renda ao Fundo,
                   confira as regras na página do <Link href="/fmdca">FMDCA</Link>. Em uma situação
-                  de proteção ou denúncia, acesse <Link href="/ajuda">Preciso de ajuda</Link>.
+                  de proteção ou denúncia, acesse <Link href="/ajuda">Buscar ajuda</Link>.
                 </p>
               </div>
               <div className="lead-box">

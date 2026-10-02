@@ -1,4 +1,4 @@
-const PLACEHOLDER_PATTERN = /\[A CONFIRMAR\]|\b(?:a confirmar|ilustrativ[oa]s?|lorem ipsum|texto de teste)\b/i
+const PLACEHOLDER_PATTERN = /\[A CONFIRMAR\]|\b(?:pend[eê]ncia|a confirmar|ilustrativ[oa]s?|lorem ipsum|texto de teste)\b/i
 
 export const isBlank = (value: unknown): boolean =>
   value == null || (typeof value === 'string' && value.trim().length === 0)

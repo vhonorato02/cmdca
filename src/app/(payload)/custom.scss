@@ -1,5 +1,33 @@
 .cmdca-admin-main {
   min-height: 100%;
+
+  // Keep the upstream CMS controls usable by touch, including compact actions.
+  :is(button, a[href], input:not([type='hidden']), select, textarea, [role='button']) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  :is(a[href], .nav-group__toggle, .nav__mobile-close, .nav-toggler) {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  :is(.nav__link, .nav-group__toggle) {
+    display: flex;
+  }
+
+  :is(.step-nav__home, .app-header__account, .nav__log-out, .nav-toggler, .nav__mobile-close) {
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .rich-text-lexical .toolbar {
+    flex-wrap: wrap;
+  }
+
+  a.cmdca-shortcut {
+    display: block;
+  }
 }
 
 .cmdca-admin-sr-only {

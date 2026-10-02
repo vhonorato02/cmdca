@@ -478,6 +478,18 @@ try {
 }
 
 const captured = report.captures.filter((capture) => capture.status === 'captured').length
+const metricFailures = report.captures.filter((capture) => capture.metrics && (
+  capture.metrics.horizontalOverflow || capture.metrics.headingSkips.length > 0 ||
+  capture.metrics.imagesMissingAlt.length > 0 || capture.metrics.smallTargets.length > 0 ||
+  capture.consoleErrors.length > 0
+))
+for (const capture of metricFailures) {
+  report.failures.push({
+    route: capture.route, width: capture.width,
+    error: `CMS layout or browser failure at ${capture.route} (${capture.width}px): inspect capture metrics.`,
+  })
+}
+await writeReport(report)
 console.log(
   `Admin audit recorded ${captured}/${report.captures.length} captures in ${path.relative(process.cwd(), OUTPUT_DIRECTORY)}.`,
 )

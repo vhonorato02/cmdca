@@ -5,7 +5,7 @@ import type {
   GlobalBeforeOperationHook,
   PayloadRequest,
 } from 'payload'
-import { APIError } from 'payload'
+import { APIError, NotFound } from 'payload'
 
 import { containsPlaceholder, isBlank, isNonEmptyRichText } from '../utilities/validation'
 
@@ -109,14 +109,17 @@ export async function uploadHasMime(
   if (isBlank(value)) return false
   const id = typeof value === 'object' && value ? (value as { id?: unknown }).id : value
   if (typeof id !== 'string' && typeof id !== 'number') return false
-  const media = await req.payload.findByID({
-    collection: 'media',
-    id,
-    depth: 0,
-    overrideAccess: true,
-  })
+  let media
+  try {
+    media = await req.payload.findByID({
+      collection: 'media', id, depth: 0, overrideAccess: true, req,
+    })
+  } catch (error) {
+    if (error instanceof NotFound) return false
+    throw error
+  }
   // Relações públicas não podem apontar para arquivos ainda em rascunho. Isso
   // também impede que uma carga recém-enviada apareça no site antes de passar
   // pela conferência editorial da própria biblioteca de mídia.
-  return media._status === 'published' && accepted.includes(media.mimeType ?? '')
+  return !media.deletedAt && media._status === 'published' && accepted.includes(media.mimeType ?? '')
 }

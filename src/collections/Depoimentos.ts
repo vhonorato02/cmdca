@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import {
   canDeleteContent,
@@ -7,6 +7,7 @@ import {
   isAuthenticated,
   isLoggedInFieldLevel,
   publishedOrLoggedIn,
+  roleOf,
 } from '../access'
 import {
   COLLECTION_EDITORIAL_COMPONENTS,
@@ -17,6 +18,20 @@ import { enforceEditorDraftOnly, validatePublication } from '../hooks/editorialP
 import { revalidateCollection } from '../hooks/revalidate'
 
 const revalidation = revalidateCollection(() => ['/'])
+
+const invalidateChangedConsent: CollectionBeforeChangeHook = ({ data, originalDoc, req }) => {
+  if (!originalDoc) return data
+  const changed = ['autor', 'frase', 'origem'].some((key) =>
+    Object.prototype.hasOwnProperty.call(data, key) && data[key] !== originalDoc[key],
+  )
+  if (!changed) return data
+  const role = roleOf(req.user)
+  const reauthorized = (role === 'admin' || role === 'juridico') &&
+    data.autorizacaoPublicacao === true && typeof data.origem === 'string' &&
+    Boolean(data.origem.trim()) && data.origem !== originalDoc.origem
+  if (!reauthorized) data.autorizacaoPublicacao = false
+  return data
+}
 
 export const Depoimentos: CollectionConfig = {
   slug: 'depoimentos',
@@ -34,6 +49,7 @@ export const Depoimentos: CollectionConfig = {
   hooks: {
     beforeOperation: [enforceEditorDraftOnly],
     beforeChange: [
+      invalidateChangedConsent,
       validatePublication([
         { path: 'frase', label: 'depoimento real', rejectPlaceholder: true },
         { path: 'autor', label: 'identificação autorizada', rejectPlaceholder: true },
@@ -106,7 +122,7 @@ export const Depoimentos: CollectionConfig = {
       access: { read: isLoggedInFieldLevel },
       admin: {
         description:
-          'Controle interno. Informe onde o termo ou consentimento está arquivado, sem inserir dados pessoais sensíveis.',
+          'Controle interno. Alterar autor ou frase exige nova autorização e uma nova referência do consentimento.',
       },
     },
     {

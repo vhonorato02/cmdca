@@ -1,4 +1,5 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import { APIError } from 'payload'
 
 import {
   canDeleteContent,
@@ -22,6 +23,14 @@ import { validateExternalURL, validateTime } from '../utilities/validation'
 
 const revalidation = revalidateCollection(() => ['/reunioes'])
 
+const preventReservedAttachments: CollectionBeforeChangeHook = ({ data, originalDoc }) => {
+  const document = { ...originalDoc, ...data }
+  if (document.acesso === 'reservada' && document.ata != null && document.ata !== '') {
+    throw new APIError('Reuniões reservadas não podem anexar atas na biblioteca pública. Guarde a ata em arquivo interno protegido.', 400)
+  }
+  return data
+}
+
 export const Reunioes: CollectionConfig = {
   slug: 'reunioes',
   labels: { singular: 'Reunião', plural: 'Reuniões' },
@@ -37,6 +46,7 @@ export const Reunioes: CollectionConfig = {
   hooks: {
     beforeOperation: [enforceEditorDraftOnly],
     beforeChange: [
+      preventReservedAttachments,
       validatePublication([
         { path: 'titulo', label: 'título' },
         { path: 'data', label: 'data' },
@@ -179,7 +189,10 @@ export const Reunioes: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       filterOptions: pdfFilter,
-      admin: { description: 'Anexe somente depois da aprovação da ata.' },
+      admin: {
+        condition: (data) => data?.acesso !== 'reservada',
+        description: 'Somente atas públicas aprovadas. Arquivos desta biblioteca têm URL pública no R2.',
+      },
     },
     editorialControlField(),
   ],

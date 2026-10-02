@@ -34,17 +34,22 @@ const validateIndicatorData: GlobalBeforeChangeHook = ({ data, originalDoc, req 
   }
 
   const counters = ['alcancados', 'projetos', 'entidades', 'reunioesNoAno']
-  if (counters.some((key) => typeof merged[key] !== 'number' || Number(merged[key]) < 0)) {
+  if (counters.some((key) => typeof merged[key] !== 'number' || !Number.isFinite(merged[key]) || Number(merged[key]) < 0)) {
     throw new APIError('Todos os indicadores publicados devem ser números iguais ou maiores que zero.', 400)
   }
 
   const series = Array.isArray(merged.serieAnual) ? merged.serieAnual : []
-  const years = series.map((row) => String((row as { ano?: unknown }).ano ?? ''))
-  if (years.some((year) => !/^\d{4}$/.test(year)) || new Set(years).size !== years.length) {
+  const years = series.map((row) => String((row as { ano?: unknown } | null)?.ano ?? ''))
+  if (series.some((row) => !row || typeof row.valor !== 'number' || !Number.isFinite(row.valor) || row.valor < 0) ||
+    years.some((year) => !/^\d{4}$/.test(year)) || new Set(years).size !== years.length) {
     throw new APIError('A série anual deve usar anos de quatro dígitos, sem repetição.', 400)
   }
 
   const areas = Array.isArray(merged.aplicacaoPorArea) ? merged.aplicacaoPorArea : []
+  if (areas.some((row) => !row || isBlank(row.area) || typeof row.percentual !== 'number' ||
+    !Number.isFinite(row.percentual) || row.percentual < 0 || row.percentual > 100)) {
+    throw new APIError('Cada área deve informar nome e percentual válido entre 0 e 100.', 400)
+  }
   const total = areas.reduce(
     (sum, row) => sum + Number((row as { percentual?: unknown }).percentual ?? 0),
     0,

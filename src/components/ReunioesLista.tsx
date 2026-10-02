@@ -116,7 +116,13 @@ export function ReunioesLista({ reunioes }: { reunioes: ReuniaoItem[] }) {
                 </div>
                 <div className="acts">
                   {r.linkTransmissao ? (
-                    <a className="mini" href={r.linkTransmissao} target="_blank" rel="noopener noreferrer">
+                    <a
+                      className="mini"
+                      href={r.linkTransmissao}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Acessar reunião: ${r.titulo} (abre em nova aba)`}
+                    >
                       Acessar reunião <span aria-hidden="true">↗</span>
                     </a>
                   ) : null}

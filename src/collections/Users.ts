@@ -1,11 +1,19 @@
 import type {
   CollectionBeforeChangeHook,
   CollectionBeforeDeleteHook,
+  CollectionBeforeOperationHook,
   CollectionConfig,
 } from 'payload'
 import { APIError } from 'payload'
 
 import { idOf, isAdmin, isAdminFieldLevel, roleOf } from '../access'
+
+const requirePasswordRecoveryEmail: CollectionBeforeOperationHook = ({ operation, args, req }) => {
+  if (operation === 'forgotPassword' && req.payload.email.name === 'console') {
+    throw new APIError('A recuperação de senha está indisponível. Solicite ajuda à administração do painel.', 503)
+  }
+  return args
+}
 
 const protectAdministratorRole: CollectionBeforeChangeHook = async ({ data, operation, originalDoc, req }) => {
   if (
@@ -81,6 +89,7 @@ export const Users: CollectionConfig = {
     },
   },
   hooks: {
+    beforeOperation: [requirePasswordRecoveryEmail],
     beforeChange: [protectAdministratorRole],
     beforeDelete: [protectAdministratorDeletion],
   },

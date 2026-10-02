@@ -98,7 +98,7 @@ export default async function AjudaPage() {
         <Reveal>
           <div className="help-cards">
             <div className="hc urgent">
-              <svg className="icn ic" viewBox="0 0 24 24">
+              <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
               </svg>
               <div>
@@ -109,11 +109,11 @@ export default async function AjudaPage() {
                     190
                   </a>
                 </div>
-                <div className="when">Polícia Militar — atendimento imediato, 24 horas.</div>
+                <div className="when">Polícia Militar: atendimento imediato, 24 horas.</div>
               </div>
             </div>
             <div className="hc">
-              <svg className="icn ic" viewBox="0 0 24 24">
+              <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 11l18-5v12L3 18zM11 9v6" />
               </svg>
               <div>
@@ -130,7 +130,7 @@ export default async function AjudaPage() {
               </div>
             </div>
             <div className="hc">
-              <svg className="icn ic" viewBox="0 0 24 24">
+              <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="7" r="3" />
                 <path d="M12 10v6m-4 5 4-5 4 5" />
               </svg>
@@ -148,8 +148,8 @@ export default async function AjudaPage() {
                 <div className="when">A ligação é gratuita. Você pode denunciar sem se identificar.</div>
               </div>
             </div>
-            <div className="hc">
-              <svg className="icn ic" viewBox="0 0 24 24">
+            <div className="hc" id="conselhos-tutelares">
+              <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 21s7-5 7-11a7 7 0 0 0-14 0c0 6 7 11 7 11Z" />
                 <circle cx="12" cy="10" r="2.5" />
               </svg>
@@ -171,7 +171,12 @@ export default async function AjudaPage() {
             </div>
           </div>
           <div className="calm">
-            <svg className="icn ic" viewBox="0 0 24 24" style={{ color: 'var(--alert)' }}>
+            <svg
+              className="icn ic"
+              viewBox="0 0 24 24"
+              style={{ color: 'var(--alert)' }}
+              aria-hidden="true"
+            >
               <rect x="5" y="11" width="14" height="9" rx="2" />
               <path d="M8 11V8a4 4 0 0 1 8 0v3" />
             </svg>

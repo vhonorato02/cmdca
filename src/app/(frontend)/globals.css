@@ -2757,3 +2757,57 @@ footer nav a {
 .meeting-agenda { margin-top: 8px; }
 .meeting-agenda p { margin-block: 8px; }
 .meet .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Situação de atos oficiais e registros: texto explícito, cor apenas como reforço. */
+.meet .dt time {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-2);
+  font-size: 0.66rem;
+  line-height: 1.2;
+}
+.pill.status-ok {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+.pill.status-warn {
+  border-color: var(--ink-2);
+  color: var(--ink-2);
+}
+.pill.status-alert {
+  border-color: var(--alert);
+  color: var(--alert);
+  background: color-mix(in srgb, var(--alert) 8%, transparent);
+}
+.meet .info .meta a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+.lead-box.entity .nm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.entity-warning {
+  margin-top: 6px;
+  color: var(--alert) !important;
+  font-weight: 650;
+}
+.entity-docs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  list-style: none;
+}
+.links h2 {
+  margin: 15px 0 6px;
+  font-family: var(--serif);
+  font-size: 1.18rem;
+  font-weight: 650;
+  line-height: 1.2;
+}

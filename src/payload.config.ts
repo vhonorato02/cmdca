@@ -36,8 +36,19 @@ dotenvConfig({ path: path.resolve(dirname, '../.env.local') })
 // App usa a string POOLED (Neon -pooler). Migrations/seed usam a UNPOOLED (direct),
 // acionada pelo env DATABASE_MIGRATION=true definido nos scripts migrate/seed.
 const isMigrating = process.env.DATABASE_MIGRATION === 'true'
+// Only the isolated Actions fixture may run production-mode tests without SMTP.
+const isIsolatedCI = process.env.GITHUB_ACTIONS === 'true' &&
+  ['DATABASE_URI', 'DATABASE_URI_UNPOOLED'].every((name) => {
+    try {
+      const uri = new URL(process.env[name] || '')
+      return ['localhost', '127.0.0.1'].includes(uri.hostname) && uri.pathname === '/cmdca_test'
+    } catch {
+      return false
+    }
+  })
 const isHostedProduction =
-  process.env.VERCEL_ENV === 'production' || process.env.ENFORCE_PRODUCTION_ENV === 'true'
+  process.env.ENFORCE_PRODUCTION_ENV === 'true' || process.env.VERCEL_ENV === 'production' ||
+  (process.env.NODE_ENV === 'production' && !isIsolatedCI)
 
 function requiredInHostedProduction(name: string, minimumLength = 1): string | undefined {
   const value = process.env[name]?.trim()
@@ -72,8 +83,11 @@ const s3Endpoint = requiredInHostedProduction('S3_ENDPOINT')
 const s3AccessKeyID = requiredInHostedProduction('S3_ACCESS_KEY_ID')
 const s3SecretAccessKey = requiredInHostedProduction('S3_SECRET_ACCESS_KEY')
 
-if (isHostedProduction && publicServerURL && !publicServerURL.startsWith('https://')) {
-  throw new Error('NEXT_PUBLIC_SERVER_URL deve usar https:// em produção.')
+if (isHostedProduction && publicServerURL) {
+  const uri = new URL(publicServerURL)
+  if (uri.protocol !== 'https:' || uri.username || uri.password || uri.pathname !== '/' || uri.search || uri.hash) {
+    throw new Error('NEXT_PUBLIC_SERVER_URL deve ser uma origem HTTPS, sem credenciais, caminho ou parâmetros.')
+  }
 }
 
 // O driver `pg` avisa que `sslmode=require/prefer/verify-ca` é tratado, hoje,
@@ -95,6 +109,13 @@ const emailFromAddress = requiredInHostedProduction('EMAIL_FROM_ADDRESS')
 if (smtpHost && !emailFromAddress) {
   throw new Error('EMAIL_FROM_ADDRESS é obrigatória quando SMTP_HOST está configurado.')
 }
+const smtpPort = Number(process.env.SMTP_PORT || 587)
+if (smtpHost && (!Number.isInteger(smtpPort) || smtpPort < 1 || smtpPort > 65535)) {
+  throw new Error('SMTP_PORT deve ser um inteiro entre 1 e 65535.')
+}
+if (smtpHost && Boolean(process.env.SMTP_USER) !== Boolean(process.env.SMTP_PASS)) {
+  throw new Error('SMTP_USER e SMTP_PASS devem ser configuradas em conjunto.')
+}
 // O adaptador de console permanece restrito ao desenvolvimento e ao CI isolado.
 const emailAdapter = smtpHost
   ? nodemailerAdapter({
@@ -102,7 +123,11 @@ const emailAdapter = smtpHost
       defaultFromAddress: emailFromAddress!,
       transport: nodemailer.createTransport({
         host: smtpHost,
-        port: Number(process.env.SMTP_PORT || 587),
+        port: smtpPort,
+        requireTLS: process.env.SMTP_SECURE !== 'true',
+        connectionTimeout: 10_000,
+        greetingTimeout: 10_000,
+        socketTimeout: 20_000,
         secure: process.env.SMTP_SECURE === 'true',
         auth:
           process.env.SMTP_USER && process.env.SMTP_PASS
@@ -159,7 +184,27 @@ export default buildConfig({
   // que o admin não caia em inglês quando o navegador envia Accept-Language: en.
   i18n: {
     fallbackLanguage: 'pt',
-    supportedLanguages: { pt },
+    supportedLanguages: {
+      pt: {
+        ...pt,
+        translations: {
+          ...pt.translations,
+          authentication: {
+            ...pt.translations.authentication,
+            login: 'Entrar',
+            logOut: 'Sair',
+            logout: 'Sair',
+            loggedOutSuccessfully: 'Você saiu com sucesso.',
+          },
+          general: {
+            ...pt.translations.general,
+            thisLanguage: 'Português do Brasil',
+            email: 'E-mail',
+            emailAddress: 'Endereço de e-mail',
+          },
+        },
+      },
+    },
   },
   collections: [
     Noticias,
@@ -179,6 +224,11 @@ export default buildConfig({
   secret: payloadSecret,
   graphQL: { disable: true },
   maxDepth: 5,
+  upload: {
+    limits: { fileSize: 20 * 1024 * 1024 },
+    abortOnLimit: true,
+    responseOnLimit: 'O arquivo excede o limite de 20 MB.',
+  },
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

@@ -2,6 +2,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Reveal } from '@/components/Reveal'
+import {
+  ENTIDADE_SITUACAO,
+  isPastDate,
+  publicDocuments,
+  statusInfo,
+} from '@/components/officialActs'
 import { formatDate } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
 import { createMetadata } from '@/lib/seo'
@@ -20,10 +26,10 @@ export const metadata: Metadata = createMetadata({
 const AREA_LABEL: Record<string, string> = {
   educacao: 'Educação',
   saude: 'Saúde',
-  cultura_esporte: 'Cultura / Esporte',
+  cultura_esporte: 'Cultura e esporte',
   assistencia: 'Assistência social',
   acolhimento: 'Acolhimento',
-  outro: 'Outra',
+  outro: 'Outra área',
 }
 
 export default async function EntidadesPage() {
@@ -34,7 +40,7 @@ export default async function EntidadesPage() {
       where: { _status: { equals: 'published' } },
       sort: 'nome',
       limit: 200,
-      depth: 0,
+      depth: 1,
     })
   const docs = (res.docs as Entidade[]).filter((item) => publicText(item.nome))
 
@@ -47,25 +53,68 @@ export default async function EntidadesPage() {
               <span className="eyebrow">Sociedade civil</span>
               <h1>Entidades registradas</h1>
               <p>
-                Esta é a relação pública de organizações registradas no CMDCA. Número e validade só
-                aparecem quando constam no registro publicado. Antes de usar a lista em um
-                procedimento formal, confirme a situação vigente com o conselho.
+                Esta é a relação pública de organizações registradas no CMDCA, com a situação de
+                cada registro informada pelo conselho: ativo, vencido, suspenso ou cancelado.
+                Antes de usar a lista em um procedimento formal, confirme a situação vigente com o
+                conselho.
               </p>
             </div>
           </div>
           {docs.length ? (
-            <div style={{ display: 'grid', gap: 12 }}>
-              {docs.map((e) => (
-                <div className="lead-box" key={e.id}>
-                  <div className="nm">{publicText(e.nome)}</div>
-                  <div className="ro">
-                    {AREA_LABEL[e.area || 'outro'] || 'Área não informada'}
-                    {publicText(e.registro) ? ` · registro ${publicText(e.registro)}` : ''}
-                    {e.validade ? ` · validade ${formatDate(e.validade)}` : ''}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ul className="meeting-list" style={{ display: 'grid', gap: 12 }}>
+              {docs.map((e) => {
+                const situacao = statusInfo(ENTIDADE_SITUACAO, e.situacaoRegistro)
+                const registro = publicText(e.registro)
+                const documentos = publicDocuments(e.documentos)
+                const validadePassou = e.situacaoRegistro === 'ativo' && isPastDate(e.validade)
+                return (
+                  <li className="lead-box entity" key={e.id}>
+                    <h2 className="nm">
+                      {publicText(e.nome)}{' '}
+                      <span className={`pill status-${situacao.tone}`}>
+                        <span className="sr-only">Situação: </span>
+                        {situacao.label}
+                      </span>
+                    </h2>
+                    <p className="ro">
+                      {e.area ? AREA_LABEL[e.area] || 'Outra área' : 'Área não informada'}
+                      {registro
+                        ? ` · ${/^registro\b/i.test(registro) ? registro : `registro ${registro}`}`
+                        : ''}
+                      {e.validade ? (
+                        <>
+                          {' · validade até '}
+                          <time dateTime={e.validade}>{formatDate(e.validade)}</time>
+                        </>
+                      ) : null}
+                    </p>
+                    {validadePassou ? (
+                      <p className="ro entity-warning">
+                        A data de validade publicada já passou. Confirme a situação atual com o
+                        conselho.
+                      </p>
+                    ) : null}
+                    {documentos.length ? (
+                      <ul className="entity-docs">
+                        {documentos.map((doc) => (
+                          <li key={doc.key}>
+                            <a
+                              className="mini"
+                              href={doc.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`${doc.label}, de ${publicText(e.nome)} (PDF, abre em nova aba)`}
+                            >
+                              {doc.label} <span aria-hidden="true">↗</span>
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </li>
+                )
+              })}
+            </ul>
           ) : (
             <p style={{ color: 'var(--ink-2)' }}>
               Não há entidades registradas listadas nesta página no momento.

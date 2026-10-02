@@ -35,6 +35,9 @@ describe('validações editoriais', () => {
   })
 
   it('bloqueia marcadores editoriais inclusive dentro de texto rico', () => {
+    expect(containsPlaceholder('PENDENCIA: confirmar fonte')).toBe(true)
+    expect(containsPlaceholder('Pendência editorial')).toBe(true)
+    expect(containsPlaceholder('Independência e direitos')).toBe(false)
     expect(containsPlaceholder('Texto de teste')).toBe(true)
     expect(containsPlaceholder({ root: { children: [{ text: 'Data a confirmar' }] } })).toBe(true)
     expect(containsPlaceholder({ root: { children: [{ text: 'Informação confirmada' }] } })).toBe(false)

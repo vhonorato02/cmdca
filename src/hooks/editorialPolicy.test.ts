@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { NotFound } from 'payload'
 
 import {
   enforceEditorDraftOnly,
@@ -133,5 +134,14 @@ describe('política editorial', () => {
 
     await expect(uploadHasMime(12, draftRequest, ['image/jpeg'])).resolves.toBe(false)
     await expect(uploadHasMime(12, publishedRequest, ['image/jpeg'])).resolves.toBe(true)
+  })
+
+  it('rejeita mídia inexistente ou na lixeira e preserva erros de infraestrutura', async () => {
+    const request = (result: unknown, error?: Error) => ({
+      payload: { findByID: async () => { if (error) throw error; return result } },
+    }) as never
+    await expect(uploadHasMime(1, request(null, new NotFound()), ['application/pdf'])).resolves.toBe(false)
+    await expect(uploadHasMime(1, request({ _status: 'published', mimeType: 'application/pdf', deletedAt: '2026-01-01' }), ['application/pdf'])).resolves.toBe(false)
+    await expect(uploadHasMime(1, request(null, new Error('database unavailable')), ['application/pdf'])).rejects.toThrow('database unavailable')
   })
 })

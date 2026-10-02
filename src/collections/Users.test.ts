@@ -15,6 +15,11 @@ const request = (userID: number, adminCount = 1) =>
   }) as never
 
 describe('proteções de administradores', () => {
+  it('recuperação sem e-mail configurado falha explicitamente sem simular envio', () => {
+    const hook = Users.hooks?.beforeOperation?.[0]
+    expect(() => hook?.({ operation: 'forgotPassword', args: {}, req: { payload: { email: { name: 'console' } } } } as never)).toThrow(/indisponível/)
+    expect(() => hook?.({ operation: 'forgotPassword', args: {}, req: { payload: { email: { name: 'nodemailer' } } } } as never)).not.toThrow()
+  })
   it('nega leitura e atualização da própria conta a papéis desconhecidos', () => {
     const invalid = { req: { user: { id: 7, role: 'intruso' } } } as never
     const readAccess = Users.access?.read

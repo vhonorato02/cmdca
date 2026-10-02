@@ -128,6 +128,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const imagePath = publicHref(capa?.url)
   const imageUrl = imagePath ? absoluteUrl(imagePath) : absoluteUrl('/opengraph-image')
   const category = CATEGORIA_LABEL[post.categoria] || 'Notícia'
+  const publishedLabel = formatDateLong(post.data)
+  const updatedLabel = formatDateLong(post.updatedAt)
   const articleLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -174,10 +176,12 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <span className="tag">{category}</span>
         <h1>{post.title}</h1>
         <div className="post-meta">
-          {post.data ? <span>{formatDateLong(post.data)}</span> : null}
+          {publishedLabel ? <time dateTime={post.data as string}>{publishedLabel}</time> : null}
           {publicText(post.autor) ? <span>{publicText(post.autor)}</span> : null}
-          {post.updatedAt && post.updatedAt !== post.data ? (
-            <span>Atualizado em {formatDateLong(post.updatedAt)}</span>
+          {updatedLabel && updatedLabel !== publishedLabel ? (
+            <span>
+              Atualizado em <time dateTime={post.updatedAt}>{updatedLabel}</time>
+            </span>
           ) : null}
         </div>
       </div>

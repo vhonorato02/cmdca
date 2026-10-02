@@ -226,14 +226,14 @@ export default async function HomePage() {
             </div>
             <div className="links">
               <Link href="/ajuda">
-                <svg className="icn ic" viewBox="0 0 24 24">
+                <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 21C7 17.5 4 14 4 9.5 4 6.5 6.2 4.5 9 4.5c1.7 0 3 .9 3 .9s1.3-.9 3-.9c2.8 0 5 2 5 5C20 14 17 17.5 12 21Z" />
                 </svg>
                 <h3>Pedir ajuda</h3>
                 <p>Encontre o canal adequado para emergência, denúncia ou orientação.</p>
               </Link>
               <Link href="/reunioes">
-                <svg className="icn ic" viewBox="0 0 24 24">
+                <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
                   <rect x="4" y="5" width="16" height="16" rx="2" />
                   <path d="M8 3v4M16 3v4M4 10h16" />
                 </svg>
@@ -241,14 +241,14 @@ export default async function HomePage() {
                 <p>Consulte calendário, pautas e atas já publicadas.</p>
               </Link>
               <Link href="/transparencia">
-                <svg className="icn ic" viewBox="0 0 24 24">
+                <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M5 19V9M12 19V5M19 19v-7M3 21h18" />
                 </svg>
                 <h3>Transparência</h3>
                 <p>Acesse atos, documentos e informações que já estão disponíveis.</p>
               </Link>
               <Link href="/fmdca">
-                <svg className="icn ic" viewBox="0 0 24 24">
+                <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M4 12v6a1 1 0 0 0 1 1h3v-7M8 12 4 9l8-5 8 5v9a1 1 0 0 1-1 1h-3v-7" />
                 </svg>
                 <h3>Destinar seu IR</h3>
@@ -297,7 +297,11 @@ export default async function HomePage() {
                     <span className="tag">{CATEGORIA_LABEL[lead.categoria] || 'Notícia'}</span>
                     <h3>{lead.title}</h3>
                     <p>{lead.resumo}</p>
-                    {lead.data ? <div className="date">{formatDate(lead.data)}</div> : null}
+                    {lead.data ? (
+                      <time className="date" dateTime={lead.data}>
+                        {formatDate(lead.data)}
+                      </time>
+                    ) : null}
                   </div>
                 </Link>
                 {rest.length ? (

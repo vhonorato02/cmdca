@@ -82,7 +82,9 @@ jobs:
           pnpm check
 
       - name: Gerar build com banco migrado
-        run: pnpm build
+        run: |
+          pnpm build
+          node scripts/ci-check-artifact.mjs
 
       - name: Montar imagem de execucao sem compilar na VPS
         run: docker build --tag cmdca-quality:${{ github.sha }} .

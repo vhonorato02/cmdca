@@ -66,7 +66,7 @@ export default async function PrivacidadePage() {
                 nome, endereço eletrônico, conteúdo da solicitação e anexos. Não envie por e-mail
                 detalhes desnecessários sobre crianças, adolescentes, saúde, violência ou outros
                 dados sensíveis; para denúncias e emergências, use os canais da página{' '}
-                <Link href="/ajuda">Preciso de ajuda</Link>.
+                <Link href="/ajuda">Buscar ajuda</Link>.
               </p>
               <p>
                 Usuários autorizados da área administrativa têm dados de identificação, contato,
@@ -97,6 +97,7 @@ export default async function PrivacidadePage() {
               </p>
 
               <h2>Fornecedores e compartilhamento</h2>
+              {/* PENDENCIA: revisar a lista de fornecedores (hospedagem e banco) quando a migração para a VPS com Coolify for concluída. */}
               <p>
                 Para operar o serviço, dados técnicos podem ser processados por fornecedores de
                 hospedagem e entrega da aplicação (Vercel), banco de dados (Neon), armazenamento de

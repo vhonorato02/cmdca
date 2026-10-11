@@ -1,4 +1,38 @@
-# Handoff: CMDCA de Pindamonhangaba
+# HANDOFF
+Atualizado: 2026-10-11 04:40
+
+## Estado atual
+
+Retomada em main a partir de c715800. SSH funciona com parametros explicitos;
+VPS usa Traefik e ja hospeda quarau/teste, nao Coolify. Dependencias locais
+reparadas pelo lockfile. Implementados preview autenticado de noticias, menu
+administravel, capa editavel e entrega de arquivos via autorizacao Payload.
+Lint/tipos/111 unitarios passaram. Migration nova gerada sem conectar no Neon.
+E2E/CI destas alteracoes ainda pendentes. Nao houve deploy ou mutacao operacional.
+
+## Como rodar
+
+`pnpm dev` em http://localhost:3000. Servidor iniciado nesta sessao.
+`pnpm check` para lint/tipos/unitarios. Escritas CMS somente no Postgres efemero do Actions.
+Nao executar seed/migrate sobre .env.local.
+
+## Feito nesta sessao
+
+Diagnostico real em docs/ESTADO_REAL.md, decisao de CI em docs/CI_CD_DECISOES.md
+e plataforma em docs/OPERACAO.md. Novos E2E cobrem preview/revogacao, menu/capa
+CMS->publico, PDF publicado e privado com comparacao SHA256.
+
+## Pendencias
+
+CI remoto e capturas, privacidade direta R2, SMTP institucional, backup/restore
+CMDCA, conteudo atual/fonte publica, DNS Wix exato e implantacao HTTPS.
+Pendencias editoriais detalhadas no historico abaixo continuam abertas.
+
+## Proxima acao unica
+
+Executar e corrigir o CI da fatia editorial antes de qualquer promocao.
+
+## Historico anterior, nao usar como inventario atual
 
 Projeto: portal publico e CMS do CMDCA de Pindamonhangaba.
 Repositorio: vhonorato02/cmdca, branch main.

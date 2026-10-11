@@ -109,11 +109,13 @@ export interface Config {
     configuracoes: Configuracoe;
     'pagina-inicial': PaginaInicial;
     indicadores: Indicadore;
+    navegacao: Navegacao;
   };
   globalsSelect: {
     configuracoes: ConfiguracoesSelect<false> | ConfiguracoesSelect<true>;
     'pagina-inicial': PaginaInicialSelect<false> | PaginaInicialSelect<true>;
     indicadores: IndicadoresSelect<false> | IndicadoresSelect<true>;
+    navegacao: NavegacaoSelect<false> | NavegacaoSelect<true>;
   };
   locale: null;
   widgets: {
@@ -213,7 +215,7 @@ export interface Noticia {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Imagens e PDFs públicos. Nunca envie documentos com dados pessoais, termos de autorização ou conteúdo sigiloso.
+ * Imagens e PDFs para publicação. Nunca envie documentos com dados pessoais, termos de autorização ou conteúdo sigiloso. Os rascunhos são restritos à equipe no portal.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
@@ -375,7 +377,7 @@ export interface Reunioe {
     [k: string]: unknown;
   } | null;
   /**
-   * Anexe somente depois da aprovação da ata.
+   * Somente atas públicas aprovadas. Arquivos desta biblioteca têm URL pública no R2.
    */
   ata?: (number | null) | Media;
   /**
@@ -641,7 +643,7 @@ export interface Depoimento {
    */
   papel?: string | null;
   /**
-   * Controle interno. Informe onde o termo ou consentimento está arquivado, sem inserir dados pessoais sensíveis.
+   * Controle interno. Alterar autor ou frase exige nova autorização e uma nova referência do consentimento.
    */
   origem?: string | null;
   /**
@@ -1312,6 +1314,14 @@ export interface Configuracoe {
  */
 export interface PaginaInicial {
   id: number;
+  capa?: {
+    titulo?: string | null;
+    texto?: string | null;
+    /**
+     * Escolha uma imagem publicada com texto alternativo e crédito conferidos.
+     */
+    imagem?: (number | null) | Media;
+  };
   /**
    * Arraste para reordenar. Desative para ocultar sem perder a configuração.
    */
@@ -1369,6 +1379,44 @@ export interface Indicadore {
       }[]
     | null;
   observacao?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Organize os menus, salve rascunhos e publique as alterações.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navegacao".
+ */
+export interface Navegacao {
+  id: number;
+  /**
+   * Arraste os itens para reordenar.
+   */
+  menuPrincipal?:
+    | {
+        label: string;
+        /**
+         * Use um caminho interno, como /conselho, ou uma URL https://.
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Arraste os itens para reordenar.
+   */
+  rodapeInstitucional?:
+    | {
+        label: string;
+        /**
+         * Use um caminho interno, como /conselho, ou uma URL https://.
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1442,6 +1490,13 @@ export interface ConfiguracoesSelect<T extends boolean = true> {
  * via the `definition` "pagina-inicial_select".
  */
 export interface PaginaInicialSelect<T extends boolean = true> {
+  capa?:
+    | T
+    | {
+        titulo?: T;
+        texto?: T;
+        imagem?: T;
+      };
   blocos?:
     | T
     | {
@@ -1485,6 +1540,30 @@ export interface IndicadoresSelect<T extends boolean = true> {
         id?: T;
       };
   observacao?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navegacao_select".
+ */
+export interface NavegacaoSelect<T extends boolean = true> {
+  menuPrincipal?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  rodapeInstitucional?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

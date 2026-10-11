@@ -61,6 +61,11 @@ const nextConfig: NextConfig = {
       },
     ]
 
+    // Temporary hostnames and previews stay out of search until explicitly promoted.
+    if (process.env.SITE_INDEXABLE !== 'true') {
+      securityHeaders.push({ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' })
+    }
+
     // Actions injects this immutable revision while generating the artifact.
     // The post-deploy smoke verifies the canonical alias serves that revision.
     if (process.env.GITHUB_SHA && /^[a-f0-9]{40}$/.test(process.env.GITHUB_SHA)) {

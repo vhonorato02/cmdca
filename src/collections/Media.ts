@@ -33,7 +33,7 @@ export const Media: CollectionConfig = {
   admin: {
     group: 'Mídia',
     description:
-      'Imagens e PDFs com URL pública no R2, inclusive em rascunho. Nunca envie documentos com dados pessoais, termos de autorização ou conteúdo sigiloso.',
+      'Imagens e PDFs para publicação. Nunca envie documentos com dados pessoais, termos de autorização ou conteúdo sigiloso. Os rascunhos são restritos à equipe no portal.',
     defaultColumns: ['filename', 'mimeType', '_status', 'updatedAt'],
     components: COLLECTION_EDITORIAL_COMPONENTS,
   },
@@ -79,6 +79,11 @@ export const Media: CollectionConfig = {
     delete: canDeleteContent,
   },
   upload: {
+    modifyResponseHeaders: ({ headers }) => {
+      headers.set('Cache-Control', 'private, no-store, max-age=0')
+      headers.set('X-Content-Type-Options', 'nosniff')
+      return headers
+    },
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'],
     imageSizes: [
       { name: 'thumbnail', width: 400 },

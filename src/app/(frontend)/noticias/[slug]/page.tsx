@@ -1,12 +1,16 @@
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import type { Metadata } from 'next'
+import { draftMode, headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getPayload } from 'payload'
 
+import configPromise from '@/payload.config'
 import { CATEGORIA_LABEL } from '@/components/NewsCard'
 import { Illustration } from '@/components/Illustration'
 import { formatDateLong } from '@/lib/format'
+import { editorialPreviewMetadata, isEditorialPreviewUser } from '@/lib/editorialPreview'
 import { getPayloadClient } from '@/lib/payload'
 import { breadcrumbJsonLd, serializeJsonLd } from '@/lib/seo'
 import {
@@ -66,6 +70,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
+  const { isEnabled } = await draftMode()
+  if (isEnabled) return editorialPreviewMetadata()
   const post = await getPost(slug)
   if (!post) {
     return {
@@ -120,7 +126,26 @@ export async function generateMetadata({
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const post = await getPost(slug)
+  const { isEnabled } = await draftMode()
+  let post: Noticia | null
+  if (isEnabled) {
+    const requestHeaders = await headers()
+    const payload = await getPayload({ config: await configPromise })
+    const { user } = await payload.auth({ headers: requestHeaders })
+    if (!isEditorialPreviewUser(user)) notFound()
+    const result = await payload.find({
+      collection: 'noticias',
+      where: { slug: { equals: slug } },
+      limit: 1,
+      depth: 1,
+      draft: true,
+      overrideAccess: false,
+      user,
+    })
+    post = (result.docs[0] as Noticia) || null
+  } else {
+    post = await getPost(slug)
+  }
   if (!post) notFound()
 
   const capa = typeof post.capa === 'object' && post.capa ? post.capa : null
@@ -163,10 +188,19 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleLd) }}
-      />
+      {isEnabled ? (
+        <aside role="status" className="wrap" style={{ paddingTop: 16 }}>
+          <strong>Prévia</strong>
+          <form action="/api/draft/exit" method="post" style={{ display: 'inline', marginLeft: 12 }}>
+            <button className="btn" type="submit">Sair da prévia</button>
+          </form>
+        </aside>
+      ) : (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleLd) }}
+        />
+      )}
       <div className="wrap post-head">
         <nav aria-label="Navegação estrutural" style={{ marginBottom: 16 }}>
           <Link href="/">Início</Link> <span aria-hidden="true">/</span>{' '}
@@ -192,6 +226,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               src={imagePath}
               alt={publicText(capa?.alt) || post.title}
               fill
+              unoptimized={isEnabled}
               style={{ objectFit: 'cover' }}
               sizes="(max-width:1140px) 100vw, 1100px"
             />

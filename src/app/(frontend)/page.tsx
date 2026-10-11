@@ -37,7 +37,7 @@ export default async function HomePage() {
   const payload = await getPayloadClient()
 
   const [pagina, config, destaques, depoimentos, noticias] = await Promise.all([
-    payload.findGlobal({ slug: 'pagina-inicial' }).catch(() => null),
+    payload.findGlobal({ slug: 'pagina-inicial', depth: 1 }).catch(() => null),
     payload.findGlobal({ slug: 'configuracoes' }).catch(() => null),
     payload
       .find({
@@ -102,6 +102,8 @@ export default async function HomePage() {
     return [{ frase, autor, papel }]
   })
   const dir = config?.diretoria
+  const cover = typeof pagina?.capa?.imagem === 'object' && pagina.capa.imagem ? pagina.capa.imagem : null
+  const coverURL = publicHref(cover?.url)
 
   const news = (noticias.docs as Noticia[]).filter(
     (item) =>
@@ -342,22 +344,22 @@ export default async function HomePage() {
                   maxWidth: '20ch',
                 }}
               >
-                Direitos de crianças e adolescentes em Pindamonhangaba
+                {publicText(pagina?.capa?.titulo) || 'CMDCA de Pindamonhangaba'}
               </h1>
               <p>
-                Encontre canais de proteção, atos oficiais, reuniões e informações sobre o Fundo.
-                Saiba também como acompanhar as decisões do CMDCA.
+                {publicText(pagina?.capa?.texto) ||
+                  'Encontre canais de proteção, atos oficiais, reuniões e informações sobre o Fundo. Saiba também como acompanhar as decisões do CMDCA.'}
               </p>
             </div>
             <div className="home-entry-image">
               <Image
-                src="/images/institucional/cuidado-coletivo-cmdca.webp"
-                alt="Adultos e crianças caminham juntos em um espaço comunitário, vistos de costas."
+                src={coverURL || '/images/institucional/cuidado-coletivo-cmdca.webp'}
+                alt={publicText(cover?.alt) || 'Adultos e crianças caminham juntos em um espaço comunitário, vistos de costas.'}
                 fill
                 priority
                 sizes="(max-width: 880px) 100vw, 52vw"
               />
-              <span>Imagem ilustrativa</span>
+              {coverURL ? (publicText(cover?.credito) ? <span>{publicText(cover?.credito)}</span> : null) : <span>Imagem ilustrativa</span>}
             </div>
           </div>
           <aside className="home-help" aria-label="Orientação para situações urgentes">

@@ -7,6 +7,7 @@ import { GrainFilter } from '@/components/GrainFilter'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
 import { VLibras } from '@/components/VLibras'
+import { getSiteNavigation } from '@/lib/navigation'
 import { absoluteUrl, DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from '@/lib/site'
 
 import './globals.css'
@@ -62,7 +63,8 @@ export const metadata: Metadata = {
 // de acessibilidade salvas (alto contraste e tamanho de fonte) sem flash.
 const A11Y_INIT = `(function(){try{var d=document.documentElement;d.classList.add('js');if(localStorage.getItem('cmdca-contrast')==='1')d.classList.add('contrast');var f=localStorage.getItem('cmdca-fs');if(f)d.style.setProperty('--fs',f+'%');}catch(e){}})();`
 
-export default function FrontendLayout({ children }: { children: React.ReactNode }) {
+export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
+  const navigation = await getSiteNavigation()
   return (
     <html
       lang="pt-BR"
@@ -77,7 +79,7 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
           Pular para o conteúdo
         </a>
         <A11yBar />
-        <SiteHeader />
+        <SiteHeader links={navigation.menuPrincipal} />
         <main id="main" tabIndex={-1}>
           {children}
         </main>

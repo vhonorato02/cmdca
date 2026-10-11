@@ -32,6 +32,10 @@ export const Noticias: CollectionConfig = {
     defaultColumns: ['title', 'categoria', 'data', '_status'],
     group: 'Conteúdo editorial',
     description: 'Prepare, confira e publique o texto quando as informações estiverem completas.',
+    preview: (doc) =>
+      typeof doc.slug === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(doc.slug)
+        ? `/api/draft?slug=${encodeURIComponent(doc.slug)}`
+        : null,
     components: {
       ...COLLECTION_EDITORIAL_COMPONENTS,
       beforeListTable: ['/components/admin/ListResultsHeading'],

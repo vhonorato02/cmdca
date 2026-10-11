@@ -24,6 +24,7 @@ import { Faq } from './collections/Faq'
 import { Configuracoes } from './globals/Configuracoes'
 import { PaginaInicial } from './globals/PaginaInicial'
 import { Indicadores } from './globals/Indicadores'
+import { Navegacao } from './globals/Navegacao'
 import { buildAllowedOrigins } from './security/origins'
 
 const filename = fileURLToPath(import.meta.url)
@@ -77,7 +78,6 @@ if (isHostedProduction && !publicServerURL) {
     'Defina NEXT_PUBLIC_SERVER_URL ou disponibilize VERCEL_PROJECT_PRODUCTION_URL em produção.',
   )
 }
-const r2PublicURL = requiredInHostedProduction('NEXT_PUBLIC_R2_PUBLIC_URL')
 const s3Bucket = requiredInHostedProduction('S3_BUCKET')
 const s3Endpoint = requiredInHostedProduction('S3_ENDPOINT')
 const s3AccessKeyID = requiredInHostedProduction('S3_ACCESS_KEY_ID')
@@ -223,7 +223,7 @@ export default buildConfig({
     Media,
     Users,
   ],
-  globals: [Configuracoes, PaginaInicial, Indicadores],
+  globals: [Configuracoes, PaginaInicial, Indicadores, Navegacao],
   editor: lexicalEditor(),
   secret: payloadSecret,
   graphQL: { disable: true },
@@ -249,17 +249,11 @@ export default buildConfig({
   email: emailAdapter,
   sharp,
   plugins: [
-    // Mídia no Cloudflare R2 (S3-compatible). disableLocalStorage = true por padrão,
-    // então uploads nunca dependem do filesystem efêmero da função Vercel.
+    // Files pass through Payload authorization. The R2 bucket must also be private:
+    // changing application URLs does not revoke previously public storage URLs.
     s3Storage({
       collections: {
-        media: {
-          // Servir a partir da URL pública do bucket R2 (pub-*.r2.dev).
-          generateFileURL: ({ filename, prefix }) =>
-            [r2PublicURL, prefix, filename]
-              .filter(Boolean)
-              .join('/'),
-        },
+        media: true,
       },
       bucket: s3Bucket || '',
       config: {

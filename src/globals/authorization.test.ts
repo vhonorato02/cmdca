@@ -14,11 +14,13 @@ import { Reunioes } from '../collections/Reunioes'
 import { Configuracoes } from './Configuracoes'
 import { Indicadores } from './Indicadores'
 import { PaginaInicial } from './PaginaInicial'
+import { Navegacao } from './Navegacao'
 
 const versionedConfigs = [
   Configuracoes,
   Indicadores,
   PaginaInicial,
+  Navegacao,
   Depoimentos,
   Destaques,
   Editais,
@@ -57,9 +59,9 @@ describe('autorização de versões e campos condicionais', () => {
       expect(typeof readVersions, `${config.slug} deve declarar readVersions`).toBe('function')
 
       expect(await readVersions!({ req: { user: null } } as never)).toBe(false)
-      expect(
-        await readVersions!({ req: { user: { id: 1, role: 'intruso' } } } as never),
-      ).toBe(false)
+      expect(await readVersions!({ req: { user: { id: 1, role: 'intruso' } } } as never)).toBe(
+        false,
+      )
 
       for (const role of ['admin', 'editor', 'juridico']) {
         expect(await readVersions!({ req: { user: { id: 1, role } } } as never)).toBe(true)

@@ -2,6 +2,7 @@ import * as migration_20260531_062721_initial from './20260531_062721_initial';
 import * as migration_20260531_190858_add_diretoria from './20260531_190858_add_diretoria';
 import * as migration_20260719_194302_editorial_safety from './20260719_194302_editorial_safety';
 import * as migration_20260929_150216_payload_upgrade_compatibility from './20260929_150216_payload_upgrade_compatibility';
+import * as migration_20261011_073400_editorial_controls from './20261011_073400_editorial_controls';
 
 export const migrations = [
   {
@@ -22,6 +23,11 @@ export const migrations = [
   {
     up: migration_20260929_150216_payload_upgrade_compatibility.up,
     down: migration_20260929_150216_payload_upgrade_compatibility.down,
-    name: '20260929_150216_payload_upgrade_compatibility'
+    name: '20260929_150216_payload_upgrade_compatibility',
+  },
+  {
+    up: migration_20261011_073400_editorial_controls.up,
+    down: migration_20261011_073400_editorial_controls.down,
+    name: '20261011_073400_editorial_controls'
   },
 ];

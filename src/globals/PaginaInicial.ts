@@ -4,8 +4,9 @@ import { canManageContent, isAuthenticated, publishedOrLoggedIn } from '../acces
 import {
   EDITORIAL_VERSIONS,
   GLOBAL_EDITORIAL_COMPONENTS,
+  imageFilter,
 } from '../fields/editorial'
-import { enforceGlobalEditorDraftOnly } from '../hooks/editorialPolicy'
+import { enforceGlobalEditorDraftOnly, uploadHasMime, validateGlobalPublication } from '../hooks/editorialPolicy'
 import { revalidateGlobal } from '../hooks/revalidate'
 
 export const PaginaInicial: GlobalConfig = {
@@ -19,6 +20,17 @@ export const PaginaInicial: GlobalConfig = {
   versions: EDITORIAL_VERSIONS,
   hooks: {
     beforeOperation: [enforceGlobalEditorDraftOnly],
+    beforeChange: [
+      validateGlobalPublication([
+        { path: 'capa.titulo', label: 'título da capa', optional: true, rejectPlaceholder: true },
+        { path: 'capa.texto', label: 'texto da capa', optional: true, rejectPlaceholder: true },
+        {
+          path: 'capa.imagem', label: 'imagem publicada da capa', optional: true,
+          validate: (value, _document, req) => value == null || value === ''
+            ? true : uploadHasMime(value, req, ['image/jpeg', 'image/png', 'image/webp', 'image/gif']),
+        },
+      ]),
+    ],
     ...revalidateGlobal(['/']),
   },
   access: {
@@ -27,6 +39,20 @@ export const PaginaInicial: GlobalConfig = {
     update: canManageContent,
   },
   fields: [
+    {
+      name: 'capa',
+      label: 'Capa da página inicial',
+      type: 'group',
+      fields: [
+        { name: 'titulo', label: 'Título', type: 'text', maxLength: 140 },
+        { name: 'texto', label: 'Apresentação', type: 'textarea', maxLength: 320 },
+        {
+          name: 'imagem', label: 'Imagem da capa', type: 'upload', relationTo: 'media',
+          filterOptions: imageFilter,
+          admin: { description: 'Escolha uma imagem publicada com texto alternativo e crédito conferidos.' },
+        },
+      ],
+    },
     {
       name: 'blocos',
       label: 'Blocos na ordem de exibição',

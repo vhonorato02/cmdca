@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
-import { randomBytes } from 'node:crypto'
+import { createHash, randomBytes } from 'node:crypto'
 import { appendFile } from 'node:fs/promises'
-import { createServer } from 'node:http'
-import type { AddressInfo } from 'node:net'
+import sharp from 'sharp'
+import { DEFAULT_NAVIGATION } from '../src/lib/navigation'
 
 // Refuse operational databases before importing config (which reads .env.local).
 assert.equal(process.env.GITHUB_ACTIONS, 'true', 'CMS fixtures run only in GitHub Actions')
@@ -11,34 +11,10 @@ for (const key of ['DATABASE_URI', 'DATABASE_URI_UNPOOLED']) {
   assert.ok(['localhost', '127.0.0.1'].includes(uri.hostname), 'Only runner PostgreSQL is allowed')
   assert.equal(uri.pathname, '/cmdca_test')
 }
-// A real PDF upload crosses Payload validation and the S3 adapter. Only the
-// storage transport is simulated, on loopback, before config can read .env.local.
-const uploadedObjects: Buffer[] = []
-const storage = createServer(async (request, response) => {
-  try {
-    if (request.method !== 'PUT') {
-      response.writeHead(405).end()
-      return
-    }
-    const chunks: Buffer[] = []
-    for await (const chunk of request) chunks.push(Buffer.from(chunk))
-    uploadedObjects.push(Buffer.concat(chunks))
-    response.writeHead(200, { ETag: '"ci-fixture-object"' }).end()
-  } catch {
-    response.writeHead(500).end()
-  }
-})
-await new Promise<void>((resolve, reject) => {
-  storage.once('error', reject)
-  storage.listen(0, '127.0.0.1', resolve)
-})
-const storageURL = `http://127.0.0.1:${(storage.address() as AddressInfo).port}`
-process.env.S3_ENDPOINT = storageURL
-process.env.S3_BUCKET = 'cmdca-ci-fixtures'
-process.env.S3_ACCESS_KEY_ID = 'ci-isolated-access'
-process.env.S3_SECRET_ACCESS_KEY = 'ci-isolated-secret'
-process.env.NEXT_PUBLIC_R2_PUBLIC_URL = `${storageURL}/cmdca-ci-fixtures`
-// PENDENCIA: download público e persistência R2 real não são cobertos pelo transporte efêmero do CI.
+// The explicitly simulated S3 transport remains alive for the browser download tests.
+assert.equal(process.env.S3_ENDPOINT, 'http://127.0.0.1:4569')
+assert.equal(process.env.S3_BUCKET, 'cmdca-quality')
+assert.ok((await fetch(`${process.env.S3_ENDPOINT}/health`)).ok)
 process.env.DATABASE_MIGRATION = 'true'
 const { getPayload } = await import('payload')
 const { default: config } = await import('../src/payload.config')
@@ -172,7 +148,37 @@ try {
     data: { alt: 'CI public document', _status: 'published', controleEditorial: provenance },
   })
   assert.equal(pdf.mimeType, 'application/pdf')
-  assert.ok(uploadedObjects.some((object) => object.includes(Buffer.from('%PDF-1.4'))), 'S3 transport received the validated PDF bytes')
+  const stored = await fetch(`${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${pdf.filename}`)
+  assert.ok(stored.ok)
+  assert.deepEqual(Buffer.from(await stored.arrayBuffer()), pdfBytes, 'S3 transport preserves exact PDF bytes')
+  await appendFile(process.env.GITHUB_ENV!, `CMS_TEST_PDF_SHA256=${createHash('sha256').update(pdfBytes).digest('hex')}\n`)
+  const privatePDF = await payload.create({
+    collection: 'media', draft: true, overrideAccess: false, user: editor,
+    file: { data: pdfBytes, name: 'ci-draft-document.pdf', mimetype: 'application/pdf', size: pdfBytes.length },
+    data: { alt: 'CI draft document', _status: 'draft' },
+  })
+  assert.ok(privatePDF.url?.includes('/api/media/file/'), 'Draft file uses the authorized Payload endpoint')
+  const imageBytes = await sharp({
+    create: { width: 1200, height: 600, channels: 3, background: '#167a61' },
+  }).png().toBuffer()
+  const image = await payload.create({
+    collection: 'media', overrideAccess: false, user: editor,
+    file: { data: imageBytes, name: 'ci-cover.png', mimetype: 'image/png', size: imageBytes.length },
+    data: { alt: 'CI isolated cover', _status: 'published', controleEditorial: provenance },
+  })
+  await payload.updateGlobal({
+    slug: 'pagina-inicial', overrideAccess: false, user: editor,
+    data: { capa: { titulo: 'CMDCA de Pindamonhangaba', imagem: image.id }, _status: 'published',
+      blocos: [{ tipo: 'sobre', ativo: true }, { tipo: 'atalhos', ativo: true }, { tipo: 'noticias', ativo: true }] },
+  })
+  await payload.updateGlobal({
+    slug: 'navegacao', overrideAccess: false, user: editor,
+    data: { ...DEFAULT_NAVIGATION, _status: 'published' },
+  })
+  await assert.rejects(payload.updateGlobal({
+    slug: 'navegacao', overrideAccess: false, user: null,
+    data: { ...DEFAULT_NAVIGATION, _status: 'published' },
+  }))
   const entity = await payload.create({
     collection: 'entidades', overrideAccess: false, user: editor,
     data: { nome: 'CI suspended organization', area: 'assistencia', registro: 'CI-ENTITY-001',
@@ -235,11 +241,7 @@ try {
     waitingConnections: payload.db.pool.waitingCount,
     activeTransactions: Object.keys(payload.db.sessions ?? {}).length,
   })
-  try {
-    await payload.destroy()
-  } finally {
-    await new Promise<void>((resolve, reject) => storage.close((error) => error ? reject(error) : resolve()))
-  }
+  await payload.destroy()
 }
 // Payload and its plugins are designed for a long-lived server. Exit only after
 // all assertions and adapter cleanup succeed, as the Payload CLI itself does.

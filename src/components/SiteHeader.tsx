@@ -5,16 +5,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-const NAV = [
-  { href: '/', label: 'Início' },
-  { href: '/conselho', label: 'CMDCA' },
-  { href: '/reunioes', label: 'Reuniões' },
-  { href: '/transparencia', label: 'Transparência' },
-  { href: '/noticias', label: 'Notícias' },
-  { href: '/participe', label: 'Participe' },
-]
+import type { NavigationLink } from '@/lib/navigation'
 
-export function SiteHeader() {
+export function SiteHeader({ links }: { links: NavigationLink[] }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -79,7 +72,13 @@ export function SiteHeader() {
       <div className="wrap">
         <Link className="brand" href="/" aria-label="CMDCA Pindamonhangaba, página inicial">
           <span className="mk">
-            <Image src="/brand/emblema.jpg" alt="Símbolo do CMDCA" width={40} height={40} priority />
+            <Image
+              src="/brand/emblema.jpg"
+              alt="Símbolo do CMDCA"
+              width={40}
+              height={40}
+              priority
+            />
           </span>
           <span className="t">
             <b>CMDCA</b>
@@ -95,17 +94,31 @@ export function SiteHeader() {
           id="nav"
           aria-label="Navegação principal"
         >
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={isActive(item.href) ? 'active' : undefined}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-              onClick={() => setOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {links.map((item) => {
+            const external = /^https:\/\//i.test(item.href)
+            const active = !external && isActive(item.href)
+            return external ? (
+              <a
+                key={`${item.href}-${item.label}`}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+              >
+                {item.label}
+              </a>
+            ) : (
+              <Link
+                key={`${item.href}-${item.label}`}
+                href={item.href}
+                className={active ? 'active' : undefined}
+                aria-current={active ? 'page' : undefined}
+                onClick={() => setOpen(false)}
+              >
+                {item.label}
+              </Link>
+            )
+          })}
           <Link className="help-link" href="/ajuda" onClick={() => setOpen(false)}>
             Buscar ajuda
           </Link>

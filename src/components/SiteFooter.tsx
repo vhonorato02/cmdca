@@ -2,12 +2,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { phoneHref } from '@/lib/contact'
+import type { NavigationLink } from '@/lib/navigation'
+import { getSiteNavigation } from '@/lib/navigation'
 import { getPayloadClient } from '@/lib/payload'
 import { publicHref, publicText } from '@/lib/site'
 
 const splitPhones = (value: string) => value.split(/\s*[·;]\s*/).filter(Boolean)
 
 export async function SiteFooter() {
+  const navigation = await getSiteNavigation()
   let casaTel: string | null = null
   let instagramUrl: string | null = null
   try {
@@ -56,12 +59,9 @@ export async function SiteFooter() {
           </div>
           <nav aria-label="Navegação institucional">
             <h2>Navegação</h2>
-            <Link href="/conselho">Sobre o CMDCA</Link>
-            <Link href="/reunioes">Reuniões</Link>
-            <Link href="/transparencia">Transparência</Link>
-            <Link href="/fmdca">Fundo Municipal</Link>
-            <Link href="/conferencias">Conferências</Link>
-            <Link href="/noticias">Notícias</Link>
+            {navigation.rodapeInstitucional.map((item) => (
+              <FooterLink key={`${item.href}-${item.label}`} item={item} />
+            ))}
           </nav>
           <nav aria-label="Canais de proteção">
             <h2>Proteção</h2>
@@ -93,4 +93,15 @@ export async function SiteFooter() {
       </div>
     </footer>
   )
+}
+
+function FooterLink({ item }: { item: NavigationLink }) {
+  if (/^https:\/\//i.test(item.href)) {
+    return (
+      <a href={item.href} target="_blank" rel="noopener noreferrer">
+        {item.label}
+      </a>
+    )
+  }
+  return <Link href={item.href}>{item.label}</Link>
 }

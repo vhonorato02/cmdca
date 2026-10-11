@@ -31,6 +31,8 @@ export function isPublishingRequest(
   if (data?._status === 'published') return true
   if (data?._status === 'draft' || flag(req.query?.draft)) return false
   if (originalDoc?._status === 'published') return true
+  if (originalDoc?._status === 'draft') return false
+  // A new document without an explicit draft flag uses Payload's publication default.
   return true
 }
 

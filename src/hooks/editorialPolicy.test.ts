@@ -69,6 +69,18 @@ describe('política editorial', () => {
     )
   })
 
+  it('edição parcial preserva rascunho e continua validando documentos publicados', async () => {
+    const hook = validatePublication([{ path: 'titulo', label: 'título' }])
+    const data = { resumo: 'Texto em preparação' }
+    await expect(hook({
+      data, originalDoc: { _status: 'draft' }, req: req('editor'),
+    } as never)).resolves.toBe(data)
+    await expect(hook({
+      data, originalDoc: { _status: 'published' }, req: req('editor'),
+    } as never)).rejects.toThrow(/título/i)
+    expect(isPublishingRequest({}, undefined, req('editor'))).toBe(true)
+  })
+
   it('publica conteúdo sem decisão de revisão', async () => {
     const hook = validatePublication([{ path: 'titulo', label: 'título' }])
     await expect(

@@ -5,9 +5,11 @@ import { getPayload } from 'payload'
 import configPromise from '@/payload.config'
 import {
   editorialPath,
+  hasEditorialOrigin,
   isEditorialPreviewUser,
   isValidEditorialSlug,
 } from '@/lib/editorialPreview'
+import { getSiteUrl } from '@/lib/site'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,7 +34,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  if (request.headers.get('origin') !== new URL(request.url).origin) {
+  if (!hasEditorialOrigin(request)) {
     return new Response('Forbidden', { status: 403, headers: { 'Cache-Control': 'no-store' } })
   }
   const form = await request.formData()
@@ -62,7 +64,7 @@ export async function POST(request: Request) {
 
   const mode = await draftMode()
   await mode.enable()
-  return NextResponse.redirect(new URL(editorialPath(slug), request.url), {
+  return NextResponse.redirect(new URL(editorialPath(slug), getSiteUrl()), {
     status: 303,
     headers: { 'Cache-Control': 'no-store' },
   })

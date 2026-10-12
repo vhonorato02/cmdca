@@ -1,5 +1,19 @@
 # WORKLOG
 
+## Retomada de 11 e 12/10/2026
+
+- a0334c5: preview autenticado, navegacao/capa CMS, arquivos via Payload,
+  migration aditiva, CI com transporte S3 explicitamente simulado.
+- CI 38122123588: migration/integracao/build/imagem aprovados; 124/128 E2E.
+  Dois defeitos em desktop/mobile: origem interna do container no CSRF e URL
+  absoluta local da capa tratada como remota. Correcoes em validacao remota.
+- Local: lint/tipos e 114 testes passaram em 12/10.
+- Backup/restore Neon confirmado com 46 tabelas; ver docs/OPERACAO.md.
+  Banco fonte, registros Wix e sites existentes nao alterados.
+- Revisao independente integrada: unpublish explicito invalida navegacao,
+  preview compartilha validador de slug. Nao removida protecao CSRF por
+  hipotese de proxy retirar Origin. Cache privado de arquivos e intencional.
+
 ## Objetivo e aceite
 Auditar e corrigir o portal CMDCA de Pindamonhangaba até entrega verificável, mantendo Next.js/Payload, Neon e R2 existentes. Aceite: navegação pública e CMS funcionais, autorização coerente, dados não inventados, testes reais, QA em 1440/1024/768/390, build/deploy pelo GitHub Actions e validação da URL publicada.
 

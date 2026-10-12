@@ -62,5 +62,12 @@ describe('global de navegação', () => {
       req,
     } as never)
     expect(revalidatePath).toHaveBeenCalledWith('/', 'layout')
+    revalidatePath.mockClear()
+    await revalidateNavigation({
+      doc: { _status: 'draft' },
+      previousDoc: { _status: 'published' },
+      req: { ...req, query: { draft: 'true', unpublishAllLocales: 'true' } },
+    } as never)
+    expect(revalidatePath).toHaveBeenCalledWith('/', 'layout')
   })
 })

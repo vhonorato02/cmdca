@@ -15,6 +15,7 @@ import {
   validatePublication,
 } from '../hooks/editorialPolicy'
 import { revalidateCollection } from '../hooks/revalidate'
+import { editorialPreviewEntryPath, isValidEditorialSlug } from '../lib/editorialPreview'
 
 const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const revalidation = revalidateCollection((doc) => [
@@ -33,8 +34,8 @@ export const Noticias: CollectionConfig = {
     group: 'Conteúdo editorial',
     description: 'Prepare, confira e publique o texto quando as informações estiverem completas.',
     preview: (doc) =>
-      typeof doc.slug === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(doc.slug)
-        ? `/api/draft?slug=${encodeURIComponent(doc.slug)}`
+      isValidEditorialSlug(doc.slug)
+        ? editorialPreviewEntryPath(doc.slug)
         : null,
     components: {
       ...COLLECTION_EDITORIAL_COMPONENTS,

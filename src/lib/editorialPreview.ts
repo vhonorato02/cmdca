@@ -1,4 +1,9 @@
 import { roleOf } from '../access'
+import { getSiteUrl } from './site'
+
+export function hasEditorialOrigin(request: Request): boolean {
+  return request.headers.get('origin') === getSiteUrl().origin
+}
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 

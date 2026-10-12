@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import {
   editorialPath,
@@ -6,9 +6,22 @@ import {
   editorialPreviewMetadata,
   isEditorialPreviewUser,
   isValidEditorialSlug,
+  hasEditorialOrigin,
 } from './editorialPreview'
 
+afterEach(() => vi.unstubAllEnvs())
+
 describe('editorial preview', () => {
+  it('validates the configured public origin behind the standalone proxy', () => {
+    vi.stubEnv('NEXT_PUBLIC_SERVER_URL', 'https://cms.example.test')
+    const request = (origin?: string) => new Request('http://0.0.0.0:3000/api/draft', {
+      headers: origin ? { origin } : {},
+    })
+    expect(hasEditorialOrigin(request('https://cms.example.test'))).toBe(true)
+    expect(hasEditorialOrigin(request('https://attacker.example.test'))).toBe(false)
+    expect(hasEditorialOrigin(request('null'))).toBe(false)
+    expect(hasEditorialOrigin(request())).toBe(false)
+  })
   it('accepts only bounded, URL-safe article slugs', () => {
     expect(isValidEditorialSlug('conselho-em-pauta-2026')).toBe(true)
     for (const slug of ['', '../admin', '//example.test', 'a?next=/admin', 'A B', 'a'.repeat(181)]) {

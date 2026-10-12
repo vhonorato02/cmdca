@@ -54,4 +54,8 @@ test('editor envia e publica PDF pelo formulário e o visitante baixa os mesmos 
   const file = await request.get(media.url)
   expect(file.status()).toBe(200)
   expect(createHash('sha256').update(await file.body()).digest('hex')).toBe(process.env.CMS_TEST_PDF_SHA256)
+  await page.getByRole('button', { name: 'Mais opções', exact: true }).click()
+  await page.getByRole('button', { name: 'Despublicar', exact: true }).click()
+  await page.getByRole('button', { name: 'Confirmar', exact: true }).click()
+  await expect.poll(async () => (await request.get(media.url)).status()).toBe(403)
 })

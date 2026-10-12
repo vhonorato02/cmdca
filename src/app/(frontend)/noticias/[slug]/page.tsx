@@ -19,6 +19,7 @@ import {
   ORGANIZATION_ID,
   ORGANIZATION_NAME,
   publicHref,
+  publicMediaHref,
   publicText,
   SITE_NAME,
 } from '@/lib/site'
@@ -223,10 +224,10 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <div className="post-cover vis">
           {imagePath ? (
             <Image
-              src={imagePath}
+              src={publicMediaHref(imagePath)!}
               alt={publicText(capa?.alt) || post.title}
               fill
-              unoptimized={isEnabled}
+              unoptimized={isEnabled || Boolean(publicMediaHref(imagePath)?.startsWith('/api/media/file/'))}
               style={{ objectFit: 'cover' }}
               sizes="(max-width:1140px) 100vw, 1100px"
             />

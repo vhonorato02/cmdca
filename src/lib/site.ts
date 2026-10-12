@@ -69,5 +69,14 @@ export function publicHref(value?: string | null): string | undefined {
   }
 }
 
+/** Same-origin Payload images use the local optimizer allowlist, never remote loopback fetching. */
+export function publicMediaHref(value?: string | null): string | undefined {
+  const href = publicHref(value)
+  if (!href) return undefined
+  const site = getSiteUrl()
+  const url = new URL(href, site)
+  return url.origin === site.origin ? `${url.pathname}${url.search}` : href
+}
+
 export const ORGANIZATION_ID = () => `${absoluteUrl('/')}#organization`
 export const WEBSITE_ID = () => `${absoluteUrl('/')}#website`

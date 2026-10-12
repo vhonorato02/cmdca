@@ -32,6 +32,21 @@ Nunca executar site remover em tentativa de reparo.
 
 - Privacidade direta do bucket R2 precisa ser verificada e configurada.
 - SMTP institucional ainda ausente.
-- Backup e restore do Neon e dos objetos precisam ser executados.
+- Backup dos objetos R2 ainda precisa ser executado; restore do banco descrito abaixo.
 - Dominio Wix exato e zona nao localizados; nenhum DNS foi alterado.
 - Host temporario resolve, mas nao existe publicacao CMDCA verificada.
+
+## Backup e restore do banco
+
+Dump criado em 11/10/2026 e conferido novamente em 12/10:
+`/srv/backups/cmdca/database-20261011074653107.dump` (root, modo 600).
+SHA256: `84982c8908e90e4c5ba6788fd6f1fc7246a4a5dc113b231dfdc085cda2b63d8e`.
+Restore privado retido em `cmdca_restore_20261011074653107`, sem aplicacao
+conectada e sem CONNECT para PUBLIC. Contagem verificada: 46 tabelas e 6 noticias.
+O Neon fonte nao foi alterado. O helper pg_dump foi efemero, com 128 MiB e
+0.5 CPU; o Postgres compartilhado manteve sua rede privada inalterada.
+
+Tres tentativas iniciais deixaram arquivos de zero bytes no mesmo diretorio.
+Nao sao backups validos; somente o arquivo com hash acima esta confirmado.
+Copias offsite e backup periodico do Neon/R2 ainda nao foram configurados.
+O timer existente da plataforma nao exporta automaticamente o Neon.

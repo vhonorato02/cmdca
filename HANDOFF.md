@@ -1,5 +1,5 @@
 # HANDOFF
-Atualizado: 2026-10-11 04:40
+Atualizado: 2026-10-12 15:32
 
 ## Estado atual
 
@@ -8,7 +8,11 @@ VPS usa Traefik e ja hospeda quarau/teste, nao Coolify. Dependencias locais
 reparadas pelo lockfile. Implementados preview autenticado de noticias, menu
 administravel, capa editavel e entrega de arquivos via autorizacao Payload.
 Lint/tipos/111 unitarios passaram. Migration nova gerada sem conectar no Neon.
-E2E/CI destas alteracoes ainda pendentes. Nao houve deploy ou mutacao operacional.
+CI 38122123588 passou migration, integracao, build/imagem e 124 E2E, mas falhou
+em 4 cenarios novos: origem interna do container no preview e imagem da capa
+tratada como URL remota. Correcoes com regressao local: 114 unitarios, lint/tipos
+aprovados. Novo CI ainda necessario. Nao houve deploy ou mutacao do banco fonte.
+Backup Neon e restore isolado confirmados: 46 tabelas, 6 noticias, 297 KiB.
 
 ## Como rodar
 
@@ -24,7 +28,7 @@ CMS->publico, PDF publicado e privado com comparacao SHA256.
 
 ## Pendencias
 
-CI remoto e capturas, privacidade direta R2, SMTP institucional, backup/restore
+CI remoto e capturas, privacidade direta R2, SMTP institucional, backup dos uploads
 CMDCA, conteudo atual/fonte publica, DNS Wix exato e implantacao HTTPS.
 Pendencias editoriais detalhadas no historico abaixo continuam abertas.
 

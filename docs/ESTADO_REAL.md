@@ -31,7 +31,7 @@ Verificacao: 2026-10-11. Base inicial: c71580083f5849ab5084737843144ba124e233cb.
 | Fontes publicas | PARCIAL | Metadados internos existentes, fonte ainda nao exibida em todas noticias |
 | Publicacao VPS | AUSENTE | Nenhum container CMDCA implantado |
 | SMTP/reset real | AUSENTE | Sem SMTP local; nao remover bloqueio de producao |
-| Backup/restore CMDCA | AUSENTE | Plataforma possui timers, mas nao comprovam backup do Neon/R2 |
+| Backup/restore CMDCA | PARCIAL | Dump Neon restaurado em 46 tabelas; uploads e offsite pendentes |
 | Wix | NAO VERIFICADO | Dominio exato/zona nao encontrados; nenhum registro alterado |
 
 ## Revisao independente
@@ -49,3 +49,16 @@ sem flag explicita continua validada, evitando afrouxar o default de publicacao.
 
 Executar CI completo no Postgres descartavel, revisar capturas e resultados,
 resolver R2 privado/SMTP/backup antes da promocao. Nao chamar esta etapa de entrega.
+
+## Resultado do CI 38122123588
+
+Migration aditiva e integracao passaram, assim como lint/tipos/unitarios, build
+e container. 124 de 128 cenarios Playwright passaram. Falhas reais:
+origem de POST comparada ao hostname interno do standalone e imagem absoluta
+da mesma origem bloqueada pela allowlist do Next Image. Corrigidos em 12/10,
+sem relaxar CSRF ou permitir fetch arbitrario de loopback. Imagens Payload
+passam diretamente pela autorizacao, sem cache publico do otimizador.
+
+A API local /api/media retornou 500 por coluna _objectkey ausente no Neon.
+Essa migration anterior ainda nao foi aplicada operacionalmente. O portal
+renderizado com fallbacks nao comprova CMS local inteiramente funcional.

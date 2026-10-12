@@ -51,7 +51,8 @@ export const revalidateNavigation: GlobalAfterChangeHook = async ({ doc, previou
   const isUnpublish =
     previous?._status === 'published' &&
     current._status !== 'published' &&
-    req.query?.draft !== 'true' && req.query?.draft !== true
+    (req.query?.unpublishAllLocales === 'true' || req.query?.unpublishAllLocales === true ||
+      (req.query?.draft !== 'true' && req.query?.draft !== true))
 
   if (current._status === 'published' || isUnpublish) {
     try {

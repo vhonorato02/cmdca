@@ -16,6 +16,7 @@ import {
   ORGANIZATION_ID,
   ORGANIZATION_NAME,
   publicHref,
+  publicMediaHref,
   publicText,
   SITE_NAME,
   WEBSITE_ID,
@@ -103,7 +104,7 @@ export default async function HomePage() {
   })
   const dir = config?.diretoria
   const cover = typeof pagina?.capa?.imagem === 'object' && pagina.capa.imagem ? pagina.capa.imagem : null
-  const coverURL = publicHref(cover?.url)
+  const coverURL = publicMediaHref(cover?.url)
 
   const news = (noticias.docs as Noticia[]).filter(
     (item) =>
@@ -356,6 +357,7 @@ export default async function HomePage() {
                 src={coverURL || '/images/institucional/cuidado-coletivo-cmdca.webp'}
                 alt={publicText(cover?.alt) || 'Adultos e crianças caminham juntos em um espaço comunitário, vistos de costas.'}
                 fill
+                unoptimized={Boolean(coverURL?.startsWith('/api/media/file/'))}
                 priority
                 sizes="(max-width: 880px) 100vw, 52vw"
               />

@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { Illustration } from '@/components/Illustration'
 import { formatDate } from '@/lib/format'
+import { publicMediaHref } from '@/lib/site'
 import type { Noticia } from '@/payload-types'
 
 export const CATEGORIA_LABEL: Record<string, string> = {
@@ -23,15 +24,17 @@ export function NewsCard({
   headingLevel?: 2 | 3
 }) {
   const capa = typeof noticia.capa === 'object' && noticia.capa ? noticia.capa : null
+  const imagePath = publicMediaHref(capa?.url)
   const Heading: 'h2' | 'h3' = headingLevel === 2 ? 'h2' : 'h3'
   return (
     <Link className="news" href={`/noticias/${noticia.slug}`}>
       <div className="vis">
-        {capa?.url ? (
+        {imagePath ? (
           <Image
-            src={capa.url}
-            alt={capa.alt || noticia.title}
+            src={imagePath}
+            alt={capa?.alt || noticia.title}
             fill
+            unoptimized={imagePath.startsWith('/api/media/file/')}
             sizes="(max-width:880px) 100vw, 360px"
           />
         ) : (

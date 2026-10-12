@@ -30,6 +30,12 @@
   do grupo na sidebar desktop. Captura confirmou formulario fonte vazio,
   nao apenas seletor errado. Grupo editorial movido ao formulario principal,
   mantendo ACL, para nao depender do recorte/lazy rendering da sidebar.
+- CI 38295915240 (a412f99) aprovado por completo: migrations, integracao CMS,
+  115 unitarios, build/imagem, 128/128 E2E, auditoria admin 16/16 sem erro de
+  console nem estouro, auditoria portal sem estouro, h1 unico e sem salto de
+  heading nas quatro larguras. Capturas do formulario de noticia conferidas em
+  1440 e 390: grupo Fonte visivel com todos os campos. Artefatos em
+  test-results/ci-38295915240. Continua sem deploy e sem mutacao do Neon.
 
 ## Objetivo e aceite
 Auditar e corrigir o portal CMDCA de Pindamonhangaba até entrega verificável, mantendo Next.js/Payload, Neon e R2 existentes. Aceite: navegação pública e CMS funcionais, autorização coerente, dados não inventados, testes reais, QA em 1440/1024/768/390, build/deploy pelo GitHub Actions e validação da URL publicada.

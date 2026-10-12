@@ -1,5 +1,5 @@
 # HANDOFF
-Atualizado: 2026-10-12 16:10
+Atualizado: 2026-10-12 16:25
 
 ## Estado atual
 
@@ -19,6 +19,9 @@ patches transitivos reduziram auditoria prod para 1 high (braces, sem release
 corrigida no npm consultado).
 CI 38294655430: 127/128 E2E passaram. Grupo Fonte na sidebar desktop nao
 montou inputs mesmo apos rolagem; movido ao formulario principal. Novo CI necessario.
+CI 38295915240 (a412f99) APROVADO: 115 unitarios, 128/128 E2E, auditorias
+admin 16/16 e portal nas quatro larguras sem estouro. Capturas do CMS revisadas.
+Isso aprova o codigo em ambiente efemero, nao a producao.
 Backup R2 de 3 objetos (55.064 bytes) criptografado e restaurado com hash.
 Fonte e restore Neon conferidos: 6 noticias, 2 midias, 2 usuarios.
 
@@ -39,13 +42,16 @@ CMS->publico, PDF publicado e privado com comparacao SHA256.
 
 ## Pendencias
 
-CI remoto e capturas, privacidade direta R2 (HEAD anonimo 200), SMTP institucional,
+Privacidade direta R2 (HEAD anonimo 200), SMTP institucional,
 backup automatico/offsite, conteudo atual/fonte publica, DNS Wix exato e implantacao HTTPS.
+Auditoria prod: 1 high em braces 3.0.3 sem versao corrigida no registry.
 Pendencias editoriais detalhadas no historico abaixo continuam abertas.
 
 ## Proxima acao unica
 
-Executar e corrigir o CI da fatia editorial antes de qualquer promocao.
+Tornar o bucket R2 privado (desligar acesso publico/r2.dev no painel Cloudflare)
+e repetir HEAD anonimo esperando 403/404; so depois preparar o deploy via
+comando site/Traefik na VPS com backup Neon novo antes das migrations.
 
 ## Pendencias editoriais e operacionais detalhadas
 

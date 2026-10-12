@@ -35,7 +35,8 @@ export const editorialControlField = (): Field => ({
   type: 'group',
   access: { read: isLoggedInFieldLevel },
   admin: {
-    position: 'sidebar',
+    // Required publication fields stay in the main form. In the narrow desktop
+    // sidebar Payload's lazy nested fields can remain clipped and never mount.
     description:
       'Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.',
   },

@@ -1,5 +1,5 @@
 # HANDOFF
-Atualizado: 2026-10-12 15:45
+Atualizado: 2026-10-12 16:10
 
 ## Estado atual
 
@@ -16,13 +16,20 @@ Backup Neon e restore isolado confirmados: 46 tabelas, 6 noticias, 297 KiB.
 CI 38291796075 confirmou correcoes de origem e imagem. Seletores novos ajustados
 para texto exato de previa e abrir menu antes de consultá-lo. Next 16.3.8 e
 patches transitivos reduziram auditoria prod para 1 high (braces, sem release
-corrigida no npm consultado). Novo CI necessario.
+corrigida no npm consultado).
+CI 38294655430: 127/128 E2E passaram. Grupo Fonte na sidebar desktop nao
+montou inputs mesmo apos rolagem; movido ao formulario principal. Novo CI necessario.
+Backup R2 de 3 objetos (55.064 bytes) criptografado e restaurado com hash.
+Fonte e restore Neon conferidos: 6 noticias, 2 midias, 2 usuarios.
 
 ## Como rodar
 
-`pnpm dev` em http://localhost:3000. Servidor iniciado nesta sessao.
+`pnpm dev --hostname 127.0.0.1 --port 3000` em http://127.0.0.1:3000.
+Servidor iniciado e restrito a loopback. CMS usa http://localhost:3000/admin.
 `pnpm check` para lint/tipos/unitarios. Escritas CMS somente no Postgres efemero do Actions.
-Nao executar seed/migrate sobre .env.local.
+Nao executar seed/migrate sobre .env.local. API media local retorna 500
+por migration antiga ainda nao aplicada (_objectkey); home com fallback
+nao comprova CMS local pronto.
 
 ## Feito nesta sessao
 
@@ -32,53 +39,23 @@ CMS->publico, PDF publicado e privado com comparacao SHA256.
 
 ## Pendencias
 
-CI remoto e capturas, privacidade direta R2, SMTP institucional, backup dos uploads
-CMDCA, conteudo atual/fonte publica, DNS Wix exato e implantacao HTTPS.
+CI remoto e capturas, privacidade direta R2 (HEAD anonimo 200), SMTP institucional,
+backup automatico/offsite, conteudo atual/fonte publica, DNS Wix exato e implantacao HTTPS.
 Pendencias editoriais detalhadas no historico abaixo continuam abertas.
 
 ## Proxima acao unica
 
 Executar e corrigir o CI da fatia editorial antes de qualquer promocao.
 
-## Historico anterior, nao usar como inventario atual
+## Pendencias editoriais e operacionais detalhadas
 
-Projeto: portal publico e CMS do CMDCA de Pindamonhangaba.
-Repositorio: vhonorato02/cmdca, branch main.
-Stack: Next.js 16.3.6, Payload 3.90.2, Postgres (Neon), Cloudflare R2, Node 24, pnpm 11.
-
-## Estado atual
-
-- Entrega pela VPS com Coolify. A imagem Docker e montada no GitHub Actions a partir do build
-  standalone, publicada no GHCR com tag unica e digest registrado, e o Coolify so troca a tag.
-  A VPS nunca compila o projeto.
-- Workflow Vercel desativado. Workflow de producao: .github/workflows/coolify-production.yml
-  (manual, exige referencia de backup).
-- Workflow Qualidade: migrations em Postgres efemero, integracao CMS com permissoes, lint, tipos,
-  testes unitarios, build, imagem Docker, smoke, Playwright, auditoria visual do portal em 1440,
-  1024, 768 e 390 px e auditoria do CMS. As auditorias sao gates, nao relatorios.
-- O banco Neon e o R2 operacionais nunca sao alterados por testes.
-- Detalhes do resultado de cada execucao ficam no WORKLOG.md.
-
-## Pendencias para entrar no ar
-
-PENDENCIA (dev): URL do painel Coolify, UUID da aplicacao Docker Image do CMDCA e UUID do servidor.
-PENDENCIA (dev): secret COOLIFY_TOKEN no environment production do GitHub; variaveis COOLIFY_URL,
-COOLIFY_APP_UUID, COOLIFY_SERVER_UUID e CMDCA_PUBLIC_URL.
-PENDENCIA (dev): credencial de pull do GHCR no Coolify (o pacote deve continuar privado).
-PENDENCIA (dev): variaveis de runtime no Coolify, conforme .env.example, com ENFORCE_PRODUCTION_ENV=true.
-PENDENCIA (dev): dominio canonico em HTTPS e DNS apontando para a VPS.
-PENDENCIA (dev): acesso SSH funcional (a chave atual e recusada) ou confirmacao de que tudo sera via Coolify.
-PENDENCIA (dev): backup do Neon com teste de restauracao antes da primeira migracao em producao.
-PENDENCIA (conselho): remetente oficial e SMTP para recuperacao de senha.
-PENDENCIA (conselho): conteudo oficial: composicao e mandato, contatos, endereco da Casa dos
-Conselhos, dados bancarios do FMDCA, calendario de reunioes, atas, resolucoes, editais, entidades
-registradas, rede de protecao e indicadores com fonte.
-PENDENCIA (conselho): confirmar as 2 noticias marcadas [A CONFIRMAR], hoje ocultas com 404.
-PENDENCIA (decisao): midia em rascunho fica com URL publica no R2; decidir bucket privado ou URL assinada.
-
-## Comandos
-
-- Qualidade: push na main ou workflow_dispatch de Qualidade.
-- Producao: Actions > Producao Coolify > Run workflow, informando a referencia do backup.
-- Verificacao do R2: node scripts/verify-storage.mjs (cria, le e apaga uma chave unica de teste).
+- Nao acionar Producao Coolify: adaptar entrega ao comando site/Traefik da VPS.
+- Aplicar migrations operacionais somente apos gate e referencia de backup.
+- Conteudo: composicao atual, contatos/endereco, dados bancarios do Fundo,
+  reunioes, atas, resolucoes, editais, entidades, rede e indicadores com fonte.
+- Duas noticias [A CONFIRMAR] continuam ocultas. Nenhuma importacao nova.
+- Robots da Prefeitura restringe crawlers de IA; coleta automatizada interrompida.
+- Biblioteca global de documentos, SEO editavel por pagina e fonte publica
+  ainda precisam de aceite completo.
+- Teste R2: `node scripts/verify-storage.mjs`, objeto unico com limpeza verificada.
 

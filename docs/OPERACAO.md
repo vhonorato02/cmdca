@@ -50,3 +50,27 @@ Tres tentativas iniciais deixaram arquivos de zero bytes no mesmo diretorio.
 Nao sao backups validos; somente o arquivo com hash acima esta confirmado.
 Copias offsite e backup periodico do Neon/R2 ainda nao foram configurados.
 O timer existente da plataforma nao exporta automaticamente o Neon.
+
+Em 12/10, consultas READ ONLY ao Neon e ao restore retornaram os mesmos totais:
+6 noticias, 2 registros de midia e 2 usuarios. Nenhum dado pessoal foi registrado
+nessa comparacao.
+
+## Backup e restore dos uploads
+
+Em 12/10/2026 19:01 UTC, os 3 objetos do bucket (55.064 bytes) foram lidos sem
+alteracao remota, criptografados com AES-256-GCM e restaurados localmente.
+Cada objeto restaurado teve SHA256 comparado ao original.
+
+Pasta privada: `C:\Users\Ze\.cmdca-backups\2026-10-12T19-01-49-380Z`.
+ACL conferida: acesso somente NOTE-ZE\Ze. Chave de recuperacao fora do
+repositorio, dentro da pasta protegida; nunca enviar seu conteudo ao chat/Git.
+SHA256 do arquivo uploads.aes:
+`aaa94012773ee5465b6f43e28c4397abefb9effc4780c39f69a4668cb1f54631`.
+
+O helper `node scripts/backup-storage.mjs --confirm-readonly-backup` faz
+somente LIST/GET no R2 e testa a recuperacao dos arquivos gravados no disco.
+Isso nao configura retencao automatica ou uma segunda copia externa.
+
+HEAD anonimo de objeto existente no endereco direto R2 retornou 200 em 12/10.
+A privacidade do bucket continua bloqueadora, apesar de o portal agora
+autorizar os downloads pela API Payload.

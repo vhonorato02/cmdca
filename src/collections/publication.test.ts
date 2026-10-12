@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { Depoimentos } from './Depoimentos'
 import { Noticias } from './Noticias'
 import { Reunioes } from './Reunioes'
+import { editorialControlField } from '../fields/editorial'
 
 const news = {
   _status: 'published', title: 'Título confirmado', slug: 'confirmed', resumo: 'Resumo confirmado',
@@ -10,6 +11,9 @@ const news = {
 }
 
 describe('proteção de publicação e consentimento', () => {
+  it('mantém os campos obrigatórios de origem no formulário principal', () => {
+    expect(editorialControlField().admin?.position).not.toBe('sidebar')
+  })
   it.each(['title', 'resumo', 'corpo', 'controleEditorial'])('rejeita pendências na notícia: %s', async (field) => {
     const data = { ...news, [field]: field === 'corpo'
       ? { root: { children: [{ children: [{ text: 'PENDENCIA: confirmar' }] }] } }

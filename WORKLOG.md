@@ -26,6 +26,10 @@
   Mobile comprovou o ciclo completo de noticia, previa, logout e publicacao.
 - R2 real revalidado em 12/10 18:49 UTC: objeto temporario unico, bytes/SHA256,
   exclusao e ausencia confirmadas. Relatorio test-results/storage-verification.json.
+- CI 38294655430 repetiu 127/128: rolar ate o titulo nao montou os inputs
+  do grupo na sidebar desktop. Captura confirmou formulario fonte vazio,
+  nao apenas seletor errado. Grupo editorial movido ao formulario principal,
+  mantendo ACL, para nao depender do recorte/lazy rendering da sidebar.
 
 ## Objetivo e aceite
 Auditar e corrigir o portal CMDCA de Pindamonhangaba até entrega verificável, mantendo Next.js/Payload, Neon e R2 existentes. Aceite: navegação pública e CMS funcionais, autorização coerente, dados não inventados, testes reais, QA em 1440/1024/768/390, build/deploy pelo GitHub Actions e validação da URL publicada.

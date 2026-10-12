@@ -31,7 +31,7 @@ Verificacao: 2026-10-11. Base inicial: c71580083f5849ab5084737843144ba124e233cb.
 | Fontes publicas | PARCIAL | Metadados internos existentes, fonte ainda nao exibida em todas noticias |
 | Publicacao VPS | AUSENTE | Nenhum container CMDCA implantado |
 | SMTP/reset real | AUSENTE | Sem SMTP local; nao remover bloqueio de producao |
-| Backup/restore CMDCA | PARCIAL | Dump Neon restaurado em 46 tabelas; uploads e offsite pendentes |
+| Backup/restore CMDCA | PARCIAL | Neon restaurado em 46 tabelas; 3 objetos R2 restaurados com hash; rotina/offsite pendentes |
 | Wix | NAO VERIFICADO | Dominio exato/zona nao encontrados; nenhum registro alterado |
 
 ## Revisao independente
@@ -62,3 +62,11 @@ passam diretamente pela autorizacao, sem cache publico do otimizador.
 A API local /api/media retornou 500 por coluna _objectkey ausente no Neon.
 Essa migration anterior ainda nao foi aplicada operacionalmente. O portal
 renderizado com fallbacks nao comprova CMS local inteiramente funcional.
+
+## Pesquisa e limites de conteudo
+
+Nao houve importacao automatica ou publicacao de fatos novos. O robots.txt da
+Prefeitura consultado em 12/10 proibe GPTBot/ClaudeBot e outros crawlers.
+A coleta automatizada foi interrompida apos essa verificacao. URLs candidatas
+encontradas na pesquisa independente nao substituem validacao editorial e
+autorizacao de republicacao. Nenhuma imagem de menor foi importada.

@@ -33,9 +33,9 @@ test('editor publica capa e menu, confirma no site e restaura sem alterar dados 
     await page.getByRole('button', { name: /^publicar(?: alterações)?$/i }).click()
     await expect.poll(async () => {
       await publicPage.goto('/noticias')
+      await publicPage.getByRole('button', { name: 'Abrir menu', exact: true }).click()
       return publicPage.getByRole('navigation', { name: 'Navegação principal' }).textContent()
     }).toContain('Início QA')
-    await publicPage.getByRole('button', { name: 'Abrir menu', exact: true }).click()
     await expect(publicPage.getByRole('navigation', { name: 'Navegação principal' })
       .getByRole('link', { name: 'Início QA', exact: true })).toBeVisible()
     await publicPage.screenshot({ path: testInfo.outputPath('published-menu-mobile.png'), fullPage: true })

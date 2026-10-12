@@ -1,5 +1,5 @@
 # HANDOFF
-Atualizado: 2026-10-12 15:32
+Atualizado: 2026-10-12 15:45
 
 ## Estado atual
 
@@ -13,6 +13,10 @@ em 4 cenarios novos: origem interna do container no preview e imagem da capa
 tratada como URL remota. Correcoes com regressao local: 114 unitarios, lint/tipos
 aprovados. Novo CI ainda necessario. Nao houve deploy ou mutacao do banco fonte.
 Backup Neon e restore isolado confirmados: 46 tabelas, 6 noticias, 297 KiB.
+CI 38291796075 confirmou correcoes de origem e imagem. Seletores novos ajustados
+para texto exato de previa e abrir menu antes de consultá-lo. Next 16.3.8 e
+patches transitivos reduziram auditoria prod para 1 high (braces, sem release
+corrigida no npm consultado). Novo CI necessario.
 
 ## Como rodar
 

@@ -13,6 +13,14 @@
 - Revisao independente integrada: unpublish explicito invalida navegacao,
   preview compartilha validador de slug. Nao removida protecao CSRF por
   hipotese de proxy retirar Origin. Cache privado de arquivos e intencional.
+- CI 38291796075 comprovou imagem da capa, upload/download/despublicacao PDF
+  e entrada autenticada na previa. Restaram seletores E2E: menu mobile oculto
+  antes de abrir e texto "Previa" ambiguo com botao sair. Corrigidos sem
+  remover assercoes.
+- Auditoria atual detectou 10 alertas de producao. Next atualizado 16.3.6 ->
+  16.3.8, sharp transitivo 0.35.5, source-map-js 1.2.2 e fast-copy 3.1.0.
+  Restou braces 3.0.3 high; npm nao oferece 3.0.4 indicada no advisory.
+  Nao ignorado o advisory. Lint/tipos/114 testes passaram apos atualizacao.
 
 ## Objetivo e aceite
 Auditar e corrigir o portal CMDCA de Pindamonhangaba até entrega verificável, mantendo Next.js/Payload, Neon e R2 existentes. Aceite: navegação pública e CMS funcionais, autorização coerente, dados não inventados, testes reais, QA em 1440/1024/768/390, build/deploy pelo GitHub Actions e validação da URL publicada.

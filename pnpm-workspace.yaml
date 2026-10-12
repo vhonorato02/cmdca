@@ -20,6 +20,9 @@ supportedArchitectures:
 # dependências do Payload. Remover quando o upstream passar a resolver versões
 # iguais ou superiores.
 overrides:
+  sharp: 0.35.5
+  source-map-js: 1.2.2
+  'fast-copy@^3': 3.1.0
   fast-uri: 3.1.8
   undici: 7.29.1
   nodemailer: 10.0.9

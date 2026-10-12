@@ -95,7 +95,7 @@ test('notícia em rascunho exige sessão atual inclusive com cookie de prévia a
   expect(entry?.status()).toBe(200)
   await expect(page).toHaveURL(new RegExp(`/noticias/${slug}$`))
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('CI draft preview article')
-  await expect(page.getByText('Prévia')).toBeVisible()
+  await expect(page.getByText('Prévia', { exact: true })).toBeVisible()
   await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0)
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
 

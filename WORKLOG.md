@@ -21,6 +21,11 @@
   16.3.8, sharp transitivo 0.35.5, source-map-js 1.2.2 e fast-copy 3.1.0.
   Restou braces 3.0.3 high; npm nao oferece 3.0.4 indicada no advisory.
   Nao ignorado o advisory. Lint/tipos/114 testes passaram apos atualizacao.
+- CI 38293118975: 127/128 E2E passaram; unico caso desktop aguardava inputs
+  lazy do Payload sem rolar ate o grupo Fonte. Teste agora rola como usuario.
+  Mobile comprovou o ciclo completo de noticia, previa, logout e publicacao.
+- R2 real revalidado em 12/10 18:49 UTC: objeto temporario unico, bytes/SHA256,
+  exclusao e ausencia confirmadas. Relatorio test-results/storage-verification.json.
 
 ## Objetivo e aceite
 Auditar e corrigir o portal CMDCA de Pindamonhangaba até entrega verificável, mantendo Next.js/Payload, Neon e R2 existentes. Aceite: navegação pública e CMS funcionais, autorização coerente, dados não inventados, testes reais, QA em 1440/1024/768/390, build/deploy pelo GitHub Actions e validação da URL publicada.

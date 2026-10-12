@@ -113,6 +113,8 @@ test('notícia em rascunho exige sessão atual inclusive com cookie de prévia a
   await page.getByRole('button', { name: 'Entrar', exact: true }).click()
   await expect(page).toHaveURL(/\/admin\/?$/)
   await page.goto(`/admin/collections/noticias/${create.body.doc.id}`)
+  // Payload mounts nested group inputs only when the group enters the viewport.
+  await page.getByRole('heading', { name: 'Fonte e informações internas' }).scrollIntoViewIfNeeded()
   await page.getByLabel('Fonte da informação', { exact: true }).fill('CI controlled institutional source')
   const date = page.getByLabel('Verificado em', { exact: true })
   await date.fill('11/10/2026')

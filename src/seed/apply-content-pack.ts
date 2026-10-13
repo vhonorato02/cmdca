@@ -72,6 +72,7 @@ export function lexicalFromParagraphs(
     children.push(
       paragraph([
         textNode('Fonte: ', 1),
+        textNode('texto redigido com base em '),
         {
           type: 'link',
           version: 3,

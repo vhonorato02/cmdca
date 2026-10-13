@@ -1,5 +1,18 @@
 # WORKLOG
 
+## 13/10/2026
+
+- Revisao UI/UX independente (sem P0), P1 aplicados em cf238ec.
+- Pacote editorial 2026-10 com fontes verificadas em 12/10/2026; nada da
+  Prefeitura coletado (robots bloqueia crawlers de IA).
+- CI 38472429756: timeout no script do pacote (handles do Payload abertos);
+  corrigido com process.exit e contagem `CONTENT_PACK_CREATED`.
+- Noticias sem data (4 no Neon) ficavam no topo por `-data`; ordenacao no
+  servidor com nulos por ultimo, sem inventar datas.
+- CI 38474174232: 128/128 E2E; auditoria reprovou link de fonte como alvo
+  pequeno (27 capturas, todas pelo mesmo motivo). Linha de fonte virou texto
+  corrido.
+
 ## Retomada de 11 e 12/10/2026
 
 - a0334c5: preview autenticado, navegacao/capa CMS, arquivos via Payload,
@@ -166,3 +179,4 @@ Próxima ação: integrar correção de hierarquia, publicar revisão e repetir 
 - 360ccfd: Correção dos gaps causados por pares de kerning em labels uppercase no Firefox/Chromium (como "CONTAT O"), aplicando font-kerning:none, e adequação do atalho VLibras para sua própria API atual `window.VLibrasWidget.open()`, visto que o plugin atual substituiu a lógica de ativação manual antiga baseada em atributo html.
 - HANDOFF.md reescrito com pendências reais.
 - Bloqueios: SSH da VPS recusado; URL do Coolify, UUIDs, token e domínio não informados; SMTP real ausente. Nenhum deploy e nenhuma migração em produção.
+- CI 38475913896 (bce6716) aprovado: 128/128 E2E, auditoria portal 116/116.

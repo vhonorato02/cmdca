@@ -1,5 +1,27 @@
 # HANDOFF
-Atualizado: 2026-10-12 16:25
+Atualizado: 2026-10-13 19:15
+
+## Rodada de 13/10/2026 (UX independente + pacote editorial)
+
+Revisao independente de UI/UX (codex exec read-only) sem P0; todos os P1
+aplicados em cf238ec: Participe sem beco sem saida, FMDCA com passos de
+destinacao no IR, menu com "Fundo e IR", reunioes futuras/realizadas, ajuda com
+telefones tocaveis, mobile do header/capa/rodape, data da noticia na coluna
+principal do CMS. Pacote `src/seed/content-pack-2026-10.ts`: 11 noticias com
+data e fonte (Tribuna do Norte, imprensa oficial; ata Edital-10434.pdf), 6 FAQ,
+2 destaques; despublica 2 destaques defasados. Script idempotente
+`pnpm apply:content-pack` (transacao unica, marcador, trava de banco nao local).
+CI aplica o pacote duas vezes (19 criados, depois 0). Noticias sem data agora
+vao para o fim na home, lista e conferencias (`sortByDateDesc`).
+CI 38474174232: pacote, 121 unitarios e 128/128 E2E aprovados; auditoria do
+portal reprovou a linha "Fonte:" como alvo de toque pequeno; corrigida para
+texto corrido. CI 38475913896 (bce6716) APROVADO: pacote 19/0, 128/128 E2E,
+admin 16/16, portal 116 capturas sem estouro, h1 unico, sem alvo pequeno.
+Capturas da lista de noticias (390) e da noticia da conferencia conferidas.
+O PACOTE NAO FOI APLICADO NO NEON. Isso exige backup novo, as 2 migrations
+pendentes (`20260929_150216_payload_upgrade_compatibility`,
+`20261011_073400_editorial_controls`) e o e-mail de um usuario real como autor.
+A Vercel (cmdca.vercel.app) le esse banco: aplicar torna o conteudo publico.
 
 ## Estado atual
 

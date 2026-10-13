@@ -92,10 +92,10 @@ export const Navegacao: GlobalConfig = {
       'menuPrincipal',
       'Menu principal',
       [
-        { label: 'Início', href: '/' },
         { label: 'CMDCA', href: '/conselho' },
         { label: 'Reuniões', href: '/reunioes' },
         { label: 'Transparência', href: '/transparencia' },
+        { label: 'Fundo e IR', href: '/fmdca' },
         { label: 'Notícias', href: '/noticias' },
         { label: 'Participe', href: '/participe' },
       ],

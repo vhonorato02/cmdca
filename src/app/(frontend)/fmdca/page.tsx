@@ -108,7 +108,9 @@ export default async function FmdcaPage() {
                 </p>
               </div>
               <div className="lead-box">
-                <span className="k">Dados locais verificados</span>
+                <span className="k">
+                  {cnpj || conta ? 'Dados do Fundo conferidos' : 'Dados bancários do Fundo'}
+                </span>
                 {cnpj ? (
                   <div className="ro" style={{ marginTop: 8 }}>
                     CNPJ do Fundo: {cnpj}
@@ -128,6 +130,55 @@ export default async function FmdcaPage() {
                 </p>
               </div>
             </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="band">
+        <div className="wrap">
+          <Reveal>
+            <div className="sec-head">
+              <div>
+                <span className="eyebrow">Passo a passo</span>
+                <h2>Como destinar na declaração</h2>
+                <p>
+                  Resumo do procedimento descrito pela Receita Federal para pessoa física no modelo
+                  por deduções legais.
+                </p>
+              </div>
+            </div>
+            <ol className="steps">
+              <li>
+                <b>Preencha a declaração completa.</b>
+                <span>
+                  Informe rendimentos, bens e deduções. A destinação só aparece no modelo por
+                  deduções legais.
+                </span>
+              </li>
+              <li>
+                <b>Abra Doações Diretamente na Declaração.</b>
+                <span>
+                  Na aba Criança e Adolescente, escolha o fundo municipal de Pindamonhangaba e
+                  informe o valor dentro do limite calculado pelo programa.
+                </span>
+              </li>
+              <li>
+                <b>Pague o DARF até o prazo final.</b>
+                <span>
+                  Depois de transmitir, emita e pague o DARF gerado. Sem o pagamento no prazo, a
+                  destinação não é validada.
+                </span>
+              </li>
+            </ol>
+            <a
+              className="btn"
+              href={RECEITA_DECLARACAO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ marginTop: 22 }}
+            >
+              Abrir orientação da Receita Federal <span aria-hidden="true">↗</span>
+            </a>
           </Reveal>
         </div>
       </section>

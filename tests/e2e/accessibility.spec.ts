@@ -118,7 +118,7 @@ test('menu móvel abre no teclado, move o foco e fecha com Escape', async ({ pag
   await expect(menuButton).toHaveAttribute('aria-expanded', 'true')
   await expect(menuButton).toHaveAccessibleName('Fechar menu')
   await expect(page.getByRole('navigation', { name: 'Navegação principal' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Início', exact: true })).toBeFocused()
+  await expect(page.getByRole('link', { name: 'CMDCA', exact: true })).toBeFocused()
 
   await page.keyboard.press('Escape')
   await expect(menuButton).toHaveAccessibleName('Abrir menu')

@@ -156,16 +156,21 @@ export default async function AjudaPage() {
               <div>
                 <h2>Conselhos Tutelares</h2>
                 <p>
-                  <b>1º Conselho Tutelar:</b> atendimento pelos telefones oficiais.
+                  <b>1º Conselho Tutelar</b>
                 </p>
-                <div className="num">
-                  <a href="tel:+551235500513">(12) 3550-0513</a> ·{' '}
-                  <a href="tel:+551235500514">3550-0514</a>
+                <div className="num num-list">
+                  <a href="tel:+551235500513">(12) 3550-0513</a>
+                  <a href="tel:+551235500514">(12) 3550-0514</a>
+                </div>
+                <p style={{ marginTop: 14 }}>
+                  <b>2º Conselho Tutelar (Moreira César)</b>
+                </p>
+                <div className="num num-list">
+                  <a href="tel:+551236411688">(12) 3641-1688</a>
                 </div>
                 <div className="when">
-                  <b>2º Conselho Tutelar (Moreira César):</b> Av. das Hortências, 168, Vale das
-                  Acácias · <a href="tel:+551236411688">(12) 3641-1688</a>. Confirme o plantão antes
-                  de se deslocar.
+                  Av. das Hortências, 168, Vale das Acácias. Confirme o plantão antes de se
+                  deslocar.
                 </div>
               </div>
             </div>

@@ -70,7 +70,9 @@ export default async function ConselhoPage() {
                 </p>
               </div>
               <div className="lead-box">
-                <span className="k">{publicText(dir?.gestaoLabel) || 'Gestão 2025–2027'}</span>
+                {publicText(dir?.gestaoLabel) ? (
+                  <span className="k">{publicText(dir?.gestaoLabel)}</span>
+                ) : null}
                 <div className="nm">Representação paritária</div>
                 <p className="ro" style={{ marginTop: 8 }}>
                   Consulte a publicação oficial para conferir titulares, suplentes e a vigência da

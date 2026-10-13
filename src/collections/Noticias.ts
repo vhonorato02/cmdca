@@ -109,6 +109,17 @@ export const Noticias: CollectionConfig = {
     },
     { name: 'corpo', label: 'Corpo', type: 'richText', required: true },
     {
+      name: 'data',
+      label: 'Data da publicação',
+      type: 'date',
+      required: true,
+      defaultValue: () => new Date().toISOString(),
+      admin: {
+        description: 'Data em que o fato ocorreu ou foi divulgado oficialmente.',
+        date: { pickerAppearance: 'dayOnly', displayFormat: 'dd/MM/yyyy' },
+      },
+    },
+    {
       name: 'capa',
       label: 'Imagem de capa',
       type: 'upload',
@@ -138,16 +149,6 @@ export const Noticias: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       admin: { position: 'sidebar' },
-    },
-    {
-      name: 'data',
-      label: 'Data da publicação',
-      type: 'date',
-      required: true,
-      admin: {
-        position: 'sidebar',
-        date: { pickerAppearance: 'dayOnly', displayFormat: 'dd/MM/yyyy' },
-      },
     },
     editorialControlField(),
   ],

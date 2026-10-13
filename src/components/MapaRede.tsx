@@ -93,6 +93,15 @@ export function MapaRede({ pontos }: { pontos: Ponto[] }) {
     [visiveis],
   )
 
+  if (!pontos.length) {
+    return (
+      <p className="empty-state">
+        A lista de serviços da rede está em atualização. Use os telefones de emergência e dos
+        Conselhos Tutelares acima.
+      </p>
+    )
+  }
+
   return (
     <>
       <div className="map-tools" role="group" aria-label="Filtrar locais por tipo">

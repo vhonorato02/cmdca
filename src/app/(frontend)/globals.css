@@ -758,7 +758,7 @@ section.band {
 
 .home-help p {
   color: var(--ink-2);
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   line-height: 1.5;
 }
 
@@ -849,7 +849,7 @@ html.contrast .sec-head .more {
 
 .lead-box .ro {
   color: var(--ink-2);
-  font-size: 0.84rem;
+  font-size: 0.95rem;
 }
 
 .lead-box hr {
@@ -940,7 +940,7 @@ html.contrast .links .ic {
 
 .links p {
   color: var(--ink-2);
-  font-size: 0.86rem;
+  font-size: 0.95rem;
 }
 
 /* Indicadores e gráficos */
@@ -1719,7 +1719,67 @@ html.contrast .hc .num {
 .hc .when {
   margin-top: 7px;
   color: var(--ink-2);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.hc .num-list {
+  display: grid;
+  gap: 4px;
+}
+
+.hc .num-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  counter-reset: step;
+  list-style: none;
+}
+
+.steps li {
+  position: relative;
+  padding: 52px 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  counter-increment: step;
+}
+
+.steps li::before {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-content: center;
+  border-radius: 50%;
+  background: var(--indigo);
+  color: #fff;
+  content: counter(step);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.steps b {
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.steps span {
+  color: var(--ink-2);
+  font-size: 0.95rem;
 }
 
 .calm {
@@ -2074,7 +2134,18 @@ html.contrast .meet .dt b {
 .meet .info .meta {
   margin-top: 5px;
   color: var(--ink-2);
-  font-size: 0.82rem;
+  font-size: 0.92rem;
+}
+
+.meeting-group + .meeting-group {
+  margin-top: 34px;
+}
+
+.meeting-group-title {
+  margin-bottom: 12px;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 650;
 }
 
 .pill {
@@ -2525,11 +2596,13 @@ footer a:hover {
   }
 
   .mobile-help {
-    display: none;
+    min-height: 44px;
+    padding: 8px 10px !important;
+    font-size: 0.85rem;
   }
 
   .burger {
-    margin-left: auto;
+    margin-left: 0;
   }
 
   .sec-head {
@@ -2543,7 +2616,7 @@ footer a:hover {
   }
 
   .home-entry-image {
-    min-height: 290px;
+    min-height: 210px;
     border-radius: var(--radius);
   }
 
@@ -2555,8 +2628,17 @@ footer a:hover {
   .stats,
   .news-list,
   .places-list,
-  .foot {
+  .steps {
     grid-template-columns: 1fr;
+  }
+
+  .foot {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 18px;
+  }
+
+  .foot > :first-child {
+    grid-column: 1 / -1;
   }
 
   .links > a {

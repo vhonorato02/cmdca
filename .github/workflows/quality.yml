@@ -86,6 +86,12 @@ jobs:
         timeout-minutes: 5
         run: pnpm exec tsx scripts/ci-test-cms.ts
 
+      - name: Aplicar pacote editorial no banco isolado
+        timeout-minutes: 5
+        run: |
+          APPLY_CONTENT_PACK=true CONTENT_PACK_AUTHOR_EMAIL=editor@example.test pnpm apply:content-pack
+          APPLY_CONTENT_PACK=true CONTENT_PACK_AUTHOR_EMAIL=editor@example.test pnpm apply:content-pack
+
       - name: Executar verificacoes de qualidade
         run: |
           git diff --check

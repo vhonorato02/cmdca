@@ -29,15 +29,15 @@ test('editor publica capa e menu, confirma no site e restaura sem alterar dados 
     await publicPage.screenshot({ path: testInfo.outputPath('published-cover-mobile.png'), fullPage: true })
 
     await page.goto('/admin/globals/navegacao')
-    await page.getByLabel(/^Texto do link/).first().fill('Início QA')
+    await page.getByLabel(/^Texto do link/).first().fill('Conselho QA')
     await page.getByRole('button', { name: /^publicar(?: alterações)?$/i }).click()
     await expect.poll(async () => {
       await publicPage.goto('/noticias')
       await publicPage.getByRole('button', { name: 'Abrir menu', exact: true }).click()
       return publicPage.getByRole('navigation', { name: 'Navegação principal' }).textContent()
-    }).toContain('Início QA')
+    }).toContain('Conselho QA')
     await expect(publicPage.getByRole('navigation', { name: 'Navegação principal' })
-      .getByRole('link', { name: 'Início QA', exact: true })).toBeVisible()
+      .getByRole('link', { name: 'Conselho QA', exact: true })).toBeVisible()
     await publicPage.screenshot({ path: testInfo.outputPath('published-menu-mobile.png'), fullPage: true })
   } finally {
     const restored = await page.evaluate(async ({ home, navigation }) => {

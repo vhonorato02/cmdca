@@ -198,10 +198,12 @@ export default async function HomePage() {
                 </p>
               </div>
               <div className="lead-box">
-                <span className="k">{publicText(dir?.gestaoLabel) || 'Gestão 2025–2027'}</span>
+                {publicText(dir?.gestaoLabel) ? (
+                  <span className="k">{publicText(dir?.gestaoLabel)}</span>
+                ) : null}
                 <div className="nm">Composição paritária</div>
                 <p className="ro" style={{ marginTop: 8 }}>
-                  Veja quem compõe o colegiado, o que ele faz e quais leis o orientam.
+                  Entenda como o colegiado é formado, o que ele faz e quais leis o orientam.
                 </p>
                 <Link
                   className="mini"

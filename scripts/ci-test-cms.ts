@@ -200,12 +200,15 @@ try {
   assert.equal((await payload.findByID({ collection: 'resolucoes', id: resolution.id, ...publicOptions })).situacaoJuridica, 'revogada')
   assert.equal((await payload.findByID({ collection: 'editais', id: notice.id, ...publicOptions })).situacaoJuridica, 'suspenso')
   console.log('Published status fixtures passed with a validated PDF through isolated S3 transport.')
+  // Future date keeps the participation link visible in the upcoming meetings group.
+  const upcomingMeeting = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  upcomingMeeting.setUTCHours(0, 0, 0, 0)
   for (const acesso of ['publica', 'reservada'] as const) {
     await payload.create({
       collection: 'reunioes', overrideAccess: false, user: editor,
       data: {
         titulo: acesso === 'publica' ? 'CI public meeting' : 'CI reserved meeting',
-        data: '2026-09-29T00:00:00.000Z', hora: '14:30', tipo: 'ordinaria',
+        data: upcomingMeeting.toISOString(), hora: '14:30', tipo: 'ordinaria',
         acesso, modalidade: 'online', linkTransmissao: 'https://example.test/meeting',
         _status: 'published',
         controleEditorial: { fonte: 'CI isolated fixture', verificadoEm: new Date().toISOString() },

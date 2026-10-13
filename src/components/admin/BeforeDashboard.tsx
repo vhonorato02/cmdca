@@ -38,11 +38,6 @@ const shortcuts: Shortcut[] = [
     title: 'Dados institucionais',
     description: 'Atualize contatos, FMDCA e base legal quando necessário.',
   },
-  {
-    href: '/admin/globals/indicadores',
-    title: 'Atualizar indicadores',
-    description: 'Registre período, fonte e método quando essas informações estiverem disponíveis.',
-  },
 ]
 
 export default function BeforeDashboard() {

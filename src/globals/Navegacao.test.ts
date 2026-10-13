@@ -27,10 +27,10 @@ describe('global de navegação', () => {
   it('mantém limites e links padrão atuais', () => {
     expect([menuPrincipal.minRows, menuPrincipal.maxRows]).toEqual([1, 6])
     expect(menuPrincipal.defaultValue).toEqual([
-      { label: 'Início', href: '/' },
       { label: 'CMDCA', href: '/conselho' },
       { label: 'Reuniões', href: '/reunioes' },
       { label: 'Transparência', href: '/transparencia' },
+      { label: 'Fundo e IR', href: '/fmdca' },
       { label: 'Notícias', href: '/noticias' },
       { label: 'Participe', href: '/participe' },
     ])

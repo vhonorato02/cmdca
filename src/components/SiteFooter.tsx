@@ -85,10 +85,7 @@ export async function SiteFooter() {
         </div>
         <div className="foot-end">
           <span>© {year} CMDCA Pindamonhangaba</span>
-          <div className="seals">
-            <span className="seal">Recursos de acessibilidade</span>
-            <span className="seal">VLibras</span>
-          </div>
+          <Link href="/acessibilidade">Recursos de acessibilidade</Link>
         </div>
       </div>
     </footer>

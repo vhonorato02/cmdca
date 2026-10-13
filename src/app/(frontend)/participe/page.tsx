@@ -72,9 +72,9 @@ export default async function ParticipePage() {
                 {telefone ? <div className="ro">Telefone: {telefone}</div> : null}
                 {cep ? <div className="ro">CEP: {cep}</div> : null}
                 {!email && !telefone && !cep ? (
-                  // PENDENCIA: e-mail e telefone oficiais do CMDCA a confirmar pelo conselho no CMS.
                   <div className="ro" style={{ marginTop: 8 }}>
-                    Canais oficiais em atualização. Use os dados da Casa dos Conselhos abaixo.
+                    Canais oficiais em atualização.
+                    {casaTelefone ? ' Use os contatos da Casa dos Conselhos abaixo.' : null}
                   </div>
                 ) : null}
                 <hr />
@@ -83,11 +83,18 @@ export default async function ParticipePage() {
                   <div className="ro" style={{ marginTop: 8 }}>
                     {casaTelefone}
                   </div>
-                ) : null}
+                ) : (
+                  <div className="ro" style={{ marginTop: 8 }}>
+                    Para orientação imediata, consulte os canais em{' '}
+                    <Link href="/ajuda">Buscar ajuda</Link>.
+                  </div>
+                )}
                 {assessora ? <div className="ro">Atendimento: {assessora}</div> : null}
-                <div className="ro" style={{ marginTop: 8 }}>
-                  Confirme o horário antes de se deslocar.
-                </div>
+                {casaTelefone ? (
+                  <div className="ro" style={{ marginTop: 8 }}>
+                    Confirme o horário antes de se deslocar.
+                  </div>
+                ) : null}
                 {instagram ? (
                   <>
                     <hr />
@@ -130,10 +137,6 @@ export default async function ParticipePage() {
               <Link href="/ajuda">
                 <h3>Pedir ajuda / denunciar</h3>
                 <p>Emergência, Disque 100 e Conselho Tutelar.</p>
-              </Link>
-              <Link href="/mapa-do-site">
-                <h3>Mapa do site</h3>
-                <p>Acesse todas as áreas institucionais e de serviço.</p>
               </Link>
             </div>
           </Reveal>

@@ -66,7 +66,7 @@ export default async function TransparenciaPage() {
             <div className="sec-head">
               <div>
                 <span className="eyebrow">Documentos</span>
-                <h2>Prestação de contas e planos de aplicação</h2>
+                <h2 style={{ fontSize: '1.5rem' }}>Prestação de contas e planos de aplicação</h2>
                 <p>
                   Esta área reúne planos de aplicação, receitas, saldos, projetos financiados e
                   prestações de contas quando os documentos são oficialmente publicados. Não há
@@ -82,6 +82,9 @@ export default async function TransparenciaPage() {
               </div>
             </div>
             <p style={{ color: 'var(--ink-2)' }}>
+              Nenhum plano de aplicação ou prestação de contas foi publicado neste portal até agora.
+            </p>
+            <p style={{ color: 'var(--ink-2)', marginTop: 10 }}>
               Para entender a destinação do Imposto de Renda, consulte os limites e as fontes
               oficiais na página do <Link href="/fmdca">Fundo Municipal</Link>.
             </p>

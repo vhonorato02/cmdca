@@ -238,7 +238,9 @@ async function main() {
 
     await commitTransaction(req)
     started = false
+    const created = [...noticias, ...faq, ...destaques].filter(([, result]) => result === 'criado').length
     payload.logger.info({ msg: 'Pacote editorial aplicado.', autor: author.email, noticias, faq, destaques })
+    console.log(`CONTENT_PACK_CREATED=${created}`)
   } catch (error) {
     if (req && started) await killTransaction(req)
     throw error
@@ -248,8 +250,12 @@ async function main() {
 }
 
 if (process.env.VITEST !== 'true') {
-  main().catch((error) => {
-    console.error('Falha ao aplicar o pacote editorial:', error)
-    process.exitCode = 1
-  })
+  // Payload keeps long-lived handles open; exit explicitly after cleanup, as the Payload CLI does.
+  main().then(
+    () => process.exit(0),
+    (error) => {
+      console.error('Falha ao aplicar o pacote editorial:', error)
+      process.exit(1)
+    },
+  )
 }

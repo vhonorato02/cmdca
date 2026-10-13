@@ -7,7 +7,7 @@ import { Vozes, type Voz } from '@/components/home/Vozes'
 import { CATEGORIA_LABEL, NewsCard } from '@/components/NewsCard'
 import { Illustration } from '@/components/Illustration'
 import { Reveal } from '@/components/Reveal'
-import { formatDate } from '@/lib/format'
+import { formatDate, sortByDateDesc } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
 import { createMetadata, serializeJsonLd } from '@/lib/seo'
 import {
@@ -62,7 +62,8 @@ export default async function HomePage() {
         collection: 'noticias',
         where: { _status: { equals: 'published' } },
         sort: '-data',
-        limit: 4,
+        // Lote maior: notícias sem data vêm primeiro no Postgres e são reordenadas abaixo.
+        limit: 24,
         depth: 1,
       })
       .catch(() => ({ docs: [] as Noticia[] })),
@@ -106,10 +107,12 @@ export default async function HomePage() {
   const cover = typeof pagina?.capa?.imagem === 'object' && pagina.capa.imagem ? pagina.capa.imagem : null
   const coverURL = publicMediaHref(cover?.url)
 
-  const news = (noticias.docs as Noticia[]).filter(
-    (item) =>
-      publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
-  )
+  const news = sortByDateDesc(
+    (noticias.docs as Noticia[]).filter(
+      (item) =>
+        publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
+    ),
+  ).slice(0, 4)
   const lead = news.find((n) => n.destaque) || news[0]
   const rest = lead ? news.filter((n) => n.id !== lead.id).slice(0, 3) : []
 

@@ -89,8 +89,11 @@ jobs:
       - name: Aplicar pacote editorial no banco isolado
         timeout-minutes: 5
         run: |
-          APPLY_CONTENT_PACK=true CONTENT_PACK_AUTHOR_EMAIL=editor@example.test pnpm apply:content-pack
-          APPLY_CONTENT_PACK=true CONTENT_PACK_AUTHOR_EMAIL=editor@example.test pnpm apply:content-pack
+          export APPLY_CONTENT_PACK=true CONTENT_PACK_AUTHOR_EMAIL=editor@example.test
+          pnpm apply:content-pack | tee test-results/content-pack-1.log
+          grep -q 'CONTENT_PACK_CREATED=19' test-results/content-pack-1.log
+          pnpm apply:content-pack | tee test-results/content-pack-2.log
+          grep -q 'CONTENT_PACK_CREATED=0' test-results/content-pack-2.log
 
       - name: Executar verificacoes de qualidade
         run: |

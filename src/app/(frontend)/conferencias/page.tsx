@@ -5,6 +5,7 @@ import { NewsCard } from '@/components/NewsCard'
 import { Hero } from '@/components/Hero'
 import { Reveal } from '@/components/Reveal'
 import { getPayloadClient } from '@/lib/payload'
+import { sortByDateDesc } from '@/lib/format'
 import { createMetadata } from '@/lib/seo'
 import { containsUnverifiedMarker, publicText } from '@/lib/site'
 import type { Noticia } from '@/payload-types'
@@ -31,9 +32,11 @@ export default async function ConferenciasPage() {
       limit: 12,
       depth: 1,
     })
-  const relacionadas = (res.docs as Noticia[]).filter(
-    (item) =>
-      publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
+  const relacionadas = sortByDateDesc(
+    (res.docs as Noticia[]).filter(
+      (item) =>
+        publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
+    ),
   )
 
   return (

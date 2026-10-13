@@ -40,6 +40,22 @@ O portal pode explicar e simular o limite informado pelo usuário, mas não deve
 
 ## Dados que exigem confirmação atual
 
+## Pacote editorial de outubro de 2026
+
+Arquivo `src/seed/content-pack-2026-10.ts`, aplicado por `pnpm apply:content-pack`
+(idempotente, transação única, marcador `[content-pack:2026-10]`). Contém 11 notícias,
+6 perguntas frequentes e 2 destaques, com textos próprios escritos a partir de publicações
+datadas do Jornal Tribuna do Norte (imprensa oficial do município), da Receita Federal e do ECA.
+Cada item registra fonte, link e data de conferência (12/10/2026). Os dois destaques
+desatualizados ("Conferência agendada para 2026" e "reuniões abertas com transmissão online")
+são despublicados pelo mesmo comando.
+
+Fora do pacote, por exigirem documento ou confirmação formal: composição nominal do Conselho,
+atas e resoluções em PDF, editais, entidades registradas, dados bancários do Fundo,
+calendário de reuniões futuras, nomes de crianças e adolescentes e qualquer imagem de pessoas.
+O site oficial da Prefeitura bloqueia coleta automatizada por robôs de IA e não foi lido.
+
+
 Não publique estes itens apenas com base no conteúdo legado:
 
 - endereço, CEP, horário, telefone e e-mail da Casa dos Conselhos;

@@ -1,6 +1,25 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatDate, formatDateLong } from './format'
+import { formatDate, formatDateLong, sortByDateDesc } from './format'
+
+describe('sortByDateDesc', () => {
+  it('põe mais recentes primeiro e itens sem data no fim', () => {
+    const items = [
+      { id: 'sem-data-antiga', data: null, createdAt: '2025-01-01T00:00:00.000Z' },
+      { id: 'antiga', data: '2026-04-09T12:00:00.000Z' },
+      { id: 'sem-data-nova', data: null, createdAt: '2025-06-01T00:00:00.000Z' },
+      { id: 'recente', data: '2026-09-25T12:00:00.000Z' },
+      { id: 'invalida', data: 'x', createdAt: '2024-01-01T00:00:00.000Z' },
+    ]
+    expect(sortByDateDesc(items).map((i) => i.id)).toEqual([
+      'recente',
+      'antiga',
+      'sem-data-nova',
+      'sem-data-antiga',
+      'invalida',
+    ])
+  })
+})
 
 describe('formatDate', () => {
   it('formata ISO em dd/MM/yyyy (UTC)', () => {

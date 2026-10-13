@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { NewsCard } from '@/components/NewsCard'
 import { Reveal } from '@/components/Reveal'
 import { getPayloadClient } from '@/lib/payload'
+import { sortByDateDesc } from '@/lib/format'
 import { createMetadata } from '@/lib/seo'
 import { containsUnverifiedMarker, publicText } from '@/lib/site'
 import type { Noticia } from '@/payload-types'
@@ -27,9 +28,11 @@ export default async function NoticiasPage() {
       limit: 60,
       depth: 1,
     })
-  const news = (res.docs as Noticia[]).filter(
-    (item) =>
-      publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
+  const news = sortByDateDesc(
+    (res.docs as Noticia[]).filter(
+      (item) =>
+        publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
+    ),
   )
 
   return (

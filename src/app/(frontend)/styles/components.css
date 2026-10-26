@@ -298,6 +298,12 @@
   }
 
 
+  .skeleton--row {
+    height: 6rem;
+    margin-bottom: var(--s-4);
+    border-radius: var(--r-md);
+  }
+
   @keyframes skeleton {
     from {
       background-position: 100% 0;

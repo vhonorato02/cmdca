@@ -80,3 +80,23 @@ export function Callout({
     </aside>
   )
 }
+
+/** Esqueleto de página de lista, usado nos `loading.tsx` das rotas dinâmicas. */
+export function ListPageSkeleton({ label }: { label: string }) {
+  return (
+    <>
+      <div className="page-header">
+        <div className="wrap page-header__inner">
+          <Skeleton lines={2} label={label} />
+        </div>
+      </div>
+      <div className="section" aria-hidden="true">
+        <div className="wrap">
+          {[0, 1, 2].map((item) => (
+            <span key={item} className="skeleton skeleton--row" />
+          ))}
+        </div>
+      </div>
+    </>
+  )
+}

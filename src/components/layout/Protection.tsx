@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { Fragment, type CSSProperties } from 'react'
 
 import type { Canal } from '@/lib/content'
 
@@ -53,7 +53,15 @@ export function ProtectionDock({ canais }: { canais: Canal[] }) {
           className={`dock-link dock-link--${canal.tipo}`}
           href={canal.href}
         >
-          <span className="dock-link__number">{canal.numero}</span>{' '}
+          <span className="dock-link__number">
+            {/* Quebra só entre as partes ("(12)" e "3550-0513"), nunca no hífen. */}
+            {canal.numero.split(' ').map((parte, index) => (
+              <Fragment key={index}>
+                {index > 0 && ' '}
+                <span>{parte}</span>
+              </Fragment>
+            ))}
+          </span>{' '}
           <span className="dock-link__label">{canal.rotulo}</span>
           <span className="sr-only">{callHint(canal)}</span>
         </a>

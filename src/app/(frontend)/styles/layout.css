@@ -144,7 +144,9 @@
     font-size: var(--fs-xs);
     font-weight: 700;
     line-height: 1;
-    transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+    transition:
+      background-color var(--t-fast) var(--ease),
+      color var(--t-fast) var(--ease);
   }
 
   .a11y-tools__btn:hover,
@@ -282,7 +284,6 @@
     margin-left: var(--s-3);
   }
 
-
   @media (max-width: 899.98px) {
     :root {
       --header-h: 4rem;
@@ -343,7 +344,6 @@
     .site-nav__help {
       margin: var(--s-6) 0 0;
     }
-
   }
 
   @media (min-width: 900px) {
@@ -377,6 +377,7 @@
       align-items: center;
       justify-content: center;
       gap: 2px;
+      min-width: 0;
       min-height: var(--dock-h);
       padding: var(--s-2) var(--s-1);
       color: var(--c-on-dark);
@@ -395,6 +396,12 @@
       font-size: clamp(1rem, 0.55rem + 2.6vw, 1.25rem);
       font-weight: 820;
       line-height: 1;
+      /* Cabe numa linha com a fonte da marca; enquanto a fonte carrega (fallback
+         mais largo) ou em 320 px, quebra entre as partes em vez de estourar a tela. */
+      text-wrap: balance;
+    }
+
+    .dock-link__number > span {
       white-space: nowrap;
     }
 

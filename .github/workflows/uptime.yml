@@ -1,0 +1,46 @@
+name: Disponibilidade
+
+# Monitor externo: a VPS vigia a si mesma, mas, se ela cair inteira, ninguém avisa.
+# A cada 15 minutos o GitHub consulta /api/health (app + banco) e a home. Em falha,
+# envia alerta ao ntfy (secret ALERT_URL) e o GitHub manda e-mail de run com falha
+# para quem editou este agendamento por último.
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cmdca-uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      BASE: ${{ vars.CMDCA_PUBLIC_URL }}
+    steps:
+      - name: Verificar saúde e home
+        run: |
+          set -u
+          ok=1
+          for path in /api/health /; do
+            code=$(curl --silent --location --output /dev/null --write-out '%{http_code}' \
+              --retry 3 --retry-delay 20 --retry-all-errors --max-time 20 "$BASE$path" || true)
+            echo "$path → $code"
+            [ "$code" = 200 ] || ok=0
+          done
+          [ "$ok" = 1 ]
+
+      - name: Alertar no ntfy
+        if: failure()
+        env:
+          ALERT_URL: ${{ secrets.ALERT_URL }}
+        run: |
+          [ -n "$ALERT_URL" ] || exit 0
+          curl --silent --max-time 15 -H 'Title: CMDCA fora do ar' -H 'Priority: high' -H 'Tags: rotating_light' \
+            -d "Monitor externo (GitHub): $BASE não respondeu 200. $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            "$ALERT_URL" > /dev/null || true

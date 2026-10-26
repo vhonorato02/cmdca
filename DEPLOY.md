@@ -67,6 +67,14 @@ site backup && site teste-restauracao
 
 Também dá para fazer pelo Dockge (`https://zewithane-1.tail731312.ts.net:10000`, só na Tailscale): stack `cmdca`.
 
+## Monitoramento
+
+- **Na VPS:** o healthwatch do `vps-platform` vigia containers, disco e backup e alerta no ntfy.
+- **Fora da VPS:** o workflow `Disponibilidade` (`.github/workflows/uptime.yml`) consulta `/api/health`
+  e a home a cada 15 minutos. Se falhar, alerta no mesmo ntfy (secret `ALERT_URL`) e o GitHub envia
+  e-mail de falha. Assim, uma queda da VPS inteira também é avisada.
+- **Depois de cada deploy:** `E2E (producao)` (Playwright de leitura + axe) e `Lighthouse (producao)`.
+
 ## Trocar para o domínio definitivo (Wix)
 
 Domínio definitivo: **www.cmdcapinda.org** (canônico). O raiz `cmdcapinda.org` e o

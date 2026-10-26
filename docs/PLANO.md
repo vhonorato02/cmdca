@@ -50,7 +50,7 @@ Regras: só a `main` (nada de clones, worktrees ou branches) e tudo hospedado na
 1. **Teste de reboot:** tudo volta sozinho (Caddy, DNAT `platform-fw`, Postgres, apps, Tailscale serve, T3).
 2. **Segundo app real:** repositório-modelo `vps-app-template` (Node + Payload + Dockerfile + workflow de deploy). Publicar um app de exemplo do zero seguindo só o README, cronometrado. Depois apagar o exemplo e o `teste`.
 3. **Backup off-site:** restic copy para um bucket grátis (R2 10 GB ou Backblaze B2 10 GB), com teste de restauração a partir dele.
-4. **Monitor externo:** healthchecks.io grátis. Heartbeat do backup e do healthwatch; se a VPS morrer, chega e-mail.
+4. ~~Monitor externo~~ — feito com o workflow `Disponibilidade` do GitHub (a cada 15 min, alerta no ntfy e e-mail do GitHub), sem conta nova.
 5. **Dockge:** criar o usuário administrador (hoje o primeiro acesso cria qualquer usuário).
 6. **IP dinâmico:** documentar o risco e a opção Cloudflare (DNS grátis com CNAME no raiz).
 

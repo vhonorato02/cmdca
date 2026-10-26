@@ -1,119 +1,88 @@
-# Manual do painel
+# Manual do painel (para quem não é técnico)
 
-Este guia é para a equipe do CMDCA. O painel fica em `/admin` e funciona melhor em navegador atualizado. Não compartilhe conta: cada pessoa deve usar seu próprio usuário para que o histórico identifique quem revisou.
+Endereço do painel: **`/admin`** no endereço do site (hoje https://cmdca.zewithane.vps.brz.dev.br/admin).
+Tudo o que aparece no site é mudado por aqui, sem programador.
 
-## Entrar e recuperar acesso
+## 1. Entrar
 
-1. Abra `/admin` no domínio oficial.
-2. Informe e-mail e senha.
-3. Se errar repetidamente, aguarde o bloqueio temporário terminar em vez de insistir.
-4. Use “Esqueci minha senha” somente se o SMTP institucional estiver validado.
+1. Abra `/admin` e digite e-mail e senha.
+2. Depois de 5 senhas erradas, o acesso fica bloqueado por 15 minutos.
+3. Troque a senha inicial no primeiro acesso: clique no seu nome (canto inferior esquerdo) → **Senha**.
+4. Esqueceu a senha? Peça ao administrador para definir uma nova. O envio por e-mail só funciona depois que o SMTP for configurado.
 
-Se o e-mail não chegar, confira spam e peça ao Administrador para verificar os logs e o provedor. Nunca peça senha por mensagem. O Administrador pode orientar a redefinição, mas não deve conhecer a senha final do usuário.
+## 2. Quem pode o quê
 
-## Papéis
+| Papel | Pode |
+|---|---|
+| **Editor geral** | Criar, editar, publicar e despublicar todo o conteúdo, incluindo textos do site, configurações e pendências. Não exclui nem gerencia usuários |
+| **Administrador** | Tudo, mais usuários e exclusões |
 
-| Ação | Editor | Jurídico | Administrador |
-| --- | :---: | :---: | :---: |
-| Criar e editar conteúdo | sim | sim | sim |
-| Salvar rascunho | sim | sim | sim |
-| Alterar aprovação jurídica | não | sim | sim |
-| Publicar ou despublicar | sim | sim | sim |
-| Excluir/enviar à lixeira | não | não | sim |
-| Editar configurações institucionais | não | sim | sim |
-| Gerenciar usuários e papéis | não | não | sim |
+## 3. A tela inicial do painel
 
-O painel impede a exclusão da própria conta administrativa e a remoção do último Administrador. Mantenha dois Administradores ativos para contingência.
+- **Pendências:** lista o que ainda está como `XXXX` (dado não confirmado). Clique no item, troque `XXXX` pelo dado correto e publique. O site nunca mostra `XXXX`.
+- **Menu lateral, por grupo:**
+  - *Conteúdo editorial:* Notícias, Destaques;
+  - *Atos e reuniões:* Reuniões, Resoluções, Editais, Conferências;
+  - *Rede e participação:* Rede de proteção, Entidades, Perguntas frequentes, Depoimentos;
+  - *Configuração:* Textos das páginas, Página inicial, Navegação, Configurações institucionais, Páginas institucionais;
+  - *Mídia:* imagens e PDFs.
 
-## Fluxo: rascunho → revisão → publicação
+## 4. Rascunho → prévia → publicar
 
-### 1. Editor prepara
+1. Edite o conteúdo. O painel salva sozinho como **rascunho**, e o site ainda não muda.
+2. Clique em **Prévia** para ver como vai ficar.
+3. Clique em **Publicar alterações**. O site atualiza em segundos.
+4. Para tirar do ar: menu **⋯** → **Despublicar**.
+5. Errou? Abra a aba **Versões**, escolha uma versão anterior e clique em **Restaurar**.
 
-1. Escolha a área correta, como Notícias, Reuniões, Resoluções ou Editais.
-2. Clique em criar novo item.
-3. Preencha o texto, data, documentos e campos laterais.
-4. No bloco **Fonte e revisão**, informe a fonte, o link oficial, a data da conferência e qualquer dúvida em **Observações internas**.
-5. Clique em **Salvar rascunho**. O autosave reduz perda de trabalho, mas confirme que o estado exibido é rascunho antes de sair.
-6. Avise o Jurídico pelo canal interno adotado pelo Conselho, incluindo o título exato do item. Não envie senha nem arquivo sigiloso pelo aviso.
+## 5. Tarefas comuns
 
-O Editor pode publicar ou despublicar, inclusive pela API autenticada. Se o sistema recusar o salvamento ou a publicação, leia a mensagem: normalmente falta campo obrigatório, formato de URL/data ou a validação editorial do conteúdo.
+### Publicar uma notícia
+**Notícias → Criar novo**:
+1. Preencha título, data e resumo (o resumo aparece nos cartões).
+2. Escreva o texto.
+3. Se quiser, adicione uma imagem de capa com **texto alternativo**: descreva a imagem para quem não enxerga.
+4. Publique.
 
-### 2. Revisão jurídica, quando aplicável
+### Criar uma página nova (ex.: "Calendário de campanhas")
+**Páginas institucionais → Criar novo**:
+1. Preencha o **Título**.
+2. O **Endereço da página** (coluna da direita) é criado sozinho a partir do título. Por exemplo, "Campanhas" vira `/campanhas`.
+3. Preencha resumo, texto e data da última atualização.
+4. Publique.
+5. Para a página aparecer no menu, vá em **Navegação**, adicione um link com o mesmo endereço e publique.
 
-1. Abra o rascunho indicado e consulte a fonte primária.
-2. Compare nomes, número e data do ato, vigência, anexos, prazos e competência do órgão.
-3. Para informação dinâmica, confirme que a data de verificação é recente.
-4. Corrija o conteúdo ou devolva a pendência em **Observações internas**.
-5. Altere **Revisão jurídica** para **Aprovada** somente quando houver suporte documental.
-6. Publique e abra a página pública em janela anônima.
+### Mudar textos do site (capa, faixa de proteção, ajuda, Fundo…)
+**Textos das páginas**: cada aba é uma página do site. Mude o texto e publique.
+Os telefones da faixa amarela de proteção ficam na aba **Proteção → Canais de proteção**.
 
-A revisão jurídica é informativa e não é uma etapa técnica obrigatória para publicação. Uma validação de servidor bloqueia publicação incompleta. Não contorne removendo fonte ou mudando a categoria. Corrija a informação ou mantenha o rascunho.
+### Cadastrar uma reunião
+**Reuniões → Criar novo**:
+1. Preencha data, horário, tipo, modalidade e local.
+2. Se houver transmissão, coloque o link.
+3. Depois da reunião, anexe a ata em PDF.
+4. Em **Acesso**, escolha **Reservada** quando a pauta envolver dados de crianças ou famílias. Assim ela não aparece no site.
 
-### 3. Depois de publicar
+### Publicar resolução ou edital
+**Resoluções** ou **Editais → Criar novo**:
+1. Preencha número, data, ementa e situação (vigente, revogada…).
+2. Envie o PDF.
+3. Se uma resolução altera outra, ligue as duas no campo de alterações.
 
-Confira título, resumo, data, links, PDF, imagem, texto alternativo e versão móvel. O site atualiza as rotas relacionadas automaticamente; uma pequena demora de cache pode ocorrer. Se a informação estiver errada, corrija e publique nova versão ou despublique conforme a gravidade.
+### Trocar endereço, telefone, dados do Fundo ou LGPD
+**Configurações institucionais**. Atenção:
+- os dados bancários só aparecem no site depois que você marca **"Dados bancários conferidos"**;
+- confirme a conta com a Secretaria de Finanças, nunca por mensagem encaminhada.
 
-## Cuidados por tipo de conteúdo
+## 6. Imagens e documentos
 
-### Notícias
+- Envie a imagem do jeito que estiver. O sistema gera versões leves (WebP) sozinho.
+- **Texto alternativo é obrigatório.**
+- **Crianças e adolescentes:** só publique imagem com autorização dos responsáveis. Prefira fotos em que ninguém seja identificado e marque o campo correspondente.
+- PDFs de até 20 MB.
 
-- título objetivo e resumo entre os limites mostrados no formulário;
-- corpo completo, autoria e data de publicação;
-- capa apenas em formato de imagem; PDF não é imagem de capa;
-- “Nota técnica” exige aprovação jurídica;
-- só marque destaque quando a notícia ainda for relevante na home.
+## 7. O que não fazer
 
-### Reuniões
-
-- **Natureza** diz se é ordinária ou extraordinária;
-- **Acesso** diz se é pública ou reservada. Reservadas nunca aparecem na API pública;
-- **Modalidade** define presencial, online ou híbrida;
-- presencial/híbrida exige local; online/híbrida exige link;
-- horário usa formato de 24 horas, por exemplo `14:30`;
-- anexe a ata somente após aprovação e em PDF.
-
-Não publique link interno, credencial de videoconferência ou pauta protegida em reunião reservada.
-
-### Resoluções e editais
-
-- confira número, ano, data, título, situação e vigência;
-- anexe o documento oficial em PDF;
-- em retificação, relacione o ato anterior e explique o que foi alterado;
-- não substitua silenciosamente um PDF publicado. Preserve o ato anterior e publique a correção com rastreabilidade.
-
-### Entidades e rede de proteção
-
-- confirme registro, validade e situação antes de listar uma entidade;
-- telefone e endereço antigos causam risco real: confirme com o equipamento;
-- abra o pin do mapa e confira rua/bairro; coordenada válida não garante local correto;
-- não use observação pública para guardar dado pessoal ou informação de caso.
-
-### Indicadores
-
-Os números ficam ocultos enquanto **Publicar indicadores no site** estiver desligado. Antes de ligar:
-
-- preencha período, fonte, data de verificação e aprovação jurídica;
-- confira todos os totais contra a mesma competência;
-- use anos de quatro dígitos sem repetir;
-- percentuais por área, quando preenchidos, devem somar 100%;
-- explique metodologia, mudança de série ou cobertura na nota pública.
-
-Zero é um número válido somente quando a fonte comprova zero; não o use como placeholder.
-
-### Mídia
-
-- dê nome compreensível ao arquivo antes do upload;
-- preencha texto alternativo descrevendo a informação visual, não “imagem de...”;
-- informe crédito e fonte;
-- use PDF para atos/documentos e formatos de imagem para fotografias/capas;
-- para criança ou adolescente identificável, registre consentimento/autorização e aplique a política de [`CONTEUDO.md`](../CONTEUDO.md).
-
-Comprovação de consentimento e observações internas não aparecem ao público, mas também não devem conter dados excessivos.
-
-## Histórico, correção e exclusão
-
-Use o histórico de versões para entender o que mudou e recuperar texto editorial. Restaurar uma versão cria estado no CMS; confira e publique conscientemente.
-
-Prefira despublicar quando o conteúdo precisa sair do site mas deve permanecer como registro. Exclusão é exclusiva do Administrador e deve ser excepcional. A lixeira protege contra erro operacional, porém não substitui backup do Neon nem versionamento/backup do R2.
-
-Para incidente com dado pessoal, documento indevido ou credencial exposta, não apenas edite a página: acione o procedimento de [`docs/OPERACOES.md`](OPERACOES.md).
+- Não publique dado sem fonte. Na dúvida, deixe `XXXX`: vira pendência e não aparece no site.
+- Não cole texto de outros sites como se fosse do conselho. Resuma com suas palavras e cite a fonte.
+- Não compartilhe sua senha. Cada pessoa tem o próprio usuário: peça ao administrador.

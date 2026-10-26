@@ -1,6 +1,6 @@
 import type { FieldAccess, GlobalConfig } from 'payload'
 
-import { isAdminOrJuridico, isAuthenticated, publishedOrLoggedIn, roleOf } from '../access'
+import { canManageContent, isAuthenticated, publishedOrLoggedIn, roleOf } from '../access'
 import {
   EDITORIAL_VERSIONS,
   GLOBAL_EDITORIAL_COMPONENTS,
@@ -24,7 +24,6 @@ export const Configuracoes: GlobalConfig = {
     group: 'Configuração',
     description:
       'Dados institucionais e legais. Alterações são salvas como rascunho e só entram no site depois da publicação.',
-    hidden: ({ user }) => !['admin', 'juridico'].includes((user as { role?: string } | null)?.role ?? ''),
     components: GLOBAL_EDITORIAL_COMPONENTS,
   },
   versions: EDITORIAL_VERSIONS,
@@ -50,7 +49,8 @@ export const Configuracoes: GlobalConfig = {
   access: {
     read: publishedOrLoggedIn,
     readVersions: isAuthenticated,
-    update: isAdminOrJuridico,
+    // Editor geral resolve as pendências (XXXX) daqui; usuários seguem só com o administrador.
+    update: canManageContent,
   },
   fields: [
     {

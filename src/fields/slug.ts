@@ -13,6 +13,7 @@ type SlugOptions = {
  */
 export const slugField = ({ trackingField = 'title' }: SlugOptions = {}): Field => ({
   name: 'slug',
+  label: 'Endereço da página',
   type: 'text',
   required: true,
   index: true,

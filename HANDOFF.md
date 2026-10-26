@@ -1,7 +1,7 @@
 # HANDOFF
-Atualizado: 2026-10-26 (rodada "zerar VPS + produção")
+Atualizado: 2026-10-26 05:55 (rodada "zerar VPS + produção")
 
-## Rodada de 26/10/2026 — em andamento
+## Rodada de 26/10/2026
 
 Decisões do dono (Q/A de 26/10): zerar a VPS e reconstruí-la como plataforma
 multi-site (CMDCA é o 1º site), com Cockpit; tudo na `main`, direto em produção.
@@ -14,18 +14,43 @@ E-mail: criar SMTP gratuito (ex.: Brevo). Dados que faltam (encarregado LGPD,
 FMDCA etc.) ficam como `XXXX` e aparecem como pendência no CMS. Dados saem do Neon/R2 para a VPS
 e a Vercel será desligada depois.
 
-Feito: backup completo da VPS antes de zerar
-(`/tmp/pre-zerar-20261026-0005.tar` na VPS e `C:\Users\Ze\Backups\vps-zewithane\`,
-SHA256 34ffda8f…e0a5 conferido nos dois lados). Inclui pg_dumpall, quarau.dump,
-cmdca_restore dump, /srv, /etc, lista de imagens.
-Preservar na VPS: /home/zewithane (T3, agentes, ~/quarau), Tailscale,
-/usr/local/bin/autostart.sh (DNS dinâmico do provedor), vmtoolsd.
+## Estado em 26/10 05:55 — PRODUÇÃO NA VPS NO AR
 
-Em andamento: subagente escrevendo o repo privado `vhonorato02/vps-platform`
-(Caddy + compose por site + Postgres por site + CLI `site` + restic + Cockpit via
-Tailscale + deploy por forced-command SSH). Depois: zerar /srv e containers,
-instalar a plataforma, refatorar o app (env Zod, Postgres local, mídia em disco,
-redesenho), migrar dados do Neon, publicar em cmdca.zewithane.vps.brz.dev.br.
+- **URL:** https://cmdca.zewithane.vps.brz.dev.br (HTTPS Let's Encrypt, `SITE_INDEXABLE=false`). Admin em `/admin`. A Vercel (cmdca.vercel.app) e o Neon continuam ligados até a troca de DNS.
+- **VPS zerada e reconstruída** com `vhonorato02/vps-platform` 0.2.0 (README/RUNBOOK de lá):
+  - Caddy por labels;
+  - Postgres compartilhado (banco `cmdca`);
+  - Dockge na porta `:10000` e Cockpit na `:8443`, só na tailnet;
+  - entrada pública por DNAT para o Caddy (`platform-fw`);
+  - SSH só na 22322, com chave;
+  - restic diário com teste semanal.
+  - Preservados: `/home`, Tailscale (o serve `:443` é o T3) e `autostart.sh`.
+  - Backup pré-reset em `C:\Users\Ze\Backups\vps-zewithane\` (SHA conferido).
+  - Senha do restic e tópico do ntfy em `C:\Users\Ze\Backups\vps-zewithane\restic-vps.env` (acesso só do usuário Ze).
+- **Deploy:** push na `main` dispara `Producao (VPS)`:
+  1. qualidade (lint, tipos, unitários, E2E);
+  2. imagem `ghcr.io/vhonorato02/cmdca:<sha>`;
+  3. `ssh deploy@ssh.zewithane.vps.brz.dev.br -p 22322 "deploy <sha>"` (forced command), com o `GITHUB_TOKEN` do job pelo stdin para o pull;
+  4. smoke test e aquecimento.
+  - Rollback: `site rollback cmdca` na VPS.
+  - Primeiro deploy verde: run 40275483160 (a4e5303).
+- **Dados:**
+  - Dump do Neon de 11/10 restaurado; o conteúdo é igual ao publicado na Vercel em 26/10.
+  - Migrations aplicadas no start (`prodMigrations`).
+  - Pacote editorial aplicado (19 itens).
+  - Mídia (logo, emblema e variante 400x96) em `/srv/sites/cmdca/data/media`; URLs do R2 reescritas para `/api/media/file/`.
+- **Contas:**
+  - `v.honorato02@gmail.com` (admin) e `admin@cmdca.teste` (editor), com a senha pedida pelo dono. ⚠ É fraca: trocar.
+  - As contas legadas `admin@cmdca.local` e `juridico@cmdca-pinda.local` ficaram com senha aleatória, ou seja, inutilizadas.
+- **Backup verificado:** `site backup` + `site teste-restauracao` → `OK snapshot=ddc7712e bancos=[cmdca:52] midia=ok`.
+- **Em andamento:** subagente "Redesenho CMDCA v2" (Claude Conta 4) na `main`. Já commitou `docs/design/*` e trabalha em globals, Paginas e CSS.
+
+## Próximos passos
+1. Revisar o redesenho (capturas 390/1280, axe, Lighthouse ≥ 95) e publicar.
+2. Dependabot: 32 alertas (5 críticos). Atualizar as dependências depois do redesenho.
+3. SMTP gratuito (Brevo) para recuperação de senha, configurado com `site config cmdca`.
+4. DNS no Wix → domínio definitivo (`site dominio cmdca ...`) e `SITE_INDEXABLE=true`; depois desligar Vercel, Neon e R2.
+5. Backup off-site (R2 free tier) em `RESTIC_REPOSITORY_OFFSITE`.
 
 ## Rodadas anteriores
 Atualizado: 2026-10-13 19:15

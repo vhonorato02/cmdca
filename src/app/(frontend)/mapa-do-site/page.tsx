@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { PageHeader } from '@/components/ui/PageHeader'
 import { getTextos } from '@/lib/content'

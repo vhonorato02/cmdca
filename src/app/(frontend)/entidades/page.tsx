@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { ENTIDADE_SITUACAO, isPastDate, publicDocuments, statusInfo } from '@/components/officialActs'
 import { ActItem, ActList, StatusPill, Tag } from '@/components/ui/ActList'

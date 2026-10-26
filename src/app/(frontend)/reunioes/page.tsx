@@ -1,6 +1,6 @@
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { ActFilters, hrefWith, pickParam, yearOf, yearOptions } from '@/components/ActFilters'
 import { ActItem, ActList, Tag } from '@/components/ui/ActList'

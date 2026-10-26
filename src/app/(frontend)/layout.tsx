@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { Archivo, Atkinson_Hyperlegible_Next } from 'next/font/google'
+import { Atkinson_Hyperlegible_Next } from 'next/font/google'
+import localFont from 'next/font/local'
 import React from 'react'
 
 import { canaisDaFaixa, ProtectionBar, ProtectionDock } from '@/components/layout/Protection'
@@ -11,12 +12,18 @@ import { absoluteUrl, DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from '@/lib/s
 
 import './globals.css'
 
-// Títulos e numerais: Archivo condensada, eco das letras pesadas do logo.
-const archivo = Archivo({
-  subsets: ['latin'],
-  axes: ['wdth'],
-  display: 'swap',
+// Títulos e numerais: Archivo condensada (instância local de 25 KB, ver fonts/README.md),
+// eco das letras pesadas do logo.
+const archivo = localFont({
+  src: './fonts/archivo-condensada.woff2',
+  weight: '760 860',
+  style: 'normal',
+  // "optional": pré-carregada (25 KB), entra na primeira pintura quase sempre; se a
+  // rede atrasar, o título fica na fonte de reserva nesta visita, sem repintura tardia.
+  display: 'optional',
   variable: '--font-archivo',
+  fallback: ['Arial Narrow', 'Arial', 'sans-serif'],
+  adjustFontFallback: 'Arial',
 })
 
 // Texto e interface: desenhada para leitores com baixa visão.
@@ -89,7 +96,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
           Pular para o conteúdo
         </a>
         <ProtectionBar chamada={textos.protecao.chamada} canais={faixa} />
-        <SiteHeader links={navigation.menuPrincipal} canais={faixa} chamada={textos.protecao.chamada} />
+        <SiteHeader links={navigation.menuPrincipal} />
         <main id="main" tabIndex={-1}>
           {children}
         </main>

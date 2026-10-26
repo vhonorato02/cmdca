@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 import { useCallback, useState, useSyncExternalStore } from 'react'
 
 import { openVLibras } from '@/components/VLibras'
@@ -69,7 +69,7 @@ export function A11yTools() {
           type="button"
           className="a11y-tools__btn"
           onClick={() => fontStep(-1)}
-          aria-label="Diminuir tamanho da fonte"
+          aria-label="A- Diminuir tamanho da fonte"
         >
           A-
         </button>
@@ -77,7 +77,7 @@ export function A11yTools() {
           type="button"
           className="a11y-tools__btn"
           onClick={() => fontStep(1)}
-          aria-label="Aumentar tamanho da fonte"
+          aria-label="A+ Aumentar tamanho da fonte"
         >
           A+
         </button>

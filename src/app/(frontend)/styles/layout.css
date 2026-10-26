@@ -280,9 +280,6 @@
     margin-left: var(--s-3);
   }
 
-  .site-nav__channels {
-    display: none;
-  }
 
   @media (max-width: 899.98px) {
     :root {
@@ -345,19 +342,6 @@
       margin: var(--s-6) 0 0;
     }
 
-    .site-nav__channels {
-      display: block;
-      margin-top: var(--s-6);
-      padding: var(--s-5);
-      background: var(--c-bg-soft);
-      border-radius: var(--r-md);
-    }
-
-    .site-nav__channels p {
-      margin-bottom: var(--s-3);
-      color: var(--c-heading);
-      font-weight: 700;
-    }
   }
 
   @media (min-width: 900px) {

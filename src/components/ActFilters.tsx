@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 export type FilterOption = { value: string; label: string }
 export type FilterField = { name: string; label: string; options: FilterOption[]; value: string }

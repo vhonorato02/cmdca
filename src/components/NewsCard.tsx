@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { Pictogram } from '@/components/ui/icons'
 import { dateParts, formatDateLong } from '@/lib/format'

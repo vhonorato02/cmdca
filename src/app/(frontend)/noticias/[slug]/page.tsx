@@ -2,7 +2,7 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 import type { Metadata } from 'next'
 import { draftMode, headers } from 'next/headers'
 import Image from 'next/image'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 

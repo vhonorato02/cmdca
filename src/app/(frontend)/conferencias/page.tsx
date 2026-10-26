@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { NewsCard } from '@/components/NewsCard'
 import { ButtonLink } from '@/components/ui/Button'

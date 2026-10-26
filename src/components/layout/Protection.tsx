@@ -9,8 +9,8 @@ export function canaisDaFaixa(canais: Canal[]): Canal[] {
   return canais.filter((canal) => canal.naFaixa && canal.href).slice(0, 3)
 }
 
-const callLabel = (canal: Canal) =>
-  `${canal.rotulo}: ligar para ${canal.numero}${canal.observacao ? `. ${canal.observacao}` : ''}`
+/** Complemento lido por leitores de tela depois do texto visível do canal. */
+const callHint = (canal: Canal) => `: ligar${canal.observacao ? `. ${canal.observacao}` : ''}`
 
 /**
  * Faixa anil do topo (assinatura 1). No computador mostra os telefones de
@@ -24,9 +24,10 @@ export function ProtectionBar({ chamada, canais }: { chamada: string; canais: Ca
         <ul className="protection-bar__channels" aria-label="Telefones de proteção">
           {canais.map((canal) => (
             <li key={`${canal.tipo}-${canal.numero}`}>
-              <a className="channel-link" href={canal.href} aria-label={callLabel(canal)}>
-                <span className="channel-link__label">{canal.rotulo}</span>
+              <a className="channel-link" href={canal.href}>
+                <span className="channel-link__label">{canal.rotulo}</span>{' '}
                 <span className="channel-link__number">{canal.numero}</span>
+                <span className="sr-only">{callHint(canal)}</span>
               </a>
             </li>
           ))}
@@ -51,10 +52,10 @@ export function ProtectionDock({ canais }: { canais: Canal[] }) {
           key={`${canal.tipo}-${canal.numero}`}
           className={`dock-link dock-link--${canal.tipo}`}
           href={canal.href}
-          aria-label={callLabel(canal)}
         >
-          <span className="dock-link__number">{canal.numero}</span>
+          <span className="dock-link__number">{canal.numero}</span>{' '}
           <span className="dock-link__label">{canal.rotulo}</span>
+          <span className="sr-only">{callHint(canal)}</span>
         </a>
       ))}
     </nav>

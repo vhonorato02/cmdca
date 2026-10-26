@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 import type { Canal, Instituicao } from '@/lib/content'
 import { phoneHref } from '@/lib/contact'

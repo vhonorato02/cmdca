@@ -1,11 +1,10 @@
 'use client'
 
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 import { Close, Menu } from '@/components/ui/icons'
-import type { Canal } from '@/lib/content'
 import type { NavigationLink } from '@/lib/navigation'
 
 const MOBILE = '(max-width: 899.98px)'
@@ -15,15 +14,7 @@ const FOCUSABLE = 'a[href], button:not([disabled])'
  * Navegação principal. No celular vira um painel que prende o foco enquanto
  * aberto, fecha com Esc (devolvendo o foco ao botão) e expõe `aria-expanded`.
  */
-export function MainNav({
-  links,
-  canais,
-  chamada,
-}: {
-  links: NavigationLink[]
-  canais: Canal[]
-  chamada: string
-}) {
+export function MainNav({ links }: { links: NavigationLink[] }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -135,22 +126,6 @@ export function MainNav({
         >
           Buscar ajuda
         </Link>
-        {canais.length ? (
-          <div className="site-nav__channels">
-            <p>{chamada}</p>
-            <div className="actions">
-              {canais.map((canal) => (
-                <a
-                  key={`${canal.tipo}-${canal.numero}`}
-                  className={`btn btn--sm ${canal.tipo === 'emergencia' ? 'btn--danger' : 'btn--primary'}`}
-                  href={canal.href}
-                >
-                  {canal.rotulo}: {canal.numero}
-                </a>
-              ))}
-            </div>
-          </div>
-        ) : null}
       </nav>
     </>
   )

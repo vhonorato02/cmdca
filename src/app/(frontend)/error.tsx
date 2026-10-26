@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 /**
  * Falha ao montar uma página. O texto fica no código de propósito: este

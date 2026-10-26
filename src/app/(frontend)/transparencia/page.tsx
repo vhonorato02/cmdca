@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { Calendar, Document, Gavel, Pictogram } from '@/components/ui/icons'
 import { PageHeader } from '@/components/ui/PageHeader'

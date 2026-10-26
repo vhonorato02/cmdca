@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 import type { ReactNode } from 'react'
 
 import { canaisDaFaixa } from '@/components/layout/Protection'

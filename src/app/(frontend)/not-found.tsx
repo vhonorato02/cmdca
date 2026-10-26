@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { Orbit } from '@/components/ui/brand'
 import { getTextos } from '@/lib/content'

@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
+import { gotoReady } from './ready'
 import { usesCiFixtures } from './target'
 
 const PUBLIC_ROUTES = [
@@ -29,8 +30,8 @@ for (const route of ALL_ROUTES) {
   test(`${route} não tem violações WCAG A/AA ou de boas práticas detectáveis pelo axe`, async ({
     page,
   }) => {
-    await page.goto(route, { waitUntil: 'domcontentloaded' })
-    await expect(page.locator('body')).not.toBeEmpty()
+    await gotoReady(page, route)
+    await expect(page.locator('main')).toBeVisible()
 
     const results = await new AxeBuilder({ page }).withTags(axeTags).analyze()
 
@@ -110,14 +111,16 @@ test('skip link é o primeiro foco e leva o foco ao conteúdo principal', async 
 
 test('menu móvel abre no teclado, move o foco e fecha com Escape', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 })
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await gotoReady(page, '/')
 
   const menuButton = page.locator('button.burger')
   await expect(menuButton).toHaveAccessibleName('Abrir menu')
-  await menuButton.focus()
-  await page.keyboard.press('Enter')
-
-  await expect(menuButton).toHaveAttribute('aria-expanded', 'true')
+  // Antes da hidratação o Enter não faz nada: repete até o React assumir o botão.
+  await expect(async () => {
+    await menuButton.focus()
+    await page.keyboard.press('Enter')
+    await expect(menuButton).toHaveAttribute('aria-expanded', 'true', { timeout: 1_000 })
+  }).toPass()
   await expect(menuButton).toHaveAccessibleName('Fechar menu')
   await expect(page.getByRole('navigation', { name: 'Navegação principal' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'CMDCA', exact: true })).toBeFocused()
@@ -190,17 +193,17 @@ test('links que abrem nova aba são seguros e PDFs públicos continuam acessíve
 })
 
 test('controles próprios alteram fonte e alto contraste com estado exposto', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await gotoReady(page, '/')
   const root = page.locator('html')
-  const fontSizeBefore = await root.evaluate((element) =>
-    Number.parseFloat(getComputedStyle(element).fontSize),
-  )
+  const fontSize = () =>
+    root.evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize))
+  const fontSizeBefore = await fontSize()
 
-  await page.getByRole('button', { name: 'Aumentar tamanho da fonte' }).click()
-  const fontSizeAfter = await root.evaluate((element) =>
-    Number.parseFloat(getComputedStyle(element).fontSize),
-  )
-  expect(fontSizeAfter).toBeGreaterThan(fontSizeBefore)
+  // Antes da hidratação o clique não faz nada: repete até o React assumir o botão.
+  await expect(async () => {
+    await page.getByRole('button', { name: 'Aumentar tamanho da fonte' }).click()
+    expect(await fontSize()).toBeGreaterThan(fontSizeBefore)
+  }).toPass()
 
   const contrast = page.getByRole('button', { name: 'Ativar alto contraste' })
   await contrast.click()

@@ -1,5 +1,5 @@
 # HANDOFF
-Atualizado: 2026-10-26 05:55 (rodada "zerar VPS + produção")
+Atualizado: 2026-10-26 20:15 (QA em produção + preparação do domínio)
 
 ## Rodada de 26/10/2026
 
@@ -10,47 +10,40 @@ Conteúdo: pesquisar fontes públicas de Pindamonhangaba-SP (resultado em
 conselheiros (editor geral); credenciais iniciais foram passadas em chat e
 devem ir só para env/seed local, nunca para o repo. Custo zero (free tier/VPS).
 Visual: redesenho moderno. Domínio no Wix: avisar o dono quando for configurar o DNS.
-E-mail: criar SMTP gratuito (ex.: Brevo). Dados que faltam (encarregado LGPD,
+E-mail: sem SMTP (ADR 0009). Dados que faltam (encarregado LGPD,
 FMDCA etc.) ficam como `XXXX` e aparecem como pendência no CMS. Dados saem do Neon/R2 para a VPS
 e a Vercel será desligada depois.
 
-## Estado em 26/10 05:55 — PRODUÇÃO NA VPS NO AR
+## Estado em 26/10 20:15
 
-- **URL:** https://cmdca.zewithane.vps.brz.dev.br (HTTPS Let's Encrypt, `SITE_INDEXABLE=false`). Admin em `/admin`. A Vercel (cmdca.vercel.app) e o Neon continuam ligados até a troca de DNS.
-- **VPS zerada e reconstruída** com `vhonorato02/vps-platform` 0.2.0 (README/RUNBOOK de lá):
-  - Caddy por labels;
-  - Postgres compartilhado (banco `cmdca`);
-  - Dockge na porta `:10000` e Cockpit na `:8443`, só na tailnet;
-  - entrada pública por DNAT para o Caddy (`platform-fw`);
-  - SSH só na 22322, com chave;
-  - restic diário com teste semanal.
-  - Preservados: `/home`, Tailscale (o serve `:443` é o T3) e `autostart.sh`.
-  - Backup pré-reset em `C:\Users\Ze\Backups\vps-zewithane\` (SHA conferido).
-  - Senha do restic e tópico do ntfy em `C:\Users\Ze\Backups\vps-zewithane\restic-vps.env` (acesso só do usuário Ze).
-- **Deploy:** push na `main` dispara `Producao (VPS)`:
-  1. qualidade (lint, tipos, unitários, E2E);
-  2. imagem `ghcr.io/vhonorato02/cmdca:<sha>`;
-  3. `ssh deploy@ssh.zewithane.vps.brz.dev.br -p 22322 "deploy <sha>"` (forced command), com o `GITHUB_TOKEN` do job pelo stdin para o pull;
-  4. smoke test e aquecimento.
-  - Rollback: `site rollback cmdca` na VPS.
-  - Primeiro deploy verde: run 40275483160 (a4e5303).
-- **Dados:**
-  - Dump do Neon de 11/10 restaurado; o conteúdo é igual ao publicado na Vercel em 26/10.
-  - Migrations aplicadas no start (`prodMigrations`).
-  - Pacote editorial aplicado (19 itens).
-  - Mídia (logo, emblema e variante 400x96) em `/srv/sites/cmdca/data/media`; URLs do R2 reescritas para `/api/media/file/`.
-- **Contas:**
-  - `v.honorato02@gmail.com` (admin) e `admin@cmdca.teste` (editor), com a senha pedida pelo dono. ⚠ É fraca: trocar.
-  - As contas legadas `admin@cmdca.local` e `juridico@cmdca-pinda.local` ficaram com senha aleatória, ou seja, inutilizadas.
-- **Backup verificado:** `site backup` + `site teste-restauracao` → `OK snapshot=ddc7712e bancos=[cmdca:52] midia=ok`.
-- **Em andamento:** subagente "Redesenho CMDCA v2" (Claude Conta 4) na `main`. Já commitou `docs/design/*` e trabalha em globals, Paginas e CSS.
+- **Produção:** https://cmdca.zewithane.vps.brz.dev.br (VPS, `SITE_INDEXABLE=false` até o domínio).
+  Plano vivo em `docs/PLANO.md` (etapas E0–E4).
+- **Domínio:** servidor pronto (`site dominio --redirecionar` instalado, ADR 0007). **Dono foi avisado
+  para apontar o DNS no Wix às 20h de 26/10** (passos em `DEPLOY.md` → "Trocar para o domínio
+  definitivo"). Assim que `nslookup www.cmdcapinda.org 1.1.1.1` mostrar o IP da VPS, siga os passos 3–6.
+- **E-mail:** não haverá caixa no domínio (o conselho usa o e-mail da prefeitura). Sem SMTP; senhas são
+  redefinidas por um administrador (ADR 0009).
+- **Evidências no hardware do GitHub (pós-deploy, automáticas):**
+  - `Lighthouse (producao)`, mobile, mediana de 3: Perf 98–99, A11y 100, Boas práticas 100 em 8 páginas.
+    SEO 69 só por causa do `noindex` temporário.
+  - `E2E (producao)`: Playwright de leitura + axe, desktop e celular, sem credenciais (`E2E_TARGET=production`
+    pula o que depende das fixtures do CI). A 1ª rodada achou testes que clicavam antes da hidratação e um
+    estouro de 8 px em 320 px (número do Conselho Tutelar com a fonte de fallback). Os dois foram corrigidos.
+  - `Disponibilidade`: monitor externo a cada 15 min (`/api/health` e home), com alerta no ntfy
+    (secret `ALERT_URL`) e e-mail do GitHub.
+  - Mozilla Observatory: B+ (80), 11/12. O único teste reprovado é o `'unsafe-inline'` (ADR 0008).
+- **VPS:** uptime de 3 dias; backup e teste de restauração diários OK. O admin do Dockge existe e a
+  credencial está em `C:\Users\Ze\Backups\vps-zewithane\dockge-admin.env`.
+  - SSH: use o `ssh.exe` do Windows (`C:\Windows\System32\OpenSSH`). A chave tem senha e só está
+    no ssh-agent do Windows; o `ssh` do Git Bash recebe "Permission denied".
+- **Dependabot:** nenhum alerta aberto.
 
 ## Próximos passos
-1. Revisar o redesenho (capturas 390/1280, axe, Lighthouse ≥ 95) e publicar.
-2. Dependabot: 32 alertas (5 críticos). Atualizar as dependências depois do redesenho.
-3. SMTP gratuito (Brevo) para recuperação de senha, configurado com `site config cmdca`.
-4. DNS no Wix → domínio definitivo (`site dominio cmdca ...`) e `SITE_INDEXABLE=true`; depois desligar Vercel, Neon e R2.
-5. Backup off-site (R2 free tier) em `RESTIC_REPOSITORY_OFFSITE`.
+1. DNS apontado → passos 3–6 do `DEPLOY.md`, depois desligar Vercel/Neon/R2 (export final antes).
+2. Senhas fortes nas contas do CMS (o dono escolhe) e manter 2 administradores.
+3. Backup off-site: precisa de uma conta gratuita do dono (Backblaze B2 ou R2) → `RESTIC_REPOSITORY_OFFSITE`.
+4. Teste de reboot da VPS (combinar horário com o dono: o T3 também roda lá).
+5. QA final: teclado manual, teste leigo no CMS, revisão visual 390/1280, code review final, tag `v1.0.0`.
 
 ## Rodadas anteriores
 Atualizado: 2026-10-13 19:15

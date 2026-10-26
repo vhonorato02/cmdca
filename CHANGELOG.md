@@ -17,7 +17,14 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 ### Adicionado
 
 - global **Textos das páginas** e coleção **Páginas institucionais** (privacidade, termos de uso, acessibilidade e créditos), com migration que publica o conteúdo inicial;
-- campos de endereço, horário e encarregado de dados (LGPD) em Configurações institucionais e links "Sobre o site" na navegação do rodapé.
+- campos de endereço, horário e encarregado de dados (LGPD) em Configurações institucionais e links "Sobre o site" na navegação do rodapé;
+- workflows pós-deploy contra a produção: `E2E (producao)` (leitura + axe, desktop e celular) e `Lighthouse (producao)` (mobile, mínimo 95);
+- monitor externo `Disponibilidade` a cada 15 minutos, com alerta no ntfy.
+
+### Corrigido
+
+- número do Conselho Tutelar na barra do celular estourava a tela em 320 px enquanto a fonte carregava; agora quebra entre o DDD e o número;
+- avatar do VLibras bloqueado pela CSP (`frame-src`); `unsafe-eval` removido.
 
 ### Removido
 

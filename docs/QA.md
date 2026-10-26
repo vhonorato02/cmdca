@@ -77,32 +77,39 @@ Também verifique autosave sem duplicação, slugs, links externos HTTPS, datas,
 
 Para Core Web Vitals, use dados de campo quando houver tráfego. Em laboratório, investigue qualquer regressão relevante de LCP, INP ou CLS; não maquie a métrica removendo conteúdo necessário.
 
-## 5. Produção na URL canônica
+## 5. Produção (VPS)
 
-Depois que o Coolify concluir o deploy e o container estiver saudável:
+Automático a cada deploy (GitHub Actions, sem usar este computador):
 
-1. repita o smoke das rotas públicas em janela anônima;
-2. confirme commit e deployment efetivamente servidos;
-3. consulte logs de build e função;
-4. autentique no `/admin`, salve um rascunho temporário e remova-o de forma controlada;
-5. faça upload e leitura de uma mídia de teste no R2;
-6. solicite recuperação de senha e confirme recebimento real, links e remetente;
-7. não publique conteúdo de teste; use apenas conteúdo institucional verdadeiro;
-8. teste links `tel:`, documentos, mapa e serviços externos;
-9. confirme domínio, certificado, redirects e ausência de URL Render no HTML, sitemap, canonical ou documentação;
-10. registre o resultado.
+1. `Producao (VPS)`: smoke de `/api/health`, rotas públicas e aquecimento do sitemap;
+2. `E2E (producao)`: Playwright de leitura + axe em desktop e celular (`E2E_TARGET=production`
+   pula o que depende das fixtures do CI e nenhuma credencial é usada);
+3. `Lighthouse (producao)`: mobile, mediana de 3 rodadas, mínimo 95 (SEO só é cobrado sem `noindex`);
+4. `Disponibilidade`: `/api/health` e home a cada 15 minutos, com alerta no ntfy.
+
+Manual, a cada entrega relevante:
+
+1. teclado: Tab pela home em 1280 e 390 px (ordem lógica, skip link primeiro, foco visível);
+2. `/admin`: entrar, salvar um rascunho, pré-visualizar e apagar o rascunho;
+3. cabeçalhos: Mozilla Observatory (`observatory-api.mdn.mozilla.net`);
+4. backup: `site backup && site teste-restauracao` na VPS;
+5. domínio: certificado válido, 301 dos hosts secundários e `robots.txt` sem `Disallow: /`.
 
 ## Evidência de entrega
 
-O registro final deve conter, sem segredos:
+Registre o que foi executado, sem segredos, diferenciando local, GitHub e VPS.
+Capturas não equivalem a inspeção visual.
 
-- SHA do commit e branch `main`;
-- ID do deploy Coolify, tag da imagem e domínio canônico testado;
-- resultado e horário de `pnpm check` e `pnpm build`;
-- migration aplicada e resultado de `migrate:status`;
-- horário/ponto de recuperação Neon pré-entrega, quando aplicável;
-- páginas e larguras testadas;
-- resultado de login, papéis, R2 e SMTP;
-- erros conhecidos e decisão explícita sobre qualquer pendência.
+### 26/10/2026 (domínio temporário)
 
-Não use “tudo certo” como evidência. Liste o que foi realmente executado e diferencie local, GitHub, VPS/Coolify, Neon, R2 e e-mail. Capturas geradas não equivalem a inspeção visual. Os scripts agora reprovam dimensões menores que 44 px, overflow, hierarquia e erros de navegador, além de guardar as imagens para revisão.
+- Lighthouse mobile (run 40414355829, e8a5c14), 8 páginas: Perf 98–99, A11y 100,
+  Boas práticas 100; SEO 69 por causa do `noindex` temporário.
+- E2E produção (run 40415972555): 7 falhas. Os testes agiam antes da hidratação e havia um estouro
+  de 8 px em 320 px no número do Conselho Tutelar enquanto a fonte carrega. Corrigido em c8962a4 e f0aea89;
+  nova rodada (run 40418735331): 110 aprovados, 0 falhas, 18 pulados (fixtures/credenciais do CI).
+- Teclado (script Playwright contra a produção): 30 paradas em 1280 px e em 390 px. O skip link vem primeiro,
+  depois os canais de proteção, as ferramentas de acessibilidade, a marca, o menu e o conteúdo. Todas
+  as paradas têm foco visível; nos cards, o contorno fica no card inteiro (`:has(a:focus-visible)`).
+- Observatory: B+ (80), 11/12 testes (falta só o `'unsafe-inline'`, ADR 0008).
+- Backup: `OK snapshot=ddc7712e bancos=[cmdca:52] midia=ok` (teste diário de restauração).
+- Monitor externo: run 40417845545, `/api/health → 200`, `/ → 200`.

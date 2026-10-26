@@ -44,11 +44,7 @@ Regras: só a `main` (nada de clones, worktrees ou branches) e tudo hospedado na
 
 ### E1 — Segurança das contas e e-mail
 1. Trocar as senhas fracas por senhas fortes (o dono escolhe) e manter 2 administradores.
-2. SMTP grátis:
-   - Brevo, 300 e-mails/dia; precisa de cadastro do dono;
-   - SPF/DKIM no DNS do Wix (TXT);
-   - `site config cmdca`.
-   Verificação: "Esqueci minha senha" chega na caixa de entrada.
+2. ~~SMTP grátis~~ — descartado: o domínio não terá e-mail (o conselho usa o da prefeitura). Senhas são redefinidas por um administrador (ADR 0009).
 
 ### E2 — VPS pronta para vários sites (provar, não supor)
 1. **Teste de reboot:** tudo volta sozinho (Caddy, DNAT `platform-fw`, Postgres, apps, Tailscale serve, T3).

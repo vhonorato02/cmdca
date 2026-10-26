@@ -132,7 +132,9 @@ export default async function AjudaPage() {
   const conselhos = lugares.filter((l) => l.tipo === 'ct').sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
   const outros = TIPO_ORDEM.map((tipo) => ({
     tipo,
-    itens: lugares.filter((l) => (TIPO_ORDEM.includes(l.tipo) ? l.tipo : 'outro') === tipo),
+    itens: lugares.filter(
+      (l) => l.tipo !== 'ct' && (TIPO_ORDEM.includes(l.tipo) ? l.tipo : 'outro') === tipo,
+    ),
   })).filter((grupo) => grupo.itens.length)
 
   const pontos: MapPoint[] = ((rede?.docs ?? []) as RedeProtecao[]).flatMap((r) => {

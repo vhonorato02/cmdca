@@ -375,11 +375,21 @@
     background: var(--amarelo-50);
   }
 
+  /* Fica preso logo abaixo do cabeçalho, sem ocupar espaço no fluxo. */
+  .quick-exit-bar {
+    position: sticky;
+    top: var(--header-h);
+    z-index: calc(var(--z-header) - 1);
+    height: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding-inline: var(--gutter);
+    pointer-events: none;
+  }
+
   .quick-exit {
-    position: fixed;
-    right: var(--s-4);
-    bottom: calc(var(--dock-h) + var(--s-4));
-    z-index: var(--z-dock);
+    margin-top: var(--s-3);
+    pointer-events: auto;
     box-shadow: var(--shadow-float);
   }
 
@@ -511,7 +521,14 @@
     padding-block: clamp(var(--s-7), 8vw, var(--s-10));
   }
 
+  .not-found__mark {
+    position: relative;
+    display: inline-block;
+    padding: 0.3em 0.6em 0.35em 0;
+  }
+
   .not-found__code {
+    position: relative;
     color: var(--c-heading);
     font-family: var(--font-display);
     font-stretch: var(--stretch-display);
@@ -522,12 +539,16 @@
 
   .not-found__orbit {
     position: absolute;
-    right: -10%;
-    top: 10%;
-    width: min(70vw, 46rem);
+    left: -14%;
+    top: 50%;
+    width: 128%;
     color: var(--c-signal);
-    transform: rotate(-12deg);
+    transform: translateY(-50%) rotate(-10deg);
     pointer-events: none;
+  }
+
+  html.contrast .not-found__orbit {
+    color: var(--amarelo);
   }
 
   .not-found__inner {

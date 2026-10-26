@@ -794,8 +794,12 @@
     max-width: var(--measure);
   }
 
-  .prose > * + * {
+  .prose :is(p, ul, ol, blockquote, figure, table, h2, h3, h4) + :is(p, ul, ol, blockquote, figure, table) {
     margin-top: var(--s-4);
+  }
+
+  .prose :is(h2, h3, h4):first-child {
+    margin-top: 0;
   }
 
   .prose h2 {
@@ -1208,6 +1212,13 @@
     border: var(--border);
     border-top: 6px solid var(--c-heading);
     border-radius: var(--r-md);
+  }
+
+  @media (min-width: 900px) {
+    .grid-2 > .contact-card {
+      position: sticky;
+      top: calc(var(--header-h) + var(--s-5));
+    }
   }
 
   .contact-card dl {

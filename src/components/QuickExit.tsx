@@ -6,13 +6,15 @@
  */
 export function QuickExit() {
   return (
-    <button
-      type="button"
-      className="btn btn--danger quick-exit"
-      onClick={() => window.location.replace('https://www.google.com.br/search?q=previs%C3%A3o+do+tempo')}
-    >
-      Sair rápido
-      <span className="sr-only"> desta página</span>
-    </button>
+    <div className="quick-exit-bar">
+      <button
+        type="button"
+        className="btn btn--danger btn--sm quick-exit"
+        onClick={() => window.location.replace('https://www.google.com.br/search?q=previs%C3%A3o+do+tempo')}
+      >
+        Sair rápido
+        <span className="sr-only"> desta página</span>
+      </button>
+    </div>
   )
 }

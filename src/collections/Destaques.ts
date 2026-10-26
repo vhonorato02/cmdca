@@ -18,7 +18,7 @@ function validCTA(_value: unknown, document: Record<string, unknown>): boolean {
 
 export const Destaques: CollectionConfig = {
   slug: 'destaques',
-  labels: { singular: 'Destaque', plural: 'Destaques (slider)' },
+  labels: { singular: 'Destaque', plural: 'Destaques' },
   admin: {
     useAsTitle: 'titulo',
     defaultColumns: ['titulo', 'ordem', '_status'],

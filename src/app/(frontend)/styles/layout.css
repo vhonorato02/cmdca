@@ -301,8 +301,13 @@
 
     .site-nav {
       display: none;
-      position: fixed;
-      inset: var(--header-h) 0 var(--dock-h) 0;
+      /* Ancorado ao cabeçalho (sticky): nunca cobre o botão de fechar,
+         esteja a faixa de proteção visível ou não. */
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      height: calc(100dvh - var(--header-h) - var(--dock-h));
       z-index: var(--z-menu);
       overflow-y: auto;
       overscroll-behavior: contain;
@@ -449,7 +454,7 @@
   }
 
   .page-header__lead {
-    max-width: 60ch;
+    max-width: 56ch;
     margin-top: var(--s-4);
     font-size: var(--fs-lg);
     color: var(--c-text);
@@ -461,25 +466,21 @@
     font-size: var(--fs-sm);
   }
 
+  /* A órbita ocupa só a margem direita, longe do texto (que vai até 60ch). */
   .page-header__orbit {
     position: absolute;
-    right: -6%;
+    left: calc(50% + 14rem);
     top: 50%;
-    width: min(46vw, 40rem);
+    width: 36rem;
     transform: translateY(-50%) rotate(-12deg);
     color: var(--c-heading);
     opacity: 0.22;
     pointer-events: none;
   }
 
-  @media (max-width: 899.98px) {
+  @media (max-width: 1199.98px) {
     .page-header__orbit {
-      right: -30%;
-      top: auto;
-      bottom: -1.5rem;
-      width: 90vw;
-      transform: rotate(-12deg);
-      opacity: 0.14;
+      display: none;
     }
   }
 

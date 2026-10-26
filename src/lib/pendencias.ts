@@ -32,6 +32,24 @@ const LABELS: Record<string, string> = {
   'baseLegal.regimento': 'Regimento interno',
 }
 
+/** Nomes legíveis para campos das coleções listadas como pendência. */
+const FIELD_LABELS: Record<string, string> = {
+  obs: 'observação',
+  telefone: 'telefone',
+  endereco: 'endereço',
+  horario: 'horário',
+  email: 'e-mail',
+  resumo: 'resumo',
+  corpo: 'texto',
+  titulo: 'título',
+  nome: 'nome',
+}
+
+const fieldLabel = (path: string) => {
+  const [field] = path.split('.')
+  return FIELD_LABELS[field] ?? (path.startsWith('corpo.') ? 'texto' : path)
+}
+
 export type Pendencia = {
   area: string
   item: string
@@ -118,7 +136,7 @@ export async function listPendencias(payload: Payload): Promise<Pendencia[]> {
         if (!paths.length) continue
         out.push({
           area,
-          item: `${String(doc[titleField] ?? 'Sem título')}: ${paths.join(', ')}`,
+          item: `${String(doc[titleField] ?? 'Sem título')}: ${[...new Set(paths.map(fieldLabel))].join(', ')}`,
           href: `/admin/collections/${collection}/${String(doc.id)}`,
         })
       }

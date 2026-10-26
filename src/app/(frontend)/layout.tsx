@@ -81,6 +81,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   return (
     <html lang="pt-BR" className={`${archivo.variable} ${atkinson.variable}`} suppressHydrationWarning>
       <head>
+        {/* Inline de propósito: precisa rodar antes da primeira pintura para não piscar. */}
         <script dangerouslySetInnerHTML={{ __html: A11Y_INIT }} />
       </head>
       <body>

@@ -23,11 +23,11 @@ export default async function NotFound() {
   const textos = await getTextos()
   return (
     <section className="not-found" aria-labelledby="nao-encontrada">
-      <Orbit className="not-found__orbit" strokeWidth={6} />
       <div className="wrap not-found__inner">
-        <p className="not-found__code" aria-hidden="true">
-          404
-        </p>
+        <div className="not-found__mark" aria-hidden="true">
+          <p className="not-found__code">404</p>
+          <Orbit className="not-found__orbit" strokeWidth={5} />
+        </div>
         <h1 id="nao-encontrada">{textos.geral.naoEncontradaTitulo}</h1>
         <p className="lead">{textos.geral.naoEncontradaTexto}</p>
         <ul className="card-grid" aria-label="Caminhos sugeridos">

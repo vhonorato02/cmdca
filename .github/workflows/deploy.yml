@@ -1,0 +1,105 @@
+name: Producao (VPS)
+
+# Todo push na main vai para produção depois da bateria de qualidade.
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md', 'docs/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cmdca-production
+  cancel-in-progress: false
+
+jobs:
+  quality:
+    uses: ./.github/workflows/quality.yml
+
+  image:
+    name: Imagem de producao
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: cmdca_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d cmdca_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      # Banco vazio e migrado: o build não embute conteúdo de teste. O conteúdo
+      # real entra por ISR no servidor e pelo aquecimento pós-deploy.
+      DATABASE_URI: postgresql://postgres:postgres@localhost:5432/cmdca_test?sslmode=disable
+      ENFORCE_PRODUCTION_ENV: 'false'
+      NEXT_PUBLIC_SERVER_URL: ${{ vars.CMDCA_PUBLIC_URL }}
+      SITE_INDEXABLE: ${{ vars.SITE_INDEXABLE || 'false' }}
+      NEXT_TELEMETRY_DISABLED: '1'
+      IMAGE: ghcr.io/${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 11.15.0, run_install: false }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - name: Validar URL publica
+        run: test -n "$NEXT_PUBLIC_SERVER_URL" || { echo "Defina a variavel CMDCA_PUBLIC_URL no repositorio"; exit 1; }
+      - run: pnpm install --frozen-lockfile --prod=false
+      - name: Gerar artefato
+        run: |
+          export PAYLOAD_SECRET="$(openssl rand -hex 32)"
+          pnpm migrate
+          pnpm build
+          node scripts/ci-check-artifact.mjs
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publicar imagem
+        run: |
+          docker build --tag "$IMAGE:${{ github.sha }}" --tag "$IMAGE:latest" \
+            --label org.opencontainers.image.source=https://github.com/${{ github.repository }} .
+          docker push "$IMAGE:${{ github.sha }}"
+          docker push "$IMAGE:latest"
+
+  deploy:
+    name: Publicar na VPS
+    needs: image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: ${{ vars.CMDCA_PUBLIC_URL }}
+    steps:
+      - name: Configurar chave de deploy (somente comando restrito)
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      - name: Deploy sem downtime (rollback automatico se falhar)
+        run: ssh -i ~/.ssh/deploy -p "${{ vars.DEPLOY_PORT || '22322' }}" "deploy@${{ vars.DEPLOY_HOST }}" "deploy ${{ github.sha }}"
+      - name: Teste de fumaca e aquecimento das paginas
+        env:
+          BASE: ${{ vars.CMDCA_PUBLIC_URL }}
+        run: |
+          curl --fail --silent --show-error --retry 5 --retry-delay 5 "$BASE/api/health"
+          urls=$(curl --fail --silent "$BASE/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed 's/<[^>]*>//g' | head -200)
+          for pass in 1 2; do
+            for u in $urls; do curl --silent --output /dev/null --max-time 30 "$u" || true; done
+            sleep 5
+          done
+          for path in / /noticias /fmdca /ajuda /admin/login; do
+            code=$(curl --silent --output /dev/null --write-out '%{http_code}' "$BASE$path")
+            echo "$path -> $code"; test "$code" = 200
+          done

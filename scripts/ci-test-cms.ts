@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { createHash, randomBytes } from 'node:crypto'
-import { appendFile } from 'node:fs/promises'
+import { appendFile, readFile } from 'node:fs/promises'
+import path from 'node:path'
 import sharp from 'sharp'
 import { DEFAULT_NAVIGATION } from '../src/lib/navigation'
 
@@ -11,10 +12,10 @@ for (const key of ['DATABASE_URI', 'DATABASE_URI_UNPOOLED']) {
   assert.ok(['localhost', '127.0.0.1'].includes(uri.hostname), 'Only runner PostgreSQL is allowed')
   assert.equal(uri.pathname, '/cmdca_test')
 }
-// The explicitly simulated S3 transport remains alive for the browser download tests.
-assert.equal(process.env.S3_ENDPOINT, 'http://127.0.0.1:4569')
-assert.equal(process.env.S3_BUCKET, 'cmdca-quality')
-assert.ok((await fetch(`${process.env.S3_ENDPOINT}/health`)).ok)
+// Uploads use the same local-disk storage as production; the browser tests mount
+// this directory into the production container.
+assert.ok(process.env.MEDIA_DIR, 'MEDIA_DIR must point to the runner media directory')
+assert.ok(!process.env.S3_BUCKET, 'CI exercises local media storage, not S3')
 process.env.DATABASE_MIGRATION = 'true'
 const { getPayload } = await import('payload')
 const { default: config } = await import('../src/payload.config')
@@ -148,9 +149,8 @@ try {
     data: { alt: 'CI public document', _status: 'published', controleEditorial: provenance },
   })
   assert.equal(pdf.mimeType, 'application/pdf')
-  const stored = await fetch(`${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}/${pdf.filename}`)
-  assert.ok(stored.ok)
-  assert.deepEqual(Buffer.from(await stored.arrayBuffer()), pdfBytes, 'S3 transport preserves exact PDF bytes')
+  const stored = await readFile(path.join(process.env.MEDIA_DIR!, pdf.filename!))
+  assert.deepEqual(stored, pdfBytes, 'Local storage preserves exact PDF bytes')
   await appendFile(process.env.GITHUB_ENV!, `CMS_TEST_PDF_SHA256=${createHash('sha256').update(pdfBytes).digest('hex')}\n`)
   const privatePDF = await payload.create({
     collection: 'media', draft: true, overrideAccess: false, user: editor,

@@ -69,7 +69,7 @@
   }
 
   .btn--sm {
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     padding: 0 var(--s-4);
     font-size: var(--fs-xs);
   }
@@ -175,6 +175,14 @@
   .card__title a {
     color: inherit;
     text-decoration: none;
+  }
+
+  /* Títulos com link esticado: o cartão todo é clicável, e o próprio link
+     também tem pelo menos 44 px de altura. */
+  :is(.card__title, .news-card__title, .ruled-link__title, .route__title) a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
   }
 
   .card__title a::after {
@@ -1202,8 +1210,12 @@
 
   .source-list a {
     display: inline-flex;
-    align-items: baseline;
-    min-height: 2rem;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .source-list {
+    gap: 0;
   }
 
   .contact-card {
@@ -1238,6 +1250,12 @@
   .contact-card dd {
     margin: 0;
     overflow-wrap: anywhere;
+  }
+
+  .contact-card dd a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
   }
 
   .person-list {

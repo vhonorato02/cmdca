@@ -13,6 +13,8 @@ if (process.env.AUDIT_NEWS === 'true') {
   }
 }
 const widths = [1440, 1024, 768, 390]
+// WCAG 2.2 AA, critério 2.5.8 (tamanho mínimo do alvo): 24 x 24 px.
+const MIN_TARGET = 24
 const directory = process.env.AUDIT_OUTPUT_DIR || 'test-results/portal-audit'
 await fs.mkdir(directory, { recursive: true })
 const browser = await chromium.launch({ headless: true })
@@ -28,7 +30,7 @@ try {
       const response = await page.goto(base + route, { waitUntil: 'domcontentloaded' })
       await page.locator('h1').first().waitFor({ state: 'visible', timeout: 60000 })
       await page.evaluate(async () => { await document.fonts.ready })
-      const report = await page.evaluate(() => {
+      const report = await page.evaluate((MIN_TARGET) => {
         const shown = element => { const r = element.getBoundingClientRect(); const s = getComputedStyle(element); return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && s.display !== 'none' }
         const headings = [...document.querySelectorAll('h1,h2,h3,h4,h5,h6')].filter(shown).map(e => ({ level: Number(e.tagName[1]), text: e.textContent.trim() }))
         return {
@@ -51,12 +53,12 @@ try {
               while (walker.nextNode()) if (!walker.currentNode.parentElement.closest('a')) prose += walker.currentNode.textContent
               if (prose.replace(/[\s.,;:()|·-]+/g, '').length >= 20) return false
             }
-            const r = e.getBoundingClientRect(); return r.width < 44 || r.height < 44
+            const r = e.getBoundingClientRect(); return r.width < MIN_TARGET || r.height < MIN_TARGET
           }).map(e => ({ text: e.textContent.trim().slice(0,80) || e.getAttribute('aria-label'), tag: e.tagName, width: e.getBoundingClientRect().width, height: e.getBoundingClientRect().height })),
           links: [...new Set([...document.querySelectorAll('a[href]')].map(e => e.href))],
           mainText: document.querySelector('main')?.textContent?.trim().slice(0,150)
         }
-      })
+      }, MIN_TARGET)
       const name = (route === '/' ? 'home' : route.replaceAll('/', '-').slice(1)) + '-' + width
       await page.screenshot({ path: `${directory}/${name}.png`, fullPage: true })
       results.push({ route, width, status: response?.status(), ...report })

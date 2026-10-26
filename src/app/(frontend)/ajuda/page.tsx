@@ -79,7 +79,12 @@ function PlaceCard({ lugar, headingLevel = 3 }: { lugar: Lugar; headingLevel?: 3
       {lugar.horario ? <p className="place__hours">{lugar.horario}</p> : null}
       {lugar.endereco ? (
         <p>
-          <a href={directionsHref(lugar.endereco)} target="_blank" rel="noopener noreferrer">
+          <a
+            className="place__route"
+            href={directionsHref(lugar.endereco)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Ver rota até {lugar.nome}
             <span className="sr-only"> (abre o mapa em nova aba)</span>
           </a>

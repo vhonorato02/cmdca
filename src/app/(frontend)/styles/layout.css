@@ -73,9 +73,10 @@
 
   .channel-link {
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
     gap: var(--s-2);
-    padding: var(--s-1) var(--s-4);
+    min-height: 2.75rem;
+    padding: 0 var(--s-4);
     color: var(--c-on-dark-muted);
     text-decoration: none;
     border-radius: var(--r-sm);
@@ -133,8 +134,8 @@
   }
 
   .a11y-tools__btn {
-    min-width: 2.25rem;
-    min-height: 2rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     padding: 0 var(--s-2);
     border: 1px solid rgb(255 255 255 / 35%);
     border-radius: var(--r-sm);
@@ -189,6 +190,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--s-3);
+    min-height: 2.75rem;
     color: var(--c-heading);
     text-decoration: none;
     margin-right: auto;
@@ -471,10 +473,11 @@
   .breadcrumb ol {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--s-1) var(--s-2);
+    align-items: center;
+    gap: 0 var(--s-2);
     list-style: none;
     padding: 0;
-    margin: 0 0 var(--s-4);
+    margin: 0 0 var(--s-2);
     font-size: var(--fs-sm);
     color: var(--c-text-muted);
   }
@@ -486,8 +489,17 @@
   }
 
   .breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
     color: var(--c-text-muted);
     font-weight: 700;
+  }
+
+  .breadcrumb li {
+    display: inline-flex;
+    align-items: center;
   }
 
   /* No celular o título da página já vem logo abaixo: a trilha mostra só o caminho. */
@@ -576,9 +588,17 @@
     margin: 0;
   }
 
-  .site-footer__links a {
-    display: inline-block;
-    padding-block: 2px;
+  /* Alvos de toque de 44 px (régua do projeto, acima dos 24 px do WCAG 2.2 AA). */
+  .site-footer__links a,
+  .site-footer__contact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+
+  .site-footer__links {
+    gap: 0;
   }
 
   .site-footer__phone {

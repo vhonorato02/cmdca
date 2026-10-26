@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { ENTIDADE_SITUACAO, isPastDate, publicDocuments, statusInfo } from '@/components/officialActs'
 import { ActItem, ActList, StatusPill, Tag } from '@/components/ui/ActList'
@@ -129,11 +128,17 @@ export default async function EntidadesPage() {
           <div className="mt-7">
             <Callout title={textos.atos.entidadesOrientacaoTitulo}>
               <p>{textos.atos.entidadesOrientacao}</p>
-              <p className="actions mt-4">
-                <Link href="/editais">Editais</Link>
-                <Link href="/resolucoes">Resoluções</Link>
-                <Link href="/participe">Fale com o conselho</Link>
-              </p>
+              <div className="actions mt-4">
+                <ButtonLink href="/editais" variant="secondary" size="sm">
+                  Editais
+                </ButtonLink>
+                <ButtonLink href="/resolucoes" variant="secondary" size="sm">
+                  Resoluções
+                </ButtonLink>
+                <ButtonLink href="/participe" variant="secondary" size="sm">
+                  Fale com o conselho
+                </ButtonLink>
+              </div>
             </Callout>
           </div>
         </div>

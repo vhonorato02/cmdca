@@ -432,6 +432,12 @@
     font-weight: 800;
   }
 
+  .place__route {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
   .place__hours {
     color: var(--c-text-muted);
     font-size: var(--fs-sm);
@@ -506,9 +512,15 @@
     border-top: 4px solid var(--c-heading);
   }
 
+  .sitemap ul a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
   .sitemap ul {
     display: grid;
-    gap: var(--s-2);
+    gap: 0;
     list-style: none;
     padding: 0;
     margin: var(--s-3) 0 0;

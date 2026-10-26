@@ -6,12 +6,12 @@ Portal institucional do Conselho Municipal dos Direitos da Criança e do Adolesc
 
 - Next.js 16, React 19 e TypeScript;
 - Payload CMS 3 em `/admin`;
-- PostgreSQL no Neon;
-- arquivos e imagens no Cloudflare R2;
-- entrega pelo GitHub Actions em container na VPS do Zé com Coolify;
+- PostgreSQL 17 (banco `cmdca` no Postgres compartilhado da VPS);
+- arquivos e imagens em disco persistente (`/srv/sites/cmdca/data/media`), servidos por `/api/media/file/`;
+- entrega pelo GitHub Actions, em container, na VPS `zewithane` (plataforma `vps-platform`: Caddy + Docker);
 - Node.js 24 e pnpm 11 fixados em `package.json`.
 
-O navegador acessa o proxy HTTPS do Coolify e o container Next.js/Payload. A aplicação usa a conexão pooled do Neon durante a navegação, a conexão direct somente para migrações, e grava uploads no R2. O container não guarda conteúdo permanente. A infraestrutura real ainda depende da confirmação de acesso e destino descrita em DEPLOY.md.
+O navegador acessa o Caddy (HTTPS automático) e o container Next.js/Payload. As migrations rodam quando o container sobe. Os dados ficam no Postgres da plataforma e a mídia num volume. Os dois entram no backup restic diário, que tem teste semanal de restauração. Produção: <https://cmdca.zewithane.vps.brz.dev.br>. Detalhes em [`DEPLOY.md`](DEPLOY.md).
 
 ## Rodar localmente
 
@@ -60,21 +60,22 @@ O site público recebe somente documentos publicados e, no caso de reuniões, so
 
 ## Entrega
 
-O fluxo de entrega usa exclusivamente GitHub Actions. O workflow de produção instala dependências pelo lockfile, executa verificações, aplica migrações compatíveis e publica a imagem standalone no GHCR para o Coolify. Não execute build, migrate, seed ou deploy local contra produção. O workflow legado da Vercel está desativado. Veja [`DEPLOY.md`](DEPLOY.md).
+Todo push na `main` passa pela bateria de qualidade (migrations, lint, tipos, unitários e E2E no container de produção). Depois publica a imagem no GHCR e faz o deploy na VPS sem downtime, por uma chave SSH que só executa o comando de deploy. Se a versão nova não ficar saudável, a anterior continua no ar. Rollback: `site rollback cmdca` na VPS. Não execute build, migrate, seed ou deploy local contra produção. Veja [`DEPLOY.md`](DEPLOY.md).
 
 ## Segredos e recuperação de acesso
 
 - `.env.local`, `.env` e `.vercel` não são versionados;
-- nunca envie URI do banco, chaves R2, senha ou `PAYLOAD_SECRET` em commit, chat, captura de tela ou log;
+- nunca envie URI do banco, senha, chave de deploy ou `PAYLOAD_SECRET` em commit, chat, captura de tela ou log;
 - `PAYLOAD_SECRET` deve ter no mínimo 32 caracteres aleatórios e sua rotação encerra sessões existentes;
 - o “Esqueci minha senha” exige SMTP funcional e remetente validado. Sem isso, a recuperação retorna indisponibilidade e não registra tokens no console;
 - mantenha dois administradores ativos. O CMS impede autoexclusão e remoção do último administrador.
 
-Em suspeita de exposição, siga a ordem em [`docs/OPERACOES.md`](docs/OPERACOES.md): conter o acesso, rotacionar o segredo, rotacionar credenciais Neon/R2/SMTP, revogar sessões e validar logs.
+Em suspeita de exposição, siga a ordem em [`docs/OPERACOES.md`](docs/OPERACOES.md): conter o acesso, rotacionar o segredo, rotacionar as credenciais do banco e do SMTP, revogar sessões e validar logs.
 
 ## Documentação
 
-- [`DEPLOY.md`](DEPLOY.md): configuração Coolify e entrega pelo GitHub Actions;
+- [`DEPLOY.md`](DEPLOY.md): deploy na VPS, variáveis, domínio definitivo e restauração;
+- [`docs/decisions/`](docs/decisions/): decisões de arquitetura (ADRs);
 - [`docs/CMS.md`](docs/CMS.md): manual de conteúdo para editor, jurídico e administrador;
 - [`docs/OPERACOES.md`](docs/OPERACOES.md): migrações, backup, rollback e incidentes;
 - [`docs/QA.md`](docs/QA.md): critérios objetivos para liberar produção;

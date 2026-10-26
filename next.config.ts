@@ -79,16 +79,43 @@ const nextConfig: NextConfig = {
       })
     }
 
+    // CSP: só o que o portal carrega de fora — VLibras (widget do governo; usa
+    // WebAssembly do Unity) e os tiles do OpenStreetMap no mapa da rede.
+    // 'unsafe-inline' cobre os scripts JSON-LD/inicialização inline sem obrigar
+    // nonce, que tornaria todas as páginas dinâmicas e acabaria com o ISR.
+    const vlibras = 'https://vlibras.gov.br https://*.vlibras.gov.br'
+    const csp = [
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' ${vlibras}`,
+      `style-src 'self' 'unsafe-inline' ${vlibras}`,
+      `img-src 'self' data: blob: https://*.tile.openstreetmap.org ${vlibras}`,
+      `font-src 'self' data: ${vlibras}`,
+      `connect-src 'self' ${vlibras}`,
+      `media-src 'self' blob: ${vlibras}`,
+      "worker-src 'self' blob:",
+      "frame-src 'self'",
+      "frame-ancestors 'self'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+    ].join('; ')
+
     return [
       {
         source: '/:path*',
         headers: securityHeaders,
       },
       {
+        // Site público: CSP aplicada (o painel fica fora até validar a dele).
+        source: '/((?!admin).*)',
+        headers: [{ key: 'Content-Security-Policy', value: csp }],
+      },
+      {
         source: '/admin/:path*',
         headers: [
           { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
           { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+          { key: 'Content-Security-Policy-Report-Only', value: csp },
         ],
       },
       {

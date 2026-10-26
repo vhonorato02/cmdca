@@ -26,6 +26,7 @@ import { PaginaInicial } from './globals/PaginaInicial'
 import { Indicadores } from './globals/Indicadores'
 import { Navegacao } from './globals/Navegacao'
 import { buildAllowedOrigins } from './security/origins'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -34,10 +35,10 @@ const dirname = path.dirname(filename)
 // carrega sozinha. Carregamos aqui sem sobrescrever variáveis já definidas pelo Next.
 dotenvConfig({ path: path.resolve(dirname, '../.env.local') })
 
-// App usa a string POOLED (Neon -pooler). Migrations/seed usam a UNPOOLED (direct),
-// acionada pelo env DATABASE_MIGRATION=true definido nos scripts migrate/seed.
+// Runtime usa DATABASE_URI (ou DATABASE_URL, injetada pela plataforma da VPS).
+// Migrations/seed podem usar uma conexão direta separada (DATABASE_URI_UNPOOLED);
+// sem ela, usam a mesma conexão do runtime (Postgres próprio do site, sem pooler).
 const isMigrating = process.env.DATABASE_MIGRATION === 'true'
-// Only the isolated Actions fixture may run production-mode tests without SMTP.
 const isIsolatedCI = process.env.GITHUB_ACTIONS === 'true' &&
   ['DATABASE_URI', 'DATABASE_URI_UNPOOLED'].every((name) => {
     try {
@@ -48,7 +49,7 @@ const isIsolatedCI = process.env.GITHUB_ACTIONS === 'true' &&
     }
   })
 const isHostedProduction =
-  process.env.ENFORCE_PRODUCTION_ENV === 'true' || process.env.VERCEL_ENV === 'production' ||
+  process.env.ENFORCE_PRODUCTION_ENV === 'true' ||
   (process.env.NODE_ENV === 'production' && !isIsolatedCI)
 
 function requiredInHostedProduction(name: string, minimumLength = 1): string | undefined {
@@ -59,29 +60,24 @@ function requiredInHostedProduction(name: string, minimumLength = 1): string | u
   return value
 }
 
-const pooledDatabaseURI = requiredInHostedProduction('DATABASE_URI')
-const directDatabaseURI = process.env.DATABASE_URI_UNPOOLED?.trim()
-if (isMigrating && !directDatabaseURI) {
-  throw new Error(
-    'DATABASE_URI_UNPOOLED é obrigatória para migrations; a conexão pooled não pode ser usada como fallback.',
-  )
+const runtimeDatabaseURI = process.env.DATABASE_URI?.trim() || process.env.DATABASE_URL?.trim()
+if (isHostedProduction && !runtimeDatabaseURI) {
+  throw new Error('Variável obrigatória ausente em produção: DATABASE_URI (ou DATABASE_URL)')
 }
-const connectionString = isMigrating ? directDatabaseURI : pooledDatabaseURI
+const connectionString = isMigrating
+  ? process.env.DATABASE_URI_UNPOOLED?.trim() || runtimeDatabaseURI
+  : runtimeDatabaseURI
 
 const payloadSecret = requiredInHostedProduction('PAYLOAD_SECRET', 32) || process.env.PAYLOAD_SECRET || ''
-const vercelProductionURL = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim()
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.trim()}`
-  : undefined
-const publicServerURL = process.env.NEXT_PUBLIC_SERVER_URL?.trim() || vercelProductionURL
+const publicServerURL = process.env.NEXT_PUBLIC_SERVER_URL?.trim()
 if (isHostedProduction && !publicServerURL) {
-  throw new Error(
-    'Defina NEXT_PUBLIC_SERVER_URL ou disponibilize VERCEL_PROJECT_PRODUCTION_URL em produção.',
-  )
+  throw new Error('Defina NEXT_PUBLIC_SERVER_URL em produção.')
 }
-const s3Bucket = requiredInHostedProduction('S3_BUCKET')
-const s3Endpoint = requiredInHostedProduction('S3_ENDPOINT')
-const s3AccessKeyID = requiredInHostedProduction('S3_ACCESS_KEY_ID')
-const s3SecretAccessKey = requiredInHostedProduction('S3_SECRET_ACCESS_KEY')
+
+// Armazenamento de mídia: disco local (volume persistente) por padrão. S3/R2 só
+// é usado quando S3_BUCKET está definido, para manter compatibilidade.
+const s3Bucket = process.env.S3_BUCKET?.trim()
+const mediaDir = path.resolve(process.env.MEDIA_DIR?.trim() || path.resolve(dirname, '../media'))
 
 if (isHostedProduction && publicServerURL) {
   const uri = new URL(publicServerURL)
@@ -90,22 +86,19 @@ if (isHostedProduction && publicServerURL) {
   }
 }
 
-// O driver `pg` avisa que `sslmode=require/prefer/verify-ca` é tratado, hoje,
-// como `verify-full`. Tornamos isso explícito: mesmo comportamento (o Neon usa
-// certificado público válido), porém sem o aviso de segurança no console/build.
-function withVerifyFullSSL(uri: string | undefined): string {
+// O driver `pg` trata `sslmode=require/prefer/verify-ca` como `verify-full` e
+// avisa no console. Tornamos isso explícito. Sem `sslmode`, a conexão segue sem
+// TLS: é o caso do Postgres do site em rede Docker interna, sem saída externa.
+function withExplicitSSLMode(uri: string | undefined): string {
   if (!uri) return ''
-  if (/[?&]sslmode=/.test(uri)) {
-    return uri.replace(/([?&]sslmode=)(require|prefer|verify-ca)\b/, '$1verify-full')
-  }
-  return `${uri}${uri.includes('?') ? '&' : '?'}sslmode=verify-full`
+  return uri.replace(/([?&]sslmode=)(require|prefer|verify-ca)\b/, '$1verify-full')
 }
-const secureConnectionString = withVerifyFullSSL(connectionString)
+const secureConnectionString = withExplicitSSLMode(connectionString)
 
-// PENDENCIA: configurar SMTP real e remetente validado no ambiente hospedado.
-// Impede recuperação de senha simulada e links sensíveis escritos no console.
-const smtpHost = requiredInHostedProduction('SMTP_HOST')
-const emailFromAddress = requiredInHostedProduction('EMAIL_FROM_ADDRESS')
+// Sem SMTP, a recuperação de senha fica bloqueada (ver hook em Users) e o
+// administrador redefine senhas pelo painel.
+const smtpHost = process.env.SMTP_HOST?.trim()
+const emailFromAddress = process.env.EMAIL_FROM_ADDRESS?.trim()
 if (smtpHost && !emailFromAddress) {
   throw new Error('EMAIL_FROM_ADDRESS é obrigatória quando SMTP_HOST está configurado.')
 }
@@ -152,7 +145,6 @@ const allowedOrigins = buildAllowedOrigins({
   nodeEnv: process.env.NODE_ENV,
   serverURL,
   publicServerURL,
-  vercelURL: process.env.VERCEL_URL,
 })
 
 export default buildConfig({
@@ -220,7 +212,9 @@ export default buildConfig({
     Depoimentos,
     Destaques,
     Faq,
-    Media,
+    s3Bucket
+      ? Media
+      : { ...Media, upload: { ...(typeof Media.upload === 'object' ? Media.upload : {}), staticDir: mediaDir } },
     Users,
   ],
   globals: [Configuracoes, PaginaInicial, Indicadores, Navegacao],
@@ -243,29 +237,28 @@ export default buildConfig({
       connectionTimeoutMillis: 10_000,
       idleTimeoutMillis: 10_000,
     },
-    // Schema controlado por migrations (não usar push automático com o Neon).
+    // Schema controlado por migrations; em produção elas rodam ao iniciar o servidor.
     push: false,
+    prodMigrations: migrations,
   }),
   email: emailAdapter,
   sharp,
-  plugins: [
-    // Files pass through Payload authorization. The R2 bucket must also be private:
-    // changing application URLs does not revoke previously public storage URLs.
-    s3Storage({
-      collections: {
-        media: true,
-      },
-      bucket: s3Bucket || '',
-      config: {
-        endpoint: s3Endpoint,
-        region: process.env.S3_REGION || 'auto',
-        credentials: {
-          accessKeyId: s3AccessKeyID || '',
-          secretAccessKey: s3SecretAccessKey || '',
-        },
-        // R2 funciona de forma confiável com path-style.
-        forcePathStyle: true,
-      },
-    }),
-  ],
+  plugins: s3Bucket
+    ? [
+        // Legado (R2). Os arquivos passam pela autorização do Payload.
+        s3Storage({
+          collections: { media: true },
+          bucket: s3Bucket,
+          config: {
+            endpoint: process.env.S3_ENDPOINT,
+            region: process.env.S3_REGION || 'auto',
+            credentials: {
+              accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+            },
+            forcePathStyle: true,
+          },
+        }),
+      ]
+    : [],
 })

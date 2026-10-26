@@ -8,6 +8,7 @@ import {
 } from '../fields/editorial'
 import { enforceGlobalEditorDraftOnly, uploadHasMime, validateGlobalPublication } from '../hooks/editorialPolicy'
 import { revalidateGlobal } from '../hooks/revalidate'
+import { PAGINA_INICIAL_PADRAO as P } from '../content/defaults'
 
 export const PaginaInicial: GlobalConfig = {
   slug: 'pagina-inicial',
@@ -44,13 +45,48 @@ export const PaginaInicial: GlobalConfig = {
       label: 'Capa da página inicial',
       type: 'group',
       fields: [
-        { name: 'titulo', label: 'Título', type: 'text', maxLength: 140 },
-        { name: 'texto', label: 'Apresentação', type: 'textarea', maxLength: 320 },
+        { name: 'titulo', label: 'Título', type: 'text', maxLength: 140, defaultValue: P.capa.titulo },
+        {
+          name: 'texto',
+          label: 'Apresentação',
+          type: 'textarea',
+          maxLength: 320,
+          defaultValue: P.capa.texto,
+        },
         {
           name: 'imagem', label: 'Imagem da capa', type: 'upload', relationTo: 'media',
           filterOptions: imageFilter,
           admin: { description: 'Escolha uma imagem publicada com texto alternativo e crédito conferidos.' },
         },
+      ],
+    },
+    {
+      name: 'rotas',
+      label: 'Três caminhos abaixo da capa',
+      type: 'group',
+      admin: { description: 'Os destinos são fixos: Buscar ajuda, Fundo e IR e Reuniões.' },
+      fields: [
+        { type: 'row', fields: [
+          { name: 'protecaoTitulo', label: 'Proteção: título', type: 'text', maxLength: 40, defaultValue: P.rotas.protecaoTitulo, admin: { width: '40%' } },
+          { name: 'protecaoTexto', label: 'Proteção: texto', type: 'text', maxLength: 120, defaultValue: P.rotas.protecaoTexto, admin: { width: '60%' } },
+        ] },
+        { type: 'row', fields: [
+          { name: 'fundoTitulo', label: 'Fundo: título', type: 'text', maxLength: 40, defaultValue: P.rotas.fundoTitulo, admin: { width: '40%' } },
+          { name: 'fundoTexto', label: 'Fundo: texto', type: 'text', maxLength: 120, defaultValue: P.rotas.fundoTexto, admin: { width: '60%' } },
+        ] },
+        { type: 'row', fields: [
+          { name: 'atosTitulo', label: 'Atos: título', type: 'text', maxLength: 40, defaultValue: P.rotas.atosTitulo, admin: { width: '40%' } },
+          { name: 'atosTexto', label: 'Atos: texto', type: 'text', maxLength: 120, defaultValue: P.rotas.atosTexto, admin: { width: '60%' } },
+        ] },
+      ],
+    },
+    {
+      name: 'sobre',
+      label: 'Bloco "O Conselho"',
+      type: 'group',
+      fields: [
+        { name: 'titulo', label: 'Título', type: 'text', maxLength: 80, defaultValue: P.sobre.titulo },
+        { name: 'texto', label: 'Texto', type: 'textarea', maxLength: 400, defaultValue: P.sobre.texto },
       ],
     },
     {
@@ -84,10 +120,10 @@ export const PaginaInicial: GlobalConfig = {
           type: 'select',
           required: true,
           options: [
-            { label: 'Slider de destaques', value: 'slider' },
+            { label: 'Destaques', value: 'slider' },
             { label: 'O Conselho', value: 'sobre' },
-            { label: 'Acesso rápido', value: 'atalhos' },
-            { label: 'Indicadores', value: 'indicadores' },
+            { label: 'Três caminhos (sempre logo abaixo da capa)', value: 'atalhos' },
+            { label: 'Indicadores (só aparece com dados publicados)', value: 'indicadores' },
             { label: 'Vozes', value: 'vozes' },
             { label: 'Notícias recentes', value: 'noticias' },
           ],

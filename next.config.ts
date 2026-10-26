@@ -83,7 +83,7 @@ const nextConfig: NextConfig = {
     // WebAssembly do Unity) e os tiles do OpenStreetMap no mapa da rede.
     // 'unsafe-inline' cobre os scripts JSON-LD/inicialização inline sem obrigar
     // nonce, que tornaria todas as páginas dinâmicas e acabaria com o ISR.
-    const vlibras = 'https://vlibras.gov.br https://*.vlibras.gov.br'
+    const vlibras = 'https://vlibras.gov.br https://*.vlibras.gov.br https://cdn.jsdelivr.net'
     const csp = [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' ${vlibras}`,

@@ -4,6 +4,7 @@ export type NavigationLink = { label: string; href: string }
 export type SiteNavigation = {
   menuPrincipal: NavigationLink[]
   rodapeInstitucional: NavigationLink[]
+  rodapeSobreSite: NavigationLink[]
 }
 
 export const DEFAULT_NAVIGATION: SiteNavigation = {
@@ -22,6 +23,13 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
     { label: 'Fundo Municipal', href: '/fmdca' },
     { label: 'Conferências', href: '/conferencias' },
     { label: 'Notícias', href: '/noticias' },
+  ],
+  rodapeSobreSite: [
+    { label: 'Mapa do site', href: '/mapa-do-site' },
+    { label: 'Acessibilidade', href: '/acessibilidade' },
+    { label: 'Privacidade (LGPD)', href: '/privacidade' },
+    { label: 'Termos de uso', href: '/termos' },
+    { label: 'Créditos de imagens', href: '/creditos' },
   ],
 }
 
@@ -58,6 +66,7 @@ export function resolvePublishedNavigation(value: unknown): SiteNavigation {
       DEFAULT_NAVIGATION.rodapeInstitucional,
       8,
     ),
+    rodapeSobreSite: sanitizeLinks(data.rodapeSobreSite, DEFAULT_NAVIGATION.rodapeSobreSite, 8),
   }
 }
 

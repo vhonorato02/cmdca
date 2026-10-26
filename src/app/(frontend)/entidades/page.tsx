@@ -1,27 +1,19 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { Reveal } from '@/components/Reveal'
-import {
-  ENTIDADE_SITUACAO,
-  isPastDate,
-  publicDocuments,
-  statusInfo,
-} from '@/components/officialActs'
-import { formatDate } from '@/lib/format'
+import { ENTIDADE_SITUACAO, isPastDate, publicDocuments, statusInfo } from '@/components/officialActs'
+import { ActItem, ActList, StatusPill, Tag } from '@/components/ui/ActList'
+import { ButtonLink } from '@/components/ui/Button'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Callout, EmptyState, ErrorState } from '@/components/ui/states'
+import { getTextos } from '@/lib/content'
+import { formatDateLong } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
 import { createMetadata } from '@/lib/seo'
 import { publicText } from '@/lib/site'
 import type { Entidade } from '@/payload-types'
 
 export const revalidate = 300
-
-export const metadata: Metadata = createMetadata({
-  title: 'Entidades Registradas no CMDCA | Pindamonhangaba',
-  description:
-    'Consulte as entidades registradas no CMDCA, com número de registro e validade quando essas informações estiverem publicadas.',
-  path: '/entidades',
-})
 
 const AREA_LABEL: Record<string, string> = {
   educacao: 'Educação',
@@ -32,105 +24,120 @@ const AREA_LABEL: Record<string, string> = {
   outro: 'Outra área',
 }
 
+export async function generateMetadata(): Promise<Metadata> {
+  const textos = await getTextos()
+  return createMetadata({
+    title: 'Entidades registradas no CMDCA | Pindamonhangaba',
+    description: textos.atos.entidadesIntro,
+    path: '/entidades',
+  })
+}
+
+/** Número curto para o numeral: "Registro 012/2024" vira "012/2024". */
+const registroCurto = (value?: string) => value?.replace(/^registro\s*(n[ºo°.]*\s*)?/i, '').trim()
+
 export default async function EntidadesPage() {
   const payload = await getPayloadClient()
-  const res = await payload
-    .find({
-      collection: 'entidades',
-      where: { _status: { equals: 'published' } },
-      sort: 'nome',
-      limit: 200,
-      depth: 1,
-    })
-  const docs = (res.docs as Entidade[]).filter((item) => publicText(item.nome))
+  const [textos, res] = await Promise.all([
+    getTextos(),
+    payload
+      .find({
+        collection: 'entidades',
+        where: { _status: { equals: 'published' } },
+        sort: 'nome',
+        limit: 500,
+        depth: 1,
+      })
+      .catch(() => null),
+  ])
+  const docs = res ? (res.docs as Entidade[]).filter((item) => publicText(item.nome)) : null
 
   return (
-    <section className="band">
-      <div className="wrap">
-        <Reveal>
-          <div className="sec-head">
-            <div>
-              <span className="eyebrow">Sociedade civil</span>
-              <h1>Entidades registradas</h1>
-              <p>
-                Esta é a relação pública de organizações registradas no CMDCA, com a situação de
-                cada registro informada pelo conselho: ativo, vencido, suspenso ou cancelado.
-                Antes de usar a lista em um procedimento formal, confirme a situação vigente com o
-                conselho.
-              </p>
-            </div>
-          </div>
-          {docs.length ? (
-            <ul className="meeting-list" style={{ display: 'grid', gap: 12 }}>
+    <>
+      <PageHeader
+        title={textos.atos.entidadesTitulo}
+        lead={textos.atos.entidadesIntro}
+        crumbs={[{ label: 'Transparência', href: '/transparencia' }]}
+      />
+      <div className="section">
+        <div className="wrap">
+          {docs === null ? (
+            <ErrorState
+              title="Não foi possível carregar as entidades"
+              action={<ButtonLink href="/entidades">Tentar de novo</ButtonLink>}
+            >
+              O banco de dados não respondeu.
+            </ErrorState>
+          ) : docs.length ? (
+            <ActList label="Entidades registradas">
               {docs.map((e) => {
-                const situacao = statusInfo(ENTIDADE_SITUACAO, e.situacaoRegistro)
-                const registro = publicText(e.registro)
+                const nome = publicText(e.nome) as string
+                const registro = registroCurto(publicText(e.registro))
                 const documentos = publicDocuments(e.documentos)
                 const validadePassou = e.situacaoRegistro === 'ativo' && isPastDate(e.validade)
                 return (
-                  <li className="lead-box entity" key={e.id}>
-                    <h2 className="nm">
-                      {publicText(e.nome)}{' '}
-                      <span className={`pill status-${situacao.tone}`}>
-                        <span className="sr-only">Situação: </span>
-                        {situacao.label}
-                      </span>
-                    </h2>
-                    <p className="ro">
-                      {e.area ? AREA_LABEL[e.area] || 'Outra área' : 'Área não informada'}
-                      {registro
-                        ? ` · ${/^registro\b/i.test(registro) ? registro : `registro ${registro}`}`
-                        : ''}
-                      {e.validade ? (
+                  <ActItem
+                    key={e.id}
+                    numeral={registro || 'Reg.'}
+                    numeralLabel={registro ? 'Registro' : 'Sem número'}
+                    title={nome}
+                    badges={
+                      <>
+                        <StatusPill status={statusInfo(ENTIDADE_SITUACAO, e.situacaoRegistro)} />
+                        <Tag>{e.area ? AREA_LABEL[e.area] || 'Outra área' : 'Área não informada'}</Tag>
+                      </>
+                    }
+                    meta={
+                      <>
+                        {e.validade ? (
+                          <p className="act__meta">
+                            Válido até <time dateTime={e.validade}>{formatDateLong(e.validade)}</time>
+                          </p>
+                        ) : null}
+                        {validadePassou ? (
+                          <p className="act__meta">
+                            A validade publicada já passou. Confirme a situação atual com o conselho.
+                          </p>
+                        ) : null}
+                      </>
+                    }
+                    actions={
+                      documentos.length ? (
                         <>
-                          {' · validade até '}
-                          <time dateTime={e.validade}>{formatDate(e.validade)}</time>
-                        </>
-                      ) : null}
-                    </p>
-                    {validadePassou ? (
-                      <p className="ro entity-warning">
-                        A data de validade publicada já passou. Confirme a situação atual com o
-                        conselho.
-                      </p>
-                    ) : null}
-                    {documentos.length ? (
-                      <ul className="entity-docs">
-                        {documentos.map((doc) => (
-                          <li key={doc.key}>
+                          {documentos.map((doc) => (
                             <a
-                              className="mini"
+                              key={doc.key}
+                              className="btn btn--secondary btn--sm"
                               href={doc.href}
                               target="_blank"
                               rel="noopener noreferrer"
-                              aria-label={`${doc.label}, de ${publicText(e.nome)} (PDF, abre em nova aba)`}
+                              aria-label={`${doc.label}, de ${nome} (documento, abre em nova aba)`}
                             >
-                              {doc.label} <span aria-hidden="true">↗</span>
+                              {doc.label}
                             </a>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </li>
+                          ))}
+                        </>
+                      ) : undefined
+                    }
+                  />
                 )
               })}
-            </ul>
+            </ActList>
           ) : (
-            <p style={{ color: 'var(--ink-2)' }}>
-              Não há entidades registradas listadas nesta página no momento.
-            </p>
+            <EmptyState title="A relação de entidades ainda não foi publicada" />
           )}
-          <div className="participate" style={{ marginTop: 28 }}>
-            <h2>Precisa de orientação sobre registro ou renovação?</h2>
-            <p>
-              Os requisitos variam conforme o programa e os atos vigentes. Antes de protocolar
-              documentos, consulte os{' '}
-              <Link href="/editais">editais</Link>, as <Link href="/resolucoes">resoluções</Link> e
-              os canais da página <Link href="/participe">Participe</Link>.
-            </p>
+          <div className="mt-7">
+            <Callout title={textos.atos.entidadesOrientacaoTitulo}>
+              <p>{textos.atos.entidadesOrientacao}</p>
+              <p className="actions mt-4">
+                <Link href="/editais">Editais</Link>
+                <Link href="/resolucoes">Resoluções</Link>
+                <Link href="/participe">Fale com o conselho</Link>
+              </p>
+            </Callout>
           </div>
-        </Reveal>
+        </div>
       </div>
-    </section>
+    </>
   )
 }

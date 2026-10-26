@@ -7,24 +7,15 @@ import {
   editorialControlField,
 } from '../fields/editorial'
 import { validateGlobalPublication } from '../hooks/editorialPolicy'
-import { revalidateGlobal } from '../hooks/revalidate'
+import { CONFIGURACOES_PADRAO } from '../content/defaults'
 import { validateEmail, validateExternalURL } from '../utilities/validation'
+import { revalidateNavigation } from './Navegacao'
 
 const readConfirmedBankData: FieldAccess = ({ doc, req }) =>
   Boolean(roleOf(req.user)) ||
   Boolean((doc as { fmdca?: { dadosBancariosConfirmados?: boolean } } | undefined)?.fmdca?.dadosBancariosConfirmados)
 
-const revalidation = revalidateGlobal([
-  '/',
-  '/conselho',
-  '/transparencia',
-  '/resolucoes',
-  '/editais',
-  '/fmdca',
-  '/participe',
-  '/acessibilidade',
-  '/privacidade',
-])
+// Contatos e base legal aparecem no rodapé: a publicação revalida o site inteiro.
 
 export const Configuracoes: GlobalConfig = {
   slug: 'configuracoes',
@@ -54,7 +45,7 @@ export const Configuracoes: GlobalConfig = {
         },
       ]),
     ],
-    ...revalidation,
+    afterChange: [revalidateNavigation],
   },
   access: {
     read: publishedOrLoggedIn,
@@ -109,6 +100,20 @@ export const Configuracoes: GlobalConfig = {
           validate: validateEmail,
         },
         { name: 'telefone', label: 'Telefone/Fax', type: 'text' },
+        {
+          name: 'endereco',
+          label: 'Endereço de atendimento do CMDCA',
+          type: 'textarea',
+          defaultValue: CONFIGURACOES_PADRAO.contato.endereco,
+          admin: { description: 'Use XXXX enquanto não houver confirmação oficial. O site não exibe XXXX.' },
+        },
+        {
+          name: 'horario',
+          label: 'Horário de atendimento',
+          type: 'text',
+          defaultValue: CONFIGURACOES_PADRAO.contato.horario,
+          admin: { description: 'Ex.: segunda a sexta, das 8h às 17h. Use XXXX enquanto não for confirmado.' },
+        },
         { name: 'cep', label: 'CEP', type: 'text' },
         { name: 'casaConselhosTelefone', label: 'Telefone da Casa dos Conselhos', type: 'text' },
         { name: 'casaConselhosEndereco', label: 'Endereço da Casa dos Conselhos', type: 'textarea' },
@@ -143,8 +148,21 @@ export const Configuracoes: GlobalConfig = {
           type: 'checkbox',
           defaultValue: false,
         },
-        { name: 'cnpj', label: 'CNPJ do FMDCA', type: 'text', access: { read: readConfirmedBankData } },
-        { name: 'conta', label: 'Conta bancária', type: 'text', access: { read: readConfirmedBankData } },
+        {
+          name: 'cnpj',
+          label: 'CNPJ do FMDCA',
+          type: 'text',
+          defaultValue: CONFIGURACOES_PADRAO.fmdca.cnpj,
+          access: { read: readConfirmedBankData },
+        },
+        {
+          name: 'conta',
+          label: 'Banco, agência e conta do FMDCA',
+          type: 'text',
+          defaultValue: CONFIGURACOES_PADRAO.fmdca.conta,
+          access: { read: readConfirmedBankData },
+          admin: { description: 'Ex.: Banco do Brasil, agência 0000-0, conta 00000-0. Use XXXX até haver ato oficial.' },
+        },
         {
           name: 'percentualDeducaoIR',
           label: 'Limite informado no simulador (%)',
@@ -155,6 +173,33 @@ export const Configuracoes: GlobalConfig = {
           admin: { description: 'Confirme a regra aplicável e a data de verificação antes de publicar.' },
         },
         { name: 'comoDestinar', label: 'Como destinar', type: 'textarea' },
+      ],
+    },
+    {
+      name: 'lgpd',
+      label: 'Proteção de dados (LGPD)',
+      type: 'group',
+      admin: { description: 'Exibido no quadro de contato do aviso de privacidade.' },
+      fields: [
+        {
+          name: 'controlador',
+          label: 'Controlador dos dados',
+          type: 'text',
+          defaultValue: CONFIGURACOES_PADRAO.lgpd.controlador,
+        },
+        {
+          name: 'encarregado',
+          label: 'Encarregado de dados (nome ou cargo)',
+          type: 'text',
+          defaultValue: CONFIGURACOES_PADRAO.lgpd.encarregado,
+          admin: { description: 'Confirme com a Prefeitura. Use XXXX até a confirmação formal.' },
+        },
+        {
+          name: 'encarregadoContato',
+          label: 'Contato do encarregado (e-mail ou link)',
+          type: 'text',
+          defaultValue: CONFIGURACOES_PADRAO.lgpd.encarregadoContato,
+        },
       ],
     },
     {

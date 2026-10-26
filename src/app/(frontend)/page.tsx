@@ -1,51 +1,69 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 
-import { HomeSlider, type Slide } from '@/components/home/HomeSlider'
-import { Vozes, type Voz } from '@/components/home/Vozes'
-import { CATEGORIA_LABEL, NewsCard } from '@/components/NewsCard'
-import { Illustration } from '@/components/Illustration'
-import { Reveal } from '@/components/Reveal'
-import { formatDate, sortByDateDesc } from '@/lib/format'
+import { canaisDaFaixa } from '@/components/layout/Protection'
+import { NewsCard } from '@/components/NewsCard'
+import { HeroMark } from '@/components/ui/brand'
+import { ButtonLink, SmartLink } from '@/components/ui/Button'
+import { ArrowRight, Calendar, Shield } from '@/components/ui/icons'
+import { Section } from '@/components/ui/Section'
+import {
+  canaisDiscaveis,
+  getInstituicao,
+  getPaginaInicial,
+  getTextos,
+} from '@/lib/content'
+import { formatDateLong, sortByDateDesc } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
 import { createMetadata, serializeJsonLd } from '@/lib/seo'
 import {
   absoluteUrl,
   containsUnverifiedMarker,
   ORGANIZATION_ID,
-  ORGANIZATION_NAME,
   publicHref,
   publicMediaHref,
   publicText,
   SITE_NAME,
   WEBSITE_ID,
 } from '@/lib/site'
-import type { Depoimento, Destaque, Noticia } from '@/payload-types'
+import type { Depoimento, Destaque, Noticia, Reunioe } from '@/payload-types'
 
 export const revalidate = 300
 
 export const metadata: Metadata = createMetadata({
   title: 'CMDCA de Pindamonhangaba | Direitos da Criança e do Adolescente',
   description:
-    'Acesse os canais de proteção, reuniões, resoluções, editais, entidades registradas e informações do Fundo Municipal em Pindamonhangaba.',
+    'Canais de proteção, destinação do Imposto de Renda ao Fundo Municipal, reuniões, resoluções e editais do CMDCA de Pindamonhangaba.',
   path: '/',
 })
 
 const DEFAULT_BLOCOS = ['slider', 'sobre', 'atalhos', 'vozes', 'noticias']
 
+/** Maior limite percentual cadastrado (ex.: "6%"), para o caminho do Fundo. */
+function maiorLimite(modalidades: { limite: string }[]): string | undefined {
+  const values = modalidades
+    .map((m) => Number.parseFloat(m.limite.replace(',', '.')))
+    .filter((v) => Number.isFinite(v))
+  return values.length ? `${Math.max(...values).toLocaleString('pt-BR')}%` : undefined
+}
+
 export default async function HomePage() {
   const payload = await getPayloadClient()
+  const today = new Date()
+  today.setUTCHours(0, 0, 0, 0)
 
-  const [pagina, config, destaques, depoimentos, noticias] = await Promise.all([
-    payload.findGlobal({ slug: 'pagina-inicial', depth: 1 }).catch(() => null),
-    payload.findGlobal({ slug: 'configuracoes' }).catch(() => null),
+  const [pagina, textos, instituicao, destaques, depoimentos, noticias, proxima] = await Promise.all([
+    getPaginaInicial(),
+    getTextos(),
+    getInstituicao(),
     payload
       .find({
         collection: 'destaques',
         where: { _status: { equals: 'published' } },
         sort: 'ordem',
-        limit: 20,
+        limit: 6,
         depth: 0,
       })
       .catch(() => ({ docs: [] as Destaque[] })),
@@ -53,7 +71,7 @@ export default async function HomePage() {
       .find({
         collection: 'depoimentos',
         where: { _status: { equals: 'published' } },
-        limit: 20,
+        limit: 3,
         depth: 0,
       })
       .catch(() => ({ docs: [] as Depoimento[] })),
@@ -62,92 +80,74 @@ export default async function HomePage() {
         collection: 'noticias',
         where: { _status: { equals: 'published' } },
         sort: '-data',
-        // Lote maior: notícias sem data vêm primeiro no Postgres e são reordenadas abaixo.
         limit: 24,
         depth: 1,
       })
       .catch(() => ({ docs: [] as Noticia[] })),
+    payload
+      .find({
+        collection: 'reunioes',
+        where: { _status: { equals: 'published' }, data: { greater_than_equal: today.toISOString() } },
+        sort: 'data',
+        limit: 1,
+        depth: 0,
+      })
+      .catch(() => ({ docs: [] as Reunioe[] })),
   ])
 
-  const blocosCfg = (pagina?.blocos && pagina.blocos.length ? pagina.blocos : null) as
-    { tipo: string; ativo?: boolean | null }[] | null
-  const ordem = blocosCfg
-    ? blocosCfg.filter((b) => b.ativo !== false).map((b) => b.tipo)
-    : DEFAULT_BLOCOS
+  const blocos = pagina.blocos ?? DEFAULT_BLOCOS
+  const canais = canaisDaFaixa(canaisDiscaveis(textos.protecao.canais))
+  const coverURL = publicMediaHref(pagina.imagem?.url)
+  const coverAlt = publicText(pagina.imagem?.alt)
+  const coverCredit = publicText(pagina.imagem?.credito)
+  const limite = maiorLimite(textos.fmdca.modalidades)
+  const proximaReuniao = (proxima.docs as Reunioe[])[0]
 
-  const slides: Slide[] = (destaques.docs as Destaque[]).flatMap((d) => {
+  const slides = (destaques.docs as Destaque[]).flatMap((d) => {
     const titulo = publicText(d.titulo)
-    const texto = publicText(d.texto)
-    const ctaLabel = publicText(d.cta?.label)
-    const ctaHref = publicHref(d.cta?.href)
     const combined = [d.kicker, d.titulo, d.texto, d.cta?.label].filter(Boolean).join(' ')
-
-    if (!titulo || containsUnverifiedMarker(combined) || /transmiss[aã]o online/i.test(combined)) {
-      return []
-    }
-
+    if (!titulo || containsUnverifiedMarker(combined)) return []
+    const label = publicText(d.cta?.label)
+    const href = publicHref(d.cta?.href)
     return [
       {
+        id: d.id,
         kicker: publicText(d.kicker),
         titulo,
-        texto,
-        cta: ctaLabel && ctaHref ? { label: ctaLabel, href: ctaHref } : undefined,
-        tema: d.tema,
+        texto: publicText(d.texto),
+        cta: label && href ? { label, href } : undefined,
       },
     ]
   })
-  const vozes: Voz[] = (depoimentos.docs as Depoimento[]).flatMap((d) => {
+
+  const vozes = (depoimentos.docs as Depoimento[]).flatMap((d) => {
     const frase = publicText(d.frase)
     const autor = publicText(d.autor)
-    const papel = publicText(d.papel)
     if (!frase || !autor || containsUnverifiedMarker([d.frase, d.autor, d.papel])) return []
-    return [{ frase, autor, papel }]
+    return [{ id: d.id, frase, autor, papel: publicText(d.papel) }]
   })
-  const dir = config?.diretoria
-  const cover = typeof pagina?.capa?.imagem === 'object' && pagina.capa.imagem ? pagina.capa.imagem : null
-  const coverURL = publicMediaHref(cover?.url)
 
   const news = sortByDateDesc(
     (noticias.docs as Noticia[]).filter(
-      (item) =>
-        publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
+      (item) => publicText(item.title) && !containsUnverifiedMarker([item.title, item.resumo, item.corpo]),
     ),
   ).slice(0, 4)
   const lead = news.find((n) => n.destaque) || news[0]
   const rest = lead ? news.filter((n) => n.id !== lead.id).slice(0, 3) : []
 
-  const email = publicText(config?.contato?.email)
-  const telephone = publicText(config?.contato?.telefone)
-  const postalCode = publicText(config?.contato?.cep)
-  const instagram = publicHref(config?.redes?.instagramUrl)
   const organizationLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'GovernmentOrganization',
         '@id': ORGANIZATION_ID(),
-        name: publicText(config?.nomeConselho) || ORGANIZATION_NAME,
-        alternateName: 'CMDCA de Pindamonhangaba',
-        description:
-          'Conselho municipal responsável por deliberar e controlar ações da política de atendimento aos direitos da criança e do adolescente.',
+        name: 'Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba',
+        alternateName: instituicao.nome,
         url: absoluteUrl('/'),
-        logo: {
-          '@type': 'ImageObject',
-          url: absoluteUrl('/brand/logo-cmdca.jpg'),
-        },
-        email,
-        telephone,
-        contactPoint:
-          email || telephone
-            ? {
-                '@type': 'ContactPoint',
-                contactType: 'atendimento institucional',
-                availableLanguage: 'Portuguese',
-                email,
-                telephone,
-              }
-            : undefined,
-        sameAs: instagram ? [instagram] : undefined,
+        logo: { '@type': 'ImageObject', url: absoluteUrl('/brand/logo-cmdca.jpg') },
+        email: instituicao.email,
+        telephone: instituicao.telefone,
+        sameAs: instituicao.instagramUrl ? [instituicao.instagramUrl] : undefined,
         areaServed: {
           '@type': 'City',
           name: 'Pindamonhangaba',
@@ -155,10 +155,11 @@ export default async function HomePage() {
         },
         address: {
           '@type': 'PostalAddress',
+          streetAddress: instituicao.endereco,
           addressLocality: 'Pindamonhangaba',
           addressRegion: 'SP',
           addressCountry: 'BR',
-          postalCode,
+          postalCode: instituicao.cep,
         },
       },
       {
@@ -172,216 +173,200 @@ export default async function HomePage() {
     ],
   }
 
-  const blocos: Record<string, React.ReactNode> = {
-    slider: slides.length ? <HomeSlider key="slider" slides={slides} /> : null,
+  const sections: Record<string, ReactNode> = {
+    slider: slides.length ? (
+      <Section key="destaques" id="destaques" title="Em destaque">
+        <ul className="highlights">
+          {slides.map((s) => (
+            <li key={s.id} className="highlight">
+              {s.kicker ? <span className="highlight__kicker">{s.kicker}</span> : null}
+              <h3 className="card__title">
+                {s.cta ? <SmartLink href={s.cta.href}>{s.titulo}</SmartLink> : s.titulo}
+              </h3>
+              {s.texto ? <p className="muted">{s.texto}</p> : null}
+              {s.cta ? (
+                <span className="more-link" aria-hidden="true">
+                  {s.cta.label}
+                  <ArrowRight />
+                </span>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </Section>
+    ) : null,
 
     sobre: (
-      <section className="band" key="sobre">
-        <div className="wrap">
-          <Reveal>
-            <div className="about">
-              <div>
-                <span className="eyebrow">O Conselho</span>
-                <h2
-                  style={{
-                    fontFamily: 'var(--serif)',
-                    fontWeight: 600,
-                    fontSize: 'clamp(1.6rem,3vw,2.3rem)',
-                    margin: '11px 0 14px',
-                    lineHeight: 1.1,
-                  }}
-                >
-                  Onde as decisões sobre direitos ganham forma pública.
-                </h2>
-                <p>
-                  O <b>CMDCA</b> reúne poder público e sociedade civil em número igual. Aqui são
-                  deliberadas prioridades da política municipal, decisões sobre o Fundo e regras
-                  para o registro de entidades e programas. O conselho também conduz o processo de
-                  escolha do Conselho Tutelar.
-                </p>
-              </div>
-              <div className="lead-box">
-                {publicText(dir?.gestaoLabel) ? (
-                  <span className="k">{publicText(dir?.gestaoLabel)}</span>
-                ) : null}
-                <div className="nm">Composição paritária</div>
-                <p className="ro" style={{ marginTop: 8 }}>
-                  Entenda como o colegiado é formado, o que ele faz e quais leis o orientam.
-                </p>
-                <Link
-                  className="mini"
-                  href="/conselho"
-                  style={{ marginTop: 14, display: 'inline-flex' }}
-                >
-                  Entender o CMDCA
-                </Link>
-              </div>
+      <Section key="sobre" id="o-conselho" alt>
+        <div className="about">
+          <div>
+            <h2 className="about__title">{pagina.sobre.titulo}</h2>
+            <p className="lead">{pagina.sobre.texto}</p>
+            <p>
+              <Link className="more-link" href="/conselho">
+                Conhecer o CMDCA
+                <ArrowRight />
+              </Link>
+            </p>
+          </div>
+          {instituicao.presidente || instituicao.vice ? (
+            <div className="stack">
+              {instituicao.gestao ? <p className="muted">{instituicao.gestao}</p> : null}
+              <ul className="person-list">
+                {[instituicao.presidente, instituicao.vice].flatMap((p) =>
+                  p ? [
+                    <li className="person" key={p.nome}>
+                      <p className="person__role">{p.cargo}</p>
+                      <p className="person__name">{p.nome}</p>
+                    </li>,
+                  ] : [],
+                )}
+              </ul>
             </div>
-          </Reveal>
+          ) : null}
         </div>
-      </section>
+      </Section>
     ),
-
-    atalhos: (
-      <section className="band" key="atalhos">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-head">
-              <div>
-                <span className="eyebrow">Serviços e informações</span>
-                <h2>Encontre o que você precisa</h2>
-              </div>
-            </div>
-            <div className="links">
-              <Link href="/ajuda">
-                <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 21C7 17.5 4 14 4 9.5 4 6.5 6.2 4.5 9 4.5c1.7 0 3 .9 3 .9s1.3-.9 3-.9c2.8 0 5 2 5 5C20 14 17 17.5 12 21Z" />
-                </svg>
-                <h3>Pedir ajuda</h3>
-                <p>Encontre o canal adequado para emergência, denúncia ou orientação.</p>
-              </Link>
-              <Link href="/reunioes">
-                <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="4" y="5" width="16" height="16" rx="2" />
-                  <path d="M8 3v4M16 3v4M4 10h16" />
-                </svg>
-                <h3>Reuniões e atas</h3>
-                <p>Consulte calendário, pautas e atas já publicadas.</p>
-              </Link>
-              <Link href="/transparencia">
-                <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M5 19V9M12 19V5M19 19v-7M3 21h18" />
-                </svg>
-                <h3>Transparência</h3>
-                <p>Acesse atos, documentos e informações que já estão disponíveis.</p>
-              </Link>
-              <Link href="/fmdca">
-                <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 12v6a1 1 0 0 0 1 1h3v-7M8 12 4 9l8-5 8 5v9a1 1 0 0 1-1 1h-3v-7" />
-                </svg>
-                <h3>Destinar seu IR</h3>
-                <p>Confira regras, limites e fontes oficiais antes de destinar.</p>
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-    ),
-
-    // Indicadores só voltarão ao site quando houver fonte, período e metodologia verificáveis no CMS.
-    indicadores: null,
 
     vozes: vozes.length ? (
-      <section className="band" key="vozes">
-        <div className="wrap">
-          <Reveal>
-            <Vozes vozes={vozes} />
-          </Reveal>
-        </div>
-      </section>
+      <Section key="vozes" id="vozes" title="Quem participa">
+        <ul className="quotes">
+          {vozes.map((v) => (
+            <li key={v.id}>
+              <figure className="quote">
+                <blockquote>
+                  <p>“{v.frase}”</p>
+                </blockquote>
+                <figcaption>
+                  <b>{v.autor}</b>
+                  {v.papel}
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </Section>
     ) : null,
 
     noticias: (
-      <section className="band" key="noticias">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-head">
-              <div>
-                <span className="eyebrow">Atualizações</span>
-                <h2>Notícias do conselho</h2>
-              </div>
-              <Link className="more" href="/noticias">
-                Todas as notícias →
-              </Link>
-            </div>
-            {lead ? (
-              <>
-                <Link className="news-lead" href={`/noticias/${lead.slug}`}>
-                  <div className="vis">
-                    <Illustration theme={lead.tema || 'familia'} />
-                    <span className="credit">ilustração CMDCA</span>
-                  </div>
-                  <div>
-                    <span className="tag">{CATEGORIA_LABEL[lead.categoria] || 'Notícia'}</span>
-                    <h3>{lead.title}</h3>
-                    <p>{lead.resumo}</p>
-                    {lead.data ? (
-                      <time className="date" dateTime={lead.data}>
-                        {formatDate(lead.data)}
-                      </time>
-                    ) : null}
-                  </div>
-                </Link>
-                {rest.length ? (
-                  <div className="news-list">
-                    {rest.map((n) => (
-                      <NewsCard key={n.id} noticia={n} />
-                    ))}
-                  </div>
-                ) : null}
-              </>
-            ) : (
-              <p style={{ color: 'var(--ink-2)' }}>Não há notícias publicadas no momento.</p>
-            )}
-          </Reveal>
-        </div>
-      </section>
+      <Section
+        key="noticias"
+        id="noticias"
+        title="Notícias"
+        action={
+          <Link className="more-link" href="/noticias">
+            Ver todas as notícias
+            <ArrowRight />
+          </Link>
+        }
+      >
+        {lead ? (
+          <ul className="news-grid">
+            <li className="news-grid__lead">
+              <NewsCard noticia={lead} lead />
+            </li>
+            {rest.map((n) => (
+              <li key={n.id}>
+                <NewsCard noticia={n} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="muted">Ainda não há notícias publicadas.</p>
+        )}
+      </Section>
     ),
   }
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationLd) }}
-      />
-      <section className="home-entry" aria-labelledby="inicio-titulo">
-        <div className="wrap">
-          <div className="home-entry-grid">
-            <div className="home-entry-copy">
-              <span className="eyebrow">Informação pública para a cidade</span>
-              <h1
-                id="inicio-titulo"
-                style={{
-                  fontFamily: 'var(--serif)',
-                  fontSize: 'clamp(2rem,4vw,3.15rem)',
-                  lineHeight: 1.05,
-                  margin: '12px 0 16px',
-                  maxWidth: '20ch',
-                }}
-              >
-                {publicText(pagina?.capa?.titulo) || 'CMDCA de Pindamonhangaba'}
-              </h1>
-              <p>
-                {publicText(pagina?.capa?.texto) ||
-                  'Encontre canais de proteção, atos oficiais, reuniões e informações sobre o Fundo. Saiba também como acompanhar as decisões do CMDCA.'}
-              </p>
-            </div>
-            <div className="home-entry-image">
-              <Image
-                src={coverURL || '/images/institucional/cuidado-coletivo-cmdca.webp'}
-                alt={publicText(cover?.alt) || 'Adultos e crianças caminham juntos em um espaço comunitário, vistos de costas.'}
-                fill
-                unoptimized={Boolean(coverURL?.startsWith('/api/media/file/'))}
-                priority
-                sizes="(max-width: 880px) 100vw, 52vw"
-              />
-              {coverURL ? (publicText(cover?.credito) ? <span>{publicText(cover?.credito)}</span> : null) : <span>Imagem ilustrativa</span>}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationLd) }} />
+      <section className="home-hero" aria-labelledby="inicio-titulo">
+        <div className="wrap home-hero__inner">
+          <div>
+            <h1 id="inicio-titulo">{pagina.capa.titulo}</h1>
+            <p className="home-hero__lead">{pagina.capa.texto}</p>
+            <div className="actions">
+              <ButtonLink href="/fmdca">Destinar meu Imposto de Renda</ButtonLink>
+              <ButtonLink href="/reunioes" variant="secondary">
+                Acompanhar as reuniões
+              </ButtonLink>
             </div>
           </div>
-          <aside className="home-help" aria-label="Orientação para situações urgentes">
-            <div>
-              <span className="k">Precisa de proteção?</span>
-              <strong>Comece pelo canal adequado à situação.</strong>
-            </div>
-            <p>Em perigo imediato, ligue 190. Para denunciar violações de direitos, use o Disque 100.</p>
-            <Link className="btn" href="/ajuda">
-              Buscar ajuda
-            </Link>
-          </aside>
+          {coverURL ? (
+            <figure className="home-hero__figure">
+              <div className="home-hero__image">
+                <Image
+                  src={coverURL}
+                  alt={coverAlt || ''}
+                  fill
+                  priority
+                  unoptimized={coverURL.startsWith('/api/media/file/')}
+                  sizes="(max-width: 900px) 100vw, 480px"
+                />
+              </div>
+              {coverCredit ? <figcaption>{coverCredit}</figcaption> : null}
+            </figure>
+          ) : (
+            <HeroMark className="home-hero__mark" />
+          )}
         </div>
       </section>
-      {ordem.map((tipo) => blocos[tipo] ?? null)}
+
+      {blocos.includes('atalhos') ? (
+        <div className="wrap">
+          <ul className="routes" aria-label="Caminhos principais">
+            <li className="route route--protecao">
+              <Shield className="route__icon" />
+              <h2 className="route__title">
+                <Link href="/ajuda">{pagina.rotas.protecaoTitulo}</Link>
+              </h2>
+              <p>{pagina.rotas.protecaoTexto}</p>
+              {canais.length ? (
+                <div className="route__channels">
+                  {canais.map((canal) => (
+                    <a
+                      key={`${canal.tipo}-${canal.numero}`}
+                      className={`btn btn--sm ${canal.tipo === 'emergencia' ? 'btn--danger' : 'btn--signal'}`}
+                      href={canal.href}
+                    >
+                      {canal.numero}
+                      <span className="sr-only">, {canal.rotulo}</span>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </li>
+            <li className="route route--fundo">
+              {limite ? (
+                <p className="route__figure" aria-hidden="true">
+                  {limite}
+                  <small>do imposto devido</small>
+                </p>
+              ) : null}
+              <h2 className="route__title">
+                <Link href="/fmdca">{pagina.rotas.fundoTitulo}</Link>
+              </h2>
+              <p>{pagina.rotas.fundoTexto}</p>
+            </li>
+            <li className="route route--atos">
+              <Calendar className="route__icon" />
+              <h2 className="route__title">
+                <Link href="/reunioes">{pagina.rotas.atosTitulo}</Link>
+              </h2>
+              <p>{pagina.rotas.atosTexto}</p>
+              {proximaReuniao?.data ? (
+                <p>
+                  <b>Próxima reunião:</b>{' '}
+                  <time dateTime={proximaReuniao.data}>{formatDateLong(proximaReuniao.data)}</time>
+                </p>
+              ) : null}
+            </li>
+          </ul>
+        </div>
+      ) : null}
+
+      {blocos.filter((tipo) => tipo !== 'atalhos').map((tipo) => sections[tipo] ?? null)}
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatDate, formatDateLong, sortByDateDesc } from './format'
+import { formatDate, formatDateLong, sortByDateDesc, dateParts } from './format'
 
 describe('sortByDateDesc', () => {
   it('põe mais recentes primeiro e itens sem data no fim', () => {
@@ -51,5 +51,16 @@ describe('formatDateLong', () => {
 
   it('retorna vazio para entrada inválida', () => {
     expect(formatDateLong('')).toBe('')
+  })
+})
+
+describe('dateParts', () => {
+  it('separa dia e mês/ano em UTC para os numerais de calendário', () => {
+    expect(dateParts('2026-03-01T00:00:00.000Z')).toEqual({ day: '01', monthYear: 'mar 2026', year: 2026 })
+  })
+
+  it('retorna null sem data válida', () => {
+    expect(dateParts(null)).toBeNull()
+    expect(dateParts('x')).toBeNull()
   })
 })

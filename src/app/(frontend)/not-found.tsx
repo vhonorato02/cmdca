@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { Hero } from '@/components/Hero'
+import { Orbit } from '@/components/ui/brand'
+import { getTextos } from '@/lib/content'
 import { createMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = createMetadata({
@@ -11,47 +12,35 @@ export const metadata: Metadata = createMetadata({
   noIndex: true,
 })
 
-export default function NotFound() {
+const CAMINHOS = [
+  { href: '/', titulo: 'Início', texto: 'Volte à página inicial do conselho.' },
+  { href: '/ajuda', titulo: 'Buscar ajuda', texto: 'Emergência, Disque 100 e Conselho Tutelar.' },
+  { href: '/noticias', titulo: 'Notícias', texto: 'Comunicados e campanhas do CMDCA.' },
+  { href: '/mapa-do-site', titulo: 'Mapa do site', texto: 'Todas as páginas, em uma lista.' },
+]
+
+export default async function NotFound() {
+  const textos = await getTextos()
   return (
-    <>
-      <Hero
-        deep
-        eyebrow="Erro 404"
-        titulo="Página não encontrada"
-        texto="Confira o endereço ou escolha um dos caminhos abaixo."
-      />
-      <section className="band">
-        <div className="wrap">
-          <div className="sec-head">
-            <div>
-              <span className="eyebrow">Por onde seguir</span>
-              <h2>Encontre o que você precisa</h2>
-            </div>
-          </div>
-          <div className="links">
-            <Link href="/">
-              <h3>Início</h3>
-              <p>Volte à página inicial do conselho.</p>
-            </Link>
-            <Link href="/ajuda">
-              <h3>Buscar ajuda</h3>
-              <p>Emergência (190), Disque 100 e Conselho Tutelar.</p>
-            </Link>
-            <Link href="/noticias">
-              <h3>Notícias</h3>
-              <p>Comunicados e publicações do conselho.</p>
-            </Link>
-            <Link href="/transparencia">
-              <h3>Transparência</h3>
-              <p>Atos, documentos e informações sobre o Fundo Municipal.</p>
-            </Link>
-            <Link href="/mapa-do-site">
-              <h3>Mapa do site</h3>
-              <p>Veja todas as áreas públicas disponíveis.</p>
-            </Link>
-          </div>
-        </div>
-      </section>
-    </>
+    <section className="not-found" aria-labelledby="nao-encontrada">
+      <Orbit className="not-found__orbit" strokeWidth={6} />
+      <div className="wrap not-found__inner">
+        <p className="not-found__code" aria-hidden="true">
+          404
+        </p>
+        <h1 id="nao-encontrada">{textos.geral.naoEncontradaTitulo}</h1>
+        <p className="lead">{textos.geral.naoEncontradaTexto}</p>
+        <ul className="card-grid" aria-label="Caminhos sugeridos">
+          {CAMINHOS.map((c) => (
+            <li key={c.href} className="card">
+              <h2 className="card__title">
+                <Link href={c.href}>{c.titulo}</Link>
+              </h2>
+              <p className="muted">{c.texto}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   )
 }

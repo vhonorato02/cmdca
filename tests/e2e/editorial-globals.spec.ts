@@ -16,14 +16,14 @@ test('editor publica capa e menu, confirma no site e restaura sem alterar dados 
   const publicPage = await context.newPage()
   try {
     await page.goto('/admin/globals/pagina-inicial')
-    await page.getByLabel(/^Título/).fill('Capa conferida no navegador')
+    await page.getByLabel(/^Título/).first().fill('Capa conferida no navegador')
     await page.getByRole('button', { name: /^publicar(?: alterações)?$/i }).click()
     await expect.poll(async () => {
       await publicPage.goto('/')
       return publicPage.getByRole('heading', { level: 1 }).textContent()
     }).toBe('Capa conferida no navegador')
-    await expect(publicPage.locator('.home-entry-image img')).toHaveAttribute('alt', 'CI isolated cover')
-    await expect.poll(() => publicPage.locator('.home-entry-image img').evaluate(
+    await expect(publicPage.locator('.home-hero__image img')).toHaveAttribute('alt', 'CI isolated cover')
+    await expect.poll(() => publicPage.locator('.home-hero__image img').evaluate(
       (image) => (image as HTMLImageElement).naturalWidth,
     )).toBeGreaterThan(0)
     await publicPage.screenshot({ path: testInfo.outputPath('published-cover-mobile.png'), fullPage: true })

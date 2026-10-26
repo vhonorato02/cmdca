@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 
 import { getPayloadClient } from '@/lib/payload'
 import { absoluteUrl, containsUnverifiedMarker, getSiteUrl, publicText } from '@/lib/site'
-import type { Noticia } from '@/payload-types'
+import type { Noticia, Pagina } from '@/payload-types'
 
 const STATIC_ROUTES = [
   { path: '/', changeFrequency: 'weekly', priority: 1 },
@@ -18,9 +18,6 @@ const STATIC_ROUTES = [
   { path: '/noticias', changeFrequency: 'daily', priority: 0.8 },
   { path: '/participe', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/mapa-do-site', changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/acessibilidade', changeFrequency: 'yearly', priority: 0.4 },
-  { path: '/privacidade', changeFrequency: 'yearly', priority: 0.4 },
-  { path: '/creditos', changeFrequency: 'yearly', priority: 0.3 },
 ] as const
 
 function validDate(value?: string | null) {
@@ -60,6 +57,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           lastModified: validDate(item.updatedAt),
           changeFrequency: 'monthly',
           priority: 0.6,
+        })
+      }
+    })
+
+    const paginas = await payload.find({
+      collection: 'paginas',
+      where: { _status: { equals: 'published' } },
+      limit: 100,
+      depth: 0,
+      pagination: false,
+    })
+    ;(paginas.docs as Pagina[]).forEach((item) => {
+      if (item.slug && publicText(item.titulo)) {
+        entries.push({
+          url: absoluteUrl(`/${item.slug}`),
+          lastModified: validDate(item.atualizadoEm || item.updatedAt),
+          changeFrequency: 'yearly',
+          priority: 0.4,
         })
       }
     })

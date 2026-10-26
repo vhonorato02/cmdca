@@ -1,181 +1,46 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
-import { phoneHref } from '@/lib/contact'
+import type { MapPoint } from './RedeMapInner'
 
+// Leaflet e os blocos do OpenStreetMap só carregam quando a pessoa pede o mapa.
 const RedeMapInner = dynamic(() => import('./RedeMapInner'), {
   ssr: false,
   loading: () => (
-    <div className="map-loading" role="status">
+    <p className="muted" role="status">
       Carregando mapa…
-    </div>
+    </p>
   ),
 })
 
-export type Ponto = {
-  id: string | number
-  nome: string
-  tipo: string
-  endereco?: string | null
-  telefone?: string | null
-  lat?: number | null
-  lng?: number | null
-}
-
-const TIPO_COR: Record<string, string> = {
-  ct: '#262357',
-  cras: '#1f7a4d',
-  creas: '#9C2A22',
-  casa: '#C9A227',
-  outro: '#9a96c4',
-}
-
-const TIPOS = [
-  { t: 'all', label: 'Todos' },
-  { t: 'ct', label: 'Conselho Tutelar' },
-  { t: 'cras', label: 'CRAS' },
-  { t: 'creas', label: 'CREAS' },
-  { t: 'casa', label: 'Casa dos Conselhos' },
-]
-
-const TIPO_LABEL = Object.fromEntries(TIPOS.map(({ t, label }) => [t, label]))
-
-// Coordenadas aproximadas das ruas divulgadas na lista pública, usadas enquanto
-// o CMS ainda não tiver latitude/longitude cadastradas. A lista acessível e o
-// link para rota continuam sendo a referência para confirmar o endereço.
-const COORDENADAS_APROXIMADAS: Record<string, [number, number]> = {
-  'CRAS Araretama': [-22.9481387, -45.4960189],
-  'CRAS Castolira': [-22.924871, -45.437798],
-  'CRAS Centro': [-22.9392412, -45.4607149],
-  'CRAS Cidade Nova': [-22.9444915, -45.408434],
-  'CRAS Moreira César': [-22.9183166, -45.3645229],
-  'CREAS Centro': [-22.9279614, -45.4565787],
-  'CREAS Moreira César': [-22.9191887, -45.3604353],
-}
-
-const splitPhones = (value: string) => value.split(/\s*[·;]\s*/).filter(Boolean)
-
-const directionsHref = (address: string) =>
-  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    `${address}, Pindamonhangaba - SP`,
-  )}`
-
-// Centro de Pindamonhangaba (coordenadas reais do município).
+// Centro de Pindamonhangaba.
 const CENTRO: [number, number] = [-22.92389, -45.46167]
 
-export function MapaRede({ pontos }: { pontos: Ponto[] }) {
-  const [filtro, setFiltro] = useState('all')
-
-  const visiveis = useMemo(
-    () => pontos.filter((p) => filtro === 'all' || p.tipo === filtro),
-    [pontos, filtro],
-  )
-
-  const comCoords = useMemo(
-    () =>
-      visiveis.flatMap((p) => {
-        const fallback = COORDENADAS_APROXIMADAS[p.nome]
-        const lat = typeof p.lat === 'number' ? p.lat : fallback?.[0]
-        const lng = typeof p.lng === 'number' ? p.lng : fallback?.[1]
-        if (lat === undefined || lng === undefined) return []
-        return {
-          id: p.id,
-          nome: p.nome,
-          lat,
-          lng,
-          color: TIPO_COR[p.tipo] || TIPO_COR.outro,
-          endereco: p.endereco,
-          telefone: p.telefone,
-        }
-      }),
-    [visiveis],
-  )
-
-  if (!pontos.length) {
-    return (
-      <p className="empty-state">
-        A lista de serviços da rede está em atualização. Use os telefones de emergência e dos
-        Conselhos Tutelares acima.
-      </p>
-    )
-  }
-
+export function MapaRede({ pontos }: { pontos: MapPoint[] }) {
+  const [visible, setVisible] = useState(false)
+  if (!pontos.length) return null
   return (
-    <>
-      <div className="map-tools" role="group" aria-label="Filtrar locais por tipo">
-        {TIPOS.map((x) => (
-          <button
-            type="button"
-            key={x.t}
-            className={filtro === x.t ? 'on' : undefined}
-            aria-pressed={filtro === x.t}
-            onClick={() => setFiltro(x.t)}
-          >
-            {x.label}
-          </button>
-        ))}
-      </div>
-      <p className="map-result-count" aria-live="polite">
-        {visiveis.length} {visiveis.length === 1 ? 'local exibido' : 'locais exibidos'}
-      </p>
-      <div className="map-grid">
-        <div className="svgmap">
-          {comCoords.length ? (
-            <RedeMapInner points={comCoords} center={CENTRO} zoom={13} />
-          ) : (
-            <div className="map-empty">
-              O mapa não está disponível para este filtro. Consulte a lista de serviços.
-            </div>
-          )}
-        </div>
-        <div className="places" aria-labelledby="places-title">
-          <h3 className="sr-only" id="places-title">
-            Lista de locais da rede de proteção
-          </h3>
-          {visiveis.length === 0 ? (
-            <p className="empty-state">Nenhum ponto neste filtro.</p>
-          ) : (
-            <ul className="places-list">
-              {visiveis.map((p) => (
-                <li className="place" key={p.id}>
-                  <h4>
-                    <span
-                      className="dot"
-                      style={{ background: TIPO_COR[p.tipo] || TIPO_COR.outro }}
-                      aria-hidden="true"
-                    />
-                    {p.nome}
-                  </h4>
-                  <span className="place-kind">{TIPO_LABEL[p.tipo] || 'Outro serviço'}</span>
-                  {p.endereco ? <p>{p.endereco}</p> : null}
-                  {p.telefone ? (
-                    <div className="ph">
-                      {splitPhones(p.telefone).map((phone, index) => (
-                        <span key={`${phone}-${index}`}>
-                          {index ? <span aria-hidden="true"> · </span> : null}
-                          <a href={phoneHref(phone)}>{phone}</a>
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
-                  {p.endereco ? (
-                    <a
-                      className="place-route"
-                      href={directionsHref(p.endereco)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Ver rota no mapa <span aria-hidden="true">↗</span>
-                    </a>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
-    </>
+    <div className="map-panel">
+      {visible ? (
+        <>
+          <p className="muted">
+            Os pontos são aproximados. Confirme endereço e horário antes de sair.
+          </p>
+          <div className="map-panel__frame" id="mapa-rede">
+            <RedeMapInner points={pontos} center={CENTRO} zoom={13} />
+          </div>
+        </>
+      ) : (
+        <button
+          type="button"
+          className="btn btn--secondary"
+          onClick={() => setVisible(true)}
+        >
+          Ver os endereços no mapa
+        </button>
+      )}
+    </div>
   )
 }

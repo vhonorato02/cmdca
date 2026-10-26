@@ -76,6 +76,7 @@ export interface Config {
     depoimentos: Depoimento;
     destaques: Destaque;
     faq: Faq;
+    paginas: Pagina;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -94,6 +95,7 @@ export interface Config {
     depoimentos: DepoimentosSelect<false> | DepoimentosSelect<true>;
     destaques: DestaquesSelect<false> | DestaquesSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
+    paginas: PaginasSelect<false> | PaginasSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -108,12 +110,14 @@ export interface Config {
   globals: {
     configuracoes: Configuracoe;
     'pagina-inicial': PaginaInicial;
+    textos: Texto;
     indicadores: Indicadore;
     navegacao: Navegacao;
   };
   globalsSelect: {
     configuracoes: ConfiguracoesSelect<false> | ConfiguracoesSelect<true>;
     'pagina-inicial': PaginaInicialSelect<false> | PaginaInicialSelect<true>;
+    textos: TextosSelect<false> | TextosSelect<true>;
     indicadores: IndicadoresSelect<false> | IndicadoresSelect<true>;
     navegacao: NavegacaoSelect<false> | NavegacaoSelect<true>;
   };
@@ -179,6 +183,10 @@ export interface Noticia {
     [k: string]: unknown;
   };
   /**
+   * Data em que o fato ocorreu ou foi divulgado oficialmente.
+   */
+  data: string;
+  /**
    * Somente JPG, PNG, WebP ou GIF. PDF não pode ser usado como capa.
    */
   capa?: (number | null) | Media;
@@ -188,7 +196,6 @@ export interface Noticia {
   tema?: ('familia' | 'maos' | 'cidade' | 'encontro' | 'escudo' | 'doc') | null;
   autor: string;
   destaque?: boolean | null;
-  data: string;
   /**
    * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
@@ -262,7 +269,6 @@ export interface Media {
      */
     observacoesInternas?: string | null;
   };
-  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -747,6 +753,71 @@ export interface Faq {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Textos longos como privacidade, termos de uso e acessibilidade. Cada página fica em /endereço. Mudanças em textos legais devem passar pelo jurídico antes da publicação.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "paginas".
+ */
+export interface Pagina {
+  id: number;
+  titulo: string;
+  /**
+   * Gerado automaticamente a partir do título. Edite apenas se necessário, pois altera a URL pública.
+   */
+  slug: string;
+  /**
+   * Aparece abaixo do título e nos resultados de busca.
+   */
+  resumo: string;
+  /**
+   * Atualize sempre que o texto mudar.
+   */
+  atualizadoEm: string;
+  /**
+   * Os dados vêm de Configurações institucionais.
+   */
+  contato: 'nenhum' | 'encarregado' | 'institucional';
+  corpo: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
+   */
+  controleEditorial?: {
+    /**
+     * Informe o órgão e o documento, processo ou página que comprova a informação.
+     */
+    fonte?: string | null;
+    /**
+     * Quando houver link, use a página ou o documento oficial em https://.
+     */
+    fonteURL?: string | null;
+    verificadoEm?: string | null;
+    statusRevisao?: ('pendente' | 'aprovada' | 'dispensada') | null;
+    revisadoPor?: (number | null) | User;
+    /**
+     * Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.
+     */
+    observacoesInternas?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -805,6 +876,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'faq';
         value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'paginas';
+        value: number | Pagina;
       } | null)
     | ({
         relationTo: 'media';
@@ -866,11 +941,11 @@ export interface NoticiasSelect<T extends boolean = true> {
   categoria?: T;
   resumo?: T;
   corpo?: T;
+  data?: T;
   capa?: T;
   tema?: T;
   autor?: T;
   destaque?: T;
-  data?: T;
   controleEditorial?:
     | T
     | {
@@ -1099,6 +1174,32 @@ export interface FaqSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "paginas_select".
+ */
+export interface PaginasSelect<T extends boolean = true> {
+  titulo?: T;
+  slug?: T;
+  resumo?: T;
+  atualizadoEm?: T;
+  contato?: T;
+  corpo?: T;
+  controleEditorial?:
+    | T
+    | {
+        fonte?: T;
+        fonteURL?: T;
+        verificadoEm?: T;
+        statusRevisao?: T;
+        revisadoPor?: T;
+        observacoesInternas?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
@@ -1117,7 +1218,6 @@ export interface MediaSelect<T extends boolean = true> {
         revisadoPor?: T;
         observacoesInternas?: T;
       };
-  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -1251,6 +1351,14 @@ export interface Configuracoe {
   contato: {
     email: string;
     telefone?: string | null;
+    /**
+     * Use XXXX enquanto não houver confirmação oficial. O site não exibe XXXX.
+     */
+    endereco?: string | null;
+    /**
+     * Ex.: segunda a sexta, das 8h às 17h. Use XXXX enquanto não for confirmado.
+     */
+    horario?: string | null;
     cep?: string | null;
     casaConselhosTelefone?: string | null;
     casaConselhosEndereco?: string | null;
@@ -1266,12 +1374,26 @@ export interface Configuracoe {
   fmdca?: {
     dadosBancariosConfirmados?: boolean | null;
     cnpj?: string | null;
+    /**
+     * Ex.: Banco do Brasil, agência 0000-0, conta 00000-0. Use XXXX até haver ato oficial.
+     */
     conta?: string | null;
     /**
      * Confirme a regra aplicável e a data de verificação antes de publicar.
      */
     percentualDeducaoIR?: number | null;
     comoDestinar?: string | null;
+  };
+  /**
+   * Exibido no quadro de contato do aviso de privacidade.
+   */
+  lgpd?: {
+    controlador?: string | null;
+    /**
+     * Confirme com a Prefeitura. Use XXXX até a confirmação formal.
+     */
+    encarregado?: string | null;
+    encarregadoContato?: string | null;
   };
   baseLegal: {
     leiCMDCA: string;
@@ -1323,6 +1445,21 @@ export interface PaginaInicial {
     imagem?: (number | null) | Media;
   };
   /**
+   * Os destinos são fixos: Buscar ajuda, Fundo e IR e Reuniões.
+   */
+  rotas?: {
+    protecaoTitulo?: string | null;
+    protecaoTexto?: string | null;
+    fundoTitulo?: string | null;
+    fundoTexto?: string | null;
+    atosTitulo?: string | null;
+    atosTexto?: string | null;
+  };
+  sobre?: {
+    titulo?: string | null;
+    texto?: string | null;
+  };
+  /**
    * Arraste para reordenar. Desative para ocultar sem perder a configuração.
    */
   blocos?:
@@ -1332,6 +1469,177 @@ export interface PaginaInicial {
         id?: string | null;
       }[]
     | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Títulos, apresentações e orientações exibidos nas páginas do site. Salve como rascunho, confira e publique.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "textos".
+ */
+export interface Texto {
+  id: number;
+  protecao: {
+    chamada: string;
+    avisoTitulo: string;
+    aviso: string;
+    /**
+     * A faixa mostra até 3 canais marcados com “Mostrar na faixa”, na ordem desta lista. Confirme cada número antes de publicar.
+     */
+    canais?:
+      | {
+          tipo: 'emergencia' | 'denuncia' | 'tutelar' | 'outro';
+          rotulo: string;
+          numero: string;
+          /**
+           * Só dígitos. Vazio: usa os dígitos do número exibido.
+           */
+          discagem?: string | null;
+          situacao: string;
+          descricao: string;
+          observacao?: string | null;
+          naFaixa?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  ajuda: {
+    titulo: string;
+    introducao: string;
+    conselhosTitulo: string;
+    conselhosTexto: string;
+    redeTitulo: string;
+    redeTexto: string;
+    /**
+     * Links exibidos no fim da página como referência.
+     */
+    fontes?:
+      | {
+          rotulo: string;
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  fmdca: {
+    titulo: string;
+    introducao: string;
+    oQueETitulo: string;
+    oQueE: string;
+    passosTitulo: string;
+    passos?:
+      | {
+          titulo: string;
+          texto: string;
+          id?: string | null;
+        }[]
+      | null;
+    modalidadesTitulo: string;
+    modalidades?:
+      | {
+          limite: string;
+          titulo: string;
+          texto: string;
+          id?: string | null;
+        }[]
+      | null;
+    aviso: string;
+    simuladorTitulo: string;
+    simuladorTexto: string;
+    simuladorPercentual: number;
+    bancarioTitulo: string;
+    bancarioAviso: string;
+    /**
+     * Links exibidos no fim da página como referência.
+     */
+    fontes?:
+      | {
+          rotulo: string;
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  conselho: {
+    titulo: string;
+    introducao: string;
+    composicaoTitulo: string;
+    composicaoTexto: string;
+    composicaoLinkRotulo: string;
+    composicaoLinkUrl?: string | null;
+    atribuicoesTitulo: string;
+    atribuicoes?:
+      | {
+          titulo: string;
+          texto: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Links exibidos no fim da página como referência.
+     */
+    fontes?:
+      | {
+          rotulo: string;
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  participe: {
+    titulo: string;
+    introducao: string;
+    caminhos?:
+      | {
+          titulo: string;
+          texto: string;
+          /**
+           * Caminho interno, como /reunioes, ou URL https://.
+           */
+          href: string;
+          id?: string | null;
+        }[]
+      | null;
+    contatoTitulo: string;
+  };
+  transparencia: {
+    titulo: string;
+    introducao: string;
+    documentosTitulo: string;
+    documentosTexto: string;
+    vazio: string;
+  };
+  atos: {
+    reunioesTitulo: string;
+    reunioesIntro: string;
+    reunioesComoAcompanhar: string;
+    resolucoesTitulo: string;
+    resolucoesIntro: string;
+    editaisTitulo: string;
+    editaisIntro: string;
+    entidadesTitulo: string;
+    entidadesIntro: string;
+    entidadesOrientacaoTitulo: string;
+    entidadesOrientacao: string;
+  };
+  publicacoes: {
+    noticiasTitulo: string;
+    noticiasIntro: string;
+    conferenciasTitulo: string;
+    conferenciasIntro: string;
+    conferenciasTexto: string;
+    registroTitulo: string;
+    registroTexto: string;
+    registroRotulo: string;
+    registroUrl?: string | null;
+  };
+  geral: {
+    rodapeDescricao: string;
+    naoEncontradaTitulo: string;
+    naoEncontradaTexto: string;
+  };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1417,6 +1725,19 @@ export interface Navegacao {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Arraste os itens para reordenar.
+   */
+  rodapeSobreSite?:
+    | {
+        label: string;
+        /**
+         * Use um caminho interno, como /conselho, ou uma URL https://.
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1442,6 +1763,8 @@ export interface ConfiguracoesSelect<T extends boolean = true> {
     | {
         email?: T;
         telefone?: T;
+        endereco?: T;
+        horario?: T;
         cep?: T;
         casaConselhosTelefone?: T;
         casaConselhosEndereco?: T;
@@ -1461,6 +1784,13 @@ export interface ConfiguracoesSelect<T extends boolean = true> {
         conta?: T;
         percentualDeducaoIR?: T;
         comoDestinar?: T;
+      };
+  lgpd?:
+    | T
+    | {
+        controlador?: T;
+        encarregado?: T;
+        encarregadoContato?: T;
       };
   baseLegal?:
     | T
@@ -1497,12 +1827,197 @@ export interface PaginaInicialSelect<T extends boolean = true> {
         texto?: T;
         imagem?: T;
       };
+  rotas?:
+    | T
+    | {
+        protecaoTitulo?: T;
+        protecaoTexto?: T;
+        fundoTitulo?: T;
+        fundoTexto?: T;
+        atosTitulo?: T;
+        atosTexto?: T;
+      };
+  sobre?:
+    | T
+    | {
+        titulo?: T;
+        texto?: T;
+      };
   blocos?:
     | T
     | {
         tipo?: T;
         ativo?: T;
         id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "textos_select".
+ */
+export interface TextosSelect<T extends boolean = true> {
+  protecao?:
+    | T
+    | {
+        chamada?: T;
+        avisoTitulo?: T;
+        aviso?: T;
+        canais?:
+          | T
+          | {
+              tipo?: T;
+              rotulo?: T;
+              numero?: T;
+              discagem?: T;
+              situacao?: T;
+              descricao?: T;
+              observacao?: T;
+              naFaixa?: T;
+              id?: T;
+            };
+      };
+  ajuda?:
+    | T
+    | {
+        titulo?: T;
+        introducao?: T;
+        conselhosTitulo?: T;
+        conselhosTexto?: T;
+        redeTitulo?: T;
+        redeTexto?: T;
+        fontes?:
+          | T
+          | {
+              rotulo?: T;
+              url?: T;
+              id?: T;
+            };
+      };
+  fmdca?:
+    | T
+    | {
+        titulo?: T;
+        introducao?: T;
+        oQueETitulo?: T;
+        oQueE?: T;
+        passosTitulo?: T;
+        passos?:
+          | T
+          | {
+              titulo?: T;
+              texto?: T;
+              id?: T;
+            };
+        modalidadesTitulo?: T;
+        modalidades?:
+          | T
+          | {
+              limite?: T;
+              titulo?: T;
+              texto?: T;
+              id?: T;
+            };
+        aviso?: T;
+        simuladorTitulo?: T;
+        simuladorTexto?: T;
+        simuladorPercentual?: T;
+        bancarioTitulo?: T;
+        bancarioAviso?: T;
+        fontes?:
+          | T
+          | {
+              rotulo?: T;
+              url?: T;
+              id?: T;
+            };
+      };
+  conselho?:
+    | T
+    | {
+        titulo?: T;
+        introducao?: T;
+        composicaoTitulo?: T;
+        composicaoTexto?: T;
+        composicaoLinkRotulo?: T;
+        composicaoLinkUrl?: T;
+        atribuicoesTitulo?: T;
+        atribuicoes?:
+          | T
+          | {
+              titulo?: T;
+              texto?: T;
+              id?: T;
+            };
+        fontes?:
+          | T
+          | {
+              rotulo?: T;
+              url?: T;
+              id?: T;
+            };
+      };
+  participe?:
+    | T
+    | {
+        titulo?: T;
+        introducao?: T;
+        caminhos?:
+          | T
+          | {
+              titulo?: T;
+              texto?: T;
+              href?: T;
+              id?: T;
+            };
+        contatoTitulo?: T;
+      };
+  transparencia?:
+    | T
+    | {
+        titulo?: T;
+        introducao?: T;
+        documentosTitulo?: T;
+        documentosTexto?: T;
+        vazio?: T;
+      };
+  atos?:
+    | T
+    | {
+        reunioesTitulo?: T;
+        reunioesIntro?: T;
+        reunioesComoAcompanhar?: T;
+        resolucoesTitulo?: T;
+        resolucoesIntro?: T;
+        editaisTitulo?: T;
+        editaisIntro?: T;
+        entidadesTitulo?: T;
+        entidadesIntro?: T;
+        entidadesOrientacaoTitulo?: T;
+        entidadesOrientacao?: T;
+      };
+  publicacoes?:
+    | T
+    | {
+        noticiasTitulo?: T;
+        noticiasIntro?: T;
+        conferenciasTitulo?: T;
+        conferenciasIntro?: T;
+        conferenciasTexto?: T;
+        registroTitulo?: T;
+        registroTexto?: T;
+        registroRotulo?: T;
+        registroUrl?: T;
+      };
+  geral?:
+    | T
+    | {
+        rodapeDescricao?: T;
+        naoEncontradaTitulo?: T;
+        naoEncontradaTexto?: T;
       };
   _status?: T;
   updatedAt?: T;
@@ -1558,6 +2073,13 @@ export interface NavegacaoSelect<T extends boolean = true> {
         id?: T;
       };
   rodapeInstitucional?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  rodapeSobreSite?:
     | T
     | {
         label?: T;

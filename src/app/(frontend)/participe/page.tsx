@@ -1,147 +1,98 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 
-import { Hero } from '@/components/Hero'
-import { Reveal } from '@/components/Reveal'
-import { getPayloadClient } from '@/lib/payload'
+import { SmartLink } from '@/components/ui/Button'
+import { ArrowRight } from '@/components/ui/icons'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Section } from '@/components/ui/Section'
+import { getInstituicao, getTextos } from '@/lib/content'
+import { phoneHref } from '@/lib/contact'
 import { createMetadata } from '@/lib/seo'
-import { publicHref, publicText } from '@/lib/site'
 
 export const revalidate = 300
 
-export const metadata: Metadata = createMetadata({
-  title: 'Como Participar do CMDCA | Pindamonhangaba',
-  description:
-    'Saiba como acompanhar reuniões e atos do CMDCA, consultar entidades registradas e buscar os canais institucionais.',
-  path: '/participe',
-})
+export async function generateMetadata(): Promise<Metadata> {
+  const textos = await getTextos()
+  return createMetadata({
+    title: 'Participe do CMDCA | Pindamonhangaba',
+    description: textos.participe.introducao,
+    path: '/participe',
+  })
+}
 
 export default async function ParticipePage() {
-  const payload = await getPayloadClient()
-  const config = await payload.findGlobal({ slug: 'configuracoes' }).catch(() => null)
-  const c = config?.contato
-  const email = publicText(c?.email)
-  const telefone = publicText(c?.telefone)
-  const cep = publicText(c?.cep)
-  const casaTelefone = publicText(c?.casaConselhosTelefone)
-  const assessora = publicText(c?.assessora)
-  const instagram = publicHref(config?.redes?.instagramUrl)
-  const instagramHandle = publicText(config?.redes?.instagramHandle) || 'Instagram do CMDCA'
+  const [textos, i] = await Promise.all([getTextos(), getInstituicao()])
+  const t = textos.participe
+  const endereco = [i.endereco, i.cep ? `CEP ${i.cep}` : undefined].filter(Boolean).join(', ')
+  const casa = [i.casaEndereco, i.casaTelefone].filter(Boolean).join('. ')
 
   return (
     <>
-      <Hero
-        eyebrow="Acompanhe e participe"
-        titulo="Participe do CMDCA"
-        texto="Acompanhe reuniões, atos e recursos. A participação social também ajuda a definir prioridades para a política de direitos."
-      />
-
-      <section className="band">
-        <div className="wrap">
-          <Reveal>
-            <div className="about">
-              <div>
-                <span className="eyebrow">Como participar</span>
-                <h2
-                  style={{
-                    fontFamily: 'var(--serif)',
-                    fontWeight: 600,
-                    fontSize: '1.8rem',
-                    margin: '11px 0 14px',
-                    lineHeight: 1.1,
-                  }}
-                >
-                  Comece pela informação pública.
+      <PageHeader title={t.titulo} lead={t.introducao} />
+      <Section id="formas">
+        <div className="grid-2">
+          <ul className="ruled-list ruled-list--single" aria-label="Formas de participar">
+            {t.caminhos.map((c) => (
+              <li key={c.href + c.titulo} className="ruled-link">
+                <h2 className="ruled-link__title">
+                  <SmartLink href={c.href}>{c.titulo}</SmartLink>
                 </h2>
-                <p>
-                  Consulte quais <Link href="/reunioes">reuniões são públicas</Link>, acompanhe os
-                  documentos de <Link href="/transparencia">transparência</Link> e conheça as{' '}
-                  <Link href="/entidades">entidades registradas</Link>. Para registro ou renovação,
-                  busque orientação nos canais do conselho. Para destinar Imposto de Renda ao Fundo,
-                  confira as regras na página do <Link href="/fmdca">FMDCA</Link>. Em uma situação
-                  de proteção ou denúncia, acesse <Link href="/ajuda">Buscar ajuda</Link>.
-                </p>
-              </div>
-              <div className="lead-box">
-                <span className="k">Contato do conselho</span>
-                {email ? (
-                  <div className="ro" style={{ marginTop: 8 }}>
-                    <a href={`mailto:${email}`}>{email}</a>
-                  </div>
-                ) : null}
-                {telefone ? <div className="ro">Telefone: {telefone}</div> : null}
-                {cep ? <div className="ro">CEP: {cep}</div> : null}
-                {!email && !telefone && !cep ? (
-                  <div className="ro" style={{ marginTop: 8 }}>
-                    Canais oficiais em atualização.
-                    {casaTelefone ? ' Use os contatos da Casa dos Conselhos abaixo.' : null}
-                  </div>
-                ) : null}
-                <hr />
-                <span className="k">Casa dos Conselhos</span>
-                {casaTelefone ? (
-                  <div className="ro" style={{ marginTop: 8 }}>
-                    {casaTelefone}
-                  </div>
-                ) : (
-                  <div className="ro" style={{ marginTop: 8 }}>
-                    Para orientação imediata, consulte os canais em{' '}
-                    <Link href="/ajuda">Buscar ajuda</Link>.
-                  </div>
-                )}
-                {assessora ? <div className="ro">Atendimento: {assessora}</div> : null}
-                {casaTelefone ? (
-                  <div className="ro" style={{ marginTop: 8 }}>
-                    Confirme o horário antes de se deslocar.
-                  </div>
-                ) : null}
-                {instagram ? (
-                  <>
-                    <hr />
-                    <div className="ro">
-                      Instagram:{' '}
-                      <a href={instagram} target="_blank" rel="noopener noreferrer">
-                        {instagramHandle}
-                      </a>
-                    </div>
-                  </>
-                ) : null}
-              </div>
-            </div>
-          </Reveal>
+                <p>{c.texto}</p>
+                <ArrowRight className="ruled-link__arrow" aria-hidden="true" />
+              </li>
+            ))}
+          </ul>
+          <aside className="contact-card" aria-labelledby="contato-conselho">
+            <h2 id="contato-conselho" className="callout__title">
+              {t.contatoTitulo}
+            </h2>
+            <dl>
+              {i.email ? (
+                <div>
+                  <dt>E-mail</dt>
+                  <dd>
+                    <a href={`mailto:${i.email}`}>{i.email}</a>
+                  </dd>
+                </div>
+              ) : null}
+              {i.telefone ? (
+                <div>
+                  <dt>Telefone</dt>
+                  <dd>{phoneHref(i.telefone) ? <a href={phoneHref(i.telefone)}>{i.telefone}</a> : i.telefone}</dd>
+                </div>
+              ) : null}
+              {endereco ? (
+                <div>
+                  <dt>Endereço</dt>
+                  <dd>{endereco}</dd>
+                </div>
+              ) : null}
+              {i.horario ? (
+                <div>
+                  <dt>Atendimento</dt>
+                  <dd>{i.horario}</dd>
+                </div>
+              ) : null}
+              {casa ? (
+                <div>
+                  <dt>Casa dos Conselhos</dt>
+                  <dd>{casa}</dd>
+                </div>
+              ) : null}
+              {i.instagramUrl ? (
+                <div>
+                  <dt>Instagram</dt>
+                  <dd>
+                    <a href={i.instagramUrl} target="_blank" rel="noopener noreferrer">
+                      {i.instagramHandle || 'Perfil do CMDCA'}
+                      <span className="sr-only"> (abre em nova aba)</span>
+                    </a>
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+          </aside>
         </div>
-      </section>
-
-      <section className="band">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-head">
-              <div>
-                <span className="eyebrow">Atalhos</span>
-                <h2>Por onde começar</h2>
-              </div>
-            </div>
-            <div className="links">
-              <Link href="/reunioes">
-                <h3>Acompanhar reuniões</h3>
-                <p>Veja calendário, classificação e atas publicadas.</p>
-              </Link>
-              <Link href="/entidades">
-                <h3>Orientação para entidades</h3>
-                <p>Conheça a relação pública e fale com o conselho sobre registro e renovação.</p>
-              </Link>
-              <Link href="/fmdca">
-                <h3>Destinar IR ao FMDCA</h3>
-                <p>Confira regras e fontes oficiais para a destinação ao Fundo.</p>
-              </Link>
-              <Link href="/ajuda">
-                <h3>Pedir ajuda / denunciar</h3>
-                <p>Emergência, Disque 100 e Conselho Tutelar.</p>
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      </Section>
     </>
   )
 }

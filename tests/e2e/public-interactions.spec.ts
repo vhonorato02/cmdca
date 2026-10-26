@@ -21,9 +21,8 @@ test('simulador limita valores vazios, negativos e extremos sem produzir NaN', a
 test('falha de rede do tradutor oferece mensagem e caminho alternativo', async ({ page }) => {
   await page.route('https://vlibras.gov.br/**', (route) => route.abort('failed'))
   await page.goto('/')
-  await expect(page.locator('html')).toHaveAttribute('data-translation-state', 'error')
   await page.getByRole('button', { name: 'VLibras: abrir tradução para Libras' }).click()
-  const status = page.getByRole('status').filter({ hasText: 'Tradutor indisponível' })
+  const status = page.getByRole('status').filter({ hasText: 'não respondeu' })
   await expect(status).toBeVisible()
   await expect(status.getByRole('link')).toHaveAttribute('href', '/acessibilidade')
 })
@@ -37,15 +36,20 @@ test('tradutor carregado abre pelo atalho da barra de acessibilidade', async ({ 
       } }`,
     }),
   )
+  let pluginRequested = false
+  page.on('request', (request) => {
+    if (request.url().startsWith('https://vlibras.gov.br/')) pluginRequested = true
+  })
   await page.goto('/')
-  await expect(page.locator('html')).toHaveAttribute('data-translation-state', 'ready')
+  // Nenhum script de terceiro antes da ação do visitante.
+  expect(pluginRequested).toBe(false)
   await page.getByRole('button', { name: 'VLibras: abrir tradução para Libras' }).click()
   await expect
     .poll(() =>
       page.evaluate(() => (window as unknown as { __vlibrasOpened?: number }).__vlibrasOpened),
     )
     .toBe(1)
-  await expect(page.getByRole('status').filter({ hasText: 'Tradutor indisponível' })).toHaveCount(0)
+  await expect(page.getByRole('status').filter({ hasText: 'não respondeu' })).toHaveCount(0)
 })
 
 test('menu mantém navegação visível e estado coerente ao mudar para desktop', async ({ page }) => {
@@ -78,13 +82,13 @@ for (const [route, labels] of Object.entries(STATUS_LABELS)) {
     page,
   }) => {
     await page.goto(route)
-    const items = page.locator('main ul.meeting-list > li')
+    const items = page.locator('main ul.act-list > li')
     const count = await items.count()
     if (process.env.GITHUB_ACTIONS === 'true') {
       expect(count, `${route} precisa exercitar conteúdo publicado no CI`).toBeGreaterThan(0)
     }
     if (!count) {
-      await expect(page.getByText(/^Não há .+ no momento\.$/)).toBeVisible()
+      await expect(page.getByRole('heading', { name: /ainda não|não há/i })).toBeVisible()
       return
     }
     const pattern = new RegExp(`^Situação: (${labels.join('|')}|Situação não informada)$`)
@@ -93,7 +97,7 @@ for (const [route, labels] of Object.entries(STATUS_LABELS)) {
       await expect(pills).toHaveCount(1)
       await expect(pills).toHaveText(pattern)
     }
-    const anchors = page.locator('main .meta a[href^="#"]')
+    const anchors = page.locator('main .act__meta a[href^="#"]')
     for (const href of await anchors.evaluateAll((links) =>
       links.map((a) => a.getAttribute('href')),
     )) {
@@ -112,7 +116,7 @@ test('fixtures publicadas preservam situação suspensa e revogada sem listas va
     ['/editais', 'CI suspended public notice', 'Situação: Suspenso'],
   ]) {
     await page.goto(route)
-    const item = page.locator('main ul.meeting-list > li').filter({ hasText: name })
+    const item = page.locator('main ul.act-list > li').filter({ hasText: name })
     await expect(item).toHaveCount(1)
     await expect(item.locator('.pill[class*="status-"]')).toHaveText(status)
   }

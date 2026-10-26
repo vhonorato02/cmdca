@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { canManageContent, isAuthenticated, publishedOrLoggedIn } from '../access'
 import { EDITORIAL_VERSIONS, GLOBAL_EDITORIAL_COMPONENTS } from '../fields/editorial'
 import { validateGlobalPublication } from '../hooks/editorialPolicy'
-import { validateNavigationHref } from '../lib/navigation'
+import { DEFAULT_NAVIGATION, validateNavigationHref } from '../lib/navigation'
 
 const makeLinks = (
   name: string,
@@ -113,6 +113,13 @@ export const Navegacao: GlobalConfig = {
         { label: 'Conferências', href: '/conferencias' },
         { label: 'Notícias', href: '/noticias' },
       ],
+      1,
+      8,
+    ),
+    makeLinks(
+      'rodapeSobreSite',
+      'Links "Sobre o site" no rodapé',
+      DEFAULT_NAVIGATION.rodapeSobreSite,
       1,
       8,
     ),

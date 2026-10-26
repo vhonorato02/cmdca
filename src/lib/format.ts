@@ -53,3 +53,17 @@ export function sortByDateDesc<T extends { data?: string | null; createdAt?: str
     return (timeOf(b.createdAt) ?? 0) - (timeOf(a.createdAt) ?? 0)
   })
 }
+
+const MESES_CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+
+/** Partes de uma data (UTC) para os numerais de calendário: dia e "mês ano". */
+export function dateParts(value?: string | null): { day: string; monthYear: string; year: number } | null {
+  if (!value) return null
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return null
+  return {
+    day: String(d.getUTCDate()).padStart(2, '0'),
+    monthYear: `${MESES_CURTOS[d.getUTCMonth()]} ${d.getUTCFullYear()}`,
+    year: d.getUTCFullYear(),
+  }
+}

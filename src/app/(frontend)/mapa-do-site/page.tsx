@@ -1,168 +1,99 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { Hero } from '@/components/Hero'
-import { Reveal } from '@/components/Reveal'
-import { createMetadata, serializeJsonLd } from '@/lib/seo'
-import { absoluteUrl } from '@/lib/site'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { getTextos } from '@/lib/content'
+import { getPayloadClient } from '@/lib/payload'
+import { breadcrumbJsonLd, createMetadata, serializeJsonLd } from '@/lib/seo'
+import { publicText } from '@/lib/site'
+import type { Pagina } from '@/payload-types'
 
 export const revalidate = 3600
 
 export const metadata: Metadata = createMetadata({
-  title: 'Mapa do Site | CMDCA de Pindamonhangaba',
-  description:
-    'Encontre as páginas institucionais, atos oficiais, serviços de proteção, transparência e participação do CMDCA de Pindamonhangaba.',
+  title: 'Mapa do site | CMDCA de Pindamonhangaba',
+  description: 'Todas as páginas do portal do CMDCA de Pindamonhangaba, organizadas por assunto.',
   path: '/mapa-do-site',
 })
 
-const groups = [
-  {
-    title: 'Proteção e atendimento',
-    items: [
-      {
-        href: '/ajuda',
-        label: 'Buscar ajuda',
-        description: 'Emergência, Disque 100, Conselhos Tutelares e rede de proteção.',
-      },
-      {
-        href: '/entidades',
-        label: 'Entidades registradas',
-        description: 'Organizações com registro publicado pelo conselho.',
-      },
-    ],
-  },
-  {
-    title: 'Conselho e participação',
-    items: [
-      {
-        href: '/conselho',
-        label: 'O Conselho',
-        description: 'Competências, composição, funcionamento e base legal.',
-      },
-      {
-        href: '/reunioes',
-        label: 'Reuniões',
-        description: 'Calendário, classificação e atas publicadas.',
-      },
-      {
-        href: '/conferencias',
-        label: 'Conferências e fóruns',
-        description: 'Registros, notícias e futuras convocações oficiais.',
-      },
-      {
-        href: '/participe',
-        label: 'Participe',
-        description: 'Formas de acompanhar o conselho e canais de contato.',
-      },
-    ],
-  },
-  {
-    title: 'Atos e transparência',
-    items: [
-      {
-        href: '/resolucoes',
-        label: 'Resoluções',
-        description: 'Atos normativos e publicações oficiais disponíveis.',
-      },
-      {
-        href: '/editais',
-        label: 'Editais',
-        description: 'Chamamentos, processos, prazos e documentos.',
-      },
-      {
-        href: '/fmdca',
-        label: 'Fundo Municipal',
-        description: 'Regras e fontes oficiais para destinação do Imposto de Renda.',
-      },
-      {
-        href: '/transparencia',
-        label: 'Transparência',
-        description: 'Atos, planos, projetos e prestações de contas disponíveis.',
-      },
-    ],
-  },
-  {
-    title: 'Informação e políticas do site',
-    items: [
-      {
-        href: '/noticias',
-        label: 'Notícias',
-        description: 'Comunicados, campanhas e atividades do conselho.',
-      },
-      {
-        href: '/acessibilidade',
-        label: 'Acessibilidade',
-        description: 'Recursos, referências, limitações e canal para relatar barreiras.',
-      },
-      {
-        href: '/privacidade',
-        label: 'Aviso de privacidade',
-        description: 'Tratamento de dados pessoais e direitos previstos na LGPD.',
-      },
-      {
-        href: '/creditos',
-        label: 'Créditos e licenças',
-        description: 'Identidade, imagens, mapas, fontes e tecnologias.',
-      },
-    ],
-  },
-]
-
-export default function MapaDoSitePage() {
-  const allItems = groups.flatMap((group) => group.items)
-  const itemListLd = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: 'Mapa do site do CMDCA de Pindamonhangaba',
-    itemListElement: allItems.map((item, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: item.label,
-      url: absoluteUrl(item.href),
-    })),
+export default async function MapaDoSitePage() {
+  const textos = await getTextos()
+  let paginas: Pagina[] = []
+  try {
+    const payload = await getPayloadClient()
+    const res = await payload.find({
+      collection: 'paginas',
+      where: { _status: { equals: 'published' } },
+      sort: 'titulo',
+      limit: 100,
+      depth: 0,
+    })
+    paginas = (res.docs as Pagina[]).filter((p) => publicText(p.titulo))
+  } catch {
+    paginas = []
   }
+
+  const groups = [
+    {
+      title: 'Proteção',
+      items: [{ href: '/ajuda', label: textos.ajuda.titulo }],
+    },
+    {
+      title: 'Fundo e Imposto de Renda',
+      items: [{ href: '/fmdca', label: textos.fmdca.titulo }],
+    },
+    {
+      title: 'O conselho e a participação',
+      items: [
+        { href: '/conselho', label: textos.conselho.titulo },
+        { href: '/participe', label: textos.participe.titulo },
+        { href: '/reunioes', label: textos.atos.reunioesTitulo },
+        { href: '/conferencias', label: textos.publicacoes.conferenciasTitulo },
+        { href: '/noticias', label: textos.publicacoes.noticiasTitulo },
+      ],
+    },
+    {
+      title: 'Atos e transparência',
+      items: [
+        { href: '/transparencia', label: textos.transparencia.titulo },
+        { href: '/resolucoes', label: textos.atos.resolucoesTitulo },
+        { href: '/editais', label: textos.atos.editaisTitulo },
+        { href: '/entidades', label: textos.atos.entidadesTitulo },
+      ],
+    },
+    {
+      title: 'Sobre o portal',
+      items: paginas.map((p) => ({ href: `/${p.slug}`, label: p.titulo })),
+    },
+  ].filter((group) => group.items.length)
+
+  const ld = breadcrumbJsonLd([
+    { name: 'Início', path: '/' },
+    { name: 'Mapa do site', path: '/mapa-do-site' },
+  ])
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(itemListLd) }}
-      />
-      <Hero
-        deep
-        eyebrow="Navegação"
-        titulo="Mapa do site"
-        texto="Todas as áreas públicas do CMDCA reunidas em um só lugar."
-      />
-      {groups.map((group, groupIndex) => (
-        <section className="band" key={group.title} aria-labelledby={`grupo-${groupIndex}`}>
-          <div className="wrap">
-            <Reveal>
-              <div className="sec-head">
-                <div>
-                  <h2 id={`grupo-${groupIndex}`}>{group.title}</h2>
-                </div>
-              </div>
-              <div className="links">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(ld) }} />
+      <PageHeader title="Mapa do site" lead="Todas as páginas do portal, organizadas por assunto." />
+      <div className="section">
+        <div className="wrap sitemap">
+          {groups.map((group, index) => (
+            <section key={group.title} aria-labelledby={`grupo-${index}`} className="sitemap__group">
+              <h2 id={`grupo-${index}`} className="callout__title">
+                {group.title}
+              </h2>
+              <ul>
                 {group.items.map((item) => (
-                  <Link href={item.href} key={item.href}>
-                    <h3
-                      style={{
-                        fontFamily: 'var(--serif)',
-                        fontSize: '1.12rem',
-                        margin: '13px 0 5px',
-                      }}
-                    >
-                      {item.label}
-                    </h3>
-                    <p>{item.description}</p>
-                  </Link>
+                  <li key={item.href}>
+                    <Link href={item.href}>{item.label}</Link>
+                  </li>
                 ))}
-              </div>
-            </Reveal>
-          </div>
-        </section>
-      ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </div>
     </>
   )
 }

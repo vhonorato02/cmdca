@@ -8,7 +8,8 @@ import { getPayload } from 'payload'
 
 import configPromise from '@/payload.config'
 import { CATEGORIA_LABEL } from '@/components/NewsCard'
-import { Illustration } from '@/components/Illustration'
+import { ArrowLeft } from '@/components/ui/icons'
+import { Breadcrumb } from '@/components/ui/PageHeader'
 import { formatDateLong } from '@/lib/format'
 import { editorialPreviewMetadata, isEditorialPreviewUser } from '@/lib/editorialPreview'
 import { getPayloadClient } from '@/lib/payload'
@@ -187,14 +188,22 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     ],
   }
 
+  const credit = publicText(capa?.credito)
+  const mediaSrc = imagePath ? publicMediaHref(imagePath) : undefined
+
   return (
     <>
       {isEnabled ? (
-        <aside role="status" className="wrap" style={{ paddingTop: 16 }}>
-          <strong>Prévia</strong>
-          <form action="/api/draft/exit" method="post" style={{ display: 'inline', marginLeft: 12 }}>
-            <button className="btn" type="submit">Sair da prévia</button>
-          </form>
+        <aside role="status" className="preview-banner">
+          <div className="wrap preview-banner__inner">
+            <strong>Prévia</strong>
+            <span>Esta versão ainda não está publicada.</span>
+            <form action="/api/draft/exit" method="post">
+              <button className="btn btn--secondary btn--sm" type="submit">
+                Sair da prévia
+              </button>
+            </form>
+          </div>
         </aside>
       ) : (
         <script
@@ -202,47 +211,61 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleLd) }}
         />
       )}
-      <div className="wrap post-head">
-        <nav aria-label="Navegação estrutural" style={{ marginBottom: 16 }}>
-          <Link href="/">Início</Link> <span aria-hidden="true">/</span>{' '}
-          <Link href="/noticias">Notícias</Link>
-        </nav>
-        <div style={{ height: 10 }} />
-        <span className="tag">{category}</span>
-        <h1>{post.title}</h1>
-        <div className="post-meta">
-          {publishedLabel ? <time dateTime={post.data as string}>{publishedLabel}</time> : null}
-          {publicText(post.autor) ? <span>{publicText(post.autor)}</span> : null}
-          {updatedLabel && updatedLabel !== publishedLabel ? (
-            <span>
-              Atualizado em <time dateTime={post.updatedAt}>{updatedLabel}</time>
-            </span>
-          ) : null}
-        </div>
-      </div>
-      <div className="wrap">
-        <div className="post-cover vis">
-          {imagePath ? (
-            <Image
-              src={publicMediaHref(imagePath)!}
-              alt={publicText(capa?.alt) || post.title}
-              fill
-              unoptimized={isEnabled || Boolean(publicMediaHref(imagePath)?.startsWith('/api/media/file/'))}
-              style={{ objectFit: 'cover' }}
-              sizes="(max-width:1140px) 100vw, 1100px"
+      <article>
+        <header className="page-header">
+          <div className="wrap page-header__inner">
+            <Breadcrumb
+              items={[
+                { label: 'Início', href: '/' },
+                { label: 'Notícias', href: '/noticias' },
+                { label: post.title },
+              ]}
             />
-          ) : (
-            <>
-              <Illustration theme={post.tema || 'familia'} />
-              <span className="credit">ilustração CMDCA</span>
-            </>
-          )}
+            <p className="tag">{category}</p>
+            <h1 className="page-header__title article-title">{post.title}</h1>
+            {publicText(post.resumo) ? <p className="page-header__lead">{post.resumo}</p> : null}
+            <p className="page-header__meta">
+              {publishedLabel ? (
+                <>
+                  Publicada em <time dateTime={post.data as string}>{publishedLabel}</time>
+                </>
+              ) : null}
+              {publicText(post.autor) ? <> por {publicText(post.autor)}</> : null}
+              {updatedLabel && updatedLabel !== publishedLabel ? (
+                <>
+                  . Atualizada em <time dateTime={post.updatedAt}>{updatedLabel}</time>
+                </>
+              ) : null}
+            </p>
+          </div>
+        </header>
+        <div className="section">
+          <div className="wrap">
+            {mediaSrc ? (
+              <figure className="article-cover">
+                <div className="article-cover__image">
+                  <Image
+                    src={mediaSrc}
+                    alt={publicText(capa?.alt) || ''}
+                    fill
+                    priority
+                    unoptimized={isEnabled || mediaSrc.startsWith('/api/media/file/')}
+                    sizes="(max-width: 1200px) 100vw, 1100px"
+                  />
+                </div>
+                {credit ? <figcaption>{credit}</figcaption> : null}
+              </figure>
+            ) : null}
+            <div className="prose article-body">{post.corpo ? <RichText data={post.corpo} /> : null}</div>
+            <p className="article-back">
+              <Link className="more-link" href="/noticias">
+                <ArrowLeft />
+                Todas as notícias
+              </Link>
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="wrap">
-        <div className="post-body">{post.corpo ? <RichText data={post.corpo} /> : null}</div>
-      </div>
-      <div style={{ height: 36 }} />
+      </article>
     </>
   )
 }

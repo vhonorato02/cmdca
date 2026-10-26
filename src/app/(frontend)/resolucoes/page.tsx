@@ -1,153 +1,207 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 
-import { Reveal } from '@/components/Reveal'
+import { ActFilters, hrefWith, pickParam, yearOf, yearOptions } from '@/components/ActFilters'
 import { amendedBy, relatedActs, RESOLUCAO_SITUACAO, statusInfo } from '@/components/officialActs'
+import { ActItem, ActList, StatusPill } from '@/components/ui/ActList'
+import { ButtonLink } from '@/components/ui/Button'
+import { ExternalIcon } from '@/components/ui/icons'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Pagination, parsePage } from '@/components/ui/Pagination'
+import { EmptyState, ErrorState } from '@/components/ui/states'
+import { getConfiguracoes, getTextos } from '@/lib/content'
 import { formatDate } from '@/lib/format'
 import { getPayloadClient } from '@/lib/payload'
 import { createMetadata } from '@/lib/seo'
 import { publicHref, publicText } from '@/lib/site'
-import type { Configuracoe, Resolucoe } from '@/payload-types'
+import type { Resolucoe } from '@/payload-types'
 
-export const revalidate = 300
+const PER_PAGE = 20
+const anchor = (id: number | string) => `resolucao-${id}`
 
-export const metadata: Metadata = createMetadata({
-  title: 'Resoluções do CMDCA | Atos Oficiais',
-  description:
-    'Consulte resoluções do CMDCA por número, data e assunto, com documento e publicação oficial quando disponíveis.',
-  path: '/resolucoes',
-})
+export async function generateMetadata(): Promise<Metadata> {
+  const textos = await getTextos()
+  return createMetadata({
+    title: 'Resoluções do CMDCA | Pindamonhangaba',
+    description: textos.atos.resolucoesIntro,
+    path: '/resolucoes',
+  })
+}
 
-export default async function ResolucoesPage() {
-  const payload = await getPayloadClient()
-  const [res, config] = await Promise.all([
-    payload
-      .find({
-        collection: 'resolucoes',
-        where: { _status: { equals: 'published' } },
-        sort: '-data',
-        limit: 200,
-        depth: 1,
-      }),
-    payload.findGlobal({ slug: 'configuracoes' }).catch(() => null as Configuracoe | null),
-  ])
-  const docs = (res.docs as Resolucoe[]).filter(
-    (item) => publicText(item.numero) && publicText(item.titulo),
-  )
-  const tribuna = publicHref(config?.tribunaUrl) || 'https://www.jornaltribunadonorte.com.br'
-  const listedIds = new Set(docs.map((item) => item.id))
-  const anchor = (id: number | string) => `resolucao-${id}`
+async function load(): Promise<Resolucoe[] | null> {
+  try {
+    const payload = await getPayloadClient()
+    const res = await payload.find({
+      collection: 'resolucoes',
+      where: { _status: { equals: 'published' } },
+      sort: '-data',
+      limit: 1000,
+      depth: 1,
+    })
+    return (res.docs as Resolucoe[]).filter((item) => publicText(item.numero) && publicText(item.titulo))
+  } catch {
+    return null
+  }
+}
+
+export default async function ResolucoesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const [textos, config, docs, params] = await Promise.all([getTextos(), getConfiguracoes(), load(), searchParams])
+  const tribuna = publicHref(config?.tribunaUrl)
+  const ano = pickParam(params.ano)
+  const filtered = (docs ?? []).filter((r) => ano === 'todos' || yearOf(r.data) === ano)
+  const total = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
+  const page = parsePage(params.pagina, total)
+  const items = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+  const listedIds = new Set(items.map((item) => item.id))
 
   return (
-    <section className="band">
-      <div className="wrap">
-        <Reveal>
-          <div className="sec-head">
-            <div>
-              <span className="eyebrow">Atos normativos</span>
-              <h1>Resoluções</h1>
-              <p>
-                Cada resolução mostra a situação jurídica informada pelo conselho e os atos que ela
-                retifica ou altera. Consulte o documento anexado e, quando houver, o link direto
-                para a publicação oficial. Para pesquisar outras edições, acesse o portal da{' '}
-                <a href={tribuna} target="_blank" rel="noopener noreferrer">
-                  Tribuna do Norte
-                </a>
-                .
-              </p>
-            </div>
-          </div>
-          {docs.length ? (
-            <ul className="meeting-list">
-            {docs.map((r) => {
-              const arquivo = typeof r.arquivo === 'object' && r.arquivo ? r.arquivo : null
-              const numero = publicText(r.numero) as string
-              const titulo = publicText(r.titulo) as string
-              const linkTribuna = publicHref(r.linkTribuna)
-              const arquivoUrl = publicHref(arquivo?.url)
-              const situacao = statusInfo(RESOLUCAO_SITUACAO, r.situacaoJuridica)
-              const altera = relatedActs(r, listedIds)
-              const alteradaPor = amendedBy(r, docs)
-              return (
-                <li className="meet" key={r.id} id={anchor(r.id)}>
-                  <div className="dt">
-                    <b>{numero}</b>
-                    {r.data ? (
-                      <time dateTime={r.data}>{formatDate(r.data)}</time>
-                    ) : null}
-                  </div>
-                  <div className="info">
-                    <h2>
-                      {titulo}{' '}
-                      <span className={`pill status-${situacao.tone}`}>
-                        <span className="sr-only">Situação: </span>
-                        {situacao.label}
-                      </span>
-                    </h2>
-                    {altera.length ? (
-                      <p className="meta">
-                        Retifica ou altera:{' '}
-                        {altera.map((ref, index) => (
-                          <span key={ref.id}>
-                            {index ? ', ' : null}
-                            {ref.listed ? (
-                              <a href={`#${anchor(ref.id)}`}>Resolução {ref.numero}</a>
-                            ) : (
-                              <>Resolução {ref.numero}</>
-                            )}
-                          </span>
-                        ))}
-                      </p>
-                    ) : null}
-                    {alteradaPor.length ? (
-                      <p className="meta">
-                        Retificada ou alterada por:{' '}
-                        {alteradaPor.map((ref, index) => (
-                          <span key={ref.id}>
-                            {index ? ', ' : null}
-                            <a href={`#${anchor(ref.id)}`}>Resolução {ref.numero}</a>
-                          </span>
-                        ))}
-                      </p>
-                    ) : null}
-                  </div>
-                  <div className="acts">
-                    {arquivoUrl ? (
-                      <a
-                        className="mini"
-                        href={arquivoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Abrir PDF da resolução ${numero}: ${titulo} (abre em nova aba)`}
-                      >
-                        Abrir PDF <span aria-hidden="true">↗</span>
-                      </a>
-                    ) : null}
-                    {linkTribuna ? (
-                      <a
-                        className="mini"
-                        href={linkTribuna}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Ver publicação oficial da resolução ${numero} (abre em nova aba)`}
-                      >
-                        Publicação oficial <span aria-hidden="true">↗</span>
-                      </a>
-                    ) : null}
-                  </div>
-                </li>
-              )
-            })}
-            </ul>
+    <>
+      <PageHeader
+        title={textos.atos.resolucoesTitulo}
+        lead={textos.atos.resolucoesIntro}
+        crumbs={[{ label: 'Transparência', href: '/transparencia' }]}
+        meta={
+          tribuna ? (
+            <>
+              Edições anteriores estão na{' '}
+              <a href={tribuna} target="_blank" rel="noopener noreferrer">
+                imprensa oficial (Tribuna do Norte)
+                <ExternalIcon />
+                <span className="sr-only"> (abre em nova aba)</span>
+              </a>
+              .
+            </>
+          ) : undefined
+        }
+      />
+      <div className="section">
+        <div className="wrap">
+          {docs === null ? (
+            <ErrorState
+              title="Não foi possível carregar as resoluções"
+              action={<ButtonLink href="/resolucoes">Tentar de novo</ButtonLink>}
+            >
+              O banco de dados não respondeu.{' '}
+              {tribuna ? 'Enquanto isso, consulte a imprensa oficial pelo link acima.' : null}
+            </ErrorState>
+          ) : docs.length ? (
+            <>
+              <ActFilters
+                action="/resolucoes"
+                fields={[{ name: 'ano', label: 'Ano', options: yearOptions(docs.map((d) => d.data)), value: ano }]}
+                resultLabel={`${filtered.length} ${filtered.length === 1 ? 'resolução' : 'resoluções'}`}
+              />
+              {items.length ? (
+                <ActList label="Resoluções publicadas">
+                  {items.map((r) => {
+                    const arquivo = typeof r.arquivo === 'object' && r.arquivo ? r.arquivo : null
+                    const numero = publicText(r.numero) as string
+                    const titulo = publicText(r.titulo) as string
+                    const linkTribuna = publicHref(r.linkTribuna)
+                    const arquivoUrl = publicHref(arquivo?.url)
+                    const altera = relatedActs(r, listedIds)
+                    const alteradaPor = amendedBy(r, items)
+                    return (
+                      <ActItem
+                        key={r.id}
+                        id={anchor(r.id)}
+                        numeral={numero}
+                        numeralLabel={r.data ? formatDate(r.data) : undefined}
+                        numeralDateTime={r.data ?? undefined}
+                        title={titulo}
+                        badges={<StatusPill status={statusInfo(RESOLUCAO_SITUACAO, r.situacaoJuridica)} />}
+                        meta={
+                          <>
+                            {altera.length ? (
+                              <p className="act__meta">
+                                Altera ou retifica:{' '}
+                                {altera.map((ref, index) => (
+                                  <span key={ref.id}>
+                                    {index ? ', ' : null}
+                                    {ref.listed ? <a href={`#${anchor(ref.id)}`}>Resolução {ref.numero}</a> : <>Resolução {ref.numero}</>}
+                                  </span>
+                                ))}
+                              </p>
+                            ) : null}
+                            {alteradaPor.length ? (
+                              <p className="act__meta">
+                                Alterada ou retificada por:{' '}
+                                {alteradaPor.map((ref, index) => (
+                                  <span key={ref.id}>
+                                    {index ? ', ' : null}
+                                    <a href={`#${anchor(ref.id)}`}>Resolução {ref.numero}</a>
+                                  </span>
+                                ))}
+                              </p>
+                            ) : null}
+                          </>
+                        }
+                        actions={
+                          arquivoUrl || linkTribuna ? (
+                            <>
+                              {arquivoUrl ? (
+                                <a
+                                  className="btn btn--primary btn--sm"
+                                  href={arquivoUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label={`Abrir PDF da resolução ${numero}: ${titulo} (abre em nova aba)`}
+                                >
+                                  Abrir PDF
+                                </a>
+                              ) : null}
+                              {linkTribuna ? (
+                                <a
+                                  className="btn btn--secondary btn--sm"
+                                  href={linkTribuna}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label={`Ver publicação oficial da resolução ${numero} (abre em nova aba)`}
+                                >
+                                  Publicação oficial
+                                </a>
+                              ) : null}
+                            </>
+                          ) : (
+                            <span className="act__note">Documento em digitalização</span>
+                          )
+                        }
+                      />
+                    )
+                  })}
+                </ActList>
+              ) : (
+                <EmptyState
+                  title="Nenhuma resolução neste ano"
+                  action={<ButtonLink href="/resolucoes" variant="secondary">Ver todos os anos</ButtonLink>}
+                />
+              )}
+              <Pagination
+                current={page}
+                total={total}
+                buildHref={(p) => hrefWith('/resolucoes', { ano }, p)}
+              />
+            </>
           ) : (
-            <p style={{ color: 'var(--ink-2)' }}>Não há resoluções publicadas nesta página no momento.</p>
+            <EmptyState
+              title="Ainda não há resoluções publicadas neste portal"
+              action={
+                tribuna ? (
+                  <ButtonLink href={tribuna} variant="secondary">
+                    Pesquisar na imprensa oficial
+                  </ButtonLink>
+                ) : undefined
+              }
+            >
+              As resoluções aprovadas entram aqui depois de publicadas. As anteriores podem ser
+              consultadas na imprensa oficial do Município.
+            </EmptyState>
           )}
-          <p style={{ color: 'var(--ink-2)', marginTop: 24 }}>
-            Consulte também as <Link href="/reunioes">reuniões e atas</Link> e os{' '}
-            <Link href="/editais">editais</Link> do conselho.
-          </p>
-        </Reveal>
+        </div>
       </div>
-    </section>
+    </>
   )
 }

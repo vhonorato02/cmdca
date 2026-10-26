@@ -21,10 +21,12 @@ import { RedeProtecao } from './collections/RedeProtecao'
 import { Depoimentos } from './collections/Depoimentos'
 import { Destaques } from './collections/Destaques'
 import { Faq } from './collections/Faq'
+import { Paginas } from './collections/Paginas'
 import { Configuracoes } from './globals/Configuracoes'
 import { PaginaInicial } from './globals/PaginaInicial'
 import { Indicadores } from './globals/Indicadores'
 import { Navegacao } from './globals/Navegacao'
+import { Textos } from './globals/Textos'
 import { buildAllowedOrigins } from './security/origins'
 import { migrations } from './migrations'
 
@@ -212,12 +214,13 @@ export default buildConfig({
     Depoimentos,
     Destaques,
     Faq,
+    Paginas,
     s3Bucket
       ? Media
       : { ...Media, upload: { ...(typeof Media.upload === 'object' ? Media.upload : {}), staticDir: mediaDir } },
     Users,
   ],
-  globals: [Configuracoes, PaginaInicial, Indicadores, Navegacao],
+  globals: [Configuracoes, PaginaInicial, Textos, Indicadores, Navegacao],
   editor: lexicalEditor(),
   secret: payloadSecret,
   graphQL: { disable: true },

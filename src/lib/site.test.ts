@@ -12,6 +12,8 @@ describe('public content boundary', () => {
   it('does not publish unresolved content markers', () => {
     expect(publicText('PENDENCIA: contato não informado')).toBeUndefined()
     expect(publicText('Lorem ipsum')).toBeUndefined()
+    expect(publicText('XXXX')).toBeUndefined()
+    expect(publicText('Agência XXXX, conta 123')).toBeUndefined()
     expect(publicText('Conselho Municipal')).toBe('Conselho Municipal')
     expect(publicText('Autonomia e independência')).toBe('Autonomia e independência')
   })

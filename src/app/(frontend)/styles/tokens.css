@@ -1,0 +1,136 @@
+/* Tokens do design system "Sinal amarelo". Ver docs/design/DESIGN-SYSTEM.md. */
+@layer tokens {
+  :root {
+    /* Marca: cores médias medidas no logo oficial */
+    --anil: #271a58;
+    --anil-900: #1a1140;
+    --anil-600: #4a3d8f;
+    --anil-100: #dcd8ee;
+    --anil-50: #ecebf5;
+    --amarelo: #f6ec27;
+    --amarelo-50: #fdf8c2;
+    --grafite: #25242b;
+    --grafite-2: #55536a;
+    --linha: #d9d7e5;
+    --linha-forte: #7b7894;
+    --branco: #ffffff;
+    --nevoa: #f6f5fa;
+    --urgencia: #b42318;
+    --urgencia-50: #fdecea;
+    --vigente: #1d6b3a;
+    --vigente-50: #e6f2ea;
+    --atencao: #8a5300;
+    --atencao-50: #fbf0dc;
+
+    /* Papéis semânticos (o alto contraste troca só estes) */
+    --c-bg: var(--branco);
+    --c-bg-alt: var(--nevoa);
+    --c-bg-soft: var(--anil-50);
+    --c-text: var(--grafite);
+    --c-text-muted: var(--grafite-2);
+    --c-heading: var(--anil);
+    --c-link: var(--anil);
+    --c-link-hover: var(--anil-600);
+    --c-border: var(--linha);
+    --c-border-strong: var(--linha-forte);
+    --c-primary: var(--anil);
+    --c-on-primary: var(--branco);
+    --c-signal: var(--amarelo);
+    --c-on-signal: var(--anil);
+    --c-dark: var(--anil-900);
+    --c-on-dark: var(--branco);
+    --c-on-dark-muted: #c9c5e2;
+    --c-danger: var(--urgencia);
+    --c-on-danger: var(--branco);
+    --c-focus-ring: var(--anil);
+    --c-focus-halo: var(--amarelo);
+
+    /* Tipografia */
+    --font-display: var(--font-archivo), 'Arial Narrow', system-ui, sans-serif;
+    --font-text: var(--font-atkinson), system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --stretch-display: 78%;
+    --fs-xs: 0.875rem;
+    --fs-sm: 1rem;
+    --fs-md: 1.125rem;
+    --fs-lg: 1.3125rem;
+    --fs-xl: 1.5rem;
+    --fs-2xl: clamp(1.75rem, 1.45rem + 1.1vw, 2.25rem);
+    --fs-3xl: clamp(2.125rem, 1.6rem + 2vw, 3rem);
+    --fs-4xl: clamp(2.5rem, 1.55rem + 4vw, 4.5rem);
+    --lh-text: 1.6;
+    --lh-tight: 1.08;
+    --measure: 68ch;
+
+    /* Espaço (base 4) */
+    --s-1: 0.25rem;
+    --s-2: 0.5rem;
+    --s-3: 0.75rem;
+    --s-4: 1rem;
+    --s-5: 1.5rem;
+    --s-6: 2rem;
+    --s-7: 3rem;
+    --s-8: 4rem;
+    --s-9: 6rem;
+    --s-10: 8rem;
+    --gutter: clamp(1rem, 0.6rem + 1.8vw, 2rem);
+    --max: 75rem;
+
+    /* Forma */
+    --r-0: 0;
+    --r-sm: 4px;
+    --r-md: 8px;
+    --r-pill: 999px;
+    --border: 1px solid var(--c-border);
+    --shadow-float: 0 12px 32px -12px rgb(26 17 64 / 35%);
+
+    /* Movimento: só em resposta a ações */
+    --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --t-fast: 120ms;
+    --t-base: 180ms;
+
+    /* Camadas */
+    --z-header: 30;
+    --z-dock: 40;
+    --z-menu: 50;
+    --header-h: 4.5rem;
+    --dock-h: 0px;
+  }
+
+  /* Alto contraste próprio do site (botão "Contraste") */
+  html.contrast {
+    --c-bg: #000;
+    --c-bg-alt: #000;
+    --c-bg-soft: #000;
+    --c-text: #fff;
+    --c-text-muted: #fff;
+    --c-heading: var(--amarelo);
+    --c-link: var(--amarelo);
+    --c-link-hover: #fff;
+    --c-border: #fff;
+    --c-border-strong: #fff;
+    --c-primary: var(--amarelo);
+    --c-on-primary: #000;
+    --c-signal: var(--amarelo);
+    --c-on-signal: #000;
+    --c-dark: #000;
+    --c-on-dark: #fff;
+    --c-on-dark-muted: #fff;
+    --c-danger: var(--amarelo);
+    --c-on-danger: #000;
+    --c-focus-ring: #fff;
+    --c-focus-halo: var(--amarelo);
+    --vigente: #fff;
+    --vigente-50: #000;
+    --atencao: #fff;
+    --atencao-50: #000;
+    --urgencia: var(--amarelo);
+    --urgencia-50: #000;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --t-fast: 0ms;
+      --t-base: 0ms;
+    }
+  }
+}

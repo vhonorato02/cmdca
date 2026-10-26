@@ -38,6 +38,7 @@ describe('links da navegação pública', () => {
     ).toEqual({
       menuPrincipal: [{ label: 'Ajuda', href: '/ajuda' }],
       rodapeInstitucional: [{ label: 'Externo', href: 'https://example.org' }],
+      rodapeSobreSite: DEFAULT_NAVIGATION.rodapeSobreSite,
     })
     expect(
       resolvePublishedNavigation({

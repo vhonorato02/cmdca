@@ -1,27 +1,29 @@
-import type { Metadata } from 'next'
-import { Newsreader, Public_Sans } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
+import { Archivo, Atkinson_Hyperlegible_Next } from 'next/font/google'
 import React from 'react'
 
-import { A11yBar } from '@/components/A11yBar'
-import { GrainFilter } from '@/components/GrainFilter'
-import { SiteFooter } from '@/components/SiteFooter'
-import { SiteHeader } from '@/components/SiteHeader'
-import { VLibras } from '@/components/VLibras'
+import { canaisDaFaixa, ProtectionBar, ProtectionDock } from '@/components/layout/Protection'
+import { SiteFooter } from '@/components/layout/SiteFooter'
+import { SiteHeader } from '@/components/layout/SiteHeader'
+import { canaisDiscaveis, getInstituicao, getTextos } from '@/lib/content'
 import { getSiteNavigation } from '@/lib/navigation'
 import { absoluteUrl, DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from '@/lib/site'
 
 import './globals.css'
 
-const publicSans = Public_Sans({
-  display: 'swap',
+// Títulos e numerais: Archivo condensada, eco das letras pesadas do logo.
+const archivo = Archivo({
   subsets: ['latin'],
-  variable: '--font-public-sans',
+  axes: ['wdth'],
+  display: 'swap',
+  variable: '--font-archivo',
 })
 
-const newsreader = Newsreader({
-  display: 'swap',
+// Texto e interface: desenhada para leitores com baixa visão.
+const atkinson = Atkinson_Hyperlegible_Next({
   subsets: ['latin'],
-  variable: '--font-newsreader',
+  display: 'swap',
+  variable: '--font-atkinson',
 })
 
 export const metadata: Metadata = {
@@ -46,7 +48,7 @@ export const metadata: Metadata = {
         url: absoluteUrl('/opengraph-image'),
         width: 1200,
         height: 630,
-        alt: 'CMDCA de Pindamonhangaba — direitos da criança e do adolescente',
+        alt: 'CMDCA de Pindamonhangaba: direitos da criança e do adolescente',
       },
     ],
   },
@@ -59,33 +61,45 @@ export const metadata: Metadata = {
   formatDetection: { address: false, email: false, telephone: false },
 }
 
-// Antes da pintura: marca .js (para a animação reveal) e reaplica as preferências
-// de acessibilidade salvas (alto contraste e tamanho de fonte) sem flash.
-const A11Y_INIT = `(function(){try{var d=document.documentElement;d.classList.add('js');if(localStorage.getItem('cmdca-contrast')==='1')d.classList.add('contrast');var f=localStorage.getItem('cmdca-fs');if(f)d.style.setProperty('--fs',f+'%');}catch(e){}})();`
+export const viewport: Viewport = {
+  themeColor: '#1a1140',
+  colorScheme: 'light',
+}
+
+// Antes da pintura: reaplica alto contraste e tamanho de letra salvos, sem piscar.
+const A11Y_INIT = `(function(){try{var d=document.documentElement;if(localStorage.getItem('cmdca-contrast')==='1')d.classList.add('contrast');var f=parseInt(localStorage.getItem('cmdca-fs')||'',10);if(f>=90&&f<=130)d.style.setProperty('--fs',f+'%');}catch(e){}})();`
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
-  const navigation = await getSiteNavigation()
+  const [navigation, textos, instituicao] = await Promise.all([
+    getSiteNavigation(),
+    getTextos(),
+    getInstituicao(),
+  ])
+  const canais = canaisDiscaveis(textos.protecao.canais)
+  const faixa = canaisDaFaixa(canais)
+
   return (
-    <html
-      lang="pt-BR"
-      className={`${publicSans.variable} ${newsreader.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="pt-BR" className={`${archivo.variable} ${atkinson.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: A11Y_INIT }} />
       </head>
       <body>
-        <a href="#main" className="skip">
+        <a href="#main" className="skip-link">
           Pular para o conteúdo
         </a>
-        <A11yBar />
-        <SiteHeader links={navigation.menuPrincipal} />
+        <ProtectionBar chamada={textos.protecao.chamada} canais={faixa} />
+        <SiteHeader links={navigation.menuPrincipal} canais={faixa} chamada={textos.protecao.chamada} />
         <main id="main" tabIndex={-1}>
           {children}
         </main>
-        <SiteFooter />
-        <GrainFilter />
-        <VLibras />
+        <SiteFooter
+          instituicao={instituicao}
+          descricao={textos.geral.rodapeDescricao}
+          institucional={navigation.rodapeInstitucional}
+          sobreSite={navigation.rodapeSobreSite}
+          canais={faixa}
+        />
+        <ProtectionDock canais={faixa} />
       </body>
     </html>
   )

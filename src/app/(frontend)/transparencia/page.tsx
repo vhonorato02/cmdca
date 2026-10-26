@@ -1,96 +1,97 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { Reveal } from '@/components/Reveal'
+import { Calendar, Document, Gavel, Pictogram } from '@/components/ui/icons'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Section } from '@/components/ui/Section'
+import { EmptyState } from '@/components/ui/states'
+import { ButtonLink } from '@/components/ui/Button'
+import { getConfiguracoes, getTextos } from '@/lib/content'
 import { getPayloadClient } from '@/lib/payload'
 import { createMetadata } from '@/lib/seo'
 import { publicHref } from '@/lib/site'
 
 export const revalidate = 300
 
-export const metadata: Metadata = createMetadata({
-  title: 'Transparência do CMDCA e do Fundo | Pindamonhangaba',
-  description:
-    'Acesse atos, documentos, planos de aplicação e prestações de contas publicados pelo CMDCA e pelo Fundo Municipal.',
-  path: '/transparencia',
-})
+export async function generateMetadata(): Promise<Metadata> {
+  const textos = await getTextos()
+  return createMetadata({
+    title: 'Transparência do CMDCA e do Fundo | Pindamonhangaba',
+    description: textos.transparencia.introducao,
+    path: '/transparencia',
+  })
+}
+
+async function counts() {
+  try {
+    const payload = await getPayloadClient()
+    const published = { _status: { equals: 'published' } } as const
+    const [resolucoes, editais, reunioes, entidades] = await Promise.all([
+      payload.count({ collection: 'resolucoes', where: published }),
+      payload.count({ collection: 'editais', where: published }),
+      payload.count({ collection: 'reunioes', where: published }),
+      payload.count({ collection: 'entidades', where: published }),
+    ])
+    return {
+      resolucoes: resolucoes.totalDocs,
+      editais: editais.totalDocs,
+      reunioes: reunioes.totalDocs,
+      entidades: entidades.totalDocs,
+    }
+  } catch {
+    return null
+  }
+}
+
+const plural = (n: number | undefined, one: string, many: string) =>
+  n === undefined ? undefined : n === 0 ? 'Nenhum registro ainda' : `${n} ${n === 1 ? one : many}`
 
 export default async function TransparenciaPage() {
-  const payload = await getPayloadClient()
-  const config = await payload.findGlobal({ slug: 'configuracoes' }).catch(() => null)
-  const tribuna = publicHref(config?.tribunaUrl) || 'https://www.jornaltribunadonorte.com.br'
+  const [textos, config, total] = await Promise.all([getTextos(), getConfiguracoes(), counts()])
+  const t = textos.transparencia
+  const tribuna = publicHref(config?.tribunaUrl)
+  const areas = [
+    { href: '/resolucoes', titulo: 'Resoluções', texto: textos.atos.resolucoesIntro, icon: <Gavel className="route__icon" />, n: plural(total?.resolucoes, 'resolução', 'resoluções') },
+    { href: '/editais', titulo: 'Editais', texto: textos.atos.editaisIntro, icon: <Document className="route__icon" />, n: plural(total?.editais, 'edital', 'editais') },
+    { href: '/reunioes', titulo: 'Reuniões e atas', texto: textos.atos.reunioesIntro, icon: <Calendar className="route__icon" />, n: plural(total?.reunioes, 'reunião', 'reuniões') },
+    { href: '/entidades', titulo: 'Entidades registradas', texto: textos.atos.entidadesIntro, icon: <Pictogram tema="encontro" className="route__icon" />, n: plural(total?.entidades, 'entidade', 'entidades') },
+  ]
 
   return (
     <>
-      <section className="band">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-head">
-              <div>
-                <span className="eyebrow">Controle social</span>
-                <h1>Transparência do Fundo e do conselho</h1>
-                <p>
-                  Acesse os atos que orientam as decisões do CMDCA e os documentos disponíveis sobre
-                  a aplicação dos recursos. Números só são publicados com período de referência,
-                  metodologia e fonte verificável.
-                </p>
-              </div>
+      <PageHeader title={t.titulo} lead={t.introducao} />
+      <Section id="atos" title="Atos e registros do conselho">
+        <ul className="card-grid">
+          {areas.map(({ href, titulo, texto, icon, n }) => (
+            <li key={href} className="card">
+              {icon}
+              <h3 className="card__title">
+                <Link href={href}>{titulo}</Link>
+              </h3>
+              <p className="muted">{texto}</p>
+              {n ? <p className="tag">{n}</p> : null}
+            </li>
+          ))}
+        </ul>
+      </Section>
+      <Section id="fundo" title={t.documentosTitulo} lead={t.documentosTexto} alt>
+        <EmptyState
+          as="h3"
+          title={t.vazio}
+          action={
+            <div className="actions">
+              <ButtonLink href="/fmdca" variant="secondary">
+                Como destinar ao Fundo
+              </ButtonLink>
+              {tribuna ? (
+                <ButtonLink href={tribuna} variant="secondary">
+                  Pesquisar na imprensa oficial
+                </ButtonLink>
+              ) : null}
             </div>
-            <div className="links">
-              <Link href="/resolucoes">
-                <h2>Resoluções</h2>
-                <p>Deliberações e atos normativos, quando publicados pelo colegiado.</p>
-              </Link>
-              <Link href="/editais">
-                <h2>Editais</h2>
-                <p>Chamamentos, processos, prazos, anexos e resultados, quando publicados.</p>
-              </Link>
-              <Link href="/reunioes">
-                <h2>Reuniões e atas</h2>
-                <p>Calendário e atas, disponibilizados conforme publicação e aprovação.</p>
-              </Link>
-              <Link href="/entidades">
-                <h2>Entidades registradas</h2>
-                <p>
-                  Registros disponibilizados pelo CMDCA, com número e validade quando informados.
-                </p>
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="band">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-head">
-              <div>
-                <span className="eyebrow">Documentos</span>
-                <h2 style={{ fontSize: '1.5rem' }}>Prestação de contas e planos de aplicação</h2>
-                <p>
-                  Esta área reúne planos de aplicação, receitas, saldos, projetos financiados e
-                  prestações de contas quando os documentos são oficialmente publicados. Não há
-                  estimativas ou valores sem fonte documental.
-                </p>
-                <p style={{ marginTop: 12 }}>
-                  Para pesquisar as edições do órgão de imprensa oficial, acesse o portal da{' '}
-                  <a href={tribuna} target="_blank" rel="noopener noreferrer">
-                    Tribuna do Norte
-                  </a>
-                  . Sempre prefira, nas listas de atos, o link direto para a publicação específica.
-                </p>
-              </div>
-            </div>
-            <p style={{ color: 'var(--ink-2)' }}>
-              Nenhum plano de aplicação ou prestação de contas foi publicado neste portal até agora.
-            </p>
-            <p style={{ color: 'var(--ink-2)', marginTop: 10 }}>
-              Para entender a destinação do Imposto de Renda, consulte os limites e as fontes
-              oficiais na página do <Link href="/fmdca">Fundo Municipal</Link>.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+          }
+        />
+      </Section>
     </>
   )
 }

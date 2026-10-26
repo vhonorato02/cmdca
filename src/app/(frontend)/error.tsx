@@ -2,50 +2,46 @@
 
 import Link from 'next/link'
 
-import { Hero } from '@/components/Hero'
-
 /**
- * Error boundary do site público. Mostra uma página com identidade do CMDCA
- * (em vez do erro cru) e um botão para tentar novamente.
+ * Falha ao montar uma página. O texto fica no código de propósito: este
+ * componente roda quando o servidor ou o banco não respondem, inclusive o CMS.
  */
 export default function Error({
-  reset,
+  error,
+  retry,
 }: {
   error: Error & { digest?: string }
-  reset: () => void
+  retry: () => void
 }) {
   return (
-    <>
-      <Hero
-        deep
-        eyebrow="Ops"
-        titulo="Não foi possível carregar esta página"
-        texto="Tente novamente. Se o problema continuar, use um dos caminhos abaixo."
-      />
-      <section className="band">
-        <div className="wrap">
-          <div style={{ marginBottom: 22 }}>
-            <button type="button" className="btn" onClick={reset}>
-              Tentar novamente
-            </button>
-          </div>
-          <h2 className="sr-only">Outros caminhos do site</h2>
-          <div className="links">
-            <Link href="/">
-              <h3>Início</h3>
-              <p>Volte à página inicial do conselho.</p>
-            </Link>
-            <Link href="/ajuda">
-              <h3>Buscar ajuda</h3>
-              <p>Emergência (190), Disque 100 e Conselho Tutelar.</p>
-            </Link>
-            <Link href="/mapa-do-site">
-              <h3>Mapa do site</h3>
-              <p>Acesse todas as áreas públicas do portal.</p>
-            </Link>
-          </div>
+    <section className="not-found" aria-labelledby="erro-titulo">
+      <div className="wrap not-found__inner">
+        <p className="not-found__code" aria-hidden="true">
+          500
+        </p>
+        <h1 id="erro-titulo">Esta página não carregou</h1>
+        <p className="lead">
+          O servidor não conseguiu montar o conteúdo agora. Tente de novo em alguns segundos. Se
+          precisar de ajuda urgente, os telefones de proteção continuam no topo e na barra
+          inferior.
+        </p>
+        <div className="actions">
+          <button type="button" className="btn btn--primary" onClick={() => retry()}>
+            Tentar de novo
+          </button>
+          <Link className="btn btn--secondary" href="/">
+            Ir para o início
+          </Link>
+          <Link className="btn btn--signal" href="/ajuda">
+            Buscar ajuda
+          </Link>
         </div>
-      </section>
-    </>
+        {error.digest ? (
+          <p className="not-found__digest">
+            Código para o suporte: {error.digest}
+          </p>
+        ) : null}
+      </div>
+    </section>
   )
 }

@@ -1,39 +1,107 @@
 import type { Metadata } from 'next'
 
-import { FaqAccordion } from '@/components/FaqAccordion'
-import { Hero } from '@/components/Hero'
-import { MapaRede, type Ponto } from '@/components/MapaRede'
-import { Reveal } from '@/components/Reveal'
+import { FaqList, publicFaq } from '@/components/FaqList'
+import { MapaRede } from '@/components/MapaRede'
+import { QuickExit } from '@/components/QuickExit'
+import type { MapPoint } from '@/components/RedeMapInner'
+import { SourceList } from '@/components/SourceList'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Section } from '@/components/ui/Section'
+import { Callout, EmptyState } from '@/components/ui/states'
+import { COORDENADAS_APROXIMADAS } from '@/content/geo'
+import { canaisDiscaveis, getTextos } from '@/lib/content'
+import { phoneHref } from '@/lib/contact'
 import { getPayloadClient } from '@/lib/payload'
-import { createMetadata, serializeJsonLd } from '@/lib/seo'
-import { containsUnverifiedMarker, publicText } from '@/lib/site'
+import { createMetadata } from '@/lib/seo'
+import { publicText } from '@/lib/site'
 import type { Faq, RedeProtecao } from '@/payload-types'
 
 export const revalidate = 300
 
-export const metadata: Metadata = createMetadata({
-  title: 'Proteção de Crianças e Adolescentes | Pindamonhangaba',
-  description:
-    'Em perigo imediato, ligue 190. Para denunciar violações de direitos, use o Disque 100 ou consulte a rede de proteção em Pindamonhangaba.',
-  path: '/ajuda',
-})
+export async function generateMetadata(): Promise<Metadata> {
+  const textos = await getTextos()
+  return createMetadata({
+    title: 'Buscar ajuda: proteção de crianças e adolescentes | Pindamonhangaba',
+    description: textos.ajuda.introducao,
+    path: '/ajuda',
+  })
+}
 
-const DISQUE_100_URL = 'https://www.gov.br/pt-br/servicos/denunciar-violacao-de-direitos-humanos'
-const TELEFONES_UTEIS_URL = 'https://pindamonhangaba.sp.gov.br/servicos-ao-cidadao/telefones-uteis'
-const SEGUNDO_CT_URL =
-  'https://pindamonhangaba.sp.gov.br/conselho-tutelar-de-moreira-cesar-passa-a-atuar-em-nova-sede-a-partir-do-dia-9-de-junho'
+const TIPO_LABEL: Record<string, string> = {
+  creas: 'CREAS: atendimento especializado',
+  cras: 'CRAS: assistência social perto de casa',
+  casa: 'Casa dos Conselhos',
+  outro: 'Outros serviços',
+}
+const TIPO_ORDEM = ['creas', 'cras', 'casa', 'outro']
+const TIPO_COR: Record<string, string> = {
+  ct: '#271A58',
+  cras: '#1D6B3A',
+  creas: '#B42318',
+  casa: '#8A5300',
+  outro: '#4A3D8F',
+}
+
+type Lugar = {
+  id: number | string
+  nome: string
+  tipo: string
+  endereco?: string
+  telefone?: string
+  horario?: string
+}
+
+const splitPhones = (value: string) => value.split(/\s*[·;]\s*/).filter(Boolean)
+
+const directionsHref = (address: string) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address}, Pindamonhangaba - SP`)}`
+
+function PlaceCard({ lugar, headingLevel = 3 }: { lugar: Lugar; headingLevel?: 3 | 4 }) {
+  const Heading = headingLevel === 4 ? 'h4' : 'h3'
+  return (
+    <li className="place">
+      <Heading className="place__name">{lugar.nome}</Heading>
+      {lugar.telefone ? (
+        <p className="place__phones">
+          {splitPhones(lugar.telefone).map((phone, index) => {
+            const href = phoneHref(phone)
+            return href ? (
+              <a key={`${phone}-${index}`} href={href}>
+                {phone}
+              </a>
+            ) : (
+              <span key={`${phone}-${index}`}>{phone}</span>
+            )
+          })}
+        </p>
+      ) : null}
+      {lugar.endereco ? <p>{lugar.endereco}</p> : null}
+      {lugar.horario ? <p className="place__hours">{lugar.horario}</p> : null}
+      {lugar.endereco ? (
+        <p>
+          <a href={directionsHref(lugar.endereco)} target="_blank" rel="noopener noreferrer">
+            Ver rota até {lugar.nome}
+            <span className="sr-only"> (abre o mapa em nova aba)</span>
+          </a>
+        </p>
+      ) : null}
+    </li>
+  )
+}
 
 export default async function AjudaPage() {
   const payload = await getPayloadClient()
-  const [rede, faq] = await Promise.all([
+  const [textos, rede, faq] = await Promise.all([
+    getTextos(),
     payload
       .find({
         collection: 'rede-protecao',
         where: { _status: { equals: 'published' } },
+        sort: 'nome',
         limit: 100,
         depth: 0,
       })
-      .catch(() => ({ docs: [] as RedeProtecao[] })),
+      .catch(() => null),
     payload
       .find({
         collection: 'faq',
@@ -45,7 +113,9 @@ export default async function AjudaPage() {
       .catch(() => ({ docs: [] as Faq[] })),
   ])
 
-  const pontos: Ponto[] = (rede.docs as RedeProtecao[]).flatMap((r) => {
+  const t = textos.ajuda
+  const canais = canaisDiscaveis(textos.protecao.canais)
+  const lugares: Lugar[] = ((rede?.docs ?? []) as RedeProtecao[]).flatMap((r) => {
     const nome = publicText(r.nome)
     if (!nome) return []
     return [
@@ -55,192 +125,115 @@ export default async function AjudaPage() {
         tipo: r.tipo,
         endereco: publicText(r.endereco),
         telefone: publicText(r.telefone),
-        lat: r.lat,
-        lng: r.lng,
+        horario: publicText(r.horario),
       },
     ]
   })
-  const faqItems = (faq.docs as Faq[]).flatMap((f) => {
-    const pergunta = publicText(f.pergunta)
-    const resposta = publicText(f.resposta)
-    return pergunta && resposta && !containsUnverifiedMarker([pergunta, resposta])
-      ? [{ pergunta, resposta }]
-      : []
+  const conselhos = lugares.filter((l) => l.tipo === 'ct').sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+  const outros = TIPO_ORDEM.map((tipo) => ({
+    tipo,
+    itens: lugares.filter((l) => (TIPO_ORDEM.includes(l.tipo) ? l.tipo : 'outro') === tipo),
+  })).filter((grupo) => grupo.itens.length)
+
+  const pontos: MapPoint[] = ((rede?.docs ?? []) as RedeProtecao[]).flatMap((r) => {
+    const nome = publicText(r.nome)
+    if (!nome) return []
+    const fallback = COORDENADAS_APROXIMADAS[nome]
+    const lat = typeof r.lat === 'number' ? r.lat : fallback?.[0]
+    const lng = typeof r.lng === 'number' ? r.lng : fallback?.[1]
+    if (lat === undefined || lng === undefined) return []
+    return [
+      {
+        id: r.id,
+        nome,
+        lat,
+        lng,
+        color: TIPO_COR[r.tipo] ?? TIPO_COR.outro,
+        endereco: publicText(r.endereco),
+        telefone: publicText(r.telefone),
+      },
+    ]
   })
-  const faqLd = faqItems.length
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: faqItems.map((item) => ({
-          '@type': 'Question',
-          name: item.pergunta,
-          acceptedAnswer: { '@type': 'Answer', text: item.resposta },
-        })),
-      }
-    : null
 
   return (
     <>
-      <Hero
-        eyebrow="Proteção começa com o canal certo"
-        titulo="Uma criança ou adolescente precisa de ajuda?"
-        texto="Escolha a situação mais próxima da sua. Em perigo imediato, ligue 190."
-      />
+      <PageHeader title={t.titulo} lead={t.introducao} />
+      <QuickExit />
 
-      {faqLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqLd) }}
-        />
-      ) : null}
-
-      <div className="wrap" id="emergencia">
-        <Reveal>
-          <div className="help-cards">
-            <div className="hc urgent">
-              <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
-              </svg>
-              <div>
-                <h2>É uma emergência</h2>
-                <p>Risco imediato à vida ou à integridade de uma criança ou adolescente.</p>
-                <div className="num">
-                  <a href="tel:190" aria-label="Ligar para a Polícia Militar no número 190">
-                    190
-                  </a>
-                </div>
-                <div className="when">Polícia Militar: atendimento imediato, 24 horas.</div>
-              </div>
-            </div>
-            <div className="hc">
-              <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 11l18-5v12L3 18zM11 9v6" />
-              </svg>
-              <div>
-                <h2>Quero denunciar uma violação de direitos</h2>
-                <p>Use este canal em casos de violência, negligência, abuso ou suspeita.</p>
-                <div className="num">
-                  <a href="tel:100" aria-label="Ligar para o Disque 100">
-                    Disque 100
-                  </a>
-                </div>
-                <div className="when">
-                  Atendimento gratuito e disponível 24 horas. A denúncia pode ser anônima.
-                </div>
-              </div>
-            </div>
-            <div className="hc">
-              <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="7" r="3" />
-                <path d="M12 10v6m-4 5 4-5 4 5" />
-              </svg>
-              <div>
-                <h2>Sou criança ou adolescente e preciso falar com alguém</h2>
-                <p>
-                  Se algo está machucando, assustando ou ameaçando você, peça ajuda. A culpa não é
-                  sua.
-                </p>
-                <div className="num">
-                  <a href="tel:100" aria-label="Ligar para o Disque 100">
-                    Disque 100
-                  </a>
-                </div>
-                <div className="when">A ligação é gratuita. Você pode denunciar sem se identificar.</div>
-              </div>
-            </div>
-            <div className="hc" id="conselhos-tutelares">
-              <svg className="icn ic" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 21s7-5 7-11a7 7 0 0 0-14 0c0 6 7 11 7 11Z" />
-                <circle cx="12" cy="10" r="2.5" />
-              </svg>
-              <div>
-                <h2>Conselhos Tutelares</h2>
-                <p>
-                  <b>1º Conselho Tutelar</b>
-                </p>
-                <div className="num num-list">
-                  <a href="tel:+551235500513">(12) 3550-0513</a>
-                  <a href="tel:+551235500514">(12) 3550-0514</a>
-                </div>
-                <p style={{ marginTop: 14 }}>
-                  <b>2º Conselho Tutelar (Moreira César)</b>
-                </p>
-                <div className="num num-list">
-                  <a href="tel:+551236411688">(12) 3641-1688</a>
-                </div>
-                <div className="when">
-                  Av. das Hortências, 168, Vale das Acácias. Confirme o plantão antes de se
-                  deslocar.
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="calm">
-            <svg
-              className="icn ic"
-              viewBox="0 0 24 24"
-              style={{ color: 'var(--alert)' }}
-              aria-hidden="true"
-            >
-              <rect x="5" y="11" width="14" height="9" rx="2" />
-              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-            </svg>
-            <div>
-              <b>Sua segurança importa.</b> A denúncia pelo Disque 100 pode ser anônima. Em caso de
-              perigo imediato, ligue 190 antes de qualquer outra coisa.
-            </div>
-          </div>
-          <p style={{ color: 'var(--ink-2)', marginTop: 16 }}>
-            Fontes: serviço federal do{' '}
-            <a href={DISQUE_100_URL} target="_blank" rel="noopener noreferrer">
-              Disque 100
-            </a>
-            , página municipal de{' '}
-            <a href={TELEFONES_UTEIS_URL} target="_blank" rel="noopener noreferrer">
-              telefones úteis
-            </a>{' '}
-            e comunicado sobre a{' '}
-            <a href={SEGUNDO_CT_URL} target="_blank" rel="noopener noreferrer">
-              sede do Conselho Tutelar de Moreira César
-            </a>
-            .
-          </p>
-        </Reveal>
-      </div>
-
-      <section className="band" id="rede" style={{ borderTop: '1px solid var(--line)' }}>
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-head">
-              <div>
-                <span className="eyebrow">Rede de proteção</span>
-                <h2>Onde encontrar apoio na cidade</h2>
-                <p>
-                  Filtre por tipo de serviço. Os pontos no mapa são aproximados; confirme endereço
-                  e horário antes de sair.
-                </p>
-              </div>
-            </div>
-            <MapaRede pontos={pontos} />
-          </Reveal>
+      <Section id="emergencia" title="Ligue para o canal certo">
+        <ul className="help-cards">
+          {canais.map((canal) => (
+            <li key={`${canal.tipo}-${canal.situacao}`} className={`help-card help-card--${canal.tipo}`}>
+              <h3 className="help-card__title">{canal.situacao}</h3>
+              <p>{canal.descricao}</p>
+              {canal.href ? (
+                <a
+                  className={`btn help-card__call ${canal.tipo === 'emergencia' ? 'btn--danger' : 'btn--primary'}`}
+                  href={canal.href}
+                >
+                  Ligar: {canal.numero}
+                </a>
+              ) : null}
+              {canal.observacao ? <p className="help-card__note">{canal.observacao}</p> : null}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-6">
+          <Callout tone="signal" as="h3" title={textos.protecao.avisoTitulo}>
+            <p>{textos.protecao.aviso}</p>
+          </Callout>
         </div>
-      </section>
+      </Section>
 
-      {faqItems.length ? (
-        <section className="band">
-          <div className="wrap">
-            <Reveal>
-              <div className="sec-head">
-                <div>
-                  <span className="eyebrow">Dúvidas frequentes</span>
-                  <h2>Dúvidas frequentes</h2>
-                </div>
+      <Section id="conselhos-tutelares" title={t.conselhosTitulo} lead={t.conselhosTexto} alt>
+        {conselhos.length ? (
+          <ul className="places">
+            {conselhos.map((lugar) => (
+              <PlaceCard key={lugar.id} lugar={lugar} />
+            ))}
+          </ul>
+        ) : (
+          <EmptyState as="h3" title="Contatos em atualização">
+            Enquanto isso, ligue para o Disque 100 ou, em perigo imediato, para o 190.
+          </EmptyState>
+        )}
+      </Section>
+
+      <Section id="rede" title={t.redeTitulo} lead={t.redeTexto}>
+        {rede === null ? (
+          <EmptyState as="h3" title="Não foi possível carregar a rede de proteção">
+            Tente de novo em alguns minutos. Os telefones de emergência acima continuam valendo.
+          </EmptyState>
+        ) : outros.length ? (
+          <>
+            {outros.map((grupo) => (
+              <div key={grupo.tipo}>
+                <h3 className="group-title">{TIPO_LABEL[grupo.tipo]}</h3>
+                <ul className="places">
+                  {grupo.itens.map((lugar) => (
+                    <PlaceCard key={lugar.id} lugar={lugar} headingLevel={4} />
+                  ))}
+                </ul>
               </div>
-              <FaqAccordion items={faqItems} />
-            </Reveal>
-          </div>
-        </section>
+            ))}
+            <MapaRede pontos={pontos} />
+          </>
+        ) : (
+          <EmptyState as="h3" title="Lista de serviços em atualização">
+            Use os telefones de emergência e dos Conselhos Tutelares acima.
+          </EmptyState>
+        )}
+      </Section>
+
+      {publicFaq(faq.docs as Faq[]).length ? (
+        <Section id="duvidas" title="Dúvidas frequentes" alt>
+          <FaqList items={publicFaq(faq.docs as Faq[])} />
+        </Section>
       ) : null}
+
+      <Section>
+        <SourceList items={t.fontes} />
+      </Section>
     </>
   )
 }

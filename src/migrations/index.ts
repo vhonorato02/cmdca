@@ -3,6 +3,7 @@ import * as migration_20260531_190858_add_diretoria from './20260531_190858_add_
 import * as migration_20260719_194302_editorial_safety from './20260719_194302_editorial_safety';
 import * as migration_20260929_150216_payload_upgrade_compatibility from './20260929_150216_payload_upgrade_compatibility';
 import * as migration_20261011_073400_editorial_controls from './20261011_073400_editorial_controls';
+import * as migration_20261026_092854_textos_paginas_pendencias from './20261026_092854_textos_paginas_pendencias';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20261011_073400_editorial_controls.up,
     down: migration_20261011_073400_editorial_controls.down,
-    name: '20261011_073400_editorial_controls'
+    name: '20261011_073400_editorial_controls',
+  },
+  {
+    up: migration_20261026_092854_textos_paginas_pendencias.up,
+    down: migration_20261026_092854_textos_paginas_pendencias.down,
+    name: '20261026_092854_textos_paginas_pendencias'
   },
 ];

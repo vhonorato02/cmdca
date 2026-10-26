@@ -1,0 +1,64 @@
+name: Lighthouse (producao)
+
+# Mede o site publicado em hardware padronizado do GitHub (Lighthouse mobile, 3 rodadas
+# por página, mediana). Roda depois de cada deploy, toda segunda-feira e sob demanda.
+on:
+  workflow_run:
+    workflows: ['Producao (VPS)']
+    types: [completed]
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BASE: ${{ vars.CMDCA_PUBLIC_URL }}
+      PAGES: '/ /ajuda /fmdca /noticias /conselho /reunioes /resolucoes /participe'
+    steps:
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - name: Medir
+        run: |
+          mkdir -p lh
+          npm i -g lighthouse@12 >/dev/null
+          for p in $PAGES; do
+            n=$(echo "${p#/}" | tr '/' '_'); n=${n:-home}
+            for i in 1 2 3; do
+              lighthouse "$BASE$p" --quiet --chrome-flags='--headless=new --no-sandbox' \
+                --output=json --output-path="lh/$n-$i.json" || true
+            done
+          done
+      - name: Resumo (mediana de 3)
+        run: |
+          node - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          const fs = require('fs')
+          const files = fs.readdirSync('lh').filter((f) => f.endsWith('.json'))
+          const byPage = {}
+          for (const f of files) {
+            const r = JSON.parse(fs.readFileSync('lh/' + f, 'utf8'))
+            if (!r.categories?.performance) continue
+            const page = f.replace(/-\d\.json$/, '')
+            ;(byPage[page] ||= []).push(r)
+          }
+          const med = (xs) => xs.sort((a, b) => a - b)[Math.floor(xs.length / 2)]
+          console.log('| Página | Perf | A11y | Boas práticas | SEO | LCP | TBT | CLS | CPU (benchmark) |')
+          console.log('|---|---|---|---|---|---|---|---|---|')
+          for (const [page, rs] of Object.entries(byPage)) {
+            const s = (id) => med(rs.map((r) => Math.round(r.categories[id].score * 100)))
+            const a = (id) => med(rs.map((r) => r.audits[id].numericValue))
+            console.log(`| ${page} | ${s('performance')} | ${s('accessibility')} | ${s('best-practices')} | ${s('seo')} | ${(a('largest-contentful-paint') / 1000).toFixed(1)} s | ${Math.round(a('total-blocking-time'))} ms | ${a('cumulative-layout-shift').toFixed(3)} | ${Math.round(med(rs.map((r) => r.environment.benchmarkIndex)))} |`)
+          }
+          console.log('\nSEO abaixo de 100 é esperado enquanto o domínio é temporário (`noindex`).')
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-mobile
+          path: lh/
+          retention-days: 30

@@ -1,30 +1,36 @@
-# Lighthouse mobile (26/10/2026)
+# Lighthouse mobile em produção (26/10/2026)
 
-Build de produção local (`next build` + `next start`, commit `1b92c76`), Lighthouse 12.8.2 com o perfil mobile padrão: Moto G Power, 4G lento simulado e CPU 4x. Cada página rodou 3 vezes e o relatório guardado é a **mediana** por performance. Os relatórios HTML trazem o JSON completo; o da home também está em `mobile-home.report.json`.
+Medido no site publicado (`https://cmdca.zewithane.vps.brz.dev.br`, commit `e48a7e6`)
+pelo workflow `Lighthouse (producao)`, run
+[40377222536](https://github.com/vhonorato02/cmdca/actions/runs/40377222536), em
+hardware padrão do GitHub (benchmark de CPU ~3000). Lighthouse 12.8.2, perfil mobile
+padrão (Moto G Power, 4G lento simulado, CPU 4x), 3 rodadas por página, mediana.
 
-| Página | Performance | Acessibilidade | Boas práticas | SEO | FCP | LCP | TBT | CLS | Benchmark da CPU |
-|---|---|---|---|---|---|---|---|---|---|
-| home | 79 | 100 | 100 | 100 | 1,0 s | 3,0 s | 610 ms | 0 | 831 |
-| ajuda | 73 | 100 | 100 | 100 | 1,0 s | 3,1 s | 940 ms | 0 | 710 |
-| fmdca | 87 | 100 | 100 | 100 | 0,9 s | 3,0 s | 340 ms | 0 | 1287 |
-| noticias | 76 | 100 | 100 | 100 | 1,0 s | 3,2 s | 640 ms | 0 | 768 |
-| reunioes | 74 | 100 | 100 | 100 | 1,2 s | 3,2 s | 810 ms | 0 | 1062 |
-| privacidade | 81 | 100 | 100 | 100 | 1,0 s | 3,0 s | 530 ms | 0 | 1245 |
+| Página | Perf | A11y | Boas práticas | SEO | LCP | TBT | CLS |
+|---|---|---|---|---|---|---|---|
+| home | 97 | 100 | 100 | 69* | 2,2 s | 67 ms | 0,000 |
+| ajuda | 98 | 100 | 100 | 69* | 2,2 s | 35 ms | 0,000 |
+| conselho | 98 | 100 | 100 | 69* | 2,2 s | 68 ms | 0,000 |
+| fmdca | 98 | 100 | 100 | 69* | 2,2 s | 74 ms | 0,000 |
+| noticias | 98 | 100 | 100 | 69* | 2,0 s | 79 ms | 0,002 |
+| participe | 98 | 100 | 100 | 69* | 2,2 s | 67 ms | 0,000 |
+| resolucoes | 98 | 100 | 100 | 69* | 2,0 s | 37 ms | 0,000 |
+| reunioes | 98 | 100 | 100 | 69* | 2,0 s | 37 ms | 0,019 |
 
-Antes do redesenho, a home na Vercel marcava 67 de performance, com LCP de 4,4 s e TBT de 360 ms (`docs/AUDIT.md`). A medição foi feita em outra máquina e outra rede, então não é comparação direta.
+\* A única auditoria de SEO reprovada é `is-crawlable`: o domínio temporário envia
+`noindex` de propósito (`SITE_INDEXABLE=false`). Com o build local em
+`SITE_INDEXABLE=true`, o SEO deu 100 em todas as páginas. Medir de novo depois da
+troca para `www.cmdcapinda.org`.
 
-## Como ler
-- **Acessibilidade, boas práticas e SEO ficaram em 100 em todas as páginas.** O SEO foi medido com `SITE_INDEXABLE=true`, a configuração prevista para o domínio final. Com o valor atual da VPS (`false`), o portal envia `noindex` de propósito e o item "página indexável" reprova.
-- **A meta de 95 em performance não foi atingida nesta máquina.** A CPU (Intel i3-1215U) oscilou entre 709 e 1287 no índice de benchmark do Lighthouse, ou seja, abaixo da faixa para a qual a simulação 4x foi calibrada. Por isso a mesma página variou até 20 pontos entre rodadas, sem mudança de código. Vale medir de novo no PageSpeed Insights quando o domínio final estiver no ar.
-- O que pesa: o LCP (o título da capa) é estimado depois do download e da hidratação do JavaScript do Next/React (cerca de 160 KB comprimidos). O TBT vem dessa hidratação e do layout inicial. O CLS é 0 em todas as páginas.
+## Arquivos
+`mobile-<página>.json.gz` é o relatório mediano de cada página. Para ver, descompacte
+e abra no [Lighthouse Viewer](https://googlechrome.github.io/lighthouse/viewer/).
 
-## O que já foi feito para performance
-- Archivo dos títulos virou uma instância local de 25 KB (antes 90 KB), com `display: optional`.
-- Links internos sem pré-busca automática (`AppLink`): a home deixou de fazer 9 requisições de rota durante o carregamento.
-- VLibras, mapa (Leaflet e OpenStreetMap) e simulador só carregam quando pedidos ou na página em que são usados. Sem carrossel, animação de entrada ou filtros SVG.
-- Filtros e paginação por formulário GET, sem JavaScript.
+## Como medir de novo
+O workflow roda depois de cada deploy, toda segunda-feira e sob demanda
+(`gh workflow run lighthouse.yml`). Ele falha se alguma categoria ficar abaixo de 95
+(SEO só é cobrado com `SITE_INDEXABLE=true`). Para resumir artefatos baixados:
+`node scripts/lighthouse-summary.mjs <pasta> 95`.
 
-## Próximos passos possíveis
-- Medir no PageSpeed Insights no domínio final, com CPU de referência.
-- Avaliar `experimental.inlineCss` para tirar a requisição de CSS do caminho crítico.
-- Reduzir o JavaScript de cliente que ainda resta (`MainNav` e `A11yTools`).
+Medições nesta máquina de desenvolvimento não valem: a CPU fica abaixo da faixa
+calibrada da simulação e a nota de performance oscila até 20 pontos.

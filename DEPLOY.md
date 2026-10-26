@@ -69,14 +69,37 @@ Também dá para fazer pelo Dockge (`https://zewithane-1.tail731312.ts.net:10000
 
 ## Trocar para o domínio definitivo (Wix)
 
-1. No painel do Wix: **Domínios → (domínio) → Registros DNS**.
-   - Crie `CNAME www → cmdca.zewithane.vps.brz.dev.br`.
-   - Para o domínio raiz, crie um registro `A @ → 177.107.94.31`. Esse IP é dinâmico; se mudar, o `A` precisa ser atualizado. Prefira manter o raiz redirecionando para o `www`, que é CNAME.
-2. Na VPS:
-   - `site dominio cmdca www.<dominio>,<dominio>`;
-   - `site config cmdca`, com `NEXT_PUBLIC_SERVER_URL=https://www.<dominio>` e `SITE_INDEXABLE=true`.
-3. No GitHub: mude `CMDCA_PUBLIC_URL` para a nova origem e faça um push (ou rode o workflow manualmente) para rebuildar.
-4. Depois de validar: desligue o projeto na Vercel e os recursos legados do Neon e do R2.
+Domínio definitivo: **www.cmdcapinda.org** (canônico). O raiz `cmdcapinda.org` e o
+antigo `pt.cmdcapinda.org` respondem com 301 para o `www`, preservando caminho e query
+(ADR 0007). O Wix não tem site conectado nem histórico no Wayback, então não há URLs
+antigas para redirecionar além dos hosts.
+
+1. **Dono, no painel do Wix:** **Domínios → cmdcapinda.org → Registros DNS**.
+   - Apague os registros `A`/`CNAME` antigos de `@`, `www` e `pt` que apontam para o Wix.
+   - `CNAME www → cmdca.zewithane.vps.brz.dev.br`
+   - `CNAME pt → cmdca.zewithane.vps.brz.dev.br`
+   - `A @ → 177.107.94.31`. Esse IP é dinâmico; se mudar, só o `A` precisa ser atualizado
+     (o `www` segue sozinho pelo CNAME).
+2. **Esperar o DNS:** `nslookup www.cmdcapinda.org 1.1.1.1` deve mostrar o IP da VPS.
+3. **Na VPS** (o domínio temporário continua respondendo e passa a redirecionar):
+   ```bash
+   site dominio cmdca www.cmdcapinda.org,cmdcapinda.org,pt.cmdcapinda.org,cmdca.zewithane.vps.brz.dev.br \
+     --redirecionar cmdcapinda.org,pt.cmdcapinda.org,cmdca.zewithane.vps.brz.dev.br --para www.cmdcapinda.org
+   sudo sed -i -e 's#^NEXT_PUBLIC_SERVER_URL=.*#NEXT_PUBLIC_SERVER_URL=https://www.cmdcapinda.org#' \
+     -e 's#^SITE_INDEXABLE=.*#SITE_INDEXABLE=true#' /srv/sites/cmdca/app.env
+   ```
+4. **No GitHub** (rebuild com a nova origem e deploy pelo CI):
+   ```bash
+   gh variable set CMDCA_PUBLIC_URL --body https://www.cmdcapinda.org
+   gh variable set SITE_INDEXABLE --body true
+   gh workflow run deploy.yml --ref main
+   ```
+5. **Validar:** `curl -I https://cmdcapinda.org/x?y=1` → `301` para `https://www.cmdcapinda.org/x?y=1`;
+   `https://www.cmdcapinda.org/robots.txt` sem `Disallow: /`; certificado válido nos três hosts.
+6. Depois de validar: desligue o projeto na Vercel e os recursos legados do Neon e do R2.
+
+Para voltar atrás: `site dominio cmdca cmdca.zewithane.vps.brz.dev.br`, restaure as duas
+linhas do `app.env` e as variáveis do GitHub, e rode o deploy de novo.
 
 ## Restaurar backup
 

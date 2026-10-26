@@ -11,7 +11,11 @@ import { CATEGORIA_LABEL } from '@/components/NewsCard'
 import { ArrowLeft } from '@/components/ui/icons'
 import { Breadcrumb } from '@/components/ui/PageHeader'
 import { formatDateLong } from '@/lib/format'
-import { editorialPreviewMetadata, isEditorialPreviewUser } from '@/lib/editorialPreview'
+import {
+  editorialPreviewMetadata,
+  isEditorialPreviewUser,
+  isValidEditorialSlug,
+} from '@/lib/editorialPreview'
 import { getPayloadClient } from '@/lib/payload'
 import { breadcrumbJsonLd, serializeJsonLd } from '@/lib/seo'
 import {
@@ -29,6 +33,9 @@ import type { Noticia } from '@/payload-types'
 export const revalidate = 300
 
 async function getPost(slug: string): Promise<Noticia | null> {
+  // Endereços fora do formato de slug viram 404 sem consultar o banco
+  // (bytes inválidos faziam o Postgres recusar a consulta e a página dar 500).
+  if (!isValidEditorialSlug(slug)) return null
   const payload = await getPayloadClient()
   const res = await payload
     .find({
@@ -74,7 +81,9 @@ export async function generateMetadata({
   const { slug } = await params
   const { isEnabled } = await draftMode()
   if (isEnabled) return editorialPreviewMetadata()
-  const post = await getPost(slug)
+  // A metadata nunca derruba a página: se o banco falhar, o corpo da página
+  // cai na fronteira de erro (error.tsx) com o layout do site.
+  const post = await getPost(slug).catch(() => null)
   if (!post) {
     return {
       title: { absolute: 'Notícia não encontrada | CMDCA de Pindamonhangaba' },

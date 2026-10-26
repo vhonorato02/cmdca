@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
 
+import { usesCiFixtures } from './target'
+
 test('simulador limita valores vazios, negativos e extremos sem produzir NaN', async ({ page }) => {
   await page.goto('/fmdca')
   const amount = page.getByRole('spinbutton', { name: 'Seu imposto devido' })
@@ -84,7 +86,7 @@ for (const [route, labels] of Object.entries(STATUS_LABELS)) {
     await page.goto(route)
     const items = page.locator('main ul.act-list > li')
     const count = await items.count()
-    if (process.env.GITHUB_ACTIONS === 'true') {
+    if (usesCiFixtures) {
       expect(count, `${route} precisa exercitar conteúdo publicado no CI`).toBeGreaterThan(0)
     }
     if (!count) {
@@ -109,7 +111,7 @@ for (const [route, labels] of Object.entries(STATUS_LABELS)) {
 test('fixtures publicadas preservam situação suspensa e revogada sem listas vazias', async ({
   page,
 }) => {
-  test.skip(process.env.GITHUB_ACTIONS !== 'true', 'Only isolated CI fixtures')
+  test.skip(!usesCiFixtures, 'Only isolated CI fixtures')
   for (const [route, name, status] of [
     ['/entidades', 'CI suspended organization', 'Situação: Registro suspenso'],
     ['/resolucoes', 'CI revoked resolution', 'Situação: Revogada'],

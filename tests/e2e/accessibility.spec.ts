@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
+import { usesCiFixtures } from './target'
+
 const PUBLIC_ROUTES = [
   '/',
   '/acessibilidade',
@@ -165,20 +167,19 @@ test('links que abrem nova aba são seguros e PDFs públicos continuam acessíve
     const pagePdfUrls = await page.locator('a[href*=".pdf" i]').evaluateAll((links) =>
       links.map((link) => ({
         href: (link as HTMLAnchorElement).href,
-        name: (
-          link.getAttribute('aria-label') ||
-          (link as HTMLElement).innerText ||
-          ''
-        ).trim(),
+        name: (link.getAttribute('aria-label') || (link as HTMLElement).innerText || '').trim(),
       })),
     )
     for (const link of pagePdfUrls) {
-      expect(link.name, `Link de PDF sem nome explícito: ${link.href}`).toMatch(/pdf|documento|ata/i)
+      expect(link.name, `Link de PDF sem nome explícito: ${link.href}`).toMatch(
+        /pdf|documento|ata/i,
+      )
       pdfUrls.add(link.href)
     }
   }
 
-  if (process.env.CI) expect(pdfUrls.size, 'CI fixtures publish at least one PDF').toBeGreaterThan(0)
+  if (usesCiFixtures)
+    expect(pdfUrls.size, 'CI fixtures publish at least one PDF').toBeGreaterThan(0)
   for (const url of [...pdfUrls].slice(0, 10)) {
     const response = await request.get(url)
     expect(response.ok(), `PDF indisponível: ${url} (${response.status()})`).toBeTruthy()
@@ -216,7 +217,8 @@ test('preferência por movimento reduzido desativa movimentos não essenciais', 
       .map((element) => {
         const style = getComputedStyle(element)
         return {
-          element: element.tagName.toLowerCase() + (element.className ? `.${element.className}` : ''),
+          element:
+            element.tagName.toLowerCase() + (element.className ? `.${element.className}` : ''),
           animation: style.animationDuration,
           transition: style.transitionDuration,
         }
@@ -235,7 +237,10 @@ test('preferência por movimento reduzido desativa movimentos não essenciais', 
   expect(longMotion).toEqual([])
 })
 
-test('alto contraste do sistema mantém foco e controles identificáveis', async ({ page, browserName }) => {
+test('alto contraste do sistema mantém foco e controles identificáveis', async ({
+  page,
+  browserName,
+}) => {
   test.skip(browserName !== 'chromium', 'forced-colors é verificado no Chromium')
   await page.emulateMedia({ forcedColors: 'active' })
   await page.goto('/', { waitUntil: 'domcontentloaded' })

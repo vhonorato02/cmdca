@@ -100,11 +100,12 @@ jobs:
       - name: Verificar paginas e login no artefato de producao
         run: |
           mkdir -p test-results
+          # A mídia vive em disco, como na VPS: o runner (fixtures) e o container
+          # compartilham a mesma pasta, montada onde a imagem espera (/app/media).
           docker run --detach --name cmdca-quality --network host \
+            -v "$MEDIA_DIR:/app/media" \
             -e DATABASE_URI -e DATABASE_URI_UNPOOLED -e PAYLOAD_SECRET \
-            -e NEXT_PUBLIC_SERVER_URL -e NEXT_PUBLIC_R2_PUBLIC_URL \
-            -e S3_BUCKET -e S3_ENDPOINT -e S3_REGION -e S3_ACCESS_KEY_ID \
-            -e S3_SECRET_ACCESS_KEY -e ENFORCE_PRODUCTION_ENV -e GITHUB_ACTIONS \
+            -e NEXT_PUBLIC_SERVER_URL -e ENFORCE_PRODUCTION_ENV -e GITHUB_ACTIONS \
             cmdca-quality:${{ github.sha }}
           node scripts/ci-smoke-production.mjs
           pnpm exec playwright test

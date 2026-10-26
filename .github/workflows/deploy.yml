@@ -78,6 +78,8 @@ jobs:
     needs: image
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      packages: read # o GITHUB_TOKEN do job vai pelo stdin só para o pull da imagem
     environment:
       name: production
       url: ${{ vars.CMDCA_PUBLIC_URL }}
@@ -88,7 +90,11 @@ jobs:
           printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
           printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
       - name: Deploy sem downtime (rollback automatico se falhar)
-        run: ssh -i ~/.ssh/deploy -p "${{ vars.DEPLOY_PORT || '22322' }}" "deploy@${{ vars.DEPLOY_HOST }}" "deploy ${{ github.sha }}"
+        # Credencial efêmera do GHCR pelo stdin: o servidor usa só neste pull e apaga.
+        run: |
+          printf '%s:%s\n' "${{ github.actor }}" "${{ secrets.GITHUB_TOKEN }}" |
+            ssh -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20 \
+              -p "${{ vars.DEPLOY_PORT || '22322' }}" "deploy@${{ vars.DEPLOY_HOST }}" "deploy ${{ github.sha }}"
       - name: Teste de fumaca e aquecimento das paginas
         env:
           BASE: ${{ vars.CMDCA_PUBLIC_URL }}

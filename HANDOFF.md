@@ -1,4 +1,33 @@
 # HANDOFF
+Atualizado: 2026-10-26 (rodada "zerar VPS + produção")
+
+## Rodada de 26/10/2026 — em andamento
+
+Decisões do dono (Q/A de 26/10): zerar a VPS e reconstruí-la como plataforma
+multi-site (CMDCA é o 1º site), com Cockpit; tudo na `main`, direto em produção.
+Conteúdo: pesquisar fontes públicas de Pindamonhangaba-SP (resultado em
+`docs/research/conteudo-pesquisa.md`). Usuários do CMS: dono (perfil dev/admin) e
+conselheiros (editor geral); credenciais iniciais foram passadas em chat e
+devem ir só para env/seed local, nunca para o repo. Custo zero (free tier/VPS).
+Visual: redesenho moderno. Domínio no Wix: avisar o dono quando for configurar o DNS.
+E-mail: criar SMTP gratuito (ex.: Brevo). Dados que faltam (encarregado LGPD,
+FMDCA etc.) ficam como `XXXX` e aparecem como pendência no CMS. Dados saem do Neon/R2 para a VPS
+e a Vercel será desligada depois.
+
+Feito: backup completo da VPS antes de zerar
+(`/tmp/pre-zerar-20261026-0005.tar` na VPS e `C:\Users\Ze\Backups\vps-zewithane\`,
+SHA256 34ffda8f…e0a5 conferido nos dois lados). Inclui pg_dumpall, quarau.dump,
+cmdca_restore dump, /srv, /etc, lista de imagens.
+Preservar na VPS: /home/zewithane (T3, agentes, ~/quarau), Tailscale,
+/usr/local/bin/autostart.sh (DNS dinâmico do provedor), vmtoolsd.
+
+Em andamento: subagente escrevendo o repo privado `vhonorato02/vps-platform`
+(Caddy + compose por site + Postgres por site + CLI `site` + restic + Cockpit via
+Tailscale + deploy por forced-command SSH). Depois: zerar /srv e containers,
+instalar a plataforma, refatorar o app (env Zod, Postgres local, mídia em disco,
+redesenho), migrar dados do Neon, publicar em cmdca.zewithane.vps.brz.dev.br.
+
+## Rodadas anteriores
 Atualizado: 2026-10-13 19:15
 
 ## Rodada de 13/10/2026 (UX independente + pacote editorial)

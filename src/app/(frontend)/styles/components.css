@@ -297,9 +297,6 @@
     margin-bottom: var(--s-4);
   }
 
-  .skeleton--block {
-    height: 7rem;
-  }
 
   @keyframes skeleton {
     from {
@@ -529,8 +526,7 @@
     min-width: min(100%, 12rem);
   }
 
-  .field label,
-  .field__label {
+  .field label {
     font-size: var(--fs-sm);
     font-weight: 700;
     color: var(--c-heading);

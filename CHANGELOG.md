@@ -2,6 +2,27 @@
 
 As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https://keepachangelog.com/pt-BR/) e o versionamento semântico.
 
+## [Não publicado]
+
+### Alterado
+
+- redesenho "Sinal amarelo" (docs/design): paleta medida no logo (anil e amarelo), Archivo condensada nos títulos e numerais, Atkinson Hyperlegible Next no texto, foco anil com halo amarelo;
+- CSS reescrito do zero em cinco camadas (`tokens`, `base`, `layout`, `components`, `pages`), sem regras mortas, com papéis semânticos de cor (o alto contraste troca só os tokens) e `!important` apenas no movimento reduzido;
+- faixa de proteção no topo e barra fixa no celular com 190, Disque 100 e Conselho Tutelar a um toque, vindos do CMS;
+- todas as páginas públicas refeitas com componentes tipados (cabeçalho de página, seções, lista de atos, estados vazio e de erro, paginação), filtros por URL sem JavaScript e 404/500 com caminhos de saída;
+- botão "Sair rápido" na página de ajuda; menu móvel com foco preso, Esc e o botão de fechar sempre visível;
+- links internos sem pré-busca automática e fonte de títulos local de 25 KB, para pesar menos em celulares;
+- painel com a marca do portal e lista de pendências (dados em `XXXX` ou sem conferência).
+
+### Adicionado
+
+- global **Textos das páginas** e coleção **Páginas institucionais** (privacidade, termos de uso, acessibilidade e créditos), com migration que publica o conteúdo inicial;
+- campos de endereço, horário e encarregado de dados (LGPD) em Configurações institucionais e links "Sobre o site" na navegação do rodapé.
+
+### Removido
+
+- carrosséis, animação de entrada por seção, filtro de grão, ilustrações genéricas e componentes sem uso (`Charts`, `StatsBand` e os cabeçalho e rodapé antigos).
+
 ## [1.0.0] — 2026-07-19
 
 ### Adicionado

@@ -9,6 +9,7 @@ import {
   relatedActs,
   RESOLUCAO_SITUACAO,
   statusInfo,
+  isPdfUrl,
 } from './officialActs'
 
 describe('situação de atos e registros', () => {
@@ -43,7 +44,13 @@ describe('relações de retificação', () => {
   })
 
   it('encontra quem retifica o original, inclusive por id não populado', () => {
-    const porId = { id: 5, numero: '05/2026', titulo: 'Por id', _status: 'published', retifica: [1] }
+    const porId = {
+      id: 5,
+      numero: '05/2026',
+      titulo: 'Por id',
+      _status: 'published',
+      retifica: [1],
+    }
     const refs = amendedBy(original, [original, retificacao, porId, { ...rascunho, retifica: [1] }])
     expect(refs.map((ref) => ref.numero)).toEqual(['04/2026', '05/2026'])
   })
@@ -70,5 +77,14 @@ describe('documentos e datas', () => {
     expect(isPastDate('2026-10-01T00:00:00.000Z', today)).toBe(false)
     expect(isPastDate('data inválida', today)).toBe(false)
     expect(isPastDate(null, today)).toBe(false)
+  })
+})
+
+describe('isPdfUrl', () => {
+  it('reconhece link direto para PDF, com ou sem query', () => {
+    expect(isPdfUrl('https://exemplo.test/edital.PDF')).toBe(true)
+    expect(isPdfUrl('https://exemplo.test/edital.pdf?v=2#p4')).toBe(true)
+    expect(isPdfUrl('https://exemplo.test/edicao/123')).toBe(false)
+    expect(isPdfUrl(undefined)).toBe(false)
   })
 })

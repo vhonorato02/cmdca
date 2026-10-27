@@ -1,7 +1,13 @@
 import type { Metadata } from 'next'
 
 import { ActFilters, hrefWith, pickParam, yearOf, yearOptions } from '@/components/ActFilters'
-import { amendedBy, EDITAL_SITUACAO, relatedActs, statusInfo } from '@/components/officialActs'
+import {
+  amendedBy,
+  EDITAL_SITUACAO,
+  relatedActs,
+  statusInfo,
+  isPdfUrl,
+} from '@/components/officialActs'
 import { ActItem, ActList, StatusPill, Tag } from '@/components/ui/ActList'
 import { ButtonLink } from '@/components/ui/Button'
 import { ExternalIcon } from '@/components/ui/icons'
@@ -55,7 +61,12 @@ export default async function EditaisPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const [textos, config, docs, params] = await Promise.all([getTextos(), getConfiguracoes(), load(), searchParams])
+  const [textos, config, docs, params] = await Promise.all([
+    getTextos(),
+    getConfiguracoes(),
+    load(),
+    searchParams,
+  ])
   const tribuna = publicHref(config?.tribunaUrl)
   const ano = pickParam(params.ano)
   const tipo = pickParam(params.tipo)
@@ -102,7 +113,12 @@ export default async function EditaisPage({
               <ActFilters
                 action="/editais"
                 fields={[
-                  { name: 'ano', label: 'Ano', options: yearOptions(docs.map((d) => d.data)), value: ano },
+                  {
+                    name: 'ano',
+                    label: 'Ano',
+                    options: yearOptions(docs.map((d) => d.data)),
+                    value: ano,
+                  },
                   {
                     name: 'tipo',
                     label: 'Tipo',
@@ -143,7 +159,8 @@ export default async function EditaisPage({
                           <>
                             {e.prazo ? (
                               <p className="act__meta">
-                                Prazo final: <time dateTime={e.prazo}>{formatDateLong(e.prazo)}</time>
+                                Prazo final:{' '}
+                                <time dateTime={e.prazo}>{formatDateLong(e.prazo)}</time>
                               </p>
                             ) : null}
                             {retifica.length ? (
@@ -152,7 +169,11 @@ export default async function EditaisPage({
                                 {retifica.map((ref, index) => (
                                   <span key={ref.id}>
                                     {index ? ', ' : null}
-                                    {ref.listed ? <a href={`#${anchor(ref.id)}`}>{refLabel(ref.numero)}</a> : refLabel(ref.numero)}
+                                    {ref.listed ? (
+                                      <a href={`#${anchor(ref.id)}`}>{refLabel(ref.numero)}</a>
+                                    ) : (
+                                      refLabel(ref.numero)
+                                    )}
                                   </span>
                                 ))}
                               </p>
@@ -190,7 +211,7 @@ export default async function EditaisPage({
                                   href={linkTribuna}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  aria-label={`Ver publicação oficial do edital${numero ? ` ${numero}` : ''} (abre em nova aba)`}
+                                  aria-label={`Ver publicação oficial do edital${numero ? ` ${numero}` : ''}${isPdfUrl(linkTribuna) ? ', em PDF,' : ''} (abre em nova aba)`}
                                 >
                                   Publicação oficial
                                 </a>
@@ -207,10 +228,18 @@ export default async function EditaisPage({
               ) : (
                 <EmptyState
                   title="Nenhum edital com esses filtros"
-                  action={<ButtonLink href="/editais" variant="secondary">Limpar filtros</ButtonLink>}
+                  action={
+                    <ButtonLink href="/editais" variant="secondary">
+                      Limpar filtros
+                    </ButtonLink>
+                  }
                 />
               )}
-              <Pagination current={page} total={total} buildHref={(p) => hrefWith('/editais', { ano, tipo }, p)} />
+              <Pagination
+                current={page}
+                total={total}
+                buildHref={(p) => hrefWith('/editais', { ano, tipo }, p)}
+              />
             </>
           ) : (
             <EmptyState

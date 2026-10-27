@@ -1,7 +1,13 @@
 import type { Metadata } from 'next'
 
 import { ActFilters, hrefWith, pickParam, yearOf, yearOptions } from '@/components/ActFilters'
-import { amendedBy, relatedActs, RESOLUCAO_SITUACAO, statusInfo } from '@/components/officialActs'
+import {
+  amendedBy,
+  relatedActs,
+  RESOLUCAO_SITUACAO,
+  statusInfo,
+  isPdfUrl,
+} from '@/components/officialActs'
 import { ActItem, ActList, StatusPill } from '@/components/ui/ActList'
 import { ButtonLink } from '@/components/ui/Button'
 import { ExternalIcon } from '@/components/ui/icons'
@@ -37,7 +43,9 @@ async function load(): Promise<Resolucoe[] | null> {
       limit: 1000,
       depth: 1,
     })
-    return (res.docs as Resolucoe[]).filter((item) => publicText(item.numero) && publicText(item.titulo))
+    return (res.docs as Resolucoe[]).filter(
+      (item) => publicText(item.numero) && publicText(item.titulo),
+    )
   } catch {
     return null
   }
@@ -48,7 +56,12 @@ export default async function ResolucoesPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const [textos, config, docs, params] = await Promise.all([getTextos(), getConfiguracoes(), load(), searchParams])
+  const [textos, config, docs, params] = await Promise.all([
+    getTextos(),
+    getConfiguracoes(),
+    load(),
+    searchParams,
+  ])
   const tribuna = publicHref(config?.tribunaUrl)
   const ano = pickParam(params.ano)
   const filtered = (docs ?? []).filter((r) => ano === 'todos' || yearOf(r.data) === ano)
@@ -91,7 +104,14 @@ export default async function ResolucoesPage({
             <>
               <ActFilters
                 action="/resolucoes"
-                fields={[{ name: 'ano', label: 'Ano', options: yearOptions(docs.map((d) => d.data)), value: ano }]}
+                fields={[
+                  {
+                    name: 'ano',
+                    label: 'Ano',
+                    options: yearOptions(docs.map((d) => d.data)),
+                    value: ano,
+                  },
+                ]}
                 resultLabel={`${filtered.length} ${filtered.length === 1 ? 'resolução' : 'resoluções'}`}
               />
               {items.length ? (
@@ -112,7 +132,9 @@ export default async function ResolucoesPage({
                         numeralLabel={r.data ? formatDate(r.data) : undefined}
                         numeralDateTime={r.data ?? undefined}
                         title={titulo}
-                        badges={<StatusPill status={statusInfo(RESOLUCAO_SITUACAO, r.situacaoJuridica)} />}
+                        badges={
+                          <StatusPill status={statusInfo(RESOLUCAO_SITUACAO, r.situacaoJuridica)} />
+                        }
                         meta={
                           <>
                             {altera.length ? (
@@ -121,7 +143,11 @@ export default async function ResolucoesPage({
                                 {altera.map((ref, index) => (
                                   <span key={ref.id}>
                                     {index ? ', ' : null}
-                                    {ref.listed ? <a href={`#${anchor(ref.id)}`}>Resolução {ref.numero}</a> : <>Resolução {ref.numero}</>}
+                                    {ref.listed ? (
+                                      <a href={`#${anchor(ref.id)}`}>Resolução {ref.numero}</a>
+                                    ) : (
+                                      <>Resolução {ref.numero}</>
+                                    )}
                                   </span>
                                 ))}
                               </p>
@@ -159,7 +185,7 @@ export default async function ResolucoesPage({
                                   href={linkTribuna}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  aria-label={`Ver publicação oficial da resolução ${numero} (abre em nova aba)`}
+                                  aria-label={`Ver publicação oficial da resolução ${numero}${isPdfUrl(linkTribuna) ? ', em PDF,' : ''} (abre em nova aba)`}
                                 >
                                   Publicação oficial
                                 </a>
@@ -176,7 +202,11 @@ export default async function ResolucoesPage({
               ) : (
                 <EmptyState
                   title="Nenhuma resolução neste ano"
-                  action={<ButtonLink href="/resolucoes" variant="secondary">Ver todos os anos</ButtonLink>}
+                  action={
+                    <ButtonLink href="/resolucoes" variant="secondary">
+                      Ver todos os anos
+                    </ButtonLink>
+                  }
                 />
               )}
               <Pagination

@@ -102,3 +102,8 @@ export function isPastDate(value?: string | null, today = new Date()): boolean {
   const ref = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())
   return day < ref
 }
+
+/** Link que abre direto um PDF: o nome acessível precisa avisar o formato. */
+export function isPdfUrl(url?: string | null): boolean {
+  return Boolean(url && /\.pdf(?:$|[?#])/i.test(url))
+}

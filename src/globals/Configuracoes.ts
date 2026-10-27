@@ -37,11 +37,6 @@ export const Configuracoes: GlobalConfig = {
         { path: 'baseLegal.leiFMDCA', label: 'Lei Municipal nº 4.140/2004', rejectPlaceholder: true },
         { path: 'controleEditorial.fonte', label: 'fonte oficial', rejectPlaceholder: true },
         { path: 'controleEditorial.verificadoEm', label: 'data de verificação' },
-        {
-          path: 'controleEditorial.statusRevisao',
-          label: 'aprovação jurídica',
-          validate: (value) => value === 'aprovada',
-        },
       ]),
     ],
     afterChange: [revalidateNavigation],

@@ -94,12 +94,6 @@ export const Indicadores: GlobalConfig = {
           optional: true,
           validate: (value, document) => document.publicar !== true || !isBlank(value),
         },
-        {
-          path: 'statusRevisao',
-          label: 'aprovação jurídica',
-          optional: true,
-          validate: (value, document) => document.publicar !== true || value === 'aprovada',
-        },
       ]),
     ],
     ...revalidateGlobal(['/', '/transparencia']),

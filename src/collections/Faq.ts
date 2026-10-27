@@ -38,11 +38,6 @@ export const Faq: CollectionConfig = {
           rejectPlaceholder: true,
         },
         { path: 'controleEditorial.verificadoEm', label: 'data de verificação' },
-        {
-          path: 'controleEditorial.statusRevisao',
-          label: 'revisão jurídica aprovada ou dispensada',
-          validate: (value) => value === 'aprovada' || value === 'dispensada',
-        },
       ]),
     ],
     ...revalidation,

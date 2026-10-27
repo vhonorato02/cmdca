@@ -24,7 +24,7 @@ export const Paginas: CollectionConfig = {
     defaultColumns: ['titulo', 'slug', 'atualizadoEm', '_status'],
     group: 'Conteúdo editorial',
     description:
-      'Textos longos como privacidade, termos de uso e acessibilidade. Cada página fica em /endereço. Mudanças em textos legais devem passar pelo jurídico antes da publicação.',
+      'Textos longos como privacidade, termos de uso e acessibilidade. Cada página fica em /endereço. Em textos legais (privacidade, termos), confira a redação com o jurídico antes de publicar.',
     components: COLLECTION_EDITORIAL_COMPONENTS,
   },
   versions: EDITORIAL_VERSIONS,

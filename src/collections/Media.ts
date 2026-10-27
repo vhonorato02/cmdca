@@ -45,7 +45,7 @@ export const Media: CollectionConfig = {
     beforeOperation: [enforceEditorDraftOnly],
     beforeChange: [
       validatePublication([
-        // Com o salvamento automático, o registro existe antes de o upload terminar.
+        // Um registro sem arquivo nunca pode ir ao ar (já houve mídia vazia publicada).
         { path: 'filename', label: 'arquivo enviado (imagem ou PDF)' },
         {
           path: 'alt',

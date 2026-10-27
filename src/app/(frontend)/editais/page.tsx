@@ -211,7 +211,7 @@ export default async function EditaisPage({
                                   href={linkTribuna}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  aria-label={`Ver publicação oficial do edital${numero ? ` ${numero}` : ''}${isPdfUrl(linkTribuna) ? ', em PDF,' : ''} (abre em nova aba)`}
+                                  aria-label={`Ver publicação oficial do edital${numero ? ` ${numero}` : ''}${isPdfUrl(linkTribuna) ? ' (PDF, abre em nova aba)' : ' (abre em nova aba)'}`}
                                 >
                                   Publicação oficial
                                 </a>

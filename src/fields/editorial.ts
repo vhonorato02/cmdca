@@ -29,11 +29,7 @@ export const GLOBAL_EDITORIAL_COMPONENTS = {
 } as const
 
 /** Metadados internos opcionais para registrar a origem das informações. */
-/**
- * `revisaoObrigatoria`: a coleção só publica com aprovação do jurídico. O rótulo
- * precisa dizer isso, senão o campo parece opcional e a publicação falha sem aviso.
- */
-export const editorialControlField = ({ revisaoObrigatoria = false } = {}): Field => ({
+export const editorialControlField = (): Field => ({
   name: 'controleEditorial',
   label: 'Fonte e informações internas',
   type: 'group',
@@ -41,27 +37,22 @@ export const editorialControlField = ({ revisaoObrigatoria = false } = {}): Fiel
   admin: {
     // Required publication fields stay in the main form. In the narrow desktop
     // sidebar Payload's lazy nested fields can remain clipped and never mount.
-    description: revisaoObrigatoria
-      ? 'Registre a origem e a data de conferência. Para publicar, o jurídico precisa marcar a revisão como aprovada.'
-      : 'Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.',
+    description:
+      'Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.',
   },
   fields: [
     {
       name: 'fonte',
       label: 'Fonte da informação',
       type: 'text',
-      admin: {
-        description: 'Informe o órgão e o documento, processo ou página que comprova a informação.',
-      },
+      admin: { description: 'Informe o órgão e o documento, processo ou página que comprova a informação.' },
     },
     {
       name: 'fonteURL',
       label: 'Link da fonte',
       type: 'text',
       validate: validateExternalURL,
-      admin: {
-        description: 'Quando houver link, use a página ou o documento oficial em https://.',
-      },
+      admin: { description: 'Quando houver link, use a página ou o documento oficial em https://.' },
     },
     {
       name: 'verificadoEm',
@@ -73,9 +64,7 @@ export const editorialControlField = ({ revisaoObrigatoria = false } = {}): Fiel
     },
     {
       name: 'statusRevisao',
-      label: revisaoObrigatoria
-        ? 'Revisão jurídica (obrigatória para publicar)'
-        : 'Revisão interna (opcional)',
+      label: 'Revisão interna (opcional)',
       type: 'select',
       options: [
         { label: 'Pendente', value: 'pendente' },
@@ -101,10 +90,7 @@ export const editorialControlField = ({ revisaoObrigatoria = false } = {}): Fiel
       name: 'observacoesInternas',
       label: 'Observações internas',
       type: 'textarea',
-      admin: {
-        description:
-          'Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.',
-      },
+      admin: { description: 'Registre pendências, validade da informação e o que precisa ser conferido na próxima revisão.' },
     },
   ],
 })

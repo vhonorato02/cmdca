@@ -143,6 +143,6 @@ export const Entidades: CollectionConfig = {
           'Anexe certificado, resolução ou outro documento público. Não envie documentos com dados pessoais ou restritos.',
       },
     },
-    editorialControlField({ revisaoObrigatoria: true }),
+    editorialControlField(),
   ],
 }

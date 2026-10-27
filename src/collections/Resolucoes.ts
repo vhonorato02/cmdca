@@ -41,7 +41,8 @@ export const Resolucoes: CollectionConfig = {
         {
           path: 'arquivo',
           label: 'arquivo oficial em PDF',
-          validate: (value, _document, req) => uploadHasMime(value, req, ['application/pdf']),
+          validate: (value, _document, req) =>
+            uploadHasMime(value, req, ['application/pdf']),
         },
         {
           path: 'controleEditorial.fonte',
@@ -144,6 +145,6 @@ export const Resolucoes: CollectionConfig = {
       validate: validateExternalURL,
       admin: { description: 'Opcional. URL completa da publicação oficial.' },
     },
-    editorialControlField({ revisaoObrigatoria: true }),
+    editorialControlField(),
   ],
 }

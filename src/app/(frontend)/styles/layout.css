@@ -192,6 +192,9 @@
     display: inline-flex;
     align-items: center;
     gap: var(--s-3);
+    /* Pode encolher: em 320 px, com a fonte de fallback (mais larga) carregando,
+       a marca empurrava o botão Menu para fora da tela. */
+    min-width: 0;
     min-height: 2.75rem;
     color: var(--c-heading);
     text-decoration: none;
@@ -212,7 +215,15 @@
   .brand__text {
     display: flex;
     flex-direction: column;
+    min-width: 0;
     line-height: 1;
+  }
+
+  .brand__name,
+  .brand__place {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .brand__name {
@@ -295,8 +306,13 @@
       height: 2.5rem;
     }
 
+    .site-header__inner {
+      gap: var(--s-3);
+    }
+
     .menu-toggle {
       display: inline-flex;
+      flex: none;
     }
 
     .site-nav {

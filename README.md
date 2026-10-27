@@ -11,7 +11,7 @@ Portal institucional do Conselho Municipal dos Direitos da Criança e do Adolesc
 - entrega pelo GitHub Actions, em container, na VPS `zewithane` (plataforma `vps-platform`: Caddy + Docker);
 - Node.js 24 e pnpm 11 fixados em `package.json`.
 
-O navegador acessa o Caddy (HTTPS automático) e o container Next.js/Payload. As migrations rodam quando o container sobe. Os dados ficam no Postgres da plataforma e a mídia num volume. Os dois entram no backup restic diário, que tem teste semanal de restauração. Produção: <https://cmdca.zewithane.vps.brz.dev.br>. Detalhes em [`DEPLOY.md`](DEPLOY.md).
+O navegador acessa o Caddy (HTTPS automático) e o container Next.js/Payload. As migrations rodam quando o container sobe. Os dados ficam no Postgres da plataforma e a mídia num volume. Os dois entram no backup restic diário, que tem teste semanal de restauração. Produção: <https://www.cmdcapinda.org>. Detalhes em [`DEPLOY.md`](DEPLOY.md).
 
 ## Rodar localmente
 

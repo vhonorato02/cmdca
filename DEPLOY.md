@@ -1,6 +1,6 @@
 # Deploy do CMDCA (VPS zewithane, plataforma `vps-platform`)
 
-Produção: **https://cmdca.zewithane.vps.brz.dev.br** (domínio temporário; o definitivo fica no Wix, veja abaixo).
+Produção: **https://www.cmdcapinda.org** (DNS no Wix; o endereço antigo `cmdca.zewithane.vps.brz.dev.br` redireciona com 301).
 A infraestrutura é a plataforma multi-site do repositório privado `vhonorato02/vps-platform`:
 
 - Caddy com HTTPS automático, publicado por labels;
@@ -33,7 +33,7 @@ Configuração no GitHub (ambiente `production`):
 
 | Tipo | Nome | Valor |
 | --- | --- | --- |
-| Variable | `CMDCA_PUBLIC_URL` | `https://cmdca.zewithane.vps.brz.dev.br` |
+| Variable | `CMDCA_PUBLIC_URL` | `https://www.cmdcapinda.org` |
 | Variable | `DEPLOY_HOST` | `ssh.zewithane.vps.brz.dev.br` |
 | Variable | `DEPLOY_PORT` | `22322` |
 | Secret | `DEPLOY_SSH_KEY` | gerado por `site chave-deploy cmdca` na VPS |

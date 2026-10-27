@@ -43,6 +43,8 @@ export const Media: CollectionConfig = {
     beforeOperation: [enforceEditorDraftOnly],
     beforeChange: [
       validatePublication([
+        // Com o salvamento automático, o registro existe antes de o upload terminar.
+        { path: 'filename', label: 'arquivo enviado (imagem ou PDF)' },
         {
           path: 'alt',
           label: 'texto alternativo para imagens',
@@ -51,7 +53,11 @@ export const Media: CollectionConfig = {
             !String(document.mimeType ?? '').startsWith('image/') ||
             (typeof value === 'string' && Boolean(value.trim())),
         },
-        { path: 'controleEditorial.fonte', label: 'fonte/crédito confirmado', rejectPlaceholder: true },
+        {
+          path: 'controleEditorial.fonte',
+          label: 'fonte/crédito confirmado',
+          rejectPlaceholder: true,
+        },
         { path: 'controleEditorial.verificadoEm', label: 'data de verificação' },
         {
           path: 'consentimentoMenor',
@@ -98,7 +104,10 @@ export const Media: CollectionConfig = {
       name: 'alt',
       label: 'Texto alternativo da imagem',
       type: 'text',
-      admin: { description: 'Obrigatório para imagens. Em PDFs, informe apenas se ajudar a identificar o documento.' },
+      admin: {
+        description:
+          'Obrigatório para imagens. Em PDFs, informe apenas se ajudar a identificar o documento.',
+      },
     },
     {
       name: 'credito',
@@ -124,7 +133,8 @@ export const Media: CollectionConfig = {
       access: { read: isLoggedInFieldLevel },
       admin: {
         condition: (data) => Boolean(data?.envolveMenorIdentificavel),
-        description: 'Marque somente após conferir o termo assinado e sua validade para publicação.',
+        description:
+          'Marque somente após conferir o termo assinado e sua validade para publicação.',
       },
     },
     {
@@ -134,7 +144,8 @@ export const Media: CollectionConfig = {
       access: { read: isLoggedInFieldLevel },
       admin: {
         condition: (data) => Boolean(data?.envolveMenorIdentificavel),
-        description: 'Número de processo/arquivo interno. Não envie o termo para esta biblioteca pública.',
+        description:
+          'Número de processo/arquivo interno. Não envie o termo para esta biblioteca pública.',
       },
     },
     editorialControlField(),

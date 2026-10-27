@@ -75,6 +75,17 @@ Também dá para fazer pelo Dockge (`https://zewithane-1.tail731312.ts.net:10000
   e-mail de falha. Assim, uma queda da VPS inteira também é avisada.
 - **Depois de cada deploy:** `E2E (producao)` (Playwright de leitura + axe) e `Lighthouse (producao)`.
 
+### Rollback e migrations
+
+O `site rollback` troca só a imagem. Se a versão nova aplicou uma migration que remove
+coluna ou tabela, a imagem anterior quebra até a migration ser desfeita. Antes de voltar
+para uma versão anterior a uma dessas, rode na VPS `site banco cmdca` e o `down` da
+migration (o SQL está em `src/migrations/<nome>.ts`). Hoje isso vale para
+`20261027_044136_media_sem_autosave` (remove `_media_v.autosave`).
+
+Nas próximas mudanças de schema, use expandir/contrair: uma versão para de usar a
+coluna e só a seguinte a remove.
+
 ## Trocar para o domínio definitivo (Wix)
 
 Domínio definitivo: **www.cmdcapinda.org** (canônico). O raiz `cmdcapinda.org` e o

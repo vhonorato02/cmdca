@@ -89,8 +89,9 @@ const nextConfig: NextConfig = {
         headers: securityHeaders,
       },
       {
-        // Site público: CSP aplicada (o painel fica fora até validar a dele).
-        source: '/((?!admin).*)',
+        // Site e painel: CSP aplicada. O painel foi validado em 27/10/2026 (painel,
+        // listas, editor de texto, mídia, globais e conta) sem nenhuma violação.
+        source: '/:path*',
         headers: [{ key: 'Content-Security-Policy', value: csp }],
       },
       {
@@ -98,7 +99,6 @@ const nextConfig: NextConfig = {
         headers: [
           { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
           { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
-          { key: 'Content-Security-Policy-Report-Only', value: csp },
         ],
       },
       {

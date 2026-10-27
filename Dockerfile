@@ -13,6 +13,12 @@ COPY --chown=node:node .next/static ./.next/static
 COPY --chown=node:node public ./public
 # Uploaded media lives on a persistent volume mounted here (uid 1000 = node).
 RUN mkdir -p /app/media && chown node:node /app/media
+# The build prerenders pages against an empty CI database. Next takes an ISR entry's
+# age from the file mtime, so dating these files to 2000 makes them expired: the first
+# request after each deploy renders from the real database (blocking) instead of
+# serving the empty build HTML for the whole revalidate window.
+RUN find .next/server/app -type f \( -name '*.html' -o -name '*.rsc' -o -name '*.meta' -o -name '*.body' \) \
+      -exec touch -d '2000-01-01T00:00:00Z' {} +
 USER node
 EXPOSE 3000
 VOLUME ["/app/media"]

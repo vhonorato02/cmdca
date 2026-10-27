@@ -56,12 +56,6 @@ export const Noticias: CollectionConfig = {
         { path: 'controleEditorial.fonte', label: 'fonte confirmada', rejectPlaceholder: true },
         { path: 'controleEditorial.verificadoEm', label: 'data de verificação' },
         {
-          path: 'controleEditorial.statusRevisao',
-          label: 'aprovação jurídica para nota técnica',
-          validate: (value, document) =>
-            document.categoria !== 'nota-tecnica' || value === 'aprovada',
-        },
-        {
           path: 'capa',
           label: 'capa em formato de imagem',
           optional: true,

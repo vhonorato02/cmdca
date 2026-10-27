@@ -33,7 +33,7 @@ export const Editais: CollectionConfig = {
     defaultColumns: ['numero', 'titulo', 'tipo', 'prazo', 'situacaoJuridica', '_status'],
     group: 'Atos e reuniões',
     description:
-      'Chamamentos e processos oficiais. O jurídico confere prazo, situação, fonte e PDF antes da publicação.',
+      'Chamamentos e processos oficiais. Antes de publicar, confira prazo, situação, fonte e PDF.',
     components: COLLECTION_EDITORIAL_COMPONENTS,
   },
   versions: EDITORIAL_VERSIONS,
@@ -65,11 +65,6 @@ export const Editais: CollectionConfig = {
           rejectPlaceholder: true,
         },
         { path: 'controleEditorial.verificadoEm', label: 'data de verificação' },
-        {
-          path: 'controleEditorial.statusRevisao',
-          label: 'aprovação jurídica',
-          validate: (value) => value === 'aprovada',
-        },
       ]),
     ],
     ...revalidation,

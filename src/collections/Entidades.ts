@@ -55,11 +55,6 @@ export const Entidades: CollectionConfig = {
           rejectPlaceholder: true,
         },
         { path: 'controleEditorial.verificadoEm', label: 'data de verificação' },
-        {
-          path: 'controleEditorial.statusRevisao',
-          label: 'aprovação jurídica',
-          validate: (value) => value === 'aprovada',
-        },
       ]),
     ],
     ...revalidation,

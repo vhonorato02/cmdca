@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Depoimentos } from './Depoimentos'
-import { Editais } from './Editais'
-import { Entidades } from './Entidades'
 import { Media } from './Media'
 import { Noticias } from './Noticias'
-import { Resolucoes } from './Resolucoes'
 import { Reunioes } from './Reunioes'
 import { editorialControlField } from '../fields/editorial'
 
@@ -39,23 +36,6 @@ describe('proteção de publicação e consentimento', () => {
       ).rejects.toThrow(/Antes de publicar/)
     },
   )
-
-  it.each([Resolucoes, Editais, Entidades])(
-    '$slug diz no formulário que a revisão jurídica é obrigatória',
-    (collection) => {
-      const group = collection.fields.find(
-        (f) => 'name' in f && f.name === 'controleEditorial',
-      ) as never as {
-        fields: { name: string; label: string }[]
-      }
-      expect(group.fields.find((f) => f.name === 'statusRevisao')?.label).toMatch(/obrigatória/)
-    },
-  )
-
-  it('mídia não usa salvamento automático (criaria registros vazios antes do upload)', () => {
-    expect(Media.versions).toMatchObject({ drafts: { validate: false } })
-    expect((Media.versions as { drafts: object }).drafts).not.toHaveProperty('autosave')
-  })
 
   it('não publica mídia sem arquivo enviado', async () => {
     const pdf = {

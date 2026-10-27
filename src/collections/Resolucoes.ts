@@ -25,7 +25,7 @@ export const Resolucoes: CollectionConfig = {
     defaultColumns: ['numero', 'titulo', 'data', 'situacaoJuridica', '_status'],
     group: 'Atos e reuniões',
     description:
-      'Atos normativos do conselho. O jurídico confere número, vigência, fonte e PDF antes da publicação.',
+      'Atos normativos do conselho. Antes de publicar, confira número, vigência, fonte e PDF.',
     components: COLLECTION_EDITORIAL_COMPONENTS,
   },
   versions: EDITORIAL_VERSIONS,
@@ -50,11 +50,6 @@ export const Resolucoes: CollectionConfig = {
           rejectPlaceholder: true,
         },
         { path: 'controleEditorial.verificadoEm', label: 'data de verificação' },
-        {
-          path: 'controleEditorial.statusRevisao',
-          label: 'aprovação jurídica',
-          validate: (value) => value === 'aprovada',
-        },
       ]),
     ],
     ...revalidation,

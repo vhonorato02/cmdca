@@ -67,3 +67,42 @@ Regras: só a `main` (nada de clones, worktrees ou branches) e tudo hospedado na
 - `docs/CMS.md` atualizado (Textos, Páginas, Pendências).
 - `CONTENT-TODO.md` com cada `XXXX`.
 - `HANDOFF.md`, `CHANGELOG.md` e tag `v1.0.0` nos dois repositórios.
+
+---
+
+# Rodada de 27/10/2026 — domínio no ar e QA completo
+
+## Autocrítica desta rodada (26/10 à noite)
+1. **Testei pouco antes de declarar.** O E2E contra a produção só existiu em 26/10, e a primeira rodada
+   reprovou 7 casos: testes que clicavam antes da hidratação e um estouro real em 320 px. Esse teste
+   deveria existir desde o primeiro deploy na VPS.
+2. **"Teste de teclado" feito por script** e com falso positivo: o script mediu foco no link, mas o
+   foco é desenhado no card. Precisei confirmar à mão. Script não substitui olhar a tela.
+3. **Pendências de segurança ficaram em aberto por um dia inteiro:** senha fraca no painel e o CMS
+   antigo na Vercel ainda editável.
+4. **Revisão visual completa, teste leigo do CMS e revisão de código final ainda não foram feitos.**
+   Sem isso, não há "pronto".
+5. Tentativas de orquestração anteriores (subagentes de design que caíram por limite) **não serão
+   reaproveitadas**: tudo é feito nesta sessão e verificado por mim.
+
+## Plano (cada item termina com evidência em `docs/QA.md`)
+1. **Domínio (feito 27/10 00:50):** backup → `site dominio` com 301 → `NEXT_PUBLIC_SERVER_URL` e
+   `SITE_INDEXABLE=true` → rebuild pelo CI. Evidência: certificado nos 4 hosts, 301 com caminho,
+   `robots.txt` liberado, sitemap/canonical/OG com `www`.
+2. **Infra/VPS:** serviços, portas expostas, firewall, fail2ban, atualizações automáticas, disco/RAM,
+   backup + restauração, rotação de logs e outros sites intactos.
+3. **Segurança/API:** cabeçalhos; REST/GraphQL do Payload sem vazar usuários, rascunhos ou campos
+   internos; rate limit do login; papéis; uploads (tipo/tamanho); cookies; `/api/health` sem detalhes.
+4. **Banco:** migrations aplicadas, sem pendentes, índices nas consultas das listas e tamanho do banco.
+5. **Design/UI/UX:** todas as rotas públicas em 390 e 1280 px, com capturas olhadas uma a uma. Mais
+   estados vazio/erro/404, alto contraste, fonte ampliada e VLibras.
+6. **CMS (teste leigo):** com o manual `docs/CMS.md`, criar, editar, pré-visualizar, publicar e apagar
+   uma página e uma notícia de teste na produção, subindo imagem.
+7. **SEO/LGPD:** metas, OG, JSON-LD, sitemap, canonical, privacidade/termos, cookies sem scripts antes
+   do aceite.
+8. **Desempenho:** Lighthouse mobile ≥ 95 nas 4 categorias, agora com SEO valendo.
+9. **Revisão de código final** e correção dos achados.
+10. **Fechamento:** `HANDOFF.md`, `CHANGELOG.md`, `docs/CMS.md`, tag `v1.0.0`.
+
+Dependem do dono: desligar o projeto na Vercel, senhas fortes, conta grátis para backup off-site e
+horário para o teste de reboot da VPS.

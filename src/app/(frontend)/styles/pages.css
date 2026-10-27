@@ -13,6 +13,9 @@
     display: grid;
     gap: var(--s-6);
     padding-block: clamp(var(--s-7), 7vw, var(--s-9));
+    /* Os caminhos (.routes) sobem --s-7 sobre a capa: sem somar isso, no celular
+       os botões encostavam no primeiro card. */
+    padding-block-end: calc(clamp(var(--s-7), 7vw, var(--s-9)) + var(--s-7));
   }
 
   @media (min-width: 900px) {

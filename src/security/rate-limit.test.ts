@@ -30,7 +30,32 @@ describe('limite de tentativas por IP', () => {
   })
 })
 
+describe('memória limitada', () => {
+  it('descarta as entradas mais antigas quando passa do teto', () => {
+    const limiter = createRateLimiter({ max: 1, windowMs: 60_000, maxEntries: 3 })
+    for (const ip of ['1', '2', '3', '4']) limiter.hit(ip, 0)
+    expect(limiter.size()).toBeLessThanOrEqual(3)
+    // O mais antigo saiu e volta a ter uma tentativa livre.
+    expect(limiter.hit('1', 0).allowed).toBe(true)
+  })
+
+  it('continua rápido com muitos endereços diferentes', () => {
+    const limiter = createRateLimiter({ max: 20, windowMs: 600_000, maxEntries: 10_000 })
+    const start = performance.now()
+    for (let i = 0; i < 100_000; i++) limiter.hit(`ip${i}`, i)
+    expect(limiter.size()).toBeLessThanOrEqual(10_000)
+    expect(performance.now() - start).toBeLessThan(2_000)
+  })
+})
+
 describe('IP do cliente', () => {
+  it('agrupa IPv6 pelo prefixo /64, que um único cliente controla inteiro', () => {
+    const a = clientIp(new Headers({ 'x-forwarded-for': '2804:14c:5b:8000:1:2:3:4' }))
+    const b = clientIp(new Headers({ 'x-forwarded-for': '2804:14c:5b:8000:ffff::9' }))
+    expect(a).toBe(b)
+    expect(a).toBe('2804:14c:5b:8000::/64')
+  })
+
   it('usa o último endereço do X-Forwarded-For, que é o que o Caddy grava', () => {
     expect(clientIp(new Headers({ 'x-forwarded-for': '6.6.6.6, 201.42.174.102' }))).toBe(
       '201.42.174.102',

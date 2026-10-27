@@ -35,7 +35,7 @@ jobs:
     env:
       DATABASE_URI: postgresql://postgres:postgres@localhost:5432/cmdca_test?sslmode=disable
       DATABASE_URI_UNPOOLED: postgresql://postgres:postgres@localhost:5432/cmdca_test?sslmode=disable
-      ENFORCE_PRODUCTION_ENV: "false"
+      ENFORCE_PRODUCTION_ENV: 'false'
       NEXT_PUBLIC_SERVER_URL: http://localhost:3000
       MEDIA_DIR: ${{ github.workspace }}/ci-media
       PAYLOAD_SECRET: quality-only-payload-secret-with-at-least-thirty-two-characters
@@ -91,6 +91,10 @@ jobs:
           pnpm build
           node scripts/ci-check-artifact.mjs
 
+      - name: Publicar noticia depois do build
+        # Como na VPS: o conteúdo real não está no build e precisa aparecer no 1º acesso.
+        run: pnpm exec tsx scripts/ci-post-build-news.ts
+
       - name: Montar imagem de execucao sem compilar na VPS
         run: docker build --tag cmdca-quality:${{ github.sha }} .
 
@@ -108,6 +112,10 @@ jobs:
             -e NEXT_PUBLIC_SERVER_URL -e ENFORCE_PRODUCTION_ENV -e GITHUB_ACTIONS \
             -e LOGIN_RATE_LIMIT_MAX=1000 \
             cmdca-quality:${{ github.sha }}
+          for i in $(seq 1 60); do curl -sf http://localhost:3000/api/health >/dev/null && break; sleep 2; done
+          # 1º acesso à home: a versão do build (sem a notícia) não pode ser servida.
+          curl -sf http://localhost:3000/ | grep -q 'ci-noticia-depois-do-build' ||
+            { echo '::error::A home serviu o HTML do build em vez do conteúdo do banco'; exit 1; }
           node scripts/ci-smoke-production.mjs
           pnpm exec playwright test
           node scripts/ci-audit-admin.mjs

@@ -7,7 +7,9 @@
     min-height: 44px;
   }
 
-  :is(a[href], .nav-group__toggle, .nav__mobile-close, .nav-toggler) {
+  // Not .nav-toggler / .nav__mobile-close: Payload hides the mobile ones with
+  // display: none, and forcing a display here showed two menu buttons on desktop.
+  :is(a[href], .nav-group__toggle) {
     display: inline-flex;
     align-items: center;
   }

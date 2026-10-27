@@ -137,10 +137,28 @@ test('reflow em largura equivalente a 400% não cria rolagem horizontal', async 
 
   for (const route of PUBLIC_ROUTES) {
     await page.goto(route, { waitUntil: 'domcontentloaded' })
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-    )
-    expect(overflow, `Rolagem horizontal de ${overflow}px em ${route}`).toBeLessThanOrEqual(1)
+    const { overflow, culprits } = await page.evaluate(() => {
+      const width = document.documentElement.clientWidth
+      // Os elementos mais externos que passam da borda: é o que precisa de correção.
+      const culprits = [...document.querySelectorAll('body *')]
+        .filter((element) => element.getBoundingClientRect().right > width + 1)
+        .filter(
+          (element) =>
+            !element.parentElement ||
+            element.parentElement.getBoundingClientRect().right <= width + 1,
+        )
+        .slice(0, 5)
+        .map((element) => {
+          const box = element.getBoundingClientRect()
+          const text = (element.textContent || '').trim().slice(0, 30)
+          return `${element.tagName.toLowerCase()}.${String(element.className)} (${Math.round(box.left)}–${Math.round(box.right)} px) "${text}"`
+        })
+      return { overflow: document.documentElement.scrollWidth - width, culprits }
+    })
+    expect(
+      overflow,
+      `Rolagem horizontal de ${overflow}px em ${route}: ${culprits.join('; ')}`,
+    ).toBeLessThanOrEqual(1)
   }
 })
 

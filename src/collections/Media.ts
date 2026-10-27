@@ -37,7 +37,9 @@ export const Media: CollectionConfig = {
     defaultColumns: ['filename', 'mimeType', '_status', 'updatedAt'],
     components: COLLECTION_EDITORIAL_COMPONENTS,
   },
-  versions: EDITORIAL_VERSIONS,
+  // Sem salvamento automático: ele criava o registro ao abrir "Criar", antes do
+  // upload, e deixava mídias vazias na biblioteca.
+  versions: { ...EDITORIAL_VERSIONS, drafts: { validate: false } },
   trash: true,
   hooks: {
     beforeOperation: [enforceEditorDraftOnly],

@@ -52,6 +52,11 @@ describe('proteção de publicação e consentimento', () => {
     },
   )
 
+  it('mídia não usa salvamento automático (criaria registros vazios antes do upload)', () => {
+    expect(Media.versions).toMatchObject({ drafts: { validate: false } })
+    expect((Media.versions as { drafts: object }).drafts).not.toHaveProperty('autosave')
+  })
+
   it('não publica mídia sem arquivo enviado', async () => {
     const pdf = {
       _status: 'published',

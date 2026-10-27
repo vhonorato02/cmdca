@@ -1,14 +1,14 @@
 # Manual do painel (para quem não é técnico)
 
-Endereço do painel: **`/admin`** no endereço do site (hoje https://cmdca.zewithane.vps.brz.dev.br/admin).
+Endereço do painel: **https://www.cmdcapinda.org/admin**.
 Tudo o que aparece no site é mudado por aqui, sem programador.
 
 ## 1. Entrar
 
 1. Abra `/admin` e digite e-mail e senha.
-2. Depois de 5 senhas erradas, o acesso fica bloqueado por 15 minutos.
+2. Depois de 5 senhas erradas, o acesso fica bloqueado por 15 minutos. Muitas tentativas seguidas do mesmo lugar também pausam o login por 10 minutos.
 3. Troque a senha inicial no primeiro acesso: clique no seu nome (canto inferior esquerdo) → **Senha**.
-4. Esqueceu a senha? Peça ao administrador para definir uma nova. O envio por e-mail só funciona depois que o SMTP for configurado.
+4. Esqueceu a senha? Peça ao administrador para definir uma nova (o site não envia e-mail).
 
 ## 2. Quem pode o quê
 
@@ -29,7 +29,7 @@ Tudo o que aparece no site é mudado por aqui, sem programador.
 
 ## 4. Rascunho → prévia → publicar
 
-1. Edite o conteúdo. O painel salva sozinho como **rascunho**, e o site ainda não muda.
+1. Edite o conteúdo. O painel salva sozinho como **rascunho**, e o site ainda não muda. Ao abrir **Criar novo**, o rascunho já é criado: se desistir, apague-o pelo menu **⋯**.
 2. Clique em **Prévia** para ver como vai ficar.
 3. Clique em **Publicar alterações**. O site atualiza em segundos.
 4. Para tirar do ar: menu **⋯** → **Despublicar**.
@@ -80,6 +80,7 @@ Os telefones da faixa amarela de proteção ficam na aba **Proteção → Canais
 - **Texto alternativo é obrigatório.**
 - **Crianças e adolescentes:** só publique imagem com autorização dos responsáveis. Prefira fotos em que ninguém seja identificado e marque o campo correspondente.
 - PDFs de até 20 MB.
+- Para anexar um PDF a uma resolução ou edital, use **Criar novo** no campo do arquivo, escolha o PDF, preencha a fonte e clique em **Publicar alterações** na própria janela. Só depois feche a janela e escolha o arquivo. Mídia sem arquivo não pode ser publicada.
 
 ## 7. O que não fazer
 

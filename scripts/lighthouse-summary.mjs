@@ -45,6 +45,11 @@ for (const [page, reports] of byPage) {
 }
 
 if (byPage.size === 0) failures.push('nenhum relatório válido')
+// Página medida sem nenhuma rodada válida também reprova (PAGES vem do workflow).
+for (const route of (process.env.PAGES ?? '').split(/\s+/).filter(Boolean)) {
+  const page = route.replace(/^\//, '').replaceAll('/', '_') || 'home'
+  if (!byPage.has(page)) failures.push(`${page} sem rodada válida`)
+}
 if (skipped.length) console.log(`\nRodadas descartadas: ${skipped.join(', ')}.`)
 if (!checkSeo) console.log('\nSEO não é cobrado enquanto o domínio é temporário (`noindex`).')
 if (failures.length) {

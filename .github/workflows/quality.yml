@@ -113,6 +113,8 @@ jobs:
             -e LOGIN_RATE_LIMIT_MAX=1000 \
             cmdca-quality:${{ github.sha }}
           for i in $(seq 1 60); do curl -sf http://localhost:3000/api/health >/dev/null && break; sleep 2; done
+          curl -sf http://localhost:3000/api/health >/dev/null ||
+            { echo '::error::O container não ficou saudável em 120 s'; docker logs cmdca-quality | tail -50; exit 1; }
           # 1º acesso à home: a versão do build (sem a notícia) não pode ser servida.
           curl -sf http://localhost:3000/ | grep -q 'ci-noticia-depois-do-build' ||
             { echo '::error::A home serviu o HTML do build em vez do conteúdo do banco'; exit 1; }

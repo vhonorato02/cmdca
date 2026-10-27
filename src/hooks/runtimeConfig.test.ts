@@ -28,7 +28,7 @@ describe('produção self-host do CMS', () => {
     runtime()
     await expect(load()).rejects.toThrow('DATABASE_URI')
   }, 60_000)
-  it('somente o banco efêmero do Actions dispensa SMTP', async () => {
+  it('o banco efêmero do Actions sobe sem os segredos de produção', async () => {
     runtime()
     vi.stubEnv('GITHUB_ACTIONS', 'true')
     vi.stubEnv('DATABASE_URI', 'postgresql://localhost/cmdca_test?sslmode=disable')

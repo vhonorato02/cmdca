@@ -106,6 +106,7 @@ jobs:
             -v "$MEDIA_DIR:/app/media" \
             -e DATABASE_URI -e DATABASE_URI_UNPOOLED -e PAYLOAD_SECRET \
             -e NEXT_PUBLIC_SERVER_URL -e ENFORCE_PRODUCTION_ENV -e GITHUB_ACTIONS \
+            -e LOGIN_RATE_LIMIT_MAX=1000 \
             cmdca-quality:${{ github.sha }}
           node scripts/ci-smoke-production.mjs
           pnpm exec playwright test

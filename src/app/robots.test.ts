@@ -13,7 +13,13 @@ describe('indexação por ambiente', () => {
     vi.stubEnv('NEXT_PUBLIC_SERVER_URL', 'https://public.example.test')
     vi.stubEnv('SITE_INDEXABLE', 'true')
     expect(robots()).toMatchObject({
-      rules: [{ userAgent: '*', allow: '/', disallow: ['/admin/', '/api/'] }],
+      rules: [
+        {
+          userAgent: '*',
+          allow: ['/', '/api/media/file/'],
+          disallow: ['/admin/', '/api/'],
+        },
+      ],
       sitemap: 'https://public.example.test/sitemap.xml',
     })
   })

@@ -13,7 +13,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: '/',
+        // PDFs e imagens públicos ficam em /api/media/file/; os privados exigem login.
+        allow: ['/', '/api/media/file/'],
         disallow: ['/admin/', '/api/'],
       },
     ],

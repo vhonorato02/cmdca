@@ -4,6 +4,10 @@ import { getPayloadClient } from '@/lib/payload'
 import { absoluteUrl, containsUnverifiedMarker, getSiteUrl, publicText } from '@/lib/site'
 import type { Noticia, Pagina } from '@/payload-types'
 
+// Route Handler especial: sem isto o Next o gera só no build (banco vazio do CI)
+// e as notícias publicadas depois nunca entram.
+export const revalidate = 3600
+
 const STATIC_ROUTES = [
   { path: '/', changeFrequency: 'weekly', priority: 1 },
   { path: '/ajuda', changeFrequency: 'monthly', priority: 0.9 },

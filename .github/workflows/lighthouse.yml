@@ -1,10 +1,11 @@
 name: Lighthouse (producao)
 
 # Mede o site publicado em hardware padronizado do GitHub (Lighthouse mobile, 3 rodadas
-# por página, mediana). Roda depois de cada deploy, toda segunda-feira e sob demanda.
+# por página, mediana). Roda depois do E2E de produção (para não medir com o E2E
+# carregando o servidor), toda segunda-feira e sob demanda.
 on:
   workflow_run:
-    workflows: ['Producao (VPS)']
+    workflows: ['E2E (producao)']
     types: [completed]
   schedule:
     - cron: '0 9 * * 1'
@@ -15,9 +16,12 @@ permissions:
 
 jobs:
   lighthouse:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    # O E2E só roda depois de deploy verde; mede mesmo se o E2E falhar.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      contains(fromJSON('["success","failure"]'), github.event.workflow_run.conclusion)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     env:
       BASE: ${{ vars.CMDCA_PUBLIC_URL }}
       PAGES: '/ /ajuda /fmdca /noticias /conselho /reunioes /resolucoes /participe'
@@ -33,11 +37,17 @@ jobs:
           for p in $PAGES; do
             n=$(echo "${p#/}" | tr '/' '_'); n=${n:-home}
             for i in 1 2 3; do
-              lighthouse "$BASE$p" --quiet --chrome-flags='--headless=new --no-sandbox' \
-                --output=json --output-path="lh/$n-$i.json" || true
+              # O Chrome do runner às vezes perde o início da navegação (NO_NAVSTART):
+              # repete até 3 vezes para ter 3 rodadas válidas por página.
+              for tentativa in 1 2 3; do
+                lighthouse "$BASE$p" --quiet --chrome-flags='--headless=new --no-sandbox' \
+                  --output=json --output-path="lh/$n-$i.json" || true
+                node -e "process.exit(require('./lh/$n-$i.json').runtimeError ? 1 : 0)" 2>/dev/null && break
+              done
             done
           done
       - name: Resumo (mediana de 3, mínimo 95)
+        shell: bash # com pipefail: o tee não pode esconder a falha do resumo
         env:
           SITE_INDEXABLE: ${{ vars.SITE_INDEXABLE || 'false' }}
         run: node scripts/lighthouse-summary.mjs lh 95 | tee -a "$GITHUB_STEP_SUMMARY"

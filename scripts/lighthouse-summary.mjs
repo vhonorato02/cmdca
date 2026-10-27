@@ -10,10 +10,15 @@ const min = minArg ? Number(minArg) : undefined
 const checkSeo = process.env.SITE_INDEXABLE === 'true'
 
 const byPage = new Map()
+const skipped = []
 for (const file of readdirSync(dir).filter((f) => f.endsWith('.json'))) {
   const report = JSON.parse(readFileSync(join(dir, file), 'utf8'))
-  if (!report.categories?.performance) continue
   const page = file.replace(/-\d+\.json$/, '')
+  // Rodada com erro do Chrome (ex.: NO_NAVSTART) não tem métricas: fica de fora.
+  if (report.runtimeError || report.categories?.performance?.score == null) {
+    skipped.push(`${page} (${report.runtimeError?.code ?? 'sem performance'})`)
+    continue
+  }
   byPage.set(page, [...(byPage.get(page) ?? []), report])
 }
 
@@ -40,6 +45,7 @@ for (const [page, reports] of byPage) {
 }
 
 if (byPage.size === 0) failures.push('nenhum relatório válido')
+if (skipped.length) console.log(`\nRodadas descartadas: ${skipped.join(', ')}.`)
 if (!checkSeo) console.log('\nSEO não é cobrado enquanto o domínio é temporário (`noindex`).')
 if (failures.length) {
   console.log(`\n**Abaixo de ${min ?? '-'}:** ${failures.join(', ')}`)

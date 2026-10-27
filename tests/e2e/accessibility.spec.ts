@@ -204,6 +204,10 @@ test('links que abrem nova aba são seguros e PDFs públicos continuam acessíve
   for (const url of [...pdfUrls].slice(0, 10)) {
     const response = await request.get(url)
     expect(response.ok(), `PDF indisponível: ${url} (${response.status()})`).toBeTruthy()
+    // O robots.txt libera /api/media/file/; o cabeçalho não pode desdizer isso.
+    expect(response.headers()['x-robots-tag'] ?? '', `PDF público com noindex: ${url}`).not.toMatch(
+      /noindex/,
+    )
     expect(response.headers()['content-type'] || '', `Tipo incorreto para ${url}`).toMatch(
       /application\/pdf/i,
     )

@@ -102,7 +102,9 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/api/:path*',
+        // Fora: /api/media/file/, onde ficam os PDFs e imagens públicos que o
+        // robots.txt libera. Os restritos continuam protegidos pelo controle de acesso.
+        source: '/api/:path((?!media/file/).*)',
         headers: [
           { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
           { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },

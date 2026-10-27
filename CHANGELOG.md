@@ -4,6 +4,10 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 
 ## [Não publicado]
 
+## [2.0.0] — 2026-10-27
+
+No ar em https://www.cmdcapinda.org, hospedado na VPS própria. Vercel, Neon e R2 deixam de ser usados (o desligamento depende do dono).
+
 ### Alterado
 
 - redesenho "Sinal amarelo" (docs/design): paleta medida no logo (anil e amarelo), Archivo condensada nos títulos e numerais, Atkinson Hyperlegible Next no texto, foco anil com halo amarelo;
@@ -19,12 +23,21 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 - global **Textos das páginas** e coleção **Páginas institucionais** (privacidade, termos de uso, acessibilidade e créditos), com migration que publica o conteúdo inicial;
 - campos de endereço, horário e encarregado de dados (LGPD) em Configurações institucionais e links "Sobre o site" na navegação do rodapé;
 - workflows pós-deploy contra a produção: `E2E (producao)` (leitura + axe, desktop e celular) e `Lighthouse (producao)` (mobile, mínimo 95);
-- monitor externo `Disponibilidade` a cada 15 minutos, com alerta no ntfy.
+- monitor externo `Disponibilidade` a cada 15 minutos, com alerta no ntfy;
+- domínio definitivo `www.cmdcapinda.org` com HTTPS; `cmdcapinda.org`, `pt.cmdcapinda.org` e o endereço temporário respondem 301 para ele (ADR 0007);
+- limite de 20 tentativas de login e de recuperação de senha por IP a cada 10 minutos (ADR 0010);
+- CSP aplicada também no painel (antes só em modo de relatório);
+- primeiros atos reais: Resolução 153/2025 e Edital CMDCA 02/2024 (2ª retificação), com o PDF do Diário Oficial.
 
 ### Corrigido
 
 - número do Conselho Tutelar na barra do celular estourava a tela em 320 px enquanto a fonte carregava; agora quebra entre o DDD e o número;
-- avatar do VLibras bloqueado pela CSP (`frame-src`); `unsafe-eval` removido.
+- avatar do VLibras bloqueado pela CSP (`frame-src`); `unsafe-eval` removido;
+- logo depois de cada deploy, as páginas mostravam o HTML do build (sem notícias nem diretoria) até o fim da janela do ISR; agora o primeiro acesso já busca o conteúdo do banco;
+- o `sitemap.xml` nunca incluía as notícias (era gerado só no build) e os PDFs públicos estavam bloqueados para buscadores;
+- o botão Menu saía da tela em 320 px com a fonte de fallback, e os botões da capa encostavam no primeiro card;
+- no painel: mídia sem arquivo podia ser publicada; abrir "Criar" na Mídia deixava registros vazios; havia dois botões de menu no desktop;
+- os links "Publicação oficial" agora avisam quando abrem um PDF.
 
 ### Removido
 

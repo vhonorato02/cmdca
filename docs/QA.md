@@ -113,3 +113,40 @@ Capturas não equivalem a inspeção visual.
 - Observatory: B+ (80), 11/12 testes (falta só o `'unsafe-inline'`, ADR 0008).
 - Backup: `OK snapshot=ddc7712e bancos=[cmdca:52] midia=ok` (teste diário de restauração).
 - Monitor externo: run 40417845545, `/api/health → 200`, `/ → 200`.
+
+### 27/10/2026 (domínio definitivo, release v2.0.0)
+
+- **Domínio:** `www.cmdcapinda.org` com Let's Encrypt (validade até 25/01/2027). `cmdcapinda.org/x?y=1`,
+  `pt.` e o temporário respondem 301 preservando caminho e query. `robots.txt` liberado, sitemap com 31 URLs
+  (inclui notícias), canonical e OG em `www`.
+- **Lighthouse mobile** (run 40482362277, 54ad126, mediana de 3): Perf 97–99, A11y 100, Boas práticas 100,
+  SEO 100 nas 8 páginas.
+- **E2E produção** (run 40481819283, 54ad126): 110 aprovados, 0 falhas, 0 instáveis, 18 pulados.
+- **CI** reproduz o bug do HTML do build: uma notícia publicada depois do build precisa aparecer no 1º
+  acesso. O teste falhou antes da correção (run de 0fd456d) e passa depois.
+- **Segurança:**
+  - Observatory B+ (80), 11/12; reprova só `'unsafe-inline'` (ADR 0008).
+  - CSP aplicada também no `/admin`: 0 violações em 9 telas e no envio de PDF.
+  - Login: 20 tentativas por IP e depois `429` com `Retry-After`, conferido na produção (ADR 0010).
+  - API anônima: `users`, `preferences` e `locked-documents` retornam 403; notícias, só as publicadas.
+  - Cookie de sessão `Secure`, `HttpOnly`, `SameSite=Lax`.
+  - Portas 5432, 3773, Dockge e Cockpit fechadas para fora.
+- **VPS:**
+  - Ubuntu 24.04, 1,9 GB de RAM (~0,9 GB livres), disco em 61%.
+  - UFW ativo, fail2ban (sshd), atualizações automáticas, SSH só por chave na 22322.
+  - Logs do Docker com rotação de 3 × 10 MB.
+  - Backup feito antes da troca de domínio (`ok backup concluído`).
+- **Banco:** 6 de 6 migrations (mais `20261027_044136` nesta release), 16 MB, usuário da aplicação sem
+  superusuário.
+- **Teste leigo do painel** (Playwright pela interface, conta temporária de QA depois apagada):
+  - criar página → preencher → publicar → visível para o visitante na hora → excluir (lixeira com
+    confirmação) → 404;
+  - cadastrar a Resolução 153/2025 e o Edital 02/2024 com o PDF;
+  - achados corrigidos: mídia sem arquivo publicável, registros vazios ao abrir "Criar", dois botões
+    de menu e o rótulo de revisão.
+- **Revisão visual:** home, ajuda, FMDCA, resoluções e editais em 390 px; home, reuniões, notícia e 404 em
+  1280 px. Script em 19 rotas × 2 larguras: sem erro de console, imagem quebrada ou rolagem horizontal.
+  Corrigidos: botões da capa encostando no card e o botão Menu fora da tela em 320 px.
+- **Revisão de código** (subagente, 0972769..HEAD): nada crítico. Os 4 itens importantes foram corrigidos
+  (limitador linear e com teto, `noindex` na mídia pública, E2E no SHA publicado, aviso de rollback da
+  migration), assim como os menores (regras mortas, rótulo do PDF, falhas silenciosas de CI).

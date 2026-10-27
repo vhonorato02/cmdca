@@ -1,5 +1,5 @@
 # HANDOFF
-Atualizado: 2026-10-26 20:15 (QA em produção + preparação do domínio)
+Atualizado: 2026-10-27 (domínio definitivo + QA completo, v2.0.0)
 
 ## Rodada de 26/10/2026
 
@@ -14,36 +14,40 @@ E-mail: sem SMTP (ADR 0009). Dados que faltam (encarregado LGPD,
 FMDCA etc.) ficam como `XXXX` e aparecem como pendência no CMS. Dados saem do Neon/R2 para a VPS
 e a Vercel será desligada depois.
 
-## Estado em 26/10 20:15
+## Estado em 27/10/2026 — NO AR EM https://www.cmdcapinda.org
 
-- **Produção:** https://cmdca.zewithane.vps.brz.dev.br (VPS, `SITE_INDEXABLE=false` até o domínio).
-  Plano vivo em `docs/PLANO.md` (etapas E0–E4).
-- **Domínio:** servidor pronto (`site dominio --redirecionar` instalado, ADR 0007). **Dono foi avisado
-  para apontar o DNS no Wix às 20h de 26/10** (passos em `DEPLOY.md` → "Trocar para o domínio
-  definitivo"). Assim que `nslookup www.cmdcapinda.org 1.1.1.1` mostrar o IP da VPS, siga os passos 3–6.
-- **E-mail:** não haverá caixa no domínio (o conselho usa o e-mail da prefeitura). Sem SMTP; senhas são
-  redefinidas por um administrador (ADR 0009).
-- **Evidências no hardware do GitHub (pós-deploy, automáticas):**
-  - `Lighthouse (producao)`, mobile, mediana de 3: Perf 98–99, A11y 100, Boas práticas 100 em 8 páginas.
-    SEO 69 só por causa do `noindex` temporário.
-  - `E2E (producao)`: Playwright de leitura + axe, desktop e celular, sem credenciais (`E2E_TARGET=production`
-    pula o que depende das fixtures do CI). A 1ª rodada achou testes que clicavam antes da hidratação e um
-    estouro de 8 px em 320 px (número do Conselho Tutelar com a fonte de fallback). Os dois foram corrigidos.
-  - `Disponibilidade`: monitor externo a cada 15 min (`/api/health` e home), com alerta no ntfy
-    (secret `ALERT_URL`) e e-mail do GitHub.
-  - Mozilla Observatory: B+ (80), 11/12. O único teste reprovado é o `'unsafe-inline'` (ADR 0008).
-- **VPS:** uptime de 3 dias; backup e teste de restauração diários OK. O admin do Dockge existe e a
-  credencial está em `C:\Users\Ze\Backups\vps-zewithane\dockge-admin.env`.
-  - SSH: use o `ssh.exe` do Windows (`C:\Windows\System32\OpenSSH`). A chave tem senha e só está
-    no ssh-agent do Windows; o `ssh` do Git Bash recebe "Permission denied".
-- **Dependabot:** nenhum alerta aberto.
+- **Domínio definitivo ativo desde 27/10 00:50** (DNS no Wix apontado pelo dono). `cmdcapinda.org`,
+  `pt.cmdcapinda.org` e `cmdca.zewithane.vps.brz.dev.br` respondem 301 para `https://www.cmdcapinda.org`,
+  com Let's Encrypt nos 4 hosts. `SITE_INDEXABLE=true`, sitemap com as notícias, `robots.txt` liberado.
+- **E-mail:** o site não envia e-mail (ADR 0009). Senhas são redefinidas por um administrador.
+- **Painel:** https://www.cmdcapinda.org/admin. Política: quem edita publica; revisão jurídica é só
+  informativa (`docs/CMS.md`).
+- **Conteúdo real novo:** Resolução 153/2025 e Edital CMDCA 02/2024 (2ª retificação), com o PDF da p. 4
+  do Diário Oficial de 28/03/2025. Reuniões e entidades seguem vazias: não há fonte aberta (`docs/research`).
+- **Corrigido nesta rodada (com teste):**
+  - páginas do build vazias após cada deploy (truque do mtime no Dockerfile + passo no CI);
+  - sitemap congelado no build;
+  - `noindex` nos PDFs públicos;
+  - limite de login por IP (ADR 0010);
+  - CSP aplicada no `/admin`;
+  - mídia sem arquivo publicável e sem autosave (migration `20261027_044136`);
+  - regras mortas de "aprovação jurídica";
+  - dois botões de menu no painel;
+  - botão Menu saindo da tela em 320 px;
+  - link de PDF sem aviso de formato;
+  - resumo do Lighthouse que quebrava em silêncio.
+- **Evidências:** `docs/QA.md` → "27/10/2026".
+- **Conta temporária de QA:** `qa-temporario@cmdcapinda.org` foi criada para o teste do painel e
+  **apagada no fim**. A senha ficou em `C:\Users\Ze\Backups\vps-zewithane\cms-qa-temporario.env`, que
+  também foi apagado.
 
-## Próximos passos
-1. DNS apontado → passos 3–6 do `DEPLOY.md`, depois desligar Vercel/Neon/R2 (export final antes).
-2. Senhas fortes nas contas do CMS (o dono escolhe) e manter 2 administradores.
-3. Backup off-site: precisa de uma conta gratuita do dono (Backblaze B2 ou R2) → `RESTIC_REPOSITORY_OFFSITE`.
-4. Teste de reboot da VPS (combinar horário com o dono: o T3 também roda lá).
-5. QA final: teclado manual, teste leigo no CMS, revisão visual 390/1280, code review final, tag `v1.0.0`.
+## Próximos passos (dependem do dono)
+1. **Desligar o projeto na Vercel** (`cmdca.vercel.app/admin` ainda está editável, sobre o Neon antigo).
+   Depois: export final do Neon e do R2 e desligamento dos dois.
+2. Senhas fortes nas contas do painel e um 2º administrador (hoje há 1 admin: `v.honorato02@gmail.com`).
+3. Conta grátis Backblaze B2 ou R2 para o backup off-site (`RESTIC_REPOSITORY_OFFSITE`).
+4. Horário para o teste de reboot da VPS (o T3 também roda nela).
+5. Conteúdo: calendário de reuniões, entidades registradas e dados em `XXXX` (lista no painel).
 
 ## Rodadas anteriores
 Atualizado: 2026-10-13 19:15

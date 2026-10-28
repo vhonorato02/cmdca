@@ -82,6 +82,8 @@ coluna ou tabela, a imagem anterior quebra até a migration ser desfeita. Antes 
 para uma versão anterior a uma dessas, rode na VPS `site banco cmdca` e o `down` da
 migration (o SQL está em `src/migrations/<nome>.ts`). Hoje isso vale para
 `20261027_044136_media_sem_autosave` (remove `_media_v.autosave`).
+A `20261027_235800_trocar_senha` só adiciona `users.trocar_senha`: voltar para uma imagem
+anterior funciona sem desfazê-la (a versão antiga ignora a coluna e ninguém fica bloqueado).
 
 Nas próximas mudanças de schema, use expandir/contrair: uma versão para de usar a
 coluna e só a seguinte a remove.
@@ -125,3 +127,23 @@ linhas do `app.env` e as variáveis do GitHub, e rode o deploy de novo.
 - **Banco e mídia do CMDCA:** `site restaurar cmdca [snapshot]`. Guarda o estado atual antes de restaurar.
 - **Servidor novo:** veja o `RUNBOOK.md` do `vps-platform`, seção "Restaurar backup".
 - **Último teste:** `/srv/backups/restore-test.log`. Exemplo de linha: `OK snapshot=ddc7712e bancos=[cmdca:52] midia=ok`.
+
+## Backup fora da VPS (Cloudflare R2, grátis até 10 GB)
+
+O `backup.sh` do `vps-platform` já copia o repositório restic para fora quando
+`RESTIC_REPOSITORY_OFFSITE` existe. Falta só a conta (exige login do dono na Cloudflare):
+
+1. Cloudflare → **R2** → *Create bucket* `vps-zewithane-backup` (região automática).
+2. R2 → **Manage API tokens** → *Create API token*: permissão **Object Read & Write**, só nesse bucket.
+   Anote *Access Key ID*, *Secret Access Key* e o endpoint `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`.
+3. Na VPS, `sudo nano /srv/platform/.env` e acrescente:
+
+   ```
+   RESTIC_REPOSITORY_OFFSITE=s3:https://<ACCOUNT_ID>.r2.cloudflarestorage.com/vps-zewithane-backup
+   AWS_ACCESS_KEY_ID=<access key>
+   AWS_SECRET_ACCESS_KEY=<secret>
+   AWS_DEFAULT_REGION=auto
+   ```
+
+4. `sudo systemctl start platform-backup && journalctl -u platform-backup -n 30` deve mostrar "cópia off-site".
+   A senha do restic (a mesma do repositório local) fica fora do servidor, em `C:\Users\Ze\Backups\vps-zewithane\restic-vps.env`.

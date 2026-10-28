@@ -4,6 +4,18 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 
 ## [Não publicado]
 
+## [2.1.0] — 2026-10-28
+
+### Adicionado
+
+- troca de senha obrigatória no primeiro acesso e depois de uma redefinição pelo administrador: o painel mostra uma tela de bloqueio e o servidor recusa qualquer gravação até a troca (mínimo 10 caracteres). Contas antigas não são afetadas (migration `20261027_235800_trocar_senha`, só adiciona coluna);
+- `manifest.webmanifest`, ícones PNG (192, 512, maskable e Apple) e `/.well-known/security.txt` (RFC 9116);
+- ícones nos telefones, ferramentas de acessibilidade, rodapé e atribuições do conselho; cartões que respondem ao mouse e ao toque; entrada animada da capa; contador do "6%"; botões de copiar CNPJ e dados bancários; botão "voltar ao topo". Tudo desliga com movimento reduzido e no alto contraste.
+
+### Corrigido
+
+- e-mails longos no texto das notícias estouravam a tela de 320 px.
+
 ## [2.0.0] — 2026-10-27
 
 No ar em https://www.cmdcapinda.org, hospedado na VPS própria. Vercel, Neon e R2 deixam de ser usados (o desligamento depende do dono).

@@ -7,8 +7,9 @@ Tudo o que aparece no site é mudado por aqui, sem programador.
 
 1. Abra `/admin` e digite e-mail e senha.
 2. Depois de 5 senhas erradas, o acesso fica bloqueado por 15 minutos. Muitas tentativas seguidas do mesmo lugar também pausam o login por 10 minutos.
-3. Troque a senha inicial no primeiro acesso: clique no seu nome (canto inferior esquerdo) → **Senha**.
-4. Esqueceu a senha? Peça ao administrador para definir uma nova (o site não envia e-mail).
+3. No primeiro acesso o painel pede uma senha nova (mínimo 10 caracteres) e só abre depois disso. Até lá nada pode ser salvo.
+4. Esqueceu a senha? Peça ao administrador para definir uma provisória (o site não envia e-mail). No próximo acesso o painel pede de novo uma senha só sua.
+5. Para trocar a senha quando quiser: clique no seu nome (canto inferior esquerdo) → **Senha**.
 
 ## 2. Quem pode o quê
 

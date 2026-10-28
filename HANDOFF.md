@@ -1,5 +1,25 @@
 # HANDOFF
-Atualizado: 2026-10-27 (domínio definitivo + QA completo, v2.0.0)
+Atualizado: 2026-10-28 (v2.1.0: troca de senha obrigatória, ícones/movimento, manifest, reboot testado)
+
+## Rodada de 28/10/2026 (madrugada)
+
+- **Troca de senha obrigatória** (`src/security/passwordGate.ts`, `src/components/admin/ForcePasswordChange.tsx`):
+  contas novas e senhas redefinidas por um administrador abrem o painel numa tela que só sai com
+  uma senha nova (mín. 10). Enquanto isso, o servidor recusa qualquer gravação (403), inclusive a
+  tentativa de desmarcar o campo pela API. Testado no navegador e em `scripts/ci-test-cms.ts`.
+- **Contas novas no painel:** `dev@cmdcapinda.org` (administrador) e `gestao@cmdcapinda.org` (editor),
+  com senha provisória e troca obrigatória. As senhas provisórias ficam só em
+  `C:\Users\Ze\Backups\vps-zewithane\cms-contas-iniciais.txt` (fora do repositório).
+- **SEO:** `manifest.webmanifest`, ícones PNG/Apple, `/.well-known/security.txt`; robots, sitemap,
+  canonical, Open Graph e JSON-LD já existiam e foram conferidos.
+- **Visual:** ícones, cartões com resposta ao mouse/toque, entrada da capa, contador do 6%, copiar
+  CNPJ/conta, voltar ao topo (`styles/motion.css`, camada `enhance`).
+- **QA:** 27 rotas públicas em 320/390/768/1366 (status, h1, descrição, alt, nomes acessíveis,
+  estouro horizontal) e todas as coleções/globais do painel. Achado e corrigido: e-mail longo
+  estourando 320 px numa notícia.
+- **VPS:** reboot de teste agendado para 28/10 03:00 (`reboot-teste-0300.timer`, transitório). Todos
+  os containers têm `restart=unless-stopped`; Docker e o `t3code.service` (usuário com linger) sobem
+  no boot. IP da VPS é fixo.
 
 ## Rodada de 26/10/2026
 
@@ -42,12 +62,12 @@ e a Vercel será desligada depois.
   também foi apagado.
 
 ## Próximos passos (dependem do dono)
-1. **Desligar o projeto na Vercel** (`cmdca.vercel.app/admin` ainda está editável, sobre o Neon antigo).
+1. **Desligar o projeto na Vercel** (`cmdca.vercel.app/admin` ainda responde 200 em 28/10, sobre o Neon
+   antigo). Vercel → projeto `cmdca` → Settings → *Pause*/*Delete*. Não há login da Vercel nesta máquina.
    Depois: export final do Neon e do R2 e desligamento dos dois.
-2. Senhas fortes nas contas do painel e um 2º administrador (hoje há 1 admin: `v.honorato02@gmail.com`).
-3. Conta grátis Backblaze B2 ou R2 para o backup off-site (`RESTIC_REPOSITORY_OFFSITE`).
-4. Horário para o teste de reboot da VPS (o T3 também roda nela).
-5. Conteúdo: calendário de reuniões, entidades registradas e dados em `XXXX` (lista no painel).
+2. **Backup off-site:** criar bucket e token no R2 (passo a passo em `DEPLOY.md` → "Backup fora da VPS").
+   Exige login na Cloudflare; não há sessão da Cloudflare nesta máquina.
+3. Conteúdo: calendário de reuniões, entidades registradas e dados em `XXXX` (lista no painel).
 
 ## Rodadas anteriores
 Atualizado: 2026-10-13 19:15

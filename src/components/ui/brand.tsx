@@ -66,18 +66,25 @@ export function Emblem({ className }: { className?: string }) {
  */
 export function HeroMark({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 480 360" aria-hidden="true" focusable="false">
+    <svg className={`hero-mark ${className ?? ''}`} viewBox="0 0 480 360" aria-hidden="true" focusable="false">
+      {/* Cada pessoa é um grupo: a capa as faz entrar uma a uma (ver motion.css). */}
       <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M240 118 196 318M240 118l44 200M190 196h100" strokeWidth="30" />
-        <path d="M108 206 84 318M108 206l24 112M80 252h56" strokeWidth="22" />
-        <path d="M374 192 348 318M374 192l26 126M382 214l44-52M406 156l24-2-2 24" strokeWidth="22" />
-      </g>
-      <g fill="currentColor">
-        <circle cx="240" cy="72" r="32" />
-        <circle cx="108" cy="174" r="22" />
-        <circle cx="374" cy="158" r="23" />
+        <g className="hero-mark__person hero-mark__person--1">
+          <path d="M108 206 84 318M108 206l24 112M80 252h56" strokeWidth="22" />
+          <circle cx="108" cy="174" r="22" fill="currentColor" stroke="none" />
+        </g>
+        <g className="hero-mark__person hero-mark__person--2">
+          <path d="M240 118 196 318M240 118l44 200M190 196h100" strokeWidth="30" />
+          <circle cx="240" cy="72" r="32" fill="currentColor" stroke="none" />
+        </g>
+        <g className="hero-mark__person hero-mark__person--3">
+          <path d="M374 192 348 318M374 192l26 126" strokeWidth="22" />
+          <path className="hero-mark__arm" d="M382 214l44-52M406 156l24-2-2 24" strokeWidth="22" />
+          <circle cx="374" cy="158" r="23" fill="currentColor" stroke="none" />
+        </g>
       </g>
       <ellipse
+        className="hero-mark__orbit"
         cx="240"
         cy="196"
         rx="226"
@@ -85,6 +92,7 @@ export function HeroMark({ className }: { className?: string }) {
         fill="none"
         stroke="currentColor"
         strokeWidth="8"
+        pathLength={1}
         transform="rotate(-12 240 196)"
       />
     </svg>

@@ -4,7 +4,7 @@ import { AppLink as Link } from '@/components/ui/AppLink'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-import { Close, Menu } from '@/components/ui/icons'
+import { Close, LifeBuoy, Menu } from '@/components/ui/icons'
 import type { NavigationLink } from '@/lib/navigation'
 
 const MOBILE = '(max-width: 899.98px)'
@@ -124,6 +124,7 @@ export function MainNav({ links }: { links: NavigationLink[] }) {
           aria-current={isActive('/ajuda') ? 'page' : undefined}
           onClick={() => setOpen(false)}
         >
+          <LifeBuoy />
           Buscar ajuda
         </Link>
       </nav>

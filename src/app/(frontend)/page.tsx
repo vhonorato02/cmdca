@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { AppLink as Link } from '@/components/ui/AppLink'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 import { canaisDaFaixa } from '@/components/layout/Protection'
 import { NewsCard } from '@/components/NewsCard'
@@ -42,11 +42,11 @@ export const metadata: Metadata = createMetadata({
 const DEFAULT_BLOCOS = ['slider', 'sobre', 'atalhos', 'vozes', 'noticias']
 
 /** Maior limite percentual cadastrado (ex.: "6%"), para o caminho do Fundo. */
-function maiorLimite(modalidades: { limite: string }[]): string | undefined {
+function maiorLimite(modalidades: { limite: string }[]): number | undefined {
   const values = modalidades
     .map((m) => Number.parseFloat(m.limite.replace(',', '.')))
     .filter((v) => Number.isFinite(v))
-  return values.length ? `${Math.max(...values).toLocaleString('pt-BR')}%` : undefined
+  return values.length ? Math.max(...values) : undefined
 }
 
 export default async function HomePage() {
@@ -338,9 +338,16 @@ export default async function HomePage() {
               ) : null}
             </li>
             <li className="route route--fundo">
-              {limite ? (
+              {limite !== undefined ? (
                 <p className="route__figure" aria-hidden="true">
-                  {limite}
+                  {Number.isInteger(limite) && limite <= 100 ? (
+                    // Conta de 0 até o valor na primeira pintura; sem suporte, mostra o valor final.
+                    <span className="countup" style={{ '--to': limite } as CSSProperties}>
+                      <span className="countup__static">{limite}%</span>
+                    </span>
+                  ) : (
+                    `${limite.toLocaleString('pt-BR')}%`
+                  )}
                   <small>do imposto devido</small>
                 </p>
               ) : null}

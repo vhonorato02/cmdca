@@ -3,10 +3,11 @@
  * precedência: páginas vencem componentes, que vencem layout e base.
  * Documentação: docs/design/DESIGN-SYSTEM.md
  */
-@layer tokens, base, layout, components, pages;
+@layer tokens, base, layout, components, pages, enhance;
 
 @import './styles/tokens.css';
 @import './styles/base.css';
 @import './styles/layout.css';
 @import './styles/components.css';
 @import './styles/pages.css';
+@import './styles/motion.css';

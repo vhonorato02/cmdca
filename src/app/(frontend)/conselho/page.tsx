@@ -3,7 +3,7 @@ import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { SourceList } from '@/components/SourceList'
 import { ButtonLink } from '@/components/ui/Button'
-import { ArrowRight } from '@/components/ui/icons'
+import { ArrowRight, TopicIcon } from '@/components/ui/icons'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Section } from '@/components/ui/Section'
 import { getInstituicao, getTextos } from '@/lib/content'
@@ -37,9 +37,12 @@ export default async function ConselhoPage() {
       <PageHeader title={t.titulo} lead={t.introducao} />
 
       <Section id="atribuicoes" title={t.atribuicoesTitulo}>
-        <ul className="ruled-list">
+        <ul className="ruled-list ruled-list--icons">
           {t.atribuicoes.map((a) => (
             <li key={a.titulo}>
+              <span className="topic-icon">
+                <TopicIcon title={a.titulo} text={a.texto} />
+              </span>
               <h3>{a.titulo}</h3>
               <p>{a.texto}</p>
             </li>

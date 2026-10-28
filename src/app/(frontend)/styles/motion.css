@@ -1,0 +1,542 @@
+/*
+ * Camada "enhance": profundidade, ícones e movimento por cima do design system.
+ * Regras:
+ *  - um único momento orquestrado (a capa da home);
+ *  - o resto do movimento responde a uma ação (passar o mouse, tocar, rolar);
+ *  - tudo some com prefers-reduced-motion e no alto contraste;
+ *  - só transform/opacity nas entradas, para não mexer no layout nem no contraste medido.
+ */
+/* Registrada fora da camada: @property é regra de nível superior. */
+@property --num {
+  syntax: '<integer>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@layer enhance {
+  :root {
+    --r-lg: 16px;
+    --shadow-rest: 0 1px 2px rgb(26 17 64 / 6%), 0 2px 8px -4px rgb(26 17 64 / 10%);
+    --shadow-lift: 0 2px 4px rgb(26 17 64 / 6%), 0 18px 36px -18px rgb(26 17 64 / 45%);
+    --spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  /* ───────── Cabeçalho translúcido, com sombra quando a página rola ───────── */
+  .site-header {
+    background: rgb(255 255 255 / 86%);
+    backdrop-filter: saturate(1.6) blur(14px);
+    -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @keyframes header-raise {
+      to {
+        box-shadow: 0 8px 24px -14px rgb(26 17 64 / 40%);
+        border-bottom-color: transparent;
+      }
+    }
+
+    .site-header {
+      animation: header-raise linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 120px;
+    }
+  }
+
+  html.contrast .site-header {
+    background: #000;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* ───────── Ícones nos controles ───────── */
+  .channel-link__icon {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+    color: var(--c-signal);
+  }
+
+  .a11y-tools__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+  }
+
+  .a11y-tools__btn svg {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+  }
+
+  .site-nav__help svg {
+    transition: transform 600ms var(--ease);
+  }
+
+  .site-nav__help:hover svg {
+    transform: rotate(90deg);
+  }
+
+  .site-footer__contact dt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .site-footer__contact dt svg {
+    width: 1rem;
+    height: 1rem;
+    color: var(--c-signal);
+  }
+
+  .site-footer__social {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .site-footer__social svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: none;
+  }
+
+  /* Atribuições do conselho com ícone por assunto */
+  .topic-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: var(--s-2);
+    border-radius: var(--r-md);
+    background: var(--c-signal);
+    color: var(--c-on-signal);
+    transition: transform var(--t-base) var(--spring);
+  }
+
+  .topic-icon svg {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .ruled-list--icons > li:hover .topic-icon {
+    transform: rotate(-6deg) scale(1.06);
+  }
+
+  html.contrast .topic-icon {
+    background: #000;
+    border: 2px solid var(--amarelo);
+    color: var(--amarelo);
+  }
+
+  /* ───────── Cartões: forma mais macia, profundidade só ao interagir ───────── */
+  .card,
+  .news-card,
+  .route,
+  .contact-card {
+    border-radius: var(--r-lg);
+  }
+
+  .card,
+  .news-card,
+  .route {
+    transition:
+      transform var(--t-base) var(--ease),
+      box-shadow var(--t-base) var(--ease),
+      border-color var(--t-fast) var(--ease);
+  }
+
+  .card:has(.card__title a:hover),
+  .news-card:has(.news-card__title a:hover),
+  .route:has(.route__title a:hover) {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .card:has(.card__title a:active),
+  .news-card:has(.news-card__title a:active),
+  .route:has(.route__title a:active) {
+    transform: translateY(-1px) scale(0.99);
+    transition-duration: 60ms;
+  }
+
+  /* Os caminhos flutuam sobre a capa amarela: a sombra mostra isso. */
+  .route {
+    box-shadow: var(--shadow-rest);
+  }
+
+  .news-card__pictogram {
+    transition: transform 400ms var(--spring);
+  }
+
+  .news-card:has(.news-card__title a:hover) .news-card__pictogram {
+    transform: translateY(-3px) rotate(-6deg);
+  }
+
+  .news-card__media img {
+    transition: transform 600ms var(--ease);
+  }
+
+  .news-card:has(.news-card__title a:hover) .news-card__media img {
+    transform: scale(1.04);
+  }
+
+  .person {
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+    box-shadow: var(--shadow-rest);
+  }
+
+  /* Destaques: a régua superior cresce de amarelo ao passar o mouse */
+  .highlight::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--c-signal);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 320ms var(--ease);
+  }
+
+  .highlight:has(.card__title a:hover)::before {
+    transform: scaleX(1);
+  }
+
+  .highlight .more-link svg,
+  .more-link svg {
+    transition: transform var(--t-base) var(--spring);
+  }
+
+  .highlight:has(.card__title a:hover) .more-link svg {
+    transform: translateX(5px);
+  }
+
+  /* ───────── Botões: resposta tátil ───────── */
+  .btn {
+    transition:
+      background-color var(--t-fast) var(--ease),
+      border-color var(--t-fast) var(--ease),
+      color var(--t-fast) var(--ease),
+      transform var(--t-fast) var(--ease),
+      box-shadow var(--t-base) var(--ease);
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px -10px rgb(26 17 64 / 55%);
+  }
+
+  .btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: none;
+  }
+
+  .btn svg {
+    transition: transform var(--t-base) var(--spring);
+  }
+
+  .btn:hover svg:last-child:not(:first-child) {
+    transform: translateX(3px);
+  }
+
+  .a11y-tools__btn:active,
+  .menu-toggle:active {
+    transform: scale(0.95);
+  }
+
+  /* Navegação: o item atual ganha um filete, os outros um sublinhado que cresce */
+  @media (min-width: 900px) {
+    .site-nav__link {
+      position: relative;
+    }
+
+    .site-nav__link:not([aria-current='page'])::after {
+      content: '';
+      position: absolute;
+      left: var(--s-3);
+      right: var(--s-3);
+      bottom: 0.45rem;
+      height: 2px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--t-base) var(--ease);
+    }
+
+    .site-nav__link:not([aria-current='page']):hover::after {
+      transform: scaleX(1);
+    }
+
+    .site-nav__link:not([aria-current='page']):hover {
+      background: transparent;
+    }
+  }
+
+  /* ───────── Contador do "6%" ───────── */
+  .countup {
+    --num: var(--to);
+    counter-reset: n var(--num);
+  }
+
+  .countup::before {
+    content: counter(n) '%';
+  }
+
+  .countup__static {
+    display: none;
+  }
+
+  /* ───────── Copiar CNPJ e conta ───────── */
+  .copy-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2) var(--s-3);
+  }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    padding: 0 var(--s-3);
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--r-pill);
+    background: var(--c-bg);
+    color: var(--c-heading);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    transition:
+      background-color var(--t-fast) var(--ease),
+      transform var(--t-fast) var(--ease);
+  }
+
+  .copy-btn svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .copy-btn:hover {
+    background: var(--c-bg-soft);
+  }
+
+  .copy-btn:active {
+    transform: scale(0.96);
+  }
+
+  .copy-btn.is-done {
+    background: var(--vigente-50);
+    border-color: var(--vigente);
+    color: var(--vigente);
+  }
+
+  .copy-btn.is-done svg {
+    animation: pop 320ms var(--spring);
+  }
+
+  @keyframes pop {
+    from {
+      transform: scale(0.4);
+    }
+  }
+
+  /* ───────── Voltar ao topo ───────── */
+  .back-to-top {
+    position: fixed;
+    right: var(--gutter);
+    bottom: calc(var(--dock-h) + var(--s-4) + env(safe-area-inset-bottom, 0px));
+    z-index: var(--z-dock);
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid var(--c-signal);
+    border-radius: 50%;
+    background: var(--c-dark);
+    color: var(--c-signal);
+    box-shadow: var(--shadow-lift);
+    opacity: 0;
+    transform: translateY(12px) scale(0.9);
+    pointer-events: none;
+    transition:
+      opacity var(--t-base) var(--ease),
+      transform var(--t-base) var(--ease);
+  }
+
+  .back-to-top.is-visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .back-to-top:hover svg {
+    transform: translateY(-2px);
+  }
+
+  .back-to-top svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: transform var(--t-fast) var(--ease);
+  }
+
+  html.contrast .back-to-top {
+    background: #000;
+    border-color: #fff;
+    color: var(--amarelo);
+  }
+
+  /* ───────── Movimento, só para quem não pediu para reduzir ───────── */
+  @media (prefers-reduced-motion: no-preference) {
+    /* A capa: uma única sequência de abertura */
+    /* O título não fica transparente: é o maior elemento da primeira pintura (LCP). */
+    .home-hero h1 {
+      animation: settle 700ms var(--ease) both;
+    }
+
+    .home-hero__lead,
+    .home-hero .actions {
+      animation: rise 700ms var(--ease) both;
+    }
+
+    .home-hero__lead {
+      animation-delay: 90ms;
+    }
+
+    .home-hero .actions {
+      animation-delay: 180ms;
+    }
+
+    .hero-mark__orbit {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: draw 1400ms 250ms var(--ease) forwards;
+    }
+
+    .hero-mark__person {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: stand 650ms var(--spring) both;
+    }
+
+    .hero-mark__person--1 {
+      animation-delay: 420ms;
+    }
+
+    .hero-mark__person--2 {
+      animation-delay: 300ms;
+    }
+
+    .hero-mark__person--3 {
+      animation-delay: 540ms;
+    }
+
+    /* O braço erguido acena uma vez ao chegar e de novo quando o mouse passa pela capa */
+    .hero-mark__arm {
+      transform-box: fill-box;
+      transform-origin: 0% 100%;
+      animation: wave 900ms 1200ms var(--ease) both;
+    }
+
+    .home-hero:hover .hero-mark__arm {
+      animation: wave-again 900ms var(--ease);
+    }
+
+    .routes .route {
+      animation: rise 600ms var(--ease) both;
+    }
+
+    .routes .route:nth-child(2) {
+      animation-delay: 80ms;
+    }
+
+    .routes .route:nth-child(3) {
+      animation-delay: 160ms;
+    }
+
+    .countup {
+      animation: count 1200ms 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .page-header__title {
+      animation: settle 600ms var(--ease) both;
+    }
+
+    .page-header__lead {
+      animation: rise 600ms 80ms var(--ease) both;
+    }
+
+    @supports (animation-timeline: view()) {
+      /* Entrada ao rolar: só deslocamento, sem transparência (o contraste não muda). */
+      :is(.highlights, .news-grid, .ruled-list--icons, .quotes, .person-list) > li {
+        animation: settle linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 70%;
+      }
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+
+  @keyframes settle {
+    from {
+      transform: translateY(32px);
+    }
+  }
+
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes stand {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scaleY(0.85);
+    }
+  }
+
+  @keyframes wave {
+    0%,
+    100% {
+      transform: rotate(0);
+    }
+    25% {
+      transform: rotate(-14deg);
+    }
+    60% {
+      transform: rotate(8deg);
+    }
+  }
+
+  @keyframes wave-again {
+    0%,
+    100% {
+      transform: rotate(0);
+    }
+    25% {
+      transform: rotate(-14deg);
+    }
+    60% {
+      transform: rotate(8deg);
+    }
+  }
+
+  @keyframes count {
+    from {
+      --num: 0;
+    }
+  }
+
+  html.contrast * {
+    animation: none !important;
+  }
+}

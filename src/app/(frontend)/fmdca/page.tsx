@@ -5,6 +5,7 @@ import { FaqList, publicFaq } from '@/components/FaqList'
 import { SimuladorIR } from '@/components/SimuladorIR'
 import { SourceList } from '@/components/SourceList'
 import { ButtonLink } from '@/components/ui/Button'
+import { CopyButton } from '@/components/ui/CopyButton'
 import { ArrowRight } from '@/components/ui/icons'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Section } from '@/components/ui/Section'
@@ -106,13 +107,19 @@ export default async function FmdcaPage() {
                 {cnpj ? (
                   <div>
                     <dt>CNPJ do Fundo</dt>
-                    <dd className="num">{cnpj}</dd>
+                    <dd className="copy-row">
+                      <span className="num">{cnpj}</span>
+                      <CopyButton value={cnpj} label="CNPJ do Fundo" />
+                    </dd>
                   </div>
                 ) : null}
                 {conta ? (
                   <div>
                     <dt>Dados bancários</dt>
-                    <dd className="num">{conta}</dd>
+                    <dd className="copy-row">
+                      <span className="num">{conta}</span>
+                      <CopyButton value={conta} label="dados bancários" />
+                    </dd>
                   </div>
                 ) : null}
               </dl>

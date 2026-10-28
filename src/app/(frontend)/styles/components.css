@@ -802,6 +802,8 @@
   /* ───────── Texto corrido (rich text) ───────── */
   .prose {
     max-width: var(--measure);
+    /* E-mails e links longos quebram em vez de estourar a tela de 320 px. */
+    overflow-wrap: break-word;
   }
 
   .prose :is(p, ul, ol, blockquote, figure, table, h2, h3, h4) + :is(p, ul, ol, blockquote, figure, table) {

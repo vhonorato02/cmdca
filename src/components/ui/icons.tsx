@@ -109,6 +109,132 @@ export const Gavel = (props: IconProps) => (
   </svg>
 )
 
+export const LifeBuoy = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="3.5" />
+    <path d="m5.6 5.6 3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9" />
+  </svg>
+)
+
+export const MapPin = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" />
+    <circle cx="12" cy="9.5" r="2.5" />
+  </svg>
+)
+
+export const Mail = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="m4 7 8 6 8-6" />
+  </svg>
+)
+
+export const Clock = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3 2" />
+  </svg>
+)
+
+export const Instagram = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <path d="M17.2 6.8h.01" />
+  </svg>
+)
+
+/** Meio círculo cheio: alto contraste. */
+export const Contrast = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" />
+  </svg>
+)
+
+/** Mão aberta: tradução para Libras. */
+export const Hand = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10.5V4a1.5 1.5 0 0 1 3 0v7M14 10.5V5.5a1.5 1.5 0 0 1 3 0V13" />
+    <path d="M17 9.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a7 7 0 0 1-5.6-2.8L3.8 14.9a1.6 1.6 0 0 1 2.5-2L8 15" />
+  </svg>
+)
+
+export const ArrowUp = (props: IconProps) => (
+  <svg {...base} strokeWidth={2.4} {...props}>
+    <path d="M12 19V5M6 11l6-6 6 6" />
+  </svg>
+)
+
+export const Copy = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <rect x="8" y="8" width="12" height="12" rx="2" />
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+  </svg>
+)
+
+export const Check = (props: IconProps) => (
+  <svg {...base} strokeWidth={2.6} {...props}>
+    <path d="m5 12.5 4.5 4.5L19 7.5" />
+  </svg>
+)
+
+export const Compass = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m15.5 8.5-2 5-5 2 2-5Z" />
+  </svg>
+)
+
+export const Building = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6M9 11h.01M15 11h.01" />
+  </svg>
+)
+
+export const Ballot = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="M4 13h16v8H4ZM8 13V4h8v9" />
+    <path d="m10 8 1.5 1.5L14 7" />
+  </svg>
+)
+
+export const Scale = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="M12 4v17M7 21h10M5 7h14M12 4l-1 3h2Z" />
+    <path d="m5 7-3 7a3 3 0 0 0 6 0ZM19 7l-3 7a3 3 0 0 0 6 0Z" />
+  </svg>
+)
+
+export const People = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <circle cx="9" cy="8" r="3" />
+    <circle cx="17" cy="9" r="2.4" />
+    <path d="M3.5 20v-1.5A5.5 5.5 0 0 1 9 13a5.5 5.5 0 0 1 5.5 5.5V20M15 14.2a4.5 4.5 0 0 1 6 4.3V20" />
+  </svg>
+)
+
+const TOPICS: [RegExp, (props: IconProps) => ReactNode][] = [
+  [/fundo|fmdca|recurso|imposto/, Coins],
+  [/tutelar|escolha|elei/, Ballot],
+  [/entidade|programa|registr/, Building],
+  [/politica|diretriz|plano/, Compass],
+  [/fiscaliz|lei|resolu|delibera/, Scale],
+  [/reuni|particip|conferen|pessoa/, People],
+]
+
+const normalize = (text: string) => text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
+
+/** Escolhe um ícone pelo assunto de um texto editável no CMS: primeiro o título, depois o texto. */
+export function TopicIcon({ title, text = '', className }: { title: string; text?: string; className?: string }) {
+  const t = normalize(title)
+  const d = normalize(text)
+  const Icon = TOPICS.find(([re]) => re.test(t))?.[1] ?? TOPICS.find(([re]) => re.test(d))?.[1] ?? Check
+  return <Icon className={className} />
+}
+
 /** Pictogramas por tema editorial das notícias (campo `tema`). */
 const PICTOGRAMS: Record<string, ReactNode> = {
   familia: (

@@ -1,5 +1,6 @@
 import { Fragment, type CSSProperties } from 'react'
 
+import { Phone } from '@/components/ui/icons'
 import type { Canal } from '@/lib/content'
 
 import { A11yTools } from './A11yTools'
@@ -25,6 +26,7 @@ export function ProtectionBar({ chamada, canais }: { chamada: string; canais: Ca
           {canais.map((canal) => (
             <li key={`${canal.tipo}-${canal.numero}`}>
               <a className="channel-link" href={canal.href}>
+                <Phone className="channel-link__icon" />
                 <span className="channel-link__label">{canal.rotulo}</span>{' '}
                 <span className="channel-link__number">{canal.numero}</span>
                 <span className="sr-only">{callHint(canal)}</span>

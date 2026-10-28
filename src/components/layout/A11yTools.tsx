@@ -3,6 +3,7 @@
 import { AppLink as Link } from '@/components/ui/AppLink'
 import { useCallback, useState, useSyncExternalStore } from 'react'
 
+import { Contrast, Hand } from '@/components/ui/icons'
 import { openVLibras } from '@/components/VLibras'
 
 /** Assina mudanças na classe do <html> para refletir o alto contraste. */
@@ -88,6 +89,7 @@ export function A11yTools() {
           aria-pressed={contrast}
           aria-label={contrast ? 'Desativar alto contraste' : 'Ativar alto contraste'}
         >
+          <Contrast />
           Contraste
         </button>
         <button
@@ -97,6 +99,7 @@ export function A11yTools() {
           aria-busy={translationLoading}
           aria-label="VLibras: abrir tradução para Libras"
         >
+          <Hand />
           {translationLoading ? 'Carregando…' : 'Libras'}
         </button>
       </div>

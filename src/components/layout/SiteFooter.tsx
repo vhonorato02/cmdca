@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { AppLink as Link } from '@/components/ui/AppLink'
 
 import type { Canal, Instituicao } from '@/lib/content'
+import { Clock, Instagram, Mail, MapPin, Phone } from '@/components/ui/icons'
 import { phoneHref } from '@/lib/contact'
 import type { NavigationLink } from '@/lib/navigation'
 
@@ -53,13 +54,19 @@ export function SiteFooter({
           <dl className="site-footer__contact">
             {endereco ? (
               <div>
-                <dt>Endereço</dt>
+                <dt>
+                  <MapPin />
+                  Endereço
+                </dt>
                 <dd>{endereco}</dd>
               </div>
             ) : null}
             {i.telefone ? (
               <div>
-                <dt>Telefone</dt>
+                <dt>
+                  <Phone />
+                  Telefone
+                </dt>
                 <dd>
                   {splitPhones(i.telefone).map((phone, index) => (
                     <span key={`${phone}-${index}`}>
@@ -72,7 +79,10 @@ export function SiteFooter({
             ) : null}
             {i.email ? (
               <div>
-                <dt>E-mail</dt>
+                <dt>
+                  <Mail />
+                  E-mail
+                </dt>
                 <dd>
                   <a href={`mailto:${i.email}`}>{i.email}</a>
                 </dd>
@@ -80,7 +90,10 @@ export function SiteFooter({
             ) : null}
             {i.horario ? (
               <div>
-                <dt>Atendimento</dt>
+                <dt>
+                  <Clock />
+                  Atendimento
+                </dt>
                 <dd>{i.horario}</dd>
               </div>
             ) : null}
@@ -128,7 +141,8 @@ export function SiteFooter({
             ))}
             {i.instagramUrl ? (
               <li>
-                <a href={i.instagramUrl} target="_blank" rel="noopener noreferrer">
+                <a className="site-footer__social" href={i.instagramUrl} target="_blank" rel="noopener noreferrer">
+                  <Instagram />
                   Instagram{i.instagramHandle ? ` ${i.instagramHandle}` : ''}
                   <span className="sr-only"> (abre em nova aba)</span>
                 </a>

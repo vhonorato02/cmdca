@@ -32,6 +32,11 @@ export default function ForcePasswordChange({ children }: { children?: ReactNode
 
   if (!blocked || !user?.id) return <>{children}</>
 
+  const signOut = async () => {
+    await logOut()
+    router.push('/admin/login')
+  }
+
   const submit = async (event: FormEvent) => {
     event.preventDefault()
     setError('')
@@ -120,7 +125,7 @@ export default function ForcePasswordChange({ children }: { children?: ReactNode
             <button type="submit" className="btn btn--style-primary" disabled={saving}>
               {saving ? 'Salvando…' : 'Salvar e entrar no painel'}
             </button>
-            <button type="button" className="btn btn--style-secondary" onClick={() => void logOut()}>
+            <button type="button" className="btn btn--style-secondary" onClick={signOut}>
               Sair
             </button>
           </div>

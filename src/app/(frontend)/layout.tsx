@@ -6,6 +6,7 @@ import React from 'react'
 import { canaisDaFaixa, ProtectionBar, ProtectionDock } from '@/components/layout/Protection'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
+import { BackToTop } from '@/components/ui/BackToTop'
 import { canaisDiscaveis, getInstituicao, getTextos } from '@/lib/content'
 import { getSiteNavigation } from '@/lib/navigation'
 import { absoluteUrl, DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from '@/lib/site'
@@ -42,7 +43,14 @@ export const metadata: Metadata = {
   description: DEFAULT_DESCRIPTION,
   applicationName: SITE_NAME,
   category: 'governo',
-  icons: { icon: '/brand/favicon.svg' },
+  icons: {
+    icon: [
+      { url: '/brand/favicon.svg', type: 'image/svg+xml' },
+      { url: '/brand/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [{ url: '/brand/apple-touch-icon.png', sizes: '180x180' }],
+  },
+  appleWebApp: { title: 'CMDCA Pinda', statusBarStyle: 'default' },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
@@ -86,7 +94,11 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   const faixa = canaisDaFaixa(canais)
 
   return (
-    <html lang="pt-BR" className={`${archivo.variable} ${atkinson.variable}`} suppressHydrationWarning>
+    <html
+      lang="pt-BR"
+      className={`${archivo.variable} ${atkinson.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Inline de propósito: precisa rodar antes da primeira pintura para não piscar. */}
         <script dangerouslySetInnerHTML={{ __html: A11Y_INIT }} />
@@ -107,6 +119,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
           sobreSite={navigation.rodapeSobreSite}
           canais={faixa}
         />
+        <BackToTop />
         <ProtectionDock canais={faixa} />
       </body>
     </html>

@@ -322,6 +322,10 @@ export interface User {
    * Editor e jurídico podem preparar e publicar conteúdo. Administrador também gerencia contas e exclusões.
    */
   role: 'admin' | 'editor' | 'juridico';
+  /**
+   * Marcado: a pessoa só usa o painel depois de criar a própria senha. Contas novas e senhas redefinidas por um administrador ficam marcadas.
+   */
+  trocarSenha?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -412,7 +416,7 @@ export interface Reunioe {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Atos normativos do conselho. O jurídico confere número, vigência, fonte e PDF antes da publicação.
+ * Atos normativos do conselho. Antes de publicar, confira número, vigência, fonte e PDF.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "resolucoes".
@@ -467,7 +471,7 @@ export interface Resolucoe {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Chamamentos e processos oficiais. O jurídico confere prazo, situação, fonte e PDF antes da publicação.
+ * Chamamentos e processos oficiais. Antes de publicar, confira prazo, situação, fonte e PDF.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "editais".
@@ -753,7 +757,7 @@ export interface Faq {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Textos longos como privacidade, termos de uso e acessibilidade. Cada página fica em /endereço. Mudanças em textos legais devem passar pelo jurídico antes da publicação.
+ * Textos longos como privacidade, termos de uso e acessibilidade. Cada página fica em /endereço. Em textos legais (privacidade, termos), confira a redação com o jurídico antes de publicar.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "paginas".
@@ -1273,6 +1277,7 @@ export interface MediaSelect<T extends boolean = true> {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   role?: T;
+  trocarSenha?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

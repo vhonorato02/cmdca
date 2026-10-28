@@ -29,11 +29,11 @@ try {
   await appendFile(process.env.GITHUB_ENV, `CMS_TEST_PASSWORD=${password}\n`)
   const admin = await payload.create({
     collection: 'users',
-    data: { name: 'CI administrator', email: 'admin@example.test', password, role: 'admin' },
+    data: { name: 'CI administrator', email: 'admin@example.test', password, role: 'admin', trocarSenha: false },
   })
   const editor = await payload.create({
     collection: 'users',
-    data: { name: 'CI editor', email: 'editor@example.test', password, role: 'editor' },
+    data: { name: 'CI editor', email: 'editor@example.test', password, role: 'editor', trocarSenha: false },
   })
   const login = await payload.login({ collection: 'users', data: { email: editor.email, password } })
   console.log('Fixture users created and editor authenticated.')
@@ -56,6 +56,24 @@ try {
   const unchanged = await payload.findByID({ collection: 'users', id: editor.id })
   assert.equal(unchanged.role, 'editor', 'Editor cannot elevate their own role')
   console.log('User isolation and role elevation checks passed.')
+
+  // Conta nova nasce com troca de senha obrigatória e não escreve nada até trocar.
+  const novato = await payload.create({
+    collection: 'users',
+    data: { name: 'CI novato', email: 'novato@example.test', password, role: 'editor' },
+  })
+  assert.equal(novato.trocarSenha, true, 'New accounts must change the password')
+  await assert.rejects(payload.create({
+    collection: 'faq', data: { pergunta: 'Bloqueada?', resposta: 'Sim' } as never,
+    overrideAccess: false, user: novato,
+  }), /nova senha/)
+  const trocada = await payload.update({
+    collection: 'users', id: novato.id, data: { password: `${password}-nova` },
+    overrideAccess: false, user: novato,
+  })
+  assert.equal(trocada.trocarSenha, false, 'Own password change clears the requirement')
+  await payload.delete({ collection: 'users', id: novato.id })
+  console.log('Forced password change checks passed.')
 
   await assert.rejects(payload.forgotPassword({ collection: 'users', data: { email: editor.email } }), /indisponível/)
   const originalEmail = payload.email

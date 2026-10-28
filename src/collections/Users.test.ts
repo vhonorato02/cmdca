@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { Users } from './Users'
 
-const beforeChange = Users.hooks?.beforeChange?.[0]
+const beforeChange = Users.hooks?.beforeChange?.[1]
 const beforeDelete = Users.hooks?.beforeDelete?.[0]
 
 const request = (userID: number, adminCount = 1) =>

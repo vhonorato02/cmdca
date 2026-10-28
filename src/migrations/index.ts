@@ -5,6 +5,7 @@ import * as migration_20260929_150216_payload_upgrade_compatibility from './2026
 import * as migration_20261011_073400_editorial_controls from './20261011_073400_editorial_controls'
 import * as migration_20261026_092854_textos_paginas_pendencias from './20261026_092854_textos_paginas_pendencias'
 import * as migration_20261027_044136_media_sem_autosave from './20261027_044136_media_sem_autosave'
+import * as migration_20261027_235800_trocar_senha from './20261027_235800_trocar_senha'
 
 export const migrations = [
   {
@@ -41,5 +42,10 @@ export const migrations = [
     up: migration_20261027_044136_media_sem_autosave.up,
     down: migration_20261027_044136_media_sem_autosave.down,
     name: '20261027_044136_media_sem_autosave',
+  },
+  {
+    up: migration_20261027_235800_trocar_senha.up,
+    down: migration_20261027_235800_trocar_senha.down,
+    name: '20261027_235800_trocar_senha',
   },
 ]

@@ -28,6 +28,7 @@ import { Indicadores } from './globals/Indicadores'
 import { Navegacao } from './globals/Navegacao'
 import { Textos } from './globals/Textos'
 import { buildAllowedOrigins } from './security/origins'
+import { withGlobalPasswordGate, withPasswordGate } from './security/passwordGate'
 import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
@@ -169,7 +170,7 @@ export default buildConfig({
       icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/brand/favicon.svg' }],
     },
     components: {
-      providers: ['/components/admin/AdminA11yProvider'],
+      providers: ['/components/admin/AdminA11yProvider', '/components/admin/ForcePasswordChange'],
       graphics: {
         Logo: '/components/admin/Logo',
         Icon: '/components/admin/Icon',
@@ -219,8 +220,8 @@ export default buildConfig({
       ? Media
       : { ...Media, upload: { ...(typeof Media.upload === 'object' ? Media.upload : {}), staticDir: mediaDir } },
     Users,
-  ],
-  globals: [Configuracoes, PaginaInicial, Textos, Indicadores, Navegacao],
+  ].map(withPasswordGate),
+  globals: [Configuracoes, PaginaInicial, Textos, Indicadores, Navegacao].map(withGlobalPasswordGate),
   editor: lexicalEditor(),
   secret: payloadSecret,
   graphQL: { disable: true },

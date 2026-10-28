@@ -15,6 +15,30 @@ const requirePasswordRecoveryEmail: CollectionBeforeOperationHook = ({ operation
   return args
 }
 
+export const MIN_PASSWORD_LENGTH = 10
+
+/**
+ * Troca de senha obrigatória:
+ * - conta nova ou senha redefinida por um administrador → a pessoa troca no próximo acesso;
+ * - a própria pessoa trocou a senha → a exigência some.
+ * Roda depois do controle de acesso por campo, então só este hook desmarca o campo
+ * de quem não é administrador.
+ */
+export const passwordChangePolicy: CollectionBeforeChangeHook = ({ data, operation, originalDoc, req }) => {
+  const password = typeof data.password === 'string' ? data.password : undefined
+  if (password !== undefined && password.length < MIN_PASSWORD_LENGTH) {
+    throw new APIError(`A senha precisa ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres.`, 400)
+  }
+  if (operation === 'create') {
+    if (data.trocarSenha === undefined) data.trocarSenha = true
+    return data
+  }
+  if (!password) return data
+  const self = originalDoc && String(originalDoc.id) === String(idOf(req.user))
+  data.trocarSenha = !self
+  return data
+}
+
 const protectAdministratorRole: CollectionBeforeChangeHook = async ({ data, operation, originalDoc, req }) => {
   if (
     operation !== 'update' ||
@@ -74,7 +98,7 @@ export const Users: CollectionConfig = {
   labels: { singular: 'Usuário', plural: 'Usuários' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'role'],
+    defaultColumns: ['name', 'email', 'role', 'trocarSenha'],
     group: 'Administração',
     hidden: ({ user }) => roleOf(user) !== 'admin',
     description: 'Contas do painel. Mantenha sempre pelo menos dois administradores ativos.',
@@ -90,7 +114,7 @@ export const Users: CollectionConfig = {
   },
   hooks: {
     beforeOperation: [requirePasswordRecoveryEmail],
-    beforeChange: [protectAdministratorRole],
+    beforeChange: [passwordChangePolicy, protectAdministratorRole],
     beforeDelete: [protectAdministratorDeletion],
   },
   access: {
@@ -128,6 +152,18 @@ export const Users: CollectionConfig = {
       admin: {
         description:
           'Editor e jurídico podem preparar e publicar conteúdo. Administrador também gerencia contas e exclusões.',
+      },
+    },
+    {
+      name: 'trocarSenha',
+      label: 'Trocar a senha no próximo acesso',
+      type: 'checkbox',
+      defaultValue: true,
+      access: { create: isAdminFieldLevel, update: isAdminFieldLevel },
+      admin: {
+        position: 'sidebar',
+        description:
+          'Marcado: a pessoa só usa o painel depois de criar a própria senha. Contas novas e senhas redefinidas por um administrador ficam marcadas.',
       },
     },
   ],

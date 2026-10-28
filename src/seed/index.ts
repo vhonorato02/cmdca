@@ -57,6 +57,8 @@ async function seed(): Promise<void> {
       password,
       name: process.env.SEED_ADMIN_NAME?.trim() || 'Administrador local',
       role: 'admin',
+      // Senha forte escolhida por quem roda o bootstrap: não precisa trocar no 1º acesso.
+      trocarSenha: false,
     },
     overrideAccess: true,
   })

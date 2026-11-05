@@ -9,3 +9,7 @@
 **Governança editorial:** conferir com fonte oficial os cargos da diretoria, telefones, leis municipais, decisões, datas, editais, indicadores, atos, instruções para destinar IR e dados bancários do Fundo. Regra já prevista no código: `XXXX` fica como pendência interna, não entra em HTML público. Não preencher faltas usando texto genérico ou resultado de busca sem confirmação documental. Não replicar dados de menores.
 
 **Próximas provas:** sitemap vs SSR e 404/despublicação, metadata em notícia/PDF, robots de ambientes antigos, HTML inicial sem JS, links WhatsApp com OG, registros de fonte/data/retificação, e aprovação jurídica das instruções fiscais.
+
+## Confronto adicional com fontes oficiais
+
+A pesquisa de 04/11/2026 encontra suporte documental para os limites de IR publicados (`3% / 6% / 1%`), os nomes/mandato da diretoria e os contatos principais dos Conselhos Tutelares. As referências, datas e ressalvas estão em [FONTES-OFICIAIS.md](FONTES-OFICIAIS.md). Essa checagem documental não confirma horários, plantão telefônico, existência de nova decisão de diretoria nem autoriza publicar dados financeiros.

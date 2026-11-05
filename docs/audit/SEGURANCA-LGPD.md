@@ -20,3 +20,14 @@
 
 ## Não publicar sem revisão
 Nomes, fotos/EXIF de menores, vítimas/famílias, termos de autorização, dados bancários, orientações fiscais, datas de atos ou contatos novos. Toda coleta e análise automática desta rodada ficou no conteúdo público e em metadados de repositório, sem exportação de dados pessoais.
+
+## Leitura anônima de APIs em 04/11/2026
+Respostas HTTP reais obtidas **somente por GET**, sem credenciais:
+- `/api/users?limit=1`: **403** (nega lista de usuários).
+- `/api/preferences?limit=1`: **404** (rota ausente no runtime atual).
+- `/api/media?limit=2&depth=0`: **200** com 3 mídias públicas no total; amostra de 2 registros sem campos `consentimentoMenor`, `referenciaConsentimento` nem `controleEditorial`.
+- `/api/noticias?limit=1&depth=0`: **200**, 16 notícias no total e amostra sem `controleEditorial`.
+- `/api/reunioes?limit=1&depth=0`: **200**, 0 reuniões públicas retornadas.
+- `/api/graphql` por GET: **405**. Isso não demonstra bloqueio de todas as modalidades de GraphQL.
+
+Amostras de paginação **não** demonstram ausência de vazamento em todos os registros, todos os papéis ou em anexos diretos. Sem validação de autorização autenticada, testes de escrita e tentativa adversarial, segurança permanece parcialmente verificada.

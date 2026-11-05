@@ -35,3 +35,6 @@ Não foram encontradas provas de vazamento ativo; também não foi possível des
 
 ## Ampliação do smoke de leitura pública
 Em 04/11/2026 foram verificadas 11 rotas públicas HTTP 200 e uma rota fictícia com HTTP 404, sem `XXXX` no texto retornado. Foram constatados estados vazios honestos em reuniões e entidades. Critério: leitura HTTP, sem Playwright, login, testes de PDF ou confirmação de SHA. A primeira alteração (`f630bda`) teve workflow de deploy VPS **success** (`41955135317`); a publicação da segunda alteração (PWA) exige sua própria run e smoke.
+
+## Leitura anônima das APIs
+Verificação GET adicional: `/api/users` 403, `/api/preferences` 404, `/api/graphql` 405, `/api/media` 200 (3 registros públicos no total, amostra sem metadados internos), `/api/noticias` 200 (16 notícias no total, amostra sem controle editorial), `/api/reunioes` 200 (0 registros públicos). Nenhum teste de login ou tentativa de bypass autenticado foi executado; **não afirmar auditoria de segurança concluída**.

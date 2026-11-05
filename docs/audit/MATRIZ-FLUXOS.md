@@ -24,3 +24,13 @@ Consulta pública sem autenticação, apenas leitura, sem navegador interativo:
 `/conselho`, `/fmdca`, `/reunioes`, `/resolucoes`, `/editais`, `/transparencia`, `/noticias`, `/conferencias`, `/entidades`, `/participe` e `/mapa-do-site`: **11/11 responderam 200**. Nenhum corpo em Markdown retornado apresentou `XXXX`. `/nao-existe-auditoria-2026` respondeu **404**, como esperado.
 
 `/reunioes` explica que o calendário ainda não foi publicado e `/entidades` indica relação não publicada; estes são estados vazios explícitos, não falhas 500. `/resolucoes` exibiu um ato e `/editais` um edital, ambos com links para PDF e publicação oficial. **Não foram abertos/analisados os bytes dos PDFs** nem verificados todos os links, PDFs, filtros, status legais ou atualidade dos registros. Essas respostas HTTP não identificam SHA de produção, disponibilidade de back-end sob carga ou conformidade WCAG.
+
+## APIs públicas: leitura e limites
+| Entrada GET anônima | Estado observado | Limite |
+|---|---|---|
+| `/api/users?limit=1` | 403 | Listagem negada, não prova de todas as rotas de conta |
+| `/api/preferences?limit=1` | 404 | Endpoint ausente, sem evidência de bypass |
+| `/api/media?limit=2&depth=0` | 200; total 3; amostra sem campos internos | Inspecionados apenas 2 registros |
+| `/api/noticias?limit=1&depth=0` | 200; total 16; amostra sem controle editorial | Inspecionado 1 registro |
+| `/api/reunioes?limit=1&depth=0` | 200; total 0 | Não exercitado documento reservado sintético |
+| `/api/graphql` | 405 para GET | Sem POST e sem teste de introspection |

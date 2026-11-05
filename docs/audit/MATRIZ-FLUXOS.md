@@ -34,3 +34,6 @@ Consulta pública sem autenticação, apenas leitura, sem navegador interativo:
 | `/api/noticias?limit=1&depth=0` | 200; total 16; amostra sem controle editorial | Inspecionado 1 registro |
 | `/api/reunioes?limit=1&depth=0` | 200; total 0 | Não exercitado documento reservado sintético |
 | `/api/graphql` | 405 para GET | Sem POST e sem teste de introspection |
+
+## Manifesto após deploy
+`/manifest.webmanifest` 200, `display:standalone`, atalho inicial `/ajuda` e quatro PNGs disponíveis. Quality/build/deploy do commit `22d2146` aprovados em `41956344743`. Falta teste interativo de instalação, navegação standalone, back e safe areas no Android; offline/push não implementados.

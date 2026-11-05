@@ -18,3 +18,8 @@
 - **Atenção:** o script de backup tolera retorno 3 do `restic backup` (snapshot parcial com arquivos ilegíveis) como aviso; avaliar política para não considerar restauração completa sem conferir esses arquivos, especialmente mídia e anexos públicos.
 
 Isso reforça a classificação **não verificado** para backup externo, restauração completa, permissões e disponibilidade operacional, mesmo quando o código de automação existe.
+
+## Pipeline publicado nesta rodada
+- `f630bda`: quality + imagem + deploy VPS **success**, workflow `41955135317`.
+- `22d2146`: quality + imagem + deploy VPS **success**, workflow `41956344743`. Manifest público compatível com a alteração.
+- A execução posterior de produção deve verificar o SHA exato de runtime e os resultados da suíte de leitura/axe e Lighthouse; GitHub Actions bem-sucedido não substitui restauração ou verificação da VPS.

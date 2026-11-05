@@ -19,7 +19,7 @@
 - Leitura GitHub autenticada: HEAD/refs, árvore, código crítico, workflows, tags/releases e histórico recente.
 - HTTP público: home, ajuda, login CMS, health, robots, sitemap, manifest e login legado. Sem autenticação, escrita ou dados privados.
 - Vercel: projeto legado `cmdca`, deployment READY antigo no painel.
-- **Não realizados:** build local, lint/typecheck local, teste real de API/CMS autenticado, QA Playwright desta rodada, axe/manual, inspeção de imagens, teste Android, stress, SSH, restore, off-site, push ou teste adversarial de segurança.
+- **Não realizados diretamente neste ambiente:** build local, lint/typecheck local, teste de CMS autenticado por operador, inspeção humana de screenshots, teste Android, stress, SSH, restore, off-site, push ou teste adversarial de segurança. **Executados em CI**: quality do GitHub Actions (migrations, lint/typecheck, testes, Playwright/artefato, build) aprovado nos commits `f630bda` e `22d2146`, conforme runs correspondentes. Isso não equivale a inspeção manual local.
 - **Sem dados privados coletados ou publicados.**
 
 ## Gates que impedem stable
@@ -41,3 +41,10 @@ Verificação GET adicional: `/api/users` 403, `/api/preferences` 404, `/api/gra
 
 ## Código da plataforma VPS também inspecionado
 O repositório **privado** `vhonorato02/vps-platform` foi lido via integração GitHub, incluindo Compose, Caddy, script de deploy, restic, healthwatch e restore-test. O projeto implementa arquitetura multi-tenant com serviços isolados e backups programados. Não foi consultada a instância rodando na VPS. A prova de off-site, restauração de todos os dados e integridade dos PDFs continua pendente; detalhes técnicos em [OPERACAO-RECUPERACAO.md](OPERACAO-RECUPERACAO.md).
+
+## Evidência de deploy do PWA em 05/11/2026 UTC
+- `https://github.com/vhonorato02/cmdca/actions/runs/41956344743`: quality, imagem e deploy VPS concluídos com **success** para o commit **`22d2146eea0c1b6cc49a274b75932d300c84794c`**.
+- `/manifest.webmanifest` consultado sem cache de scraping após publicação: HTTP 200, `display:'standalone'`, `/ajuda` primeiro atalho; arquivos de ícone 192, 512, maskable e apple-touch: todos HTTP 200, `image/png`.
+- O manifest novo prova que a versão funcional mudou no site, mas **não** constitui inspeção independente do header `X-Release-Commit` ou instalação Android.
+- A execução E2E de produção pós-deploy está registrada em `https://github.com/vhonorato02/cmdca/actions/runs/41957378741`; consultar resultado no GitHub, sem pressupor sucesso antes de concluir.
+- Stable continua **bloqueada** pelos gates estruturais já relacionados; nenhuma tag `stable` ou GitHub Release foi criada.

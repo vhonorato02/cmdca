@@ -10,3 +10,6 @@
 **Notificações:** ainda não implementadas. Considerar apenas novas resoluções, editais ou reuniões publicadas após revisão, opt-in contextual, categorias e cancelamento imediato. Sem autorização e serviço idempotente de subscriptions, **não ativar** nem solicitar permissão de push.
 
 **Provas pendentes:** Android Chrome e Samsung Internet instalados, desktop, rede lenta, offline/online, atualização de versão, deep links, permissões negadas, recebimento real isolado e nenhuma notificação de ensaio a usuários reais.
+
+## Validação no domínio canônico
+Após o deploy do commit `22d2146` com status **success** (`41956344743`), consulta pública de `/manifest.webmanifest` retornou HTTP 200, `display:'standalone'` e `Pedir ajuda` como atalho prioritário. Quatro PNGs declarados (192, 512, maskable e Apple) responderam HTTP 200 com Content-Type `image/png`. **Evidência de instalação real e atualização One UI permanece pendente.**

@@ -13,19 +13,14 @@ function withProtocol(value: string) {
   return /^https?:\/\//i.test(value) ? value : `https://${value}`
 }
 
-/**
- * Origem canônica do site. A Vercel fornece VERCEL_PROJECT_PRODUCTION_URL sem
- * protocolo; localmente mantemos localhost para não impedir o desenvolvimento.
- * Em produção, a ausência de uma origem configurada interrompe o build em vez
- * de publicar canonicals e sitemap apontando para localhost.
- */
+/** Origem canônica única, controlada na VPS e no CI; nunca usar fallback da Vercel. */
 export function getSiteUrl(): URL {
-  const configured = process.env.NEXT_PUBLIC_SERVER_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
+  const configured = process.env.NEXT_PUBLIC_SERVER_URL
 
   if (!configured) {
     if (process.env.NODE_ENV === 'production') {
       throw new Error(
-        'Configure NEXT_PUBLIC_SERVER_URL ou VERCEL_PROJECT_PRODUCTION_URL com a URL pública do site.',
+        'Configure NEXT_PUBLIC_SERVER_URL com a origem HTTPS pública do site.',
       )
     }
 

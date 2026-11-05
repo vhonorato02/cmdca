@@ -48,3 +48,7 @@ O repositório **privado** `vhonorato02/vps-platform` foi lido via integração 
 - O manifest novo prova que a versão funcional mudou no site, mas **não** constitui inspeção independente do header `X-Release-Commit` ou instalação Android.
 - A execução E2E de produção pós-deploy está registrada em `https://github.com/vhonorato02/cmdca/actions/runs/41957378741`; consultar resultado no GitHub, sem pressupor sucesso antes de concluir.
 - Stable continua **bloqueada** pelos gates estruturais já relacionados; nenhuma tag `stable` ou GitHub Release foi criada.
+
+## Decisão revisada de produto (04/11/2026)
+O responsável esclareceu que o CMDCA é exclusivamente um **portal responsivo**, não deve atuar como PWA. Correção da rodada atual: remover `src/app/manifest.ts`, o teste de instalação e `appleWebApp` do layout; proibir `VERCEL_PROJECT_PRODUCTION_URL` como fallback e remover o seletor S3/R2 do runtime Payload/Next. O backup externo criptografado é exceção expressamente aceita, ainda dependente de repositório remoto e credenciais do operador.
+A pausa reversível do projeto legado `cmdca` na Vercel foi confirmada por `https://cmdca.vercel.app/admin` respondendo HTTP 503, enquanto `https://www.cmdcapinda.org/api/health` seguiu HTTP 200. Não apagar banco e arquivos históricos sem inventário/backup.

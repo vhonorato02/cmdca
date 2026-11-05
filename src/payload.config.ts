@@ -1,7 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { s3Storage } from '@payloadcms/storage-s3'
 import { pt } from '@payloadcms/translations/languages/pt'
 import { config as dotenvConfig } from 'dotenv'
 import path from 'path'
@@ -77,9 +76,8 @@ if (isHostedProduction && !publicServerURL) {
   throw new Error('Defina NEXT_PUBLIC_SERVER_URL em produção.')
 }
 
-// Armazenamento de mídia: disco local (volume persistente) por padrão. S3/R2 só
-// é usado quando S3_BUCKET está definido, para manter compatibilidade.
-const s3Bucket = process.env.S3_BUCKET?.trim()
+// Armazenamento de mídia: somente volume persistente da VPS.
+// Buckets S3/R2 legados são históricos e nunca selecionam o backend de produção.
 const mediaDir = path.resolve(process.env.MEDIA_DIR?.trim() || path.resolve(dirname, '../media'))
 
 if (isHostedProduction && publicServerURL) {
@@ -216,9 +214,7 @@ export default buildConfig({
     Destaques,
     Faq,
     Paginas,
-    s3Bucket
-      ? Media
-      : { ...Media, upload: { ...(typeof Media.upload === 'object' ? Media.upload : {}), staticDir: mediaDir } },
+    { ...Media, upload: { ...(typeof Media.upload === 'object' ? Media.upload : {}), staticDir: mediaDir } },
     Users,
   ].map(withPasswordGate),
   globals: [Configuracoes, PaginaInicial, Textos, Indicadores, Navegacao].map(withGlobalPasswordGate),
@@ -247,22 +243,5 @@ export default buildConfig({
   }),
   email: emailAdapter,
   sharp,
-  plugins: s3Bucket
-    ? [
-        // Legado (R2). Os arquivos passam pela autorização do Payload.
-        s3Storage({
-          collections: { media: true },
-          bucket: s3Bucket,
-          config: {
-            endpoint: process.env.S3_ENDPOINT,
-            region: process.env.S3_REGION || 'auto',
-            credentials: {
-              accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
-            },
-            forcePathStyle: true,
-          },
-        }),
-      ]
-    : [],
+  plugins: [],
 })

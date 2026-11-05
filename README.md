@@ -13,6 +13,13 @@ Portal institucional do Conselho Municipal dos Direitos da Criança e do Adolesc
 
 O navegador acessa o Caddy (HTTPS automático) e o container Next.js/Payload. As migrations rodam quando o container sobe. Os dados ficam no Postgres da plataforma e a mídia num volume. Os dois entram no backup restic diário, que tem teste semanal de restauração. Produção: <https://www.cmdcapinda.org>. Detalhes em [`DEPLOY.md`](DEPLOY.md).
 
+
+### Fronteira de hospedagem e comportamento
+
+A aplicação **não é PWA**: não publica web manifest de instalação, service worker, modo standalone nem notificações push. O objetivo é uma experiência responsiva e acessível em navegadores móveis e desktop.
+
+O runtime do portal, Payload, PostgreSQL e biblioteca de mídia são locais à VPS. O build é criado no GitHub Actions e a imagem é publicada no GitHub Container Registry para o deploy. Integrações de navegador opcionais (como VLibras e mosaicos do OpenStreetMap) não hospedam banco ou CMS. A única nova dependência externa prevista para dados operacionais é um destino de **backup off-site criptografado**, fora do caminho das requisições.
+
 ## Rodar localmente
 
 Pré-requisitos: Node.js 24, pnpm 11 e variáveis do projeto. Desenvolva em uma cópia no C: para manter caches fora do disco sincronizado Z:. O arquivo local existente aponta para serviços operacionais; use-o somente em diagnóstico de leitura. Testes com escrita usam o banco descartável do GitHub Actions.

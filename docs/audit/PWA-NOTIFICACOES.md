@@ -13,3 +13,6 @@
 
 ## Validação no domínio canônico
 Após o deploy do commit `22d2146` com status **success** (`41956344743`), consulta pública de `/manifest.webmanifest` retornou HTTP 200, `display:'standalone'` e `Pedir ajuda` como atalho prioritário. Quatro PNGs declarados (192, 512, maskable e Apple) responderam HTTP 200 com Content-Type `image/png`. **Evidência de instalação real e atualização One UI permanece pendente.**
+
+## Requisito substituído por decisão do responsável
+**Decisão mais recente:** o portal não é PWA e não deve tentar se comportar como aplicativo. Manifest de instalação, modo standalone e respectivo teste foram removidos do código; os registros acima são apenas históricos. Sucesso atual é layout adaptável, navegação no navegador e acessibilidade. Nenhuma notificação push planejada. A medida foi enviada ao CI para validar build/deploy.

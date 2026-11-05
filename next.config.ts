@@ -8,16 +8,6 @@ import { contentSecurityPolicy } from './src/security/csp'
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
-// Permite que o next/image sirva as imagens da URL pública do R2.
-let r2Hostname: string | undefined
-try {
-  if (process.env.NEXT_PUBLIC_R2_PUBLIC_URL) {
-    r2Hostname = new URL(process.env.NEXT_PUBLIC_R2_PUBLIC_URL).hostname
-  }
-} catch {
-  r2Hostname = undefined
-}
-
 const nextConfig: NextConfig = {
   output: 'standalone',
   poweredByHeader: false,
@@ -35,7 +25,7 @@ const nextConfig: NextConfig = {
       { pathname: '/brand/**' },
       { pathname: '/images/**' },
     ],
-    remotePatterns: r2Hostname ? [{ protocol: 'https', hostname: r2Hostname }] : [],
+    remotePatterns: [],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

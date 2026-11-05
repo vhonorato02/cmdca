@@ -52,3 +52,6 @@ O repositório **privado** `vhonorato02/vps-platform` foi lido via integração 
 ## Decisão revisada de produto (04/11/2026)
 O responsável esclareceu que o CMDCA é exclusivamente um **portal responsivo**, não deve atuar como PWA. Correção da rodada atual: remover `src/app/manifest.ts`, o teste de instalação e `appleWebApp` do layout; proibir `VERCEL_PROJECT_PRODUCTION_URL` como fallback e remover o seletor S3/R2 do runtime Payload/Next. O backup externo criptografado é exceção expressamente aceita, ainda dependente de repositório remoto e credenciais do operador.
 A pausa reversível do projeto legado `cmdca` na Vercel foi confirmada por `https://cmdca.vercel.app/admin` respondendo HTTP 503, enquanto `https://www.cmdcapinda.org/api/health` seguiu HTTP 200. Não apagar banco e arquivos históricos sem inventário/backup.
+
+## Revisão do escopo: responsividade sem PWA
+O usuário descartou instalação de app. A implementação retirou os arquivos de manifesto e os metadados Apple Web App. A suíte agora verifica explicitamente ausência de `rel=manifest` e rolagem lateral nos layouts de 320, 390, 768 e 1440 px, para home, ajuda, FMDCA e notícias. O teste compara a área útil do viewport e a largura do documento; não substitui análise com leitores de tela, zoom ou toque em dispositivo.

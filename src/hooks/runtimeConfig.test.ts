@@ -28,6 +28,21 @@ describe('produção self-host do CMS', () => {
     runtime()
     await expect(load()).rejects.toThrow('DATABASE_URI')
   }, 60_000)
+  it('ignora credenciais legadas R2 e mantém a mídia exclusivamente em disco local', async () => {
+    runtime()
+    vi.stubEnv('GITHUB_ACTIONS', 'true')
+    vi.stubEnv('DATABASE_URI', 'postgresql://localhost/cmdca_test?sslmode=disable')
+    vi.stubEnv('DATABASE_URI_UNPOOLED', 'postgresql://localhost/cmdca_test?sslmode=disable')
+    vi.stubEnv('MEDIA_DIR', '/srv/sites/cmdca/data/media')
+    vi.stubEnv('S3_BUCKET', 'legacy-r2-bucket')
+    vi.stubEnv('NEXT_PUBLIC_R2_PUBLIC_URL', 'https://legacy.example.test')
+    const config = await load()
+    const media = config.collections.find((collection) => collection.slug === 'media')
+    expect(media?.upload).toEqual(expect.objectContaining({
+      staticDir: '/srv/sites/cmdca/data/media',
+    }))
+    expect(config.plugins).toEqual([])
+  }, 60_000)
   it('o banco efêmero do Actions sobe sem os segredos de produção', async () => {
     runtime()
     vi.stubEnv('GITHUB_ACTIONS', 'true')

@@ -10,7 +10,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: '/',
     start_url: '/',
     scope: '/',
-    display: 'browser',
+    display: 'standalone',
     lang: 'pt-BR',
     dir: 'ltr',
     background_color: '#f5f1e8',
@@ -28,10 +28,10 @@ export default function manifest(): MetadataRoute.Manifest {
       },
     ],
     shortcuts: [
+      { name: 'Pedir ajuda', url: '/ajuda' },
       { name: 'Reuniões', url: '/reunioes' },
       { name: 'Resoluções', url: '/resolucoes' },
       { name: 'Editais', url: '/editais' },
-      { name: 'Doe pelo Imposto de Renda', url: '/fmdca' },
     ],
   }
 }

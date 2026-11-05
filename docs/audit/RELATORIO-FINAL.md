@@ -4,6 +4,7 @@
 ## Alteração executada
 - `f630bda5a1cb1d459e1a0ac43eb35e5feaec2dad`: `ci(test): align disposable PostgreSQL with production 17`, `.github/workflows/quality.yml` PostgreSQL 16 → 17. Workflow acionado: https://github.com/vhonorato02/cmdca/actions/runs/41955135317. O resultado deve ser consultado no link, não inferido.
 - Documentação de inventário, riscos, arquitetura, matrizes e bloqueios criada nesta rodada; não altera dados de usuários nem banco.
+- Segunda correção candidata: manifesto standalone e atalho de ajuda, com regressão unitária. Não implica offline/push nem comprova instalação real.
 
 ## Comparação antes / depois
 | Tema | Antes | Depois verificável |
@@ -12,7 +13,7 @@
 | Proveniência da topologia | Documentos antigos de Neon/R2/Coolify contradizem VPS | Inventário/arquitetura datados identificam documentos históricos |
 | QA/release | Evidência histórica e gates não reunidos | Pendências objetivas e não verificado registrado sem maquiagem |
 | Legado | Documentação previa Vercel antiga | Projeto READY + login público confirmados, sem deleção |
-| PWA | Manifest e ícones, display browser | Falta de standalone/offline/push registrada sem prometer capacidade |
+| PWA | Manifest e ícones, display browser | Modo standalone corrigido no código e teste unitário adicionado; instalação real/offline/push ainda não comprovados |
 
 ## Testes efetivamente realizados
 - Leitura GitHub autenticada: HEAD/refs, árvore, código crítico, workflows, tags/releases e histórico recente.

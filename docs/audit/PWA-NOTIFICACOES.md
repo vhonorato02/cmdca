@@ -1,6 +1,7 @@
 # PWA e notificações: capacidade e decisão
 
-**Estado observado:** `/manifest.webmanifest` retorna 200, possui `id`, `start_url`, `scope`, idioma `pt-BR`, cores e ícones 192/512/maskable. O código em `src/app/manifest.ts` define `display:'browser'`. A árvore da aplicação não contém service worker nem módulo de Web Push. **Não anunciar modo app, offline ou push como entregues.**
+**Estado antes da correção:** `/manifest.webmanifest` respondia 200, com ícones 192/512/maskable, porém `display:'browser'`. 
+**Correção de código desta rodada:** `display:'standalone'`, atalho prioritário para `/ajuda` e testes unitários em `src/app/manifest.test.ts`. A publicação e o comportamento real no Android devem ser conferidos no CI e em dispositivo. **Nenhum service worker ou Web Push foi implementado**; a aplicação não promete offline nem notificações. Documentação técnica consultada: https://nextjs.org/docs/app/api-reference/file-conventions/metadata/manifest e https://developer.chrome.com/docs/lighthouse/pwa/installable-manifest/ . A documentação instalada `node_modules/next/dist/docs` não pôde ser lida neste ambiente sem checkout/dependências; isso permanece como limitação explícita.
 
 **Direção recomendada:** instalar como `standalone` se teste Android/Samsung demonstrar navegação, retorno, teclado virtual, safe-area, deep links e ausência de travamento; não simular telas nativas. Um portal cívico não precisa copiar padrões de aplicativo de chat.
 

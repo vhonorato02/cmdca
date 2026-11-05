@@ -20,3 +20,6 @@ flowchart LR
 **Legado em paralelo:** projeto Vercel `cmdca`, deployment READY antigo e login `cmdca.vercel.app/admin` ainda acessível. O banco/media desse deployment, contas e acesso de escrita **não** foram verificados. Não desativar até garantir export e rollback.
 
 **Riscos de operação:** SPOF de uma VPS, possível incoerência de docs antigas, off-site pendente conforme HANDOFF e ausência de prova independente de recuperação. Não introduzir microserviços/Kubernetes ou dependência nova para resolver lacunas que exigem teste.
+
+## Revisão do repositório privado da plataforma
+A integração GitHub concedeu **leitura** do repositório privado `vhonorato02/vps-platform` (scripts e Compose) nesta rodada. O código confirma: `caddy-docker-proxy` atrás de socket-proxy somente leitura, Postgres `17-alpine` em rede interna, banco por site, Dockge em interface local, fluxo SSH de deploy com `forced-command`, backup local restic e timers de backup/restauração. Isso melhora a evidência de **arquitetura projetada**, mas não mostra se essas configurações estão aplicadas no host. Nenhum segredo da plataforma foi copiado para este documento público. Fontes privadas: `compose.yml`, `caddy/Caddyfile`, `bin/gh-deploy`, `scripts/backup.sh`, `scripts/restore-test.sh`, `scripts/deploy.sh`.

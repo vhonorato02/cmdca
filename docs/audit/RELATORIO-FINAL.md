@@ -38,3 +38,6 @@ Em 04/11/2026 foram verificadas 11 rotas públicas HTTP 200 e uma rota fictícia
 
 ## Leitura anônima das APIs
 Verificação GET adicional: `/api/users` 403, `/api/preferences` 404, `/api/graphql` 405, `/api/media` 200 (3 registros públicos no total, amostra sem metadados internos), `/api/noticias` 200 (16 notícias no total, amostra sem controle editorial), `/api/reunioes` 200 (0 registros públicos). Nenhum teste de login ou tentativa de bypass autenticado foi executado; **não afirmar auditoria de segurança concluída**.
+
+## Código da plataforma VPS também inspecionado
+O repositório **privado** `vhonorato02/vps-platform` foi lido via integração GitHub, incluindo Compose, Caddy, script de deploy, restic, healthwatch e restore-test. O projeto implementa arquitetura multi-tenant com serviços isolados e backups programados. Não foi consultada a instância rodando na VPS. A prova de off-site, restauração de todos os dados e integridade dos PDFs continua pendente; detalhes técnicos em [OPERACAO-RECUPERACAO.md](OPERACAO-RECUPERACAO.md).

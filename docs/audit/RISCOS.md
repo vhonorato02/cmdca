@@ -16,3 +16,5 @@ Base: `cc437d7` e mudança `f630bda`, 2026-11-04. Prioridade reflete impacto de 
 
 ## Critério de conclusão
 Não foram comprovadas violações P0 nesta inspeção não destrutiva. Isso **não demonstra ausência** de P0. Não classificar o legado como vazamento confirmado sem provar acesso a dado privado. O risco de ambiente antigo com login disponível continua prioritário. Nenhum P1 pode ser encerrado só por documentação.
+
+| R11 | P2 | Código verificado, runtime não verificado | `vps-platform/scripts/restore-test.sh` restaura bancos e amostra um arquivo de mídia; `backup.sh` só faz check de 5% e aceita snapshot parcial com aviso | Não é prova de restauração completa, checksum de todos os atos nem backup off-site. Definir política de erros parciais e test restore consistente; provar operação real antes de stable | Restore banco+mídia de snapshot coordenado, hashes de amostra representativa de PDFs e cópia externa íntegra |

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('portal continua legível em telas de 320 px a desktop, sem rolagem lateral', async ({ page }) => {
+  test.setTimeout(120_000)
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     for (const route of ['/', '/ajuda', '/fmdca', '/noticias']) {

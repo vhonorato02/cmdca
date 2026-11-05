@@ -1,3 +1,5 @@
+> **Decisão vigente:** NÃO haverá PWA. O CMDCA é um site institucional responsivo; o histórico de PWA abaixo foi substituído pela decisão do responsável em 04/11/2026. Não criar manifest, service worker, instalação standalone ou push.
+
 # PWA e notificações: capacidade e decisão
 
 **Estado antes da correção:** `/manifest.webmanifest` respondia 200, com ícones 192/512/maskable, porém `display:'browser'`. 

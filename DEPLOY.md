@@ -1,3 +1,5 @@
+> **Situação atualizada em 04/11/2026:** o CMDCA é um **portal responsivo sem PWA**. Hospedagem, Payload, PostgreSQL 17 e mídia estão previstos e configurados na VPS. O projeto Vercel `cmdca` foi **pausado** e retornou HTTP 503; não foi excluído para preservar dados legados. O suporte a R2/S3 foi removido do runtime do portal. O **R2 pode ser usado exclusivamente para backup externo criptografado**, após bucket privado, credenciais e restauração confirmada. O repositório da plataforma inclui melhorias de backup em `f571b2e`, mas **elas ainda não foram instaladas no servidor**.
+
 # Deploy do CMDCA (VPS zewithane, plataforma `vps-platform`)
 
 Produção: **https://www.cmdcapinda.org** (DNS no Wix; o endereço antigo `cmdca.zewithane.vps.brz.dev.br` redireciona com 301).

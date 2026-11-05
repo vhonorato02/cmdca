@@ -4,6 +4,13 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 
 ## [Não publicado]
 
+### Revisão de escopo / hospedagem (04/11/2026)
+- portal responsivo comum, sem manifesto de instalação, modo PWA ou notificações;
+- remoção dos fallbacks Vercel/R2 do código de produção e armazenamento persistente local na VPS;
+- suíte de responsividade 320/390/768/1440 px e regressões dos limites do runtime;
+- projeto Vercel antigo pausado, mantendo o histórico para descomissionamento seguro;
+- melhorias nos scripts de backup da plataforma VPS preparadas no repositório privado, **pendentes de instalação e credenciais off-site**.
+
 ## [2.1.0] — 2026-10-28
 
 ### Adicionado

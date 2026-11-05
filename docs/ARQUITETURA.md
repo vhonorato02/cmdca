@@ -1,3 +1,7 @@
+> **ATENÇÃO: histórico não operacional.** Este documento descreve uma topologia anterior (Coolify/Neon/R2/SMTP). O estado corrente declarado no código e nos ADRs de 26/10/2026 está em [ARQUITETURA-ATUAL](audit/ARQUITETURA-ATUAL.md), [README](../README.md) e [DEPLOY](../DEPLOY.md). Não execute comandos ou alterações de provedor com base no texto histórico abaixo.
+
+---
+
 # Arquitetura
 
 ## Visão geral

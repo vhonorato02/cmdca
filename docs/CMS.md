@@ -15,7 +15,8 @@ Tudo o que aparece no site é mudado por aqui, sem programador.
 
 | Papel | Pode |
 |---|---|
-| **Editor geral** | Criar, editar, publicar e despublicar todo o conteúdo, incluindo textos do site, configurações e pendências. Não exclui nem gerencia usuários |
+| **Editor geral** | Criar, editar, publicar e despublicar conteúdo, textos e configurações. Não exclui nem gerencia usuários |
+| **Jurídico** | Criar, editar, publicar e despublicar conteúdo e realizar revisão documental; não gerencia contas nem exclui. A revisão não é etapa obrigatória para publicar |
 | **Administrador** | Tudo, mais usuários e exclusões |
 
 ## 3. A tela inicial do painel

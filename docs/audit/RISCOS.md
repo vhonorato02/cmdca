@@ -1,0 +1,18 @@
+# Matriz de riscos e achados
+Base: `cc437d7` e mudança `f630bda`, 2026-11-04. Prioridade reflete impacto de serviço público, não um CVSS calculado. Hipótese **não é** vulnerabilidade comprovada. Para cada item, a reprodução abaixo é não destrutiva.
+
+| ID | Prioridade | Estado | Evidência / reprodução | Impacto e ação | Teste de fechamento |
+|---|---|---|---|---|---|
+| R01 | P1 | Estado confirmado, exploração não verificada | `cmdca.vercel.app/admin` ainda carrega login; Vercel indica deployment de produção antigo READY; comparar URL e commit com portal canônico | Duas interfaces de edição podem confundir equipe, preservar dados legados e credenciais antigas. Fazer export verificável do banco/mídia, mapa de dependentes e plano aprovado de pausa/redirecionamento, **sem apagar** | Login legado inacessível com retenção dos dados e redirecionamento seguro; rollback definido |
+| R02 | P2 | Confirmado/corrigido no código, CI pendente | `quality.yml` Postgres 16 vs `deploy.yml` Postgres 17; diff no commit `f630bda` | Inconsistência entre schema validado e versão principal; alinhar CI, repetir migrations+E2E | Workflow de qualidade de `f630bda` concluído com sucesso |
+| R03 | P2 | Confirmado | Manifest público `display=browser` e árvore sem SW/push | PWA não entrega instalação em janela autônoma/offline/notificações; definir escopo cívico e implementar por etapas com teste Android | Experiência standalone Android/Desktop; SW offline seguro se adotado; prova real de push apenas se implementado |
+| R04 | P2 | Confirmado | `docs/ARQUITETURA.md` e `docs/OPERACOES.md` descrevem infra anterior | Operador pode aplicar instruções de Neon/Coolify/R2 na VPS atual; atualizar referência, manter história sinalizada | Revisão cruzada entre runbooks, ADRs e topologia real |
+| R05 | P2 | Confirmado | README/CMS/manual e código divergem quanto ao papel `juridico` | Equipe pode não compreender poderes de publicação e exclusão | Manuais e suites de ACL para três perfis sincronizados |
+| R06 | P2 | Não verificado | Backup off-site e restauração banco+mídia sincronizados exigem acesso VPS; HANDOFF de 28/10 dizia pendente | Perda total da VPS pode comprometer documentos e conteúdo | Restore isolado com hashes, RPO/RTO e prova de cópia externa |
+| R07 | P2 | Confirmado | Manifest/SEO do painel no login ainda mostra imagem e descrição padrão do Payload em Open Graph | Compartilhamento institucional inconsistente, sem impacto conhecido em dados | HTML da página de login com metadados intencionais e noindex |
+| R08 | P3 | Confirmado | `package.json` 1.0.0, changelog 2.1.0, tag v2.0.0 e ausência de GitHub Release | Dificulta correlação artefato/release/rollback | Reconciliar SHAs, artefato e versão antes da tag |
+| R09 | P2 | Não verificado | Reunião reservada bloqueia vínculo com ata, mas a mídia foi uma coleção independente | Verificar se um PDF antes público permanece público após mudança editorial de acesso; **não afirmar vazamento** | Teste com fixture em banco/mídia descartáveis, acesso direto anônimo e cache |
+| R10 | P2 | Não verificado | Entorno de autenticação, banco, proxy e limites foi inspecionado em código, sem execução adversarial | Não é possível afirmar resistência a IDOR, brute force distribuído, SSRF e upload hostil | Matriz negativa em runner isolado, evidência de headers/CSP e documentos reservados |
+
+## Critério de conclusão
+Não foram comprovadas violações P0 nesta inspeção não destrutiva. Isso **não demonstra ausência** de P0. Não classificar o legado como vazamento confirmado sem provar acesso a dado privado. O risco de ambiente antigo com login disponível continua prioritário. Nenhum P1 pode ser encerrado só por documentação.

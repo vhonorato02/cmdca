@@ -1,3 +1,7 @@
+> **ARQUIVO HISTÓRICO: fotografia de 11/10/2026, não diagnóstico corrente.** Consulte [inventário de 04/11/2026](audit/INVENTARIO.md) para estado mais recente e limitações de verificação. Não interpretar “CMDCA ausente” abaixo como a situação atual.
+
+---
+
 # Estado real
 
 Verificacao: 2026-10-11. Base inicial: c71580083f5849ab5084737843144ba124e233cb.

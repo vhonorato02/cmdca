@@ -1,3 +1,7 @@
+> **ATENÇÃO: runbook histórico de Neon/R2/Coolify.** Não use as instruções abaixo para operar a atual VPS multi-site. Para operação vigente, consulte [DEPLOY](../DEPLOY.md), [operação e recuperação](audit/OPERACAO-RECUPERACAO.md) e o runbook da plataforma após verificar acesso/autorização. Esta seção é preservada exclusivamente para rastreabilidade e eventual recuperação do legado.
+
+---
+
 # Operações, backup e recuperação
 
 ## Rotina saudável

@@ -18,3 +18,9 @@ Legenda: **Leitura HTTP** = fetch anônimo da página; **Histórico CI** = execu
 | Portal Vercel legado | Anônimo, `cmdca.vercel.app/admin` | Legado descomissionado com dados protegidos | Login antigo 200; deployment antigo READY | Export, bloqueio de edição, pausa autorizada |
 
 Matriz de dispositivos pendente: 320, 360, 390, 430, 768, 1024, 1280, 1440, 1920 px; Android Samsung Internet/Chrome, desktop Chrome/Edge/Firefox, zoom 200/400%, leitor de tela e rede lenta. Não converter os testes listados em “aprovados” sem executar.
+
+## Varredura HTTP ampliada em 04/11/2026
+Consulta pública sem autenticação, apenas leitura, sem navegador interativo:
+`/conselho`, `/fmdca`, `/reunioes`, `/resolucoes`, `/editais`, `/transparencia`, `/noticias`, `/conferencias`, `/entidades`, `/participe` e `/mapa-do-site`: **11/11 responderam 200**. Nenhum corpo em Markdown retornado apresentou `XXXX`. `/nao-existe-auditoria-2026` respondeu **404**, como esperado.
+
+`/reunioes` explica que o calendário ainda não foi publicado e `/entidades` indica relação não publicada; estes são estados vazios explícitos, não falhas 500. `/resolucoes` exibiu um ato e `/editais` um edital, ambos com links para PDF e publicação oficial. **Não foram abertos/analisados os bytes dos PDFs** nem verificados todos os links, PDFs, filtros, status legais ou atualidade dos registros. Essas respostas HTTP não identificam SHA de produção, disponibilidade de back-end sob carga ou conformidade WCAG.

@@ -32,3 +32,6 @@
 7. Integridade de metadados, licensing, versão e release/tags conciliadas.
 
 Não foram encontradas provas de vazamento ativo; também não foi possível descartá-lo com inspeção anônima. O critério seguro é **não lançar a etiqueta stable**. Leia `RISCOS.md`, `MATRIZ-FLUXOS.md` e `PLANO-DE-EXECUCAO.md`.
+
+## Ampliação do smoke de leitura pública
+Em 04/11/2026 foram verificadas 11 rotas públicas HTTP 200 e uma rota fictícia com HTTP 404, sem `XXXX` no texto retornado. Foram constatados estados vazios honestos em reuniões e entidades. Critério: leitura HTTP, sem Playwright, login, testes de PDF ou confirmação de SHA. A primeira alteração (`f630bda`) teve workflow de deploy VPS **success** (`41955135317`); a publicação da segunda alteração (PWA) exige sua própria run e smoke.

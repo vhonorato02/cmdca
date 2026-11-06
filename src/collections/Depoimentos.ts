@@ -6,7 +6,7 @@ import {
   isAdminOrJuridicoFieldLevel,
   isAuthenticated,
   isLoggedInFieldLevel,
-  publishedOrLoggedIn,
+  publishedLiveOrLoggedIn,
   roleOf,
 } from '../access'
 import {
@@ -70,7 +70,7 @@ export const Depoimentos: CollectionConfig = {
     ...revalidation,
   },
   access: {
-    read: publishedOrLoggedIn,
+    read: publishedLiveOrLoggedIn,
     readVersions: isAuthenticated,
     create: canManageContent,
     update: canManageContent,

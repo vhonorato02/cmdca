@@ -1,6 +1,6 @@
 import type { CollectionConfig, Field } from 'payload'
 
-import { canDeleteContent, canManageContent, isAuthenticated, publishedOrLoggedIn } from '../access'
+import { canDeleteContent, canManageContent, isAuthenticated, publishedLiveOrLoggedIn } from '../access'
 import { RESERVED_SLUGS } from '../content/paginas'
 import {
   COLLECTION_EDITORIAL_COMPONENTS,
@@ -42,7 +42,7 @@ export const Paginas: CollectionConfig = {
     ...revalidation,
   },
   access: {
-    read: publishedOrLoggedIn,
+    read: publishedLiveOrLoggedIn,
     readVersions: isAuthenticated,
     create: canManageContent,
     update: canManageContent,

@@ -5,7 +5,7 @@ import {
   canManageContent,
   isAuthenticated,
   isLoggedInFieldLevel,
-  publishedOrLoggedIn,
+  publishedLiveOrLoggedIn,
 } from '../access'
 import {
   COLLECTION_EDITORIAL_COMPONENTS,
@@ -80,7 +80,7 @@ export const Media: CollectionConfig = {
     ...revalidation,
   },
   access: {
-    read: publishedOrLoggedIn,
+    read: publishedLiveOrLoggedIn,
     readVersions: isAuthenticated,
     create: canManageContent,
     update: canManageContent,

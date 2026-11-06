@@ -218,6 +218,41 @@ try {
   assert.equal((await payload.findByID({ collection: 'resolucoes', id: resolution.id, ...publicOptions })).situacaoJuridica, 'revogada')
   assert.equal((await payload.findByID({ collection: 'editais', id: notice.id, ...publicOptions })).situacaoJuridica, 'suspenso')
   console.log('Published status fixtures passed with a validated PDF on local disk.')
+
+  // Lixeira: um item publicado que vai para a lixeira some do público, inclusive com
+  // ?trash=true e no arquivo direto (o E2E pede /api/media/file/ci-trashed-document.pdf).
+  const trashedPDF = await payload.create({
+    collection: 'media', overrideAccess: false, user: editor,
+    file: { data: pdfBytes, name: 'ci-trashed-document.pdf', mimetype: 'application/pdf', size: pdfBytes.length },
+    data: { alt: 'CI trashed document', _status: 'published', controleEditorial: provenance },
+  })
+  const trashedNews = await payload.create({
+    collection: 'noticias', overrideAccess: false, user: editor,
+    data: {
+      title: 'CI trashed news', slug: 'ci-trashed-news', categoria: 'noticia', autor: 'CI fixture author',
+      resumo: 'Published fixture that goes to the trash and must disappear for visitors.',
+      corpo: { root: { type: 'root', version: 1, format: '', indent: 0, direction: null,
+        children: [{ type: 'paragraph', version: 1, format: '', indent: 0, direction: null,
+          children: [{ type: 'text', version: 1, text: 'Trashed fixture body.',
+            format: 0, detail: 0, mode: 'normal', style: '' }] }] } },
+      data: new Date().toISOString(), _status: 'published', controleEditorial: provenance,
+    },
+  })
+  await assert.rejects(payload.update({
+    collection: 'noticias', id: trashedNews.id, data: { deletedAt: new Date().toISOString() },
+    overrideAccess: false, user: editor,
+  }), 'Only administrators send content to the trash')
+  for (const [collection, id] of [['media', trashedPDF.id], ['noticias', trashedNews.id]] as const) {
+    await payload.update({ collection, id, data: { deletedAt: new Date().toISOString() }, overrideAccess: false, user: admin })
+    const visible = await payload.find({ collection, ...publicOptions, trash: true, where: { id: { equals: id } } })
+    assert.equal(visible.totalDocs, 0, `Trashed ${collection} stays hidden from visitors even with trash=true`)
+    const draftView = await payload.find({ collection, ...publicOptions, trash: true, draft: true, where: { id: { equals: id } } })
+    assert.equal(draftView.totalDocs, 0, `Trashed ${collection} stays hidden from visitors in draft mode`)
+    await assert.rejects(payload.findByID({ collection, id, ...publicOptions, trash: true }))
+    const editorView = await payload.find({ collection, overrideAccess: false, user: editor, trash: true, where: { id: { equals: id } } })
+    assert.equal(editorView.totalDocs, 1, `Editors still see trashed ${collection} to restore it`)
+  }
+  console.log('Trashed content and files are hidden from visitors.')
   // Future date keeps the participation link visible in the upcoming meetings group.
   const upcomingMeeting = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
   upcomingMeeting.setUTCHours(0, 0, 0, 0)

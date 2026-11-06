@@ -6,6 +6,7 @@ import {
   idOf,
   isAuthenticated,
   isLoggedInFieldLevel,
+  publishedLiveOrLoggedIn,
   publishedOrLoggedIn,
   publishedPublicMeetingOrLoggedIn,
   roleOf,
@@ -20,10 +21,20 @@ describe('controle de acesso do CMS', () => {
     expect(publishedOrLoggedIn(request('editor'))).toBe(true)
   })
 
+  it('esconde do visitante o que foi para a lixeira, inclusive o arquivo de mídia', () => {
+    // O endpoint /api/media/file e ?trash=true do Payload não aplicam o filtro da lixeira.
+    expect(publishedLiveOrLoggedIn(request())).toEqual({
+      _status: { equals: 'published' },
+      deletedAt: { exists: false },
+    })
+    expect(publishedLiveOrLoggedIn(request('editor'))).toBe(true)
+  })
+
   it('não expõe reuniões reservadas a visitantes', () => {
     expect(publishedPublicMeetingOrLoggedIn(request())).toEqual({
       _status: { equals: 'published' },
       acesso: { equals: 'publica' },
+      deletedAt: { exists: false },
     })
     expect(publishedPublicMeetingOrLoggedIn(request('juridico'))).toBe(true)
   })
@@ -45,9 +56,14 @@ describe('controle de acesso do CMS', () => {
     expect(canManageContent(invalid)).toBe(false)
     expect(isLoggedInFieldLevel(invalid)).toBe(false)
     expect(publishedOrLoggedIn(invalid)).toEqual({ _status: { equals: 'published' } })
+    expect(publishedLiveOrLoggedIn(invalid)).toEqual({
+      _status: { equals: 'published' },
+      deletedAt: { exists: false },
+    })
     expect(publishedPublicMeetingOrLoggedIn(invalid)).toEqual({
       _status: { equals: 'published' },
       acesso: { equals: 'publica' },
+      deletedAt: { exists: false },
     })
   })
 })

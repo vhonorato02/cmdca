@@ -8,6 +8,11 @@ test('PDF publicado preserva bytes e rascunho exige sessão editorial', async ({
   expect(publicFile.headers()['content-type']).toContain('application/pdf')
   expect(createHash('sha256').update(await publicFile.body()).digest('hex')).toBe(process.env.CMS_TEST_PDF_SHA256)
 
+  // PDF publicado e depois enviado à lixeira (fixture de scripts/ci-test-cms.ts).
+  expect([401, 403, 404]).toContain((await request.get('/api/media/file/ci-trashed-document.pdf')).status())
+  expect((await (await request.get('/api/media?trash=true&depth=0&limit=100')).json()).docs
+    .map((doc: { filename?: string }) => doc.filename)).not.toContain('ci-trashed-document.pdf')
+
   const privatePath = '/api/media/file/ci-draft-document.pdf'
   expect([401, 403, 404]).toContain((await request.get(privatePath)).status())
   await page.goto('/admin/login')

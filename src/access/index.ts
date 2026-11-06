@@ -36,18 +36,28 @@ export const canManageContent: Access = ({ req: { user } }) => Boolean(roleOf(us
 export const canDeleteContent: Access = ({ req: { user } }) => roleOf(user) === 'admin'
 
 /**
- * Visitantes recebem apenas a versão publicada. Pessoas autenticadas também
- * podem ler rascunhos para revisão no painel.
+ * Globais: visitantes recebem apenas a versão publicada. Pessoas autenticadas também
+ * podem ler rascunhos para revisão no painel. Coleções usam publishedLiveOrLoggedIn.
  */
 export const publishedOrLoggedIn: Access = ({ req: { user } }) => {
   if (roleOf(user)) return true
   return { _status: { equals: 'published' } }
 }
 
+/**
+ * Coleções com lixeira: o visitante só recebe o que está publicado e fora da lixeira.
+ * O filtro precisa estar aqui porque o Payload não o aplica em `?trash=true` nem ao
+ * servir `/api/media/file/<arquivo>` (que consulta o banco só com esta regra).
+ */
+export const publishedLiveOrLoggedIn: Access = ({ req: { user } }) => {
+  if (roleOf(user)) return true
+  return { _status: { equals: 'published' }, deletedAt: { exists: false } }
+}
+
 /** Reuniões reservadas nunca são retornadas ao público, ainda que publicadas. */
 export const publishedPublicMeetingOrLoggedIn: Access = ({ req: { user } }) => {
   if (roleOf(user)) return true
-  return { _status: { equals: 'published' }, acesso: { equals: 'publica' } }
+  return { _status: { equals: 'published' }, acesso: { equals: 'publica' }, deletedAt: { exists: false } }
 }
 
 export const isAdminFieldLevel: FieldAccess = ({ req: { user } }) =>

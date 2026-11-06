@@ -3,8 +3,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 
 assert.equal(process.env.GITHUB_ACTIONS, 'true', 'Verificacao do artefato somente no Actions')
-const secrets = ['DATABASE_URI', 'DATABASE_URI_UNPOOLED', 'PAYLOAD_SECRET', 'S3_SECRET_ACCESS_KEY',
-  'S3_ACCESS_KEY_ID', 'SMTP_PASS', 'COOLIFY_TOKEN']
+const secrets = ['DATABASE_URI', 'DATABASE_URI_UNPOOLED', 'PAYLOAD_SECRET', 'SMTP_PASS']
   .map((name) => ({ name, value: process.env[name] }))
   .filter(({ value }) => value)
 let checked = 0

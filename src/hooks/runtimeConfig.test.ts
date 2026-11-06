@@ -1,10 +1,10 @@
+import path from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('dotenv', () => ({ config: vi.fn() }))
 vi.mock('@payloadcms/db-postgres', () => ({ postgresAdapter: vi.fn(() => ({})) }))
 vi.mock('@payloadcms/email-nodemailer', () => ({ nodemailerAdapter: vi.fn(() => undefined) }))
 vi.mock('@payloadcms/richtext-lexical', () => ({ lexicalEditor: vi.fn(() => ({})) }))
-vi.mock('@payloadcms/storage-s3', () => ({ s3Storage: vi.fn(() => (config: unknown) => config) }))
 vi.mock('sharp', () => ({ default: vi.fn() }))
 vi.mock('nodemailer', () => ({ default: { createTransport: vi.fn() } }))
 vi.mock('payload', () => ({
@@ -39,7 +39,7 @@ describe('produção self-host do CMS', () => {
     const config = await load()
     const media = config.collections.find((collection) => collection.slug === 'media')
     expect(media?.upload).toEqual(expect.objectContaining({
-      staticDir: '/srv/sites/cmdca/data/media',
+      staticDir: path.resolve('/srv/sites/cmdca/data/media'),
     }))
     expect(config.plugins).toEqual([])
   }, 60_000)

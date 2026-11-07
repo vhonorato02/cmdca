@@ -12,7 +12,7 @@ Atualizado em 06/11/2026 (plataforma `vps-platform` 1.0). Runbook antigo (Neon/R
 | Saúde na VPS | `ssh zewithane-vps 'site saude'`; painéis Gatus e Beszel pela Tailscale (`site paineis`) | Quando houver alerta |
 | Backup local | Timer `platform-backup` 03:17 (dumps + restic, retenção 7d/4s/6m, check de 5%) | Diário |
 | Teste de restauração | Timer `platform-restore-test` (domingo 04:30) | Semanal |
-| Off-site | R2 automático quando configurado; até lá, `tools/offsite-pull.sh` do `vps-platform` pelo notebook | Ver abaixo |
+| Off-site | Cópia restic criptografada no Google Drive do Zé, no mesmo timer do backup local; `tools/offsite-pull.sh` pelo notebook continua valendo | Diário |
 
 ## Comandos na VPS
 
@@ -47,10 +47,10 @@ só a seguinte remove.
   ```
   Resultado de 06/11: `check --read-data` sem erros; 4 arquivos de mídia com SHA-256 idêntico à produção;
   `pg_restore` num PostgreSQL 17.11 local em 5 s; contagem de linhas idêntica nas 74 tabelas.
-- **Off-site automático (pendente do Zé):** bucket privado no Cloudflare R2 + token só desse bucket, gravados em
-  `/srv/platform/.env` (`RESTIC_REPOSITORY_OFFSITE`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
-  `AWS_DEFAULT_REGION=auto`). O `backup.sh` passa a copiar, verificar e marcar `last-backup-offsite-ok`; o
-  healthwatch alerta se passar de 36 h. Volume atual cabe com folga nos 10 GB grátis.
+- **Off-site automático (desde 07/11/2026):** o `backup.sh` copia o repositório restic para o Google Drive do Zé
+  (`rclone:gdrive:vps-zewithane-restic`, client OAuth próprio, escopo `drive.file`), verifica e marca
+  `last-backup-offsite-ok`; o healthwatch alerta se passar de 36 h. Restauração a partir do Drive conferida em 07/11
+  (dump do CMDCA válido e mídia presente). Detalhes e reautorização: `docs/RUNBOOK.md` do `vps-platform`.
 - **Restaurar só o CMDCA na mesma VPS:** `site restaurar cmdca [snapshot]` (guarda o estado atual antes).
 - **VPS perdida ou zerada (feito de verdade em 06/11/2026):**
   1. Plataforma nova (`bootstrap.sh` + `install.sh` do `vps-platform`).

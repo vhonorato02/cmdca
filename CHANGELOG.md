@@ -4,6 +4,13 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 
 ## [Não publicado]
 
+### Operação (07/11/2026, sem mudança de código)
+
+- portal de volta ao domínio oficial `www.cmdcapinda.org`, com indexação liberada (`SITE_INDEXABLE=true`); raiz, `pt.` e o
+  domínio temporário redirecionam com 301 para o `www`;
+- backup off-site automático ligado (restic criptografado no Google Drive) e restauração a partir dele conferida;
+- bucket R2 legado `cmdca-media` excluído depois de conferir que os 3 arquivos estavam na VPS.
+
 ## [2.3.0] — 2026-11-07
 
 Terceira auditoria e redesign. O site saiu do domínio oficial e ficou só no temporário, sem indexação, até o lançamento.

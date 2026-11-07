@@ -6,18 +6,19 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
 
 ## Estado em produção
 
-- **Fora do domínio oficial, por decisão do Zé (07/11).** O portal responde só em
-  **https://cmdca.zewithane.vps.brz.dev.br** (painel em `/admin`), com `X-Robots-Tag: noindex` em tudo e
-  `robots.txt` fechado (`SITE_INDEXABLE=false`, `CMDCA_PUBLIC_URL` = temporário, nas variáveis do GitHub).
-- `www.cmdcapinda.org` e `cmdcapinda.org` mostram a página "Em preparação" da plataforma (503, noindex).
-  Para voltar: devolver os domínios oficiais ao site na VPS (skill `vps-zewithane`), `CMDCA_PUBLIC_URL` =
-  `https://www.cmdcapinda.org`, `SITE_INDEXABLE=true` e um novo deploy (a URL entra no build).
+- **De volta ao domínio oficial (07/11, ~17:30, a pedido do Zé).** Canônico **https://www.cmdcapinda.org** (painel em
+  `/admin`); `cmdcapinda.org`, `pt.cmdcapinda.org` e `cmdca.zewithane.vps.brz.dev.br` redirecionam com 301 para o `www`.
+  Indexação liberada: `SITE_INDEXABLE=true` e `CMDCA_PUBLIC_URL=https://www.cmdcapinda.org` nas variáveis do
+  repositório **e** do ambiente `Production` do GitHub (o ambiente sobrepõe o repositório) e no `app.env` da VPS.
+  O site estático `cmdca-oficial` (página "Em preparação") foi removido; cópia em
+  `/srv/backups/removidos/cmdca-oficial-20261107-173219`.
 - VPS `zewithane`, plataforma `vps-platform` 1.0. Site `cmdca`: 512 MB, raiz gravável (`--rw`, motivo em
   `docs/ARQUITETURA.md`), banco `cmdca` no Postgres 17 da plataforma, mídia em `/srv/sites/cmdca/data/media`.
 - Painel: contas de teste **apagadas**; as 3 contas reais (2 administradores, 1 editor) com senhas novas em
   `C:\Users\Ze\Backups\vps-zewithane\cms-acessos-2026-11-07.txt` (fora do repositório; apagar depois de anotar).
-- Versão no ar: **`6e63238`** (2.3.0, redesign "Caderno público"), publicada pelo CI: Produção `42409041255`, E2E
-  `42409762881` e Lighthouse `42410185397` verdes. Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
+- Versão no ar: imagem de **`337fe2b`** (código da 2.3.0, redesign "Caderno público", recompilada com a URL oficial):
+  Produção `42411586932`, E2E `42412835340` e Lighthouse `42413997121` verdes (capa 96; uma rodada anterior deu 87
+  com cache de imagem frio logo após o deploy). Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
   O primeiro push do redesign (`c1cc66b`, run `42407697861`) parou na qualidade (estouro de 23 px em 320 px com o
   título padrão do CI) e não publicou nada; a correção é o `6e63238`.
 
@@ -36,18 +37,25 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
    todas as rotas × 8 larguras (320 a 1920 px) sem estouro, h1 único, imagens com alt; **axe sem violações**; 148 testes
    unitários, lint e tipos verdes. Títulos do CMS com palavra longa não estouram mais a tela estreita.
 
+## Feito em 07/11 (noite, pedido do Zé)
+
+1. Domínio oficial de volta, indexável (ver "Estado em produção").
+2. **Backup off-site automático ligado** (era o único gate para `stable`): restic criptografado no Google Drive do Zé,
+   client OAuth próprio (`backup-vps-zewithane`, escopo `drive.file`), primeira cópia e restauração conferidas;
+   `site saude` mostra "backup externo confirmado". Detalhes no `docs/RUNBOOK.md` do `vps-platform`.
+3. Bucket R2 `cmdca-media` excluído (3 arquivos conferidos na VPS antes; cópia extra em `Z:\Dev\sandbox2-cmdca-final`).
+
 ## Pendências
 
 | # | O quê | Quem | Como |
 | --- | --- | --- | --- |
-| 1 | **Backup off-site automático** (único gate para `stable`) | Zé dá 1 clique; agente faz o resto | R2 pede cartão, então o destino escolhido é o Google Drive do Zé (restic criptografado, escopo `drive.file`). No notebook, peça ao agente para retomar: ele roda `rclone authorize drive` (está em `Z:\Dev\sandbox\rclone\`) e você clica em **Permitir** no navegador. Depois ele grava o remoto na VPS e testa uma restauração |
-| 2 | Excluir o projeto `cmdca` da Vercel | Zé | A API pede confirmação por link enviado ao dono da conta. Nada depende dele (está pausado, 503) |
-| 3 | Excluir o banco Neon e o bucket R2 antigos | Zé (login nas contas) ou agente com token | Os dados já estão na VPS desde 26/10 (conferido); nada no portal usa esses serviços |
-| 4 | Voltar ao domínio oficial | Zé decide quando; agente executa | Ver "Para voltar" acima |
-| 5 | Conteúdo sem fonte pública: calendário de reuniões, entidades registradas, dados bancários do Fundo, encarregado LGPD | Conselho | Painel → pendências (o site mostra estado vazio honesto) |
-| 6 | Raiz somente-leitura no container | Agente | `cacheHandler` do Next + teste no CI; depois recriar o site sem `--rw` |
-| 7 | Testes manuais com leitor de tela e Android físico | Zé ou agente com aparelho | `docs/QA.md` |
-| 8 | Renomear a pasta `Z:\Dev\projetos\cmdca-main` para `cmdca` | Zé, com o T3 fechado | `Rename-Item Z:\Dev\projetos\cmdca-main cmdca` e ajustar a pasta do projeto no T3 |
+| 1 | Excluir o projeto `cmdca` da Vercel | Zé | Login na Vercel pede o código do autenticador (2FA). Depois: Settings → General → Delete Project (nome `cmdca`). Nada depende dele (pausado, 503) |
+| 2 | Excluir o banco Neon antigo do CMDCA | Zé diz em que conta está | Não está nas organizações do login GitHub (v.honorato02): lá só há bancos do Anglo (tickets e CMS), que **não** foram tocados. Os dados já estão na VPS desde 26/10 |
+| 3 | Conta Cloudflare `cmdcapinda@outlook.com` | Zé decide | O bucket `cmdca-media` foi excluído em 07/11; a conta ficou vazia. Revogar tokens de API R2 antigos no painel, se quiser |
+| 4 | Conteúdo sem fonte pública: calendário de reuniões, entidades registradas, dados bancários do Fundo, encarregado LGPD | Conselho | Painel → pendências (o site mostra estado vazio honesto) |
+| 5 | Raiz somente-leitura no container | Agente | `cacheHandler` do Next + teste no CI; depois recriar o site sem `--rw` |
+| 6 | Testes manuais com leitor de tela e Android físico | Zé ou agente com aparelho | `docs/QA.md` |
+| 7 | Renomear a pasta `Z:\Dev\projetos\cmdca-main` para `cmdca` | Zé, com o T3 fechado | `Rename-Item Z:\Dev\projetos\cmdca-main cmdca` e ajustar a pasta do projeto no T3 |
 
 ## Como continuar
 

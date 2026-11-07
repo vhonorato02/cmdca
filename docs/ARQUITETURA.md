@@ -25,7 +25,7 @@ Navegador ──HTTPS/HTTP3──► Caddy (borda da VPS, Let's Encrypt)
 | Build e testes | GitHub Actions | Nada é compilado na VPS |
 | Backup | restic local diário na VPS + cópia off-site | Ver [`OPERACOES.md`](OPERACOES.md) |
 
-**Fora do runtime:** Vercel (projeto pausado, 503), Neon e R2 legados não são usados pelo portal. GitHub/GHCR e o DNS (Wix) são serviços de entrega, não hospedam dados.
+**Fora do runtime:** o projeto antigo da Vercel (pausado, 503, aguardando exclusão) não é usado pelo portal; o bucket R2 `cmdca-media` foi excluído em 07/11/2026 (arquivos já estavam na VPS). GitHub/GHCR e o DNS (Wix) são serviços de entrega, não hospedam dados.
 
 **Não é PWA:** sem manifest, service worker, push ou modo standalone (decisão do dono, 04/11/2026).
 

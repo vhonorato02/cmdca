@@ -24,6 +24,8 @@ jobs:
     env:
       PLAYWRIGHT_BASE_URL: ${{ vars.CMDCA_PUBLIC_URL }}
       E2E_TARGET: production
+      # Mesmo valor do deploy: com 'false' o site inteiro sai com noindex de propósito.
+      SITE_INDEXABLE: ${{ vars.SITE_INDEXABLE || 'false' }}
     steps:
       - uses: actions/checkout@v4
         with:

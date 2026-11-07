@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { AppLink as Link } from '@/components/ui/AppLink'
 
-import { Calendar, Document, Gavel, Pictogram } from '@/components/ui/icons'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Section } from '@/components/ui/Section'
 import { EmptyState } from '@/components/ui/states'
@@ -51,10 +50,10 @@ export default async function TransparenciaPage() {
   const t = textos.transparencia
   const tribuna = publicHref(config?.tribunaUrl)
   const areas = [
-    { href: '/resolucoes', titulo: 'Resoluções', texto: textos.atos.resolucoesIntro, icon: <Gavel className="route__icon" />, n: plural(total?.resolucoes, 'resolução', 'resoluções') },
-    { href: '/editais', titulo: 'Editais', texto: textos.atos.editaisIntro, icon: <Document className="route__icon" />, n: plural(total?.editais, 'edital', 'editais') },
-    { href: '/reunioes', titulo: 'Reuniões e atas', texto: textos.atos.reunioesIntro, icon: <Calendar className="route__icon" />, n: plural(total?.reunioes, 'reunião', 'reuniões') },
-    { href: '/entidades', titulo: 'Entidades registradas', texto: textos.atos.entidadesIntro, icon: <Pictogram tema="encontro" className="route__icon" />, n: plural(total?.entidades, 'entidade', 'entidades') },
+    { href: '/resolucoes', titulo: 'Resoluções', texto: textos.atos.resolucoesIntro, n: plural(total?.resolucoes, 'resolução', 'resoluções') },
+    { href: '/editais', titulo: 'Editais', texto: textos.atos.editaisIntro, n: plural(total?.editais, 'edital', 'editais') },
+    { href: '/reunioes', titulo: 'Reuniões e atas', texto: textos.atos.reunioesIntro, n: plural(total?.reunioes, 'reunião', 'reuniões') },
+    { href: '/entidades', titulo: 'Entidades registradas', texto: textos.atos.entidadesIntro, n: plural(total?.entidades, 'entidade', 'entidades') },
   ]
 
   return (
@@ -62,9 +61,8 @@ export default async function TransparenciaPage() {
       <PageHeader title={t.titulo} lead={t.introducao} />
       <Section id="atos" title="Atos e registros do conselho">
         <ul className="card-grid">
-          {areas.map(({ href, titulo, texto, icon, n }) => (
+          {areas.map(({ href, titulo, texto, n }) => (
             <li key={href} className="card">
-              {icon}
               <h3 className="card__title">
                 <Link href={href}>{titulo}</Link>
               </h3>

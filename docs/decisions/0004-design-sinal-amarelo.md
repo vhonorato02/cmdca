@@ -1,6 +1,6 @@
 # 0004 — Design system "Sinal amarelo"
 
-Data: 26/10/2026 · Situação: aceita
+Data: 26/10/2026 · Situação: substituída pela [0011](0011-design-caderno-publico.md) em 07/11/2026
 
 ## Contexto
 O dono reprovou a interface anterior como genérica. O site precisa passar

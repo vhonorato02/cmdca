@@ -4,7 +4,7 @@ import type { StatusInfo } from '../officialActs'
 
 /**
  * Lista de atos oficiais e reuniões. Cada item destaca um numeral (número do
- * ato ou dia da reunião) em Archivo condensada: a assinatura "numerais de ato".
+ * ato ou dia da reunião) na serifa dos títulos: a assinatura "numerais de ato".
  */
 export function ActList({ children, label }: { children: ReactNode; label?: string }) {
   return (

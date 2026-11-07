@@ -1,52 +1,46 @@
-# Direção visual: "Sinal amarelo"
+# Direção visual: "Caderno público" (07/11/2026)
+
+Substitui a direção "Sinal amarelo" (26/10/2026; `CRITICA.md` e `REFERENCIAS.md` são daquela rodada). O motivo da troca foi a avaliação do Zé ("design tá feio que dói"): bloco amarelo saturado na capa, títulos condensados pesados, cartões com estilos diferentes, ícones sem critério, animações de entrada e nenhuma foto real.
 
 ## Conceito
-Na rua, o amarelo com azul-escuro é a cor da placa de área escolar: avisa que ali há crianças e pede atenção. O logo do CMDCA usa exatamente essa dupla, com o quadrado amarelo, as figuras em anil e a faixa com "PINDAMONHANGABA". O site trata o amarelo como sinal de cuidado. Ele marca o que protege (canais de ajuda, foco do teclado, a capa da home) e nunca serve de enfeite. O anil sustenta a confiança institucional: títulos, botões, números de atos e rodapé.
+O CMDCA decide em público: reuniões abertas, resoluções numeradas, Fundo com prestação de contas. O site lê como o **caderno de um órgão público bem editado**: serifa nos títulos, texto claro, réguas finas separando assuntos, a cidade de verdade na capa. O amarelo do logo continua, mas só como **sinal**: telefones de proteção, foco do teclado, o botão "Buscar ajuda" e a marca. Ele não preenche áreas.
 
-A frase-guia é "Placa de serviço público feita com carinho": direta como sinalização e calorosa na escrita.
+Frase-guia: "Diário oficial que dá vontade de ler".
 
-## Paleta (tirada do logo em `public/brand/logo-cmdca.jpg`, cores médias medidas)
-| Token | Hex | Uso | Contraste medido |
-|---|---|---|---|
-| `--anil` | #271A58 | títulos, botões, links, faixas | 15,27:1 sobre branco |
-| `--anil-900` | #1A1140 | rodapé, barra de proteção | 17,53:1 com branco |
-| `--anil-600` | #4A3D8F | hover de links, detalhes | 8,92:1 sobre branco |
-| `--anil-50` | #ECEAF5 | superfícies de apoio | anil sobre ele: 12,84:1 |
-| `--amarelo` | #F6EC27 | campos de cor, foco, sinal | anil sobre amarelo: 12,32:1 |
-| `--amarelo-50` | #FDF8C2 | destaque suave | anil sobre ele: 14,10:1 |
-| `--grafite` | #25242B | texto corrido | 15,37:1 sobre branco |
-| `--grafite-2` | #55536A | texto secundário | 7,42:1 sobre branco, 6,23:1 sobre anil-50 |
-| `--linha-forte` | #7B7894 | bordas de campos (não-texto ≥ 3:1) | 4,24:1 |
-| `--urgencia` | #B42318 | 190 e alertas | branco sobre ela: 6,57:1 |
-| `--vigente` | #1D6B3A | situação "vigente" | 5,68:1 sobre o fundo claro do selo |
-| `--atencao` | #8A5300 | situação "encerrado/alterada" | 5,61:1 sobre o fundo claro do selo |
+## Paleta (tokens em `src/app/(frontend)/styles/tokens.css`)
+| Token | Hex | Uso |
+|---|---|---|
+| `--anil` | #231A5C | títulos, botões, links |
+| `--anil-900` | #1A1140 | faixa de proteção, painel "Proteger agora", rodapé |
+| `--anil-600` | #4A3D8F | hover, detalhes |
+| `--anil-100` / `--anil-50` | #DFE2EE / #EEF0F6 | superfícies de apoio (frias, sem o lilás anterior) |
+| `--nevoa` | #F3F5F9 | seção alternada |
+| `--amarelo` | #F6EC27 | sinal: números de proteção sobre anil, foco, "Buscar ajuda", marca |
+| `--grafite` / `--grafite-2` | #1F1D2B / #4F5163 | texto e texto secundário |
+| `--linha` / `--linha-forte` | #DCDFE8 / #767A90 | réguas e bordas de campos (não-texto ≥ 3:1) |
+| `--urgencia` | #B42318 | 190 e alertas |
 
-Regras: o amarelo **nunca** é texto sobre branco (1,24:1). Ele sempre aparece como campo de cor com texto anil ou como halo de foco. O fundo é branco, não creme.
+Regras: o amarelo nunca é texto sobre branco. Fundo branco, sem creme. O alto contraste (`html.contrast`) troca só os papéis `--c-*`.
 
-## Tipografia (`next/font/google`, auto-hospedadas)
-- **Archivo** (variável, eixos `wdth` 62–125 e `wght`). É usada em títulos e numerais, a 72–82% de largura e peso 760–850, e ecoa as letras condensadas e pesadas do logo.
-- **Atkinson Hyperlegible Next** (variável). É usada em texto, interface e formulários. Foi desenhada pelo Braille Institute para leitores com baixa visão, uma escolha coerente com a LBI e o eMAG.
-- Escala clássica (Elements of Typographic Style), em rem com base de 16 px: 14 · 16 · **18 (corpo)** · 21 · 24 · 30 · 36 · 48 · 60 · 72. Os tamanhos de exibição são fluidos com `clamp()`.
-- Altura de linha de 1,6 no corpo e 1,05–1,15 nos títulos. Medida máxima de 68 caracteres. Títulos usam `text-wrap: balance`. Sem caixa alta espaçada em rótulos.
+## Tipografia
+- **Newsreader** (Production Type, OFL, eixo óptico `opsz`) nos títulos e numerais, peso 560 (títulos) e 620 (numerais). O eixo óptico desenha letra de texto nos tamanhos pequenos e de título nos grandes.
+- **Atkinson Hyperlegible Next** (Braille Institute, OFL) no texto e na interface. Mantida por ser desenhada para baixa visão. O zero cortado é dela, de propósito (distingue 0 de O em telefones), e não tem alternativa sem corte.
+- Ambas por `next/font/google`, servidas pelo próprio site.
 
-## Grade, espaço, forma
-- Conteúdo com até 75 rem (1200 px), 12 colunas, calhas de 24 px (mobile) e 32 px (desktop). Tudo alinhado à esquerda.
-- Espaçamento em base 4: 4, 8, 12, 16, 24, 32, 48, 64, 96 e 128.
-- Raio com hierarquia: 0 nas faixas e campos de cor (sinalização), 4 px em selos e campos, 8 px em botões e cartões, e pílula só nos selos de situação.
-- Sombra quase ausente. O desenho é plano, com bordas. Só o menu aberto e a barra fixa móvel ganham uma elevação discreta.
-- Movimento só responde a ações: menu (180 ms) e detalhes/sanfona (nativos). Nada anima sozinho, e com `prefers-reduced-motion` todas as durações vão a 0.
+## Capa (home)
+1. Título editorial grande ("Direitos de crianças e adolescentes, decididos em público.") com apresentação e dois botões; ao lado, **foto real da cidade** (telhados com a Serra da Mantiqueira, Facs90, CC BY-SA 4.0, crédito na legenda e em `/creditos`). Se o CMS tiver uma capa conferida, ela substitui a foto.
+2. **Proteger agora**: painel anil com os canais do CMS como linhas "situação → número", em vez de cartões.
+3. **Caminhos**: Destinar o IR e Acompanhar o conselho, como dois blocos tipográficos separados por régua.
+4. Destaques, Quem decide (presidência), Quem participa (citações) e Notícias (uma em destaque e três em lista), todos com régua no topo, sem cartão com sombra.
 
-## Tom de voz
-Segunda pessoa, verbos no imperativo, frases curtas. O botão diz o que acontece ("Ligar para o Disque 100", "Abrir PDF da ata"). Erros explicam a causa e o próximo passo, sem pedir desculpas. Estados vazios convidam a uma ação. Nada de "Ops".
+## Movimento
+Só o que tem função: menu, copiar, voltar ao topo, detalhes. Saíram as entradas em cascata, os cartões que "sobem" no hover e o contador animado. Com `prefers-reduced-motion`, tudo vai a 0.
 
-## Assinaturas
-1. **Faixa de proteção:** barra anil no topo de todas as páginas com os canais do CMS (190, Disque 100, Conselho Tutelar) em números amarelos tocáveis. No celular, vira uma barra fixa inferior com três botões de um toque.
-2. **A órbita:** a elipse do logo, desenhada a traço, aparece em um só lugar por página (capa da home, cabeçalho interno e 404). É a única forma decorativa do site.
-3. **Numerais de ato:** datas de reunião e números de resolução e edital em Archivo condensada e grande, como folha de calendário e carimbo. Os limites do Fundo (3%, 6%) seguem a mesma linguagem.
+## O que saiu
+- A **órbita** (elipse do logo usada como enfeite na capa, nos cabeçalhos internos e no 404) e o **pictograma** da capa.
+- O cartão de notícia com borda, carimbo de data gigante e pictograma por tema.
+- O bloco amarelo da capa, a faixa amarela grossa nos cabeçalhos internos e o item ativo do menu em bloco amarelo (agora sublinhado).
+- A Archivo condensada local.
 
-Extra: o foco do teclado é anil com halo amarelo (inspirado no GOV.UK), visível sobre qualquer fundo.
-
-## Revisão contra o padrão genérico
-- Eu ia repetir "foto + título + dois botões" na capa. Troquei por um campo amarelo de marca com a órbita e um título forte. A foto só aparece quando o CMS tem uma capa conferida.
-- Eu ia usar cartões iguais para atalhos. Troquei por três rotas com pesos distintos: proteção (amarela), Fundo (anil) e atos públicos (contorno).
-- Notícias sem foto não recebem ilustração genérica. O cartão é tipográfico, com data em numerais.
+## Mantido
+Faixa de proteção no topo (no desktop cabe numa linha a partir de 1280 px), barra fixa de três botões no celular, "Sair rápido" na página de Ajuda, foco anil com halo amarelo, tamanho de letra, alto contraste e VLibras.

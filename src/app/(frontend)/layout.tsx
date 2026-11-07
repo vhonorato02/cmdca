@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Atkinson_Hyperlegible_Next } from 'next/font/google'
-import localFont from 'next/font/local'
+import { Atkinson_Hyperlegible_Next, Newsreader } from 'next/font/google'
 import React from 'react'
 
 import { canaisDaFaixa, ProtectionBar, ProtectionDock } from '@/components/layout/Protection'
@@ -13,18 +12,15 @@ import { absoluteUrl, DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from '@/lib/s
 
 import './globals.css'
 
-// Títulos e numerais: Archivo condensada (instância local de 25 KB, ver fonts/README.md),
-// eco das letras pesadas do logo.
-const archivo = localFont({
-  src: './fonts/archivo-condensada.woff2',
-  weight: '760 860',
-  style: 'normal',
-  // "optional": pré-carregada (25 KB), entra na primeira pintura quase sempre; se a
-  // rede atrasar, o título fica na fonte de reserva nesta visita, sem repintura tardia.
-  display: 'optional',
-  variable: '--font-archivo',
-  fallback: ['Arial Narrow', 'Arial', 'sans-serif'],
-  adjustFontFallback: 'Arial',
+// Títulos e numerais: serifa editorial com eixo óptico (desenho de texto em tamanhos
+// pequenos, de título nos grandes). Acentos do português conferidos.
+const newsreader = Newsreader({
+  subsets: ['latin'],
+  axes: ['opsz'],
+  style: ['normal'],
+  display: 'swap',
+  variable: '--font-newsreader',
+  fallback: ['Georgia', 'Times New Roman', 'serif'],
 })
 
 // Texto e interface: desenhada para leitores com baixa visão.
@@ -93,7 +89,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   return (
     <html
       lang="pt-BR"
-      className={`${archivo.variable} ${atkinson.variable}`}
+      className={`${newsreader.variable} ${atkinson.variable}`}
       suppressHydrationWarning
     >
       <head>

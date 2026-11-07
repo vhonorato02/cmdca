@@ -1,13 +1,11 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { AppLink as Link } from '@/components/ui/AppLink'
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
-import { canaisDaFaixa } from '@/components/layout/Protection'
 import { NewsCard } from '@/components/NewsCard'
-import { HeroMark } from '@/components/ui/brand'
 import { ButtonLink, SmartLink } from '@/components/ui/Button'
-import { ArrowRight, Calendar, Shield } from '@/components/ui/icons'
+import { ArrowRight } from '@/components/ui/icons'
 import { Section } from '@/components/ui/Section'
 import {
   canaisDiscaveis,
@@ -40,6 +38,14 @@ export const metadata: Metadata = createMetadata({
 })
 
 const DEFAULT_BLOCOS = ['slider', 'sobre', 'atalhos', 'vozes', 'noticias']
+
+/** Foto padrão da capa quando o CMS não tem uma imagem conferida (licença livre). */
+const FOTO_CIDADE = {
+  src: '/images/cidade/pindamonhangaba-serra.jpg',
+  alt: 'Telhados do centro de Pindamonhangaba com a Serra da Mantiqueira ao fundo, numa manhã clara.',
+  credito: 'Foto: Facs90, CC BY-SA 4.0, via Wikimedia Commons',
+  fonte: 'https://commons.wikimedia.org/wiki/File:Panor%C3%A2mica_de_Pindamonhangaba_02.jpg',
+}
 
 /** Maior limite percentual cadastrado (ex.: "6%"), para o caminho do Fundo. */
 function maiorLimite(modalidades: { limite: string }[]): number | undefined {
@@ -96,7 +102,8 @@ export default async function HomePage() {
   ])
 
   const blocos = pagina.blocos ?? DEFAULT_BLOCOS
-  const canais = canaisDaFaixa(canaisDiscaveis(textos.protecao.canais))
+  // Painel de ajuda: os canais com número discável, na ordem do CMS (até quatro).
+  const canais = canaisDiscaveis(textos.protecao.canais).filter((canal) => canal.href).slice(0, 4)
   const coverURL = publicMediaHref(pagina.imagem?.url)
   const coverAlt = publicText(pagina.imagem?.alt)
   const coverCredit = publicText(pagina.imagem?.credito)
@@ -283,94 +290,109 @@ export default async function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationLd) }} />
       <section className="home-hero" aria-labelledby="inicio-titulo">
         <div className="wrap home-hero__inner">
-          <div>
+          <div className="home-hero__text">
             <h1 id="inicio-titulo">{pagina.capa.titulo}</h1>
             <p className="home-hero__lead">{pagina.capa.texto}</p>
             <div className="actions">
-              <ButtonLink href="/fmdca">Destinar meu Imposto de Renda</ButtonLink>
-              <ButtonLink href="/reunioes" variant="secondary">
-                Acompanhar as reuniões
+              <ButtonLink href="/ajuda">Buscar ajuda</ButtonLink>
+              <ButtonLink href="/fmdca" variant="secondary">
+                Destinar meu Imposto de Renda
               </ButtonLink>
             </div>
           </div>
-          {coverURL ? (
-            <figure className="home-hero__figure">
-              <div className="home-hero__image">
+          <figure className="home-hero__figure">
+            <div className="home-hero__image">
+              {coverURL ? (
                 <Image
                   src={coverURL}
                   alt={coverAlt || ''}
                   fill
                   priority
                   unoptimized={coverURL.startsWith('/api/media/file/')}
-                  sizes="(max-width: 900px) 100vw, 480px"
+                  sizes="(max-width: 900px) 100vw, 640px"
                 />
-              </div>
-              {coverCredit ? <figcaption>{coverCredit}</figcaption> : null}
-            </figure>
-          ) : (
-            <HeroMark className="home-hero__mark" />
-          )}
+              ) : (
+                <Image src={FOTO_CIDADE.src} alt={FOTO_CIDADE.alt} fill priority sizes="(max-width: 900px) 100vw, 640px" />
+              )}
+            </div>
+            <figcaption>
+              {coverURL ? (
+                coverCredit
+              ) : (
+                <a href={FOTO_CIDADE.fonte} rel="license noopener">
+                  {FOTO_CIDADE.credito}
+                </a>
+              )}
+            </figcaption>
+          </figure>
         </div>
       </section>
 
       {blocos.includes('atalhos') ? (
-        <div className="wrap">
-          <ul className="routes" aria-label="Caminhos principais">
-            <li className="route route--protecao">
-              <Shield className="route__icon" />
-              <h2 className="route__title">
-                <Link href="/ajuda">{pagina.rotas.protecaoTitulo}</Link>
-              </h2>
-              <p>{pagina.rotas.protecaoTexto}</p>
-              {canais.length ? (
-                <div className="route__channels">
-                  {canais.map((canal) => (
-                    <a
-                      key={`${canal.tipo}-${canal.numero}`}
-                      className={`btn btn--sm ${canal.tipo === 'emergencia' ? 'btn--danger' : 'btn--signal'}`}
-                      href={canal.href}
-                    >
-                      {canal.numero}
-                      <span className="sr-only">, {canal.rotulo}</span>
-                    </a>
-                  ))}
+        <>
+          {canais.length ? (
+            <section className="help-panel" aria-labelledby="ajuda-agora">
+              <div className="wrap help-panel__inner">
+                <div className="help-panel__intro">
+                  <h2 id="ajuda-agora">{pagina.rotas.protecaoTitulo}</h2>
+                  <p>{pagina.rotas.protecaoTexto}</p>
+                  <p>
+                    <Link className="help-panel__more" href="/ajuda">
+                      Ver toda a rede de proteção da cidade
+                    </Link>
+                  </p>
                 </div>
-              ) : null}
-            </li>
-            <li className="route route--fundo">
-              {limite !== undefined ? (
-                <p className="route__figure" aria-hidden="true">
-                  {Number.isInteger(limite) && limite <= 100 ? (
-                    // Conta de 0 até o valor na primeira pintura; sem suporte, mostra o valor final.
-                    <span className="countup" style={{ '--to': limite } as CSSProperties}>
-                      <span className="countup__static">{limite}%</span>
-                    </span>
-                  ) : (
-                    `${limite.toLocaleString('pt-BR')}%`
-                  )}
-                  <small>do imposto devido</small>
-                </p>
-              ) : null}
-              <h2 className="route__title">
-                <Link href="/fmdca">{pagina.rotas.fundoTitulo}</Link>
-              </h2>
-              <p>{pagina.rotas.fundoTexto}</p>
-            </li>
-            <li className="route route--atos">
-              <Calendar className="route__icon" />
-              <h2 className="route__title">
-                <Link href="/reunioes">{pagina.rotas.atosTitulo}</Link>
-              </h2>
-              <p>{pagina.rotas.atosTexto}</p>
-              {proximaReuniao?.data ? (
-                <p>
-                  <b>Próxima reunião:</b>{' '}
-                  <time dateTime={proximaReuniao.data}>{formatDateLong(proximaReuniao.data)}</time>
-                </p>
-              ) : null}
-            </li>
-          </ul>
-        </div>
+                <ul className="help-panel__list">
+                  {canais.map((canal) => (
+                    <li key={`${canal.tipo}-${canal.rotulo}`} className={`help-call help-call--${canal.tipo}`}>
+                      <a className="help-call__link" href={canal.href}>
+                        <span className="help-call__situation">{canal.situacao || canal.rotulo}</span>
+                        <span className="help-call__number">{canal.numero}</span>
+                        <span className="help-call__who">
+                          {canal.rotulo}
+                          {canal.observacao ? <span className="sr-only">. {canal.observacao}</span> : null}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          ) : null}
+
+          <div className="wrap">
+            <ul className="paths" aria-label="Outros caminhos">
+              <li className="path">
+                <h2 className="path__title">
+                  <Link href="/fmdca">{pagina.rotas.fundoTitulo}</Link>
+                </h2>
+                <p>{pagina.rotas.fundoTexto}</p>
+                {limite !== undefined ? (
+                  <p className="path__fact">
+                    Até <strong>{limite.toLocaleString('pt-BR')}%</strong> do imposto devido pode ficar na cidade.
+                  </p>
+                ) : null}
+              </li>
+              <li className="path">
+                <h2 className="path__title">
+                  <Link href="/reunioes">{pagina.rotas.atosTitulo}</Link>
+                </h2>
+                <p>{pagina.rotas.atosTexto}</p>
+                {proximaReuniao?.data ? (
+                  <p className="path__fact">
+                    Próxima reunião em{' '}
+                    <time dateTime={proximaReuniao.data}>{formatDateLong(proximaReuniao.data)}</time>.
+                  </p>
+                ) : (
+                  <p className="path__fact">
+                    <Link href="/resolucoes">Resoluções</Link> e <Link href="/editais">editais</Link> publicados
+                    pelo conselho.
+                  </p>
+                )}
+              </li>
+            </ul>
+          </div>
+        </>
       ) : null}
 
       {blocos.filter((tipo) => tipo !== 'atalhos').map((tipo) => sections[tipo] ?? null)}

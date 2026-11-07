@@ -1,7 +1,6 @@
 import { AppLink as Link } from '@/components/ui/AppLink'
 import type { ReactNode } from 'react'
 
-import { Orbit } from './brand'
 
 export type Crumb = { label: string; href?: string }
 
@@ -45,7 +44,6 @@ export function PageHeader({
 }) {
   return (
     <header className="page-header">
-      <Orbit className="page-header__orbit" strokeWidth={2} />
       <div className="wrap page-header__inner">
         <Breadcrumb items={[{ label: 'Início', href: '/' }, ...(crumbs ?? []), { label: title }]} />
         <h1 className="page-header__title">{title}</h1>

@@ -1,20 +1,20 @@
-/* Tokens do design system "Sinal amarelo". Ver docs/design/DESIGN-SYSTEM.md. */
+/* Tokens do design system "Caderno público" (2026-11). Ver docs/design/DIRECAO.md. */
 @layer tokens {
   :root {
     /* Marca: cores médias medidas no logo oficial */
-    --anil: #271a58;
+    --anil: #231a5c;
     --anil-900: #1a1140;
     --anil-600: #4a3d8f;
-    --anil-100: #dcd8ee;
-    --anil-50: #ecebf5;
+    --anil-100: #dfe2ee;
+    --anil-50: #eef0f6;
     --amarelo: #f6ec27;
     --amarelo-50: #fdf8c2;
-    --grafite: #25242b;
-    --grafite-2: #55536a;
-    --linha: #d9d7e5;
-    --linha-forte: #7b7894;
+    --grafite: #1f1d2b;
+    --grafite-2: #4f5163;
+    --linha: #dcdfe8;
+    --linha-forte: #767a90;
     --branco: #ffffff;
-    --nevoa: #f6f5fa;
+    --nevoa: #f3f5f9;
     --urgencia: #b42318;
     --urgencia-50: #fdecea;
     --vigente: #1d6b3a;
@@ -46,9 +46,12 @@
     --c-focus-halo: var(--amarelo);
 
     /* Tipografia */
-    --font-display: var(--font-archivo), 'Arial Narrow', system-ui, sans-serif;
+    --font-display: var(--font-newsreader), Georgia, 'Times New Roman', serif;
     --font-text: var(--font-atkinson), system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --stretch-display: 78%;
+    --stretch-display: 100%;
+    /* Pesos da serifa: títulos médios, numerais um pouco mais firmes. */
+    --w-display: 560;
+    --w-display-strong: 620;
     --fs-xs: 0.875rem;
     --fs-sm: 1rem;
     --fs-md: 1.125rem;
@@ -58,7 +61,7 @@
     --fs-3xl: clamp(2.125rem, 1.6rem + 2vw, 3rem);
     --fs-4xl: clamp(2.5rem, 1.55rem + 4vw, 4.5rem);
     --lh-text: 1.6;
-    --lh-tight: 1.08;
+    --lh-tight: 1.1;
     --measure: 68ch;
 
     /* Espaço (base 4) */
@@ -81,7 +84,7 @@
     --r-md: 8px;
     --r-pill: 999px;
     --border: 1px solid var(--c-border);
-    --shadow-float: 0 12px 32px -12px rgb(26 17 64 / 35%);
+    --shadow-float: 0 16px 40px -18px rgb(35 26 92 / 30%);
 
     /* Movimento: só em resposta a ações */
     --ease: cubic-bezier(0.2, 0.7, 0.2, 1);

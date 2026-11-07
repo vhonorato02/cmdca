@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { AppLink as Link } from '@/components/ui/AppLink'
 
-import { Orbit } from '@/components/ui/brand'
 import { getTextos } from '@/lib/content'
 import { createMetadata } from '@/lib/seo'
 
@@ -24,10 +23,9 @@ export default async function NotFound() {
   return (
     <section className="not-found" aria-labelledby="nao-encontrada">
       <div className="wrap not-found__inner">
-        <div className="not-found__mark" aria-hidden="true">
-          <p className="not-found__code">404</p>
-          <Orbit className="not-found__orbit" strokeWidth={5} />
-        </div>
+        <p className="not-found__code" aria-hidden="true">
+          404
+        </p>
         <h1 id="nao-encontrada">{textos.geral.naoEncontradaTitulo}</h1>
         <p className="lead">{textos.geral.naoEncontradaTexto}</p>
         <ul className="card-grid" aria-label="Caminhos sugeridos">

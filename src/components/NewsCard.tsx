@@ -1,8 +1,7 @@
 import Image from 'next/image'
 import { AppLink as Link } from '@/components/ui/AppLink'
 
-import { Pictogram } from '@/components/ui/icons'
-import { dateParts, formatDateLong } from '@/lib/format'
+import { formatDateLong } from '@/lib/format'
 import { publicMediaHref, publicText } from '@/lib/site'
 import type { Noticia } from '@/payload-types'
 
@@ -17,9 +16,8 @@ export const CATEGORIA_LABEL: Record<string, string> = {
 }
 
 /**
- * Cartão de notícia. Com capa conferida, mostra a imagem; sem capa, vira um
- * cartão tipográfico com a data em numerais e o pictograma do tema, em vez de
- * uma ilustração genérica.
+ * Item de notícia editorial: categoria e data numa linha discreta, título em
+ * serifa e resumo. A imagem só aparece quando há capa conferida no CMS.
  */
 export function NewsCard({
   noticia,
@@ -33,10 +31,12 @@ export function NewsCard({
   const capa = typeof noticia.capa === 'object' && noticia.capa ? noticia.capa : null
   const imagePath = publicMediaHref(capa?.url)
   const Heading = headingLevel === 2 ? 'h2' : 'h3'
-  const parts = dateParts(noticia.data)
   const credit = publicText(capa?.credito)
+  const classes = ['news-card', lead ? 'news-card--lead' : '', imagePath ? 'news-card--media' : '']
+    .filter(Boolean)
+    .join(' ')
   return (
-    <article className={lead ? 'news-card news-card--lead' : 'news-card'}>
+    <article className={classes}>
       {imagePath ? (
         <div className="news-card__media">
           <Image
@@ -48,30 +48,21 @@ export function NewsCard({
           />
           {credit ? <span className="news-card__credit">{credit}</span> : null}
         </div>
-      ) : (
-        <div className="news-card__stamp" aria-hidden="true">
-          {parts ? (
-            <span className="news-card__date">
-              <b>{parts.day}</b>
-              <span>{parts.monthYear}</span>
-            </span>
-          ) : (
-            <span />
-          )}
-          <Pictogram tema={noticia.tema} className="news-card__pictogram" />
-        </div>
-      )}
+      ) : null}
       <div className="news-card__body">
-        <span className="tag">{CATEGORIA_LABEL[noticia.categoria] || 'Notícia'}</span>
+        <p className="news-card__meta">
+          <span className="news-card__kind">{CATEGORIA_LABEL[noticia.categoria] || 'Notícia'}</span>
+          {noticia.data ? (
+            <>
+              <span className="sr-only">, publicada em </span>
+              <time dateTime={noticia.data}>{formatDateLong(noticia.data)}</time>
+            </>
+          ) : null}
+        </p>
         <Heading className="news-card__title">
           <Link href={`/noticias/${noticia.slug}`}>{noticia.title}</Link>
         </Heading>
         {noticia.resumo ? <p className="news-card__summary">{noticia.resumo}</p> : null}
-        {noticia.data ? (
-          <p className={imagePath ? 'news-card__meta' : 'news-card__meta sr-only'}>
-            Publicada em <time dateTime={noticia.data}>{formatDateLong(noticia.data)}</time>
-          </p>
-        ) : null}
       </div>
     </article>
   )

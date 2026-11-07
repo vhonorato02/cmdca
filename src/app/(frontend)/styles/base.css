@@ -34,7 +34,7 @@
     font-optical-sizing: auto;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    -webkit-tap-highlight-color: rgb(246 236 39 / 45%);
+    -webkit-tap-highlight-color: rgb(35 26 92 / 12%);
   }
 
   main {
@@ -53,18 +53,17 @@
     margin: 0;
     color: var(--c-heading);
     font-family: var(--font-display);
-    font-stretch: var(--stretch-display);
-    font-weight: 780;
+    font-weight: var(--w-display);
     line-height: var(--lh-tight);
-    letter-spacing: -0.005em;
-    /* Archivo condensada estreita também o espaço entre palavras: devolve o respiro. */
-    word-spacing: 0.08em;
+    letter-spacing: -0.012em;
+    font-variant-numeric: lining-nums;
     text-wrap: balance;
   }
 
   h1 {
     font-size: var(--fs-3xl);
-    font-weight: 820;
+    font-weight: var(--w-display);
+    letter-spacing: -0.02em;
   }
 
   h2 {

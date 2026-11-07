@@ -16,7 +16,10 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
   `docs/ARQUITETURA.md`), banco `cmdca` no Postgres 17 da plataforma, mídia em `/srv/sites/cmdca/data/media`.
 - Painel: contas de teste **apagadas**; as 3 contas reais (2 administradores, 1 editor) com senhas novas em
   `C:\Users\Ze\Backups\vps-zewithane\cms-acessos-2026-11-07.txt` (fora do repositório; apagar depois de anotar).
-- Versão: **2.3.0** (redesign "Caderno público"). Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
+- Versão no ar: **`6e63238`** (2.3.0, redesign "Caderno público"), publicada pelo CI: Produção `42409041255`, E2E
+  `42409762881` e Lighthouse `42410185397` verdes. Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
+  O primeiro push do redesign (`c1cc66b`, run `42407697861`) parou na qualidade (estouro de 23 px em 320 px com o
+  título padrão do CI) e não publicou nada; a correção é o `6e63238`.
 
 ## Feito em 07/11 (terceira auditoria)
 
@@ -29,8 +32,9 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
    404 sem enfeite.
 4. Conteúdo: migration `20261107_120000_creditos_capa` atualiza `/creditos` (só se o texto ainda for o original).
 5. E2E de produção corrigido para o modo noindex (`SITE_INDEXABLE`); antes falhava por exigir PDF indexável.
-6. Evidências locais (build de produção com cópia dos dados reais): auditoria visual em 20 rotas × 8 larguras (320 a
-   1920 px) sem estouro, h1 único, imagens com alt; **axe sem violações**; 148 testes unitários, lint e tipos verdes.
+6. Evidências locais (build de produção com cópia dos dados reais e, depois, com os dados do CI): auditoria visual em
+   todas as rotas × 8 larguras (320 a 1920 px) sem estouro, h1 único, imagens com alt; **axe sem violações**; 148 testes
+   unitários, lint e tipos verdes. Títulos do CMS com palavra longa não estouram mais a tela estreita.
 
 ## Pendências
 

@@ -4,6 +4,26 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 
 ## [Não publicado]
 
+## [2.3.0] — 2026-11-07
+
+Terceira auditoria e redesign. O site saiu do domínio oficial e ficou só no temporário, sem indexação, até o lançamento.
+
+### Alterado
+
+- **redesign "Caderno público"** ([direção](docs/design/DIRECAO.md)): títulos em Newsreader (serifa com eixo óptico) no lugar da Archivo condensada; paleta fria sem o lilás; amarelo restrito a sinal (telefones de proteção, foco, "Buscar ajuda"); capa com foto real da cidade (Facs90, CC BY-SA 4.0) e título editorial; painel "Proteger agora" em linhas situação → número; caminhos do IR e do conselho em texto com régua; notícias editoriais (rubrica e data em linha, título em serifa); cabeçalhos internos sem faixa amarela; item ativo do menu sublinhado;
+- faixa de proteção do topo numa linha só a partir de 1280 px; barra fixa do celular sem quebrar o telefone do Conselho Tutelar a partir de 375 px; rodapé em três colunas no tablet; o "Sair rápido" da Ajuda não cobre mais o título da primeira seção no celular;
+- página `/creditos` cita a foto da capa e a nova fonte (migration de conteúdo `20261107_120000_creditos_capa`, que só reescreve a página se ela ainda tiver o texto original);
+- E2E de produção respeita `SITE_INDEXABLE`: com o site em noindex de propósito, não exige PDFs indexáveis.
+
+### Removido
+
+- animações decorativas (entrada em cascata da capa, cartões que sobem no hover, contador do "6%"), a órbita decorativa, o pictograma da capa e os pictogramas por tema das notícias, e a fonte Archivo local.
+
+### Operação
+
+- site só em `https://cmdca.zewithane.vps.brz.dev.br`, com `noindex` global e `robots.txt` fechado; `www.cmdcapinda.org` e `cmdcapinda.org` mostram "Em preparação" (503, noindex);
+- contas de teste do painel apagadas; as três contas reais com senhas novas (arquivo fora do repositório).
+
 ## [2.2.0] — 2026-11-06
 
 Segunda auditoria completa, somada à de 04/11 ([relatório](docs/audit/RELATORIO-FINAL.md)).

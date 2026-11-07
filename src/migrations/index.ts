@@ -6,6 +6,7 @@ import * as migration_20261011_073400_editorial_controls from './20261011_073400
 import * as migration_20261026_092854_textos_paginas_pendencias from './20261026_092854_textos_paginas_pendencias'
 import * as migration_20261027_044136_media_sem_autosave from './20261027_044136_media_sem_autosave'
 import * as migration_20261027_235800_trocar_senha from './20261027_235800_trocar_senha'
+import * as migration_20261107_120000_creditos_capa from './20261107_120000_creditos_capa'
 
 export const migrations = [
   {
@@ -47,5 +48,10 @@ export const migrations = [
     up: migration_20261027_235800_trocar_senha.up,
     down: migration_20261027_235800_trocar_senha.down,
     name: '20261027_235800_trocar_senha',
+  },
+  {
+    up: migration_20261107_120000_creditos_capa.up,
+    down: migration_20261107_120000_creditos_capa.down,
+    name: '20261107_120000_creditos_capa',
   },
 ]

@@ -16,6 +16,8 @@ const WCAG = 'https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/'
 const LBI = 'https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13146.htm'
 const OSM = 'https://www.openstreetmap.org/copyright'
 const OFL = 'https://openfontlicense.org'
+const FOTO_CAPA = 'https://commons.wikimedia.org/wiki/File:Panor%C3%A2mica_de_Pindamonhangaba_02.jpg'
+const CC_BY_SA = 'https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br'
 
 export type PaginaPadrao = {
   titulo: string
@@ -199,25 +201,29 @@ export const PAGINAS_PADRAO: PaginaPadrao[] = [
     titulo: 'Créditos',
     slug: 'creditos',
     resumo: 'Identidade visual, imagens, mapas, tipografia e tecnologias usadas neste portal.',
-    atualizadoEm: '2026-10-26T12:00:00.000Z',
+    atualizadoEm: '2026-11-07T12:00:00.000Z',
     contato: 'nenhum',
     blocos: [
       ['h2', 'Identidade visual'],
       [
         'p',
-        'Logotipo oficial do CMDCA Pindamonhangaba, cedido pelo conselho. O emblema do cabeçalho e o pictograma da página inicial são redesenhos vetoriais desse logotipo, nas cores medidas no original.',
+        'Logotipo oficial do CMDCA Pindamonhangaba, cedido pelo conselho. O emblema do cabeçalho é um redesenho vetorial desse logotipo, nas cores medidas no original.',
       ],
       ['h2', 'Imagens'],
       [
         'p',
         'O portal evita fotos que identifiquem crianças e adolescentes. Quando uma imagem é publicada, o crédito aparece junto dela.',
       ],
+      [
+        'p',
+        'Foto da página inicial: [Panorâmica de Pindamonhangaba 02](' + FOTO_CAPA + '), de Facs90, via Wikimedia Commons, sob a licença [CC BY-SA 4.0](' + CC_BY_SA + '). Imagem redimensionada para o portal.',
+      ],
       ['h2', 'Mapa'],
       ['p', 'Mapas e dados geográficos do [OpenStreetMap e colaboradores](' + OSM + ').'],
       ['h2', 'Tipografia'],
       [
         'p',
-        'Archivo, da Omnibus-Type, nos títulos, e Atkinson Hyperlegible Next, do Braille Institute, no texto. As duas usam a [licença SIL Open Font](' + OFL + ') e são entregues pelo próprio portal.',
+        'Newsreader, da Production Type, nos títulos, e Atkinson Hyperlegible Next, do Braille Institute, no texto. As duas usam a [licença SIL Open Font](' + OFL + ') e são entregues pelo próprio portal.',
       ],
       ['h2', 'Tecnologia'],
       [

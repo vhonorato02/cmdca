@@ -19,6 +19,8 @@ Tudo o que aparece no site é mudado por aqui, sem programador.
 | **Jurídico** | Criar, editar, publicar e despublicar conteúdo e realizar revisão documental; não gerencia contas nem exclui. A revisão não é etapa obrigatória para publicar |
 | **Administrador** | Tudo, mais usuários e exclusões |
 
+Item enviado à **lixeira** (só administrador) some do site na hora, inclusive o PDF ou a imagem pelo endereço direto. Na lixeira ele ainda pode ser restaurado.
+
 ## 3. A tela inicial do painel
 
 - **Pendências:** lista o que ainda está como `XXXX` (dado não confirmado). Clique no item, troque `XXXX` pelo dado correto e publique. O site nunca mostra `XXXX`.

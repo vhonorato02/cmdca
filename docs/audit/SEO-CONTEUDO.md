@@ -1,3 +1,5 @@
+> Fotografia de 04/11/2026. Estado atual: [RELATORIO-FINAL.md](RELATORIO-FINAL.md) e [RISCOS.md](RISCOS.md).
+
 # SEO, transparência e conteúdo verificado
 
 **Provas atuais de rede:** home e ajuda HTTP 200 com metadata social/canônica aparente; `robots.txt` 200 com sitemap e exclusão de `/admin`/`/api`; `sitemap.xml` 200 com URLs públicas; `/admin/login` exibe `robots=noindex,nofollow`.

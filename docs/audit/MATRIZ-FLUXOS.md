@@ -1,3 +1,5 @@
+> Fotografia de 04/11/2026. Estado atual: [RELATORIO-FINAL.md](RELATORIO-FINAL.md) e [RISCOS.md](RISCOS.md).
+
 # Matriz de fluxos com evidência real
 Legenda: **Leitura HTTP** = fetch anônimo da página; **Histórico CI** = execução anterior, não repetida agora; **Não verificado** = requer navegador, credencial ou banco isolado.
 

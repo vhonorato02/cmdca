@@ -1,3 +1,5 @@
+> Fotografia de 04/11/2026. Estado atual: [RELATORIO-FINAL.md](RELATORIO-FINAL.md) e [RISCOS.md](RISCOS.md).
+
 # Arquitetura atual declarada e fronteiras verificadas
 
 ```mermaid

@@ -1,13 +1,13 @@
-> **Situação atualizada em 04/11/2026:** o CMDCA é um **portal responsivo sem PWA**. Hospedagem, Payload, PostgreSQL 17 e mídia estão previstos e configurados na VPS. O projeto Vercel `cmdca` foi **pausado** e retornou HTTP 503; não foi excluído para preservar dados legados. O suporte a R2/S3 foi removido do runtime do portal. O **R2 pode ser usado exclusivamente para backup externo criptografado**, após bucket privado, credenciais e restauração confirmada. O repositório da plataforma inclui melhorias de backup em `f571b2e`, mas **elas ainda não foram instaladas no servidor**.
+> Atualizado em 06/11/2026: VPS reinstalada com a plataforma `vps-platform` 1.0 (Caddy com rotas geradas pelo CLI, sem Dockge). O CMDCA voltou com os mesmos dados. Portal responsivo **sem PWA**; runtime só na VPS (sem Vercel, Neon ou R2). Backup e recuperação: [`docs/OPERACOES.md`](docs/OPERACOES.md).
 
 # Deploy do CMDCA (VPS zewithane, plataforma `vps-platform`)
 
 Produção: **https://www.cmdcapinda.org** (DNS no Wix; o endereço antigo `cmdca.zewithane.vps.brz.dev.br` redireciona com 301).
 A infraestrutura é a plataforma multi-site do repositório privado `vhonorato02/vps-platform`:
 
-- Caddy com HTTPS automático, publicado por labels;
+- Caddy com HTTPS automático e rota gerada pelo CLI `site` (`/srv/platform/caddy/sites/cmdca.caddy`);
 - Postgres 17 compartilhado, com banco `cmdca` e usuário próprio;
-- stack compose em `/srv/sites/cmdca`;
+- stack compose em `/srv/sites/cmdca` (512 MB, raiz gravável `--rw`: ver `docs/ARQUITETURA.md`);
 - mídia em disco em `/srv/sites/cmdca/data/media`;
 - backup restic diário, com teste de restauração semanal.
 
@@ -38,12 +38,12 @@ Configuração no GitHub (ambiente `production`):
 | Variable | `CMDCA_PUBLIC_URL` | `https://www.cmdcapinda.org` |
 | Variable | `DEPLOY_HOST` | `ssh.zewithane.vps.brz.dev.br` |
 | Variable | `DEPLOY_PORT` | `22322` |
-| Secret | `DEPLOY_SSH_KEY` | gerado por `site chave-deploy cmdca` na VPS |
-| Secret | `DEPLOY_KNOWN_HOSTS` | idem |
+| Secret (ambiente) | `DEPLOY_SSH_KEY` | gerado por `site chave-deploy cmdca` na VPS (renovado em 06/11/2026) |
+| Secret (ambiente) | `DEPLOY_KNOWN_HOSTS` | idem |
 
 ## Variáveis do app na VPS
 
-Para editar: `site config cmdca` (abre `/srv/sites/cmdca/app.env` e republica sem downtime).
+Para editar: monte o arquivo no notebook e rode `cat app.env | ssh zewithane-vps 'site config cmdca --stdin'` (vale no próximo deploy).
 `DATABASE_URL`, `PORT` e `HOSTNAME` são injetados pela plataforma.
 
 ```
@@ -52,7 +52,7 @@ ENFORCE_PRODUCTION_ENV=true
 NEXT_PUBLIC_SERVER_URL=https://<domínio>       # origem HTTPS, sem caminho
 SITE_INDEXABLE=false                           # true só no domínio definitivo
 PAYLOAD_SECRET=<64 hex, gerado no servidor>    # trocar encerra as sessões
-SMTP_HOST= SMTP_PORT=587 SMTP_USER= SMTP_PASS= EMAIL_FROM_ADDRESS=   # recuperação de senha (pendente)
+# Sem SMTP (ADR 0009): senha esquecida é redefinida por um administrador.
 ```
 
 `NEXT_PUBLIC_SERVER_URL` também entra no build pela variável `CMDCA_PUBLIC_URL`. Ao trocar o domínio, mude os dois.
@@ -67,11 +67,11 @@ site banco cmdca            # psql no banco do CMDCA
 site backup && site teste-restauracao
 ```
 
-Também dá para fazer pelo Dockge (`https://zewithane-1.tail731312.ts.net:10000`, só na Tailscale): stack `cmdca`.
+Painéis só pela Tailscale (`site paineis`): Gatus (disponibilidade) e Beszel (recursos). O Dockge foi removido na plataforma 1.0.
 
 ## Monitoramento
 
-- **Na VPS:** o healthwatch do `vps-platform` vigia containers, disco e backup e alerta no ntfy.
+- **Na VPS:** o healthwatch do `vps-platform` vigia o site (primeiro domínio da lista, por isso o `www` vem primeiro), containers, disco, backup local e off-site, e alerta no ntfy.
 - **Fora da VPS:** o workflow `Disponibilidade` (`.github/workflows/uptime.yml`) consulta `/api/health`
   e a home a cada 15 minutos. Se falhar, alerta no mesmo ntfy (secret `ALERT_URL`) e o GitHub envia
   e-mail de falha. Assim, uma queda da VPS inteira também é avisada.
@@ -90,62 +90,19 @@ anterior funciona sem desfazê-la (a versão antiga ignora a coluna e ninguém f
 Nas próximas mudanças de schema, use expandir/contrair: uma versão para de usar a
 coluna e só a seguinte a remove.
 
-## Trocar para o domínio definitivo (Wix)
+## Domínios
 
-Domínio definitivo: **www.cmdcapinda.org** (canônico). O raiz `cmdcapinda.org` e o
-antigo `pt.cmdcapinda.org` respondem com 301 para o `www`, preservando caminho e query
-(ADR 0007). O Wix não tem site conectado nem histórico no Wayback, então não há URLs
-antigas para redirecionar além dos hosts.
+`www.cmdcapinda.org` é o canônico (ADR 0007); `cmdcapinda.org`, `pt.cmdcapinda.org` e `cmdca.zewithane.vps.brz.dev.br`
+respondem 301 para ele, preservando caminho e query. DNS no Wix: `www` e `pt` em CNAME para
+`cmdca.zewithane.vps.brz.dev.br`, `@` em A para o IP da VPS (177.107.94.31 em 06/11/2026). Comando aplicado na VPS:
 
-1. **Dono, no painel do Wix:** **Domínios → cmdcapinda.org → Registros DNS**.
-   - Apague os registros `A`/`CNAME` antigos de `@`, `www` e `pt` que apontam para o Wix.
-   - `CNAME www → cmdca.zewithane.vps.brz.dev.br`
-   - `CNAME pt → cmdca.zewithane.vps.brz.dev.br`
-   - `A @ → 177.107.94.31`. Esse IP é dinâmico; se mudar, só o `A` precisa ser atualizado
-     (o `www` segue sozinho pelo CNAME).
-2. **Esperar o DNS:** `nslookup www.cmdcapinda.org 1.1.1.1` deve mostrar o IP da VPS.
-3. **Na VPS** (o domínio temporário continua respondendo e passa a redirecionar):
-   ```bash
-   site dominio cmdca www.cmdcapinda.org,cmdcapinda.org,pt.cmdcapinda.org,cmdca.zewithane.vps.brz.dev.br \
-     --redirecionar cmdcapinda.org,pt.cmdcapinda.org,cmdca.zewithane.vps.brz.dev.br --para www.cmdcapinda.org
-   sudo sed -i -e 's#^NEXT_PUBLIC_SERVER_URL=.*#NEXT_PUBLIC_SERVER_URL=https://www.cmdcapinda.org#' \
-     -e 's#^SITE_INDEXABLE=.*#SITE_INDEXABLE=true#' /srv/sites/cmdca/app.env
-   ```
-4. **No GitHub** (rebuild com a nova origem e deploy pelo CI):
-   ```bash
-   gh variable set CMDCA_PUBLIC_URL --body https://www.cmdcapinda.org
-   gh variable set SITE_INDEXABLE --body true
-   gh workflow run deploy.yml --ref main
-   ```
-5. **Validar:** `curl -I https://cmdcapinda.org/x?y=1` → `301` para `https://www.cmdcapinda.org/x?y=1`;
-   `https://www.cmdcapinda.org/robots.txt` sem `Disallow: /`; certificado válido nos três hosts.
-6. Depois de validar: desligue o projeto na Vercel e os recursos legados do Neon e do R2.
+```bash
+site dominio cmdca www.cmdcapinda.org,cmdcapinda.org,pt.cmdcapinda.org,cmdca.zewithane.vps.brz.dev.br   --redirecionar cmdcapinda.org,pt.cmdcapinda.org,cmdca.zewithane.vps.brz.dev.br --para www.cmdcapinda.org
+```
 
-Para voltar atrás: `site dominio cmdca cmdca.zewithane.vps.brz.dev.br`, restaure as duas
-linhas do `app.env` e as variáveis do GitHub, e rode o deploy de novo.
+O histórico da troca de domínio (27/10) está em `docs/historico/HANDOFF-2026-10-28.md`.
 
-## Restaurar backup
+## Restaurar backup e backup fora da VPS
 
-- **Banco e mídia do CMDCA:** `site restaurar cmdca [snapshot]`. Guarda o estado atual antes de restaurar.
-- **Servidor novo:** veja o `RUNBOOK.md` do `vps-platform`, seção "Restaurar backup".
-- **Último teste:** `/srv/backups/restore-test.log`. Exemplo de linha: `OK snapshot=ddc7712e bancos=[cmdca:52] midia=ok`.
-
-## Backup fora da VPS (Cloudflare R2, grátis até 10 GB)
-
-O `backup.sh` do `vps-platform` já copia o repositório restic para fora quando
-`RESTIC_REPOSITORY_OFFSITE` existe. Falta só a conta (exige login do dono na Cloudflare):
-
-1. Cloudflare → **R2** → *Create bucket* `vps-zewithane-backup` (região automática).
-2. R2 → **Manage API tokens** → *Create API token*: permissão **Object Read & Write**, só nesse bucket.
-   Anote *Access Key ID*, *Secret Access Key* e o endpoint `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`.
-3. Na VPS, `sudo nano /srv/platform/.env` e acrescente:
-
-   ```
-   RESTIC_REPOSITORY_OFFSITE=s3:https://<ACCOUNT_ID>.r2.cloudflarestorage.com/vps-zewithane-backup
-   AWS_ACCESS_KEY_ID=<access key>
-   AWS_SECRET_ACCESS_KEY=<secret>
-   AWS_DEFAULT_REGION=auto
-   ```
-
-4. `sudo systemctl start platform-backup && journalctl -u platform-backup -n 30` deve mostrar "cópia off-site".
-   A senha do restic (a mesma do repositório local) fica fora do servidor, em `C:\Users\Ze\Backups\vps-zewithane\restic-vps.env`.
+Ver [`docs/OPERACOES.md`](docs/OPERACOES.md): restauração do CMDCA, recuperação com a VPS perdida (executada de verdade
+em 06/11/2026), cópia off-site manual pelo notebook e configuração do R2 automático.

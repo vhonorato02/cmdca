@@ -1,3 +1,5 @@
+> Fotografia de 04/11/2026. Estado atual: [RELATORIO-FINAL.md](RELATORIO-FINAL.md) e [RISCOS.md](RISCOS.md).
+
 # UX e acessibilidade: evidência e cobertura
 
 ## Leitura de páginas públicas em 04/11/2026

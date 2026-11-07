@@ -1,20 +1,22 @@
-# Matriz de riscos e achados
-Base: `cc437d7` e mudança `f630bda`, 2026-11-04. Prioridade reflete impacto de serviço público, não um CVSS calculado. Hipótese **não é** vulnerabilidade comprovada. Para cada item, a reprodução abaixo é não destrutiva.
+# Matriz de riscos
 
-| ID | Prioridade | Estado | Evidência / reprodução | Impacto e ação | Teste de fechamento |
-|---|---|---|---|---|---|
-| R01 | P1 | Contido: Vercel pausada; exclusão pendente de inventário | O painel antigo passou a responder **503** após a pausa reversível do projeto `cmdca`; o portal oficial seguiu HTTP 200. Banco e bucket legados não foram excluídos | A superfície pública do CMS antigo foi interrompida, mas credenciais e dados retidos ainda precisam de inventário/retirada segura | Confirmar pausa contínua, backup do legado e desativação definitiva sem dependências |
-| R02 | P2 | Corrigido e workflow VPS 41955135317 bem-sucedido | `quality.yml` Postgres 16 vs `deploy.yml` Postgres 17; diff no commit `f630bda` | Inconsistência entre schema validado e versão principal; alinhar CI, repetir migrations+E2E | Workflow de qualidade de `f630bda` concluído com sucesso |
-| R03 | Encerrado por mudança de escopo | PWA expressamente dispensada pelo responsável | Manifest e metadados de instalação removidos; ver commits `fbe44f6` e testes de regressão | Portal responsivo no navegador, sem requisito de offline/push | Testes de layout e navegação em 320–1440 px + ausência de link de manifest |
-| R04 | P2 | Confirmado | `docs/ARQUITETURA.md` e `docs/OPERACOES.md` descrevem infra anterior | Operador pode aplicar instruções de Neon/Coolify/R2 na VPS atual; atualizar referência, manter história sinalizada | Revisão cruzada entre runbooks, ADRs e topologia real |
-| R05 | P2 | Confirmado | README/CMS/manual e código divergem quanto ao papel `juridico` | Equipe pode não compreender poderes de publicação e exclusão | Manuais e suites de ACL para três perfis sincronizados |
-| R06 | P2 | Não verificado | Backup off-site e restauração banco+mídia sincronizados exigem acesso VPS; HANDOFF de 28/10 dizia pendente | Perda total da VPS pode comprometer documentos e conteúdo | Restore isolado com hashes, RPO/RTO e prova de cópia externa |
-| R07 | P2 | Confirmado | Manifest/SEO do painel no login ainda mostra imagem e descrição padrão do Payload em Open Graph | Compartilhamento institucional inconsistente, sem impacto conhecido em dados | HTML da página de login com metadados intencionais e noindex |
-| R08 | P3 | Confirmado | `package.json` 1.0.0, changelog 2.1.0, tag v2.0.0 e ausência de GitHub Release | Dificulta correlação artefato/release/rollback | Reconciliar SHAs, artefato e versão antes da tag |
-| R09 | P2 | Não verificado | Reunião reservada bloqueia vínculo com ata, mas a mídia foi uma coleção independente | Verificar se um PDF antes público permanece público após mudança editorial de acesso; **não afirmar vazamento** | Teste com fixture em banco/mídia descartáveis, acesso direto anônimo e cache |
-| R10 | P2 | Não verificado | Entorno de autenticação, banco, proxy e limites foi inspecionado em código, sem execução adversarial | Não é possível afirmar resistência a IDOR, brute force distribuído, SSRF e upload hostil | Matriz negativa em runner isolado, evidência de headers/CSP e documentos reservados |
+Atualizada em 06/11/2026 (segunda auditoria). Prioridade = impacto num serviço público, não CVSS. Achados novos de
+06/11 (A1–A12) estão em [`RELATORIO-FINAL.md`](RELATORIO-FINAL.md).
 
-| R11 | P2 | Código de recuperação reforçado; não instalado na VPS | `vps-platform/f571b2e`: falha fechada para snapshots incompletos, cópia externa verificada e alarme de ausência | Destino remoto gratuito precisa de bucket privado e credenciais, atualização da plataforma na VPS e prova de restore | Confirmar snapshot criptografado no free tier e restauração isolada de PostgreSQL + mídia |
+| ID | Prio | Risco | Estado em 06/11/2026 | Fechamento |
+| --- | --- | --- | --- | --- |
+| R01 | P1 | Painel antigo na Vercel com login | **Contido**: projeto pausado, `cmdca.vercel.app/admin` 503; secrets Vercel removidos do GitHub | Excluir projeto Vercel, Neon e bucket R2 legados depois de export final (conta do Zé) |
+| R02 | P2 | CI com Postgres 16 × produção 17 | **Fechado** (`f630bda`) | — |
+| R03 | — | PWA | **Fora de escopo** (decisão do dono); manifest 404 conferido | — |
+| R04 | P2 | Docs de Neon/Coolify/R2 lidos como atuais | **Fechado**: movidos para `docs/historico/`, atuais reescritos | — |
+| R05 | P2 | Papel `juridico` mal explicado | **Fechado**: README, `docs/CMS.md` e `docs/ARQUITETURA.md` alinhados ao código | — |
+| R06 | P1 | Perda da VPS sem cópia externa | **Mitigado**: off-site manual provado e recuperação total executada em 06/11 | Ligar R2 automático e ver `last-backup-offsite-ok` |
+| R07 | P3 | OG padrão do Payload no login do painel | Aberto (painel tem `noindex`) | Metadados próprios no `/admin` |
+| R08 | P3 | Versão/tag/licença divergentes | **Fechado**: 2.2.0, `UNLICENSED` | Tag `v2.2.0` no SHA publicado |
+| R09 | P2 | PDF continuar público depois de despublicar ou ir para a lixeira | **Fechado**: despublicar já era testado; lixeira corrigida (A1) | — |
+| R10 | P2 | Segurança adversarial ampla (IDOR, upload hostil, SSRF) | Parcial: APIs anônimas, papéis, lixeira, troca de senha e limite de login testados; fuzzing de upload não feito | Rodada dedicada em runner isolado |
+| R11 | P2 | Scripts de backup do Git não instalados | **Fechado**: instalados e mantidos na plataforma 1.0 | — |
+| R12 | P1 | Contas de teste ativas no painel | **Contido**: bloqueadas (A2) | Zé apaga pelo painel |
+| R13 | P3 | Raiz gravável no container (`--rw`) | Aceito (A8) | `cacheHandler` e teste no CI |
 
-## Critério de conclusão
-Não foram comprovadas violações P0 nesta inspeção não destrutiva. Isso **não demonstra ausência** de P0. Não classificar o legado como vazamento confirmado sem provar acesso a dado privado. O risco de ambiente antigo com login disponível continua prioritário. Nenhum P1 pode ser encerrado só por documentação.
+Nenhum P0 encontrado. Isso não prova ausência de P0.

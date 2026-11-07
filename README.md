@@ -1,4 +1,4 @@
-# CMDCA Pindamonhangaba
+# Portal CMDCA Pindamonhangaba
 
 Portal institucional do Conselho Municipal dos Direitos da Criança e do Adolescente de Pindamonhangaba, com site público e painel de conteúdo no mesmo projeto.
 
@@ -11,7 +11,7 @@ Portal institucional do Conselho Municipal dos Direitos da Criança e do Adolesc
 - entrega pelo GitHub Actions, em container, na VPS `zewithane` (plataforma `vps-platform`: Caddy + Docker);
 - Node.js 24 e pnpm 11 fixados em `package.json`.
 
-O navegador acessa o Caddy (HTTPS automático) e o container Next.js/Payload. As migrations rodam quando o container sobe. Os dados ficam no Postgres da plataforma e a mídia num volume. Os dois entram no backup restic diário, que tem teste semanal de restauração. Produção: <https://www.cmdcapinda.org>. Detalhes em [`DEPLOY.md`](DEPLOY.md).
+O navegador acessa o Caddy (HTTPS automático) e o container Next.js/Payload. As migrations rodam quando o container sobe. Os dados ficam no Postgres da plataforma e a mídia num volume. Os dois entram no backup restic diário, que tem teste semanal de restauração e cópia fora da VPS (ver `docs/OPERACOES.md`). Produção: <https://www.cmdcapinda.org>. Detalhes em [`DEPLOY.md`](DEPLOY.md).
 
 
 ### Fronteira de hospedagem e comportamento
@@ -22,7 +22,7 @@ O runtime do portal, Payload, PostgreSQL e biblioteca de mídia são locais à V
 
 ## Rodar localmente
 
-Pré-requisitos: Node.js 24, pnpm 11 e variáveis do projeto. Desenvolva em uma cópia no C: para manter caches fora do disco sincronizado Z:. O arquivo local existente aponta para serviços operacionais; use-o somente em diagnóstico de leitura. Testes com escrita usam o banco descartável do GitHub Actions.
+Pré-requisitos: Node.js 24, pnpm 11 e um PostgreSQL 17 local descartável (no notebook do Zé: binários portáteis em `Z:\Dev\sandbox\offsite-restore-tools`, sem Docker). O `.env.local` deve apontar só para `127.0.0.1`; nunca para o banco de produção.
 
 ```powershell
 corepack enable
@@ -35,7 +35,7 @@ pnpm devsafe
 - Site: <http://localhost:3000>
 - Painel: <http://localhost:3000/admin>
 
-`pnpm devsafe` remove apenas caches gerados (`.next` e `tsconfig.tsbuildinfo`) antes de iniciar o servidor. Este ambiente local aponta para os serviços operacionais por decisão do projeto: não execute `pnpm migrate`, `pnpm seed` nem `pnpm apply:confirmados` como rotina local. Migrações de produção são executadas uma única vez pelo workflow do GitHub Actions. Seeds só podem ser usados em banco isolado e descartável, com autorização explícita.
+`pnpm devsafe` remove apenas caches gerados (`.next` e `tsconfig.tsbuildinfo`) antes de iniciar o servidor. `pnpm migrate` e `pnpm seed` só em banco local descartável. Em produção as migrations rodam quando o container sobe. O teste de integração do CMS (`scripts/ci-test-cms.ts`) também roda localmente contra esse banco, com `GITHUB_ACTIONS=true`, `GITHUB_ENV` apontando para um arquivo temporário e `MEDIA_DIR` numa pasta descartável.
 
 ## Comandos
 
@@ -71,21 +71,24 @@ Todo push na `main` passa pela bateria de qualidade (migrations, lint, tipos, un
 
 ## Segredos e recuperação de acesso
 
-- `.env.local`, `.env` e `.vercel` não são versionados;
+- `.env.local` e `.env` não são versionados;
 - nunca envie URI do banco, senha, chave de deploy ou `PAYLOAD_SECRET` em commit, chat, captura de tela ou log;
 - `PAYLOAD_SECRET` deve ter no mínimo 32 caracteres aleatórios e sua rotação encerra sessões existentes;
-- o “Esqueci minha senha” exige SMTP funcional e remetente validado. Sem isso, a recuperação retorna indisponibilidade e não registra tokens no console;
+- não há SMTP (ADR 0009): o “Esqueci minha senha” responde indisponível e não registra tokens; um administrador redefine a senha e a pessoa troca no primeiro acesso;
 - mantenha dois administradores ativos. O CMS impede autoexclusão e remoção do último administrador.
 
-Em suspeita de exposição, siga a ordem em [`docs/OPERACOES.md`](docs/OPERACOES.md): conter o acesso, rotacionar o segredo, rotacionar as credenciais do banco e do SMTP, revogar sessões e validar logs.
+Em suspeita de exposição, siga a ordem em [`docs/OPERACOES.md`](docs/OPERACOES.md): conter o acesso, rotacionar o segredo, rotacionar a credencial do banco, revogar sessões e validar logs.
 
 ## Documentação
 
-- [`DEPLOY.md`](DEPLOY.md): deploy na VPS, variáveis, domínio definitivo e restauração;
+- [`HANDOFF.md`](HANDOFF.md): estado atual verificado e pendências;
+- [`DEPLOY.md`](DEPLOY.md): deploy na VPS, variáveis e domínios;
 - [`docs/decisions/`](docs/decisions/): decisões de arquitetura (ADRs);
 - [`docs/CMS.md`](docs/CMS.md): manual de conteúdo para editor, jurídico e administrador;
 - [`docs/OPERACOES.md`](docs/OPERACOES.md): migrações, backup, rollback e incidentes;
 - [`docs/QA.md`](docs/QA.md): critérios objetivos para liberar produção;
 - [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md): serviços, dados e limites de responsabilidade;
 - [`CONTEUDO.md`](CONTEUDO.md): fontes oficiais, fatos confirmados e pendências;
-- [`CHANGELOG.md`](CHANGELOG.md): histórico das versões.
+- [`docs/audit/RELATORIO-FINAL.md`](docs/audit/RELATORIO-FINAL.md): auditorias de 04 e 06/11/2026;
+- [`CHANGELOG.md`](CHANGELOG.md): histórico das versões;
+- [`docs/historico/`](docs/historico/): documentos antigos (Vercel/Neon/R2/Coolify, PWA), só como registro.

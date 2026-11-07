@@ -1,3 +1,5 @@
+> Fotografia de 04/11/2026. Estado atual: [RELATORIO-FINAL.md](RELATORIO-FINAL.md) e [RISCOS.md](RISCOS.md).
+
 # Plano de execução e promoção, sem risco de dados
 
 ## Lote 0: baseline e contenção

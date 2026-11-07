@@ -1,160 +1,50 @@
-# HANDOFF
-Atualizado: 2026-10-28 (v2.1.0: troca de senha obrigatória, ícones/movimento, manifest, reboot testado)
+# HANDOFF · Portal CMDCA Pindamonhangaba
 
-## Rodada de 28/10/2026 (madrugada)
+Atualizado: **06/11/2026, 23:59 BRT**. Fotografia verificável; revalide no git, no CI e na VPS antes de agir.
+Histórico: [`docs/historico/HANDOFF-2026-10-28.md`](docs/historico/HANDOFF-2026-10-28.md) e anteriores.
 
-- **Troca de senha obrigatória** (`src/security/passwordGate.ts`, `src/components/admin/ForcePasswordChange.tsx`):
-  contas novas e senhas redefinidas por um administrador abrem o painel numa tela que só sai com
-  uma senha nova (mín. 10). Enquanto isso, o servidor recusa qualquer gravação (403), inclusive a
-  tentativa de desmarcar o campo pela API. Testado no navegador e em `scripts/ci-test-cms.ts`.
-- **Contas novas no painel:** `dev@cmdcapinda.org` (administrador) e `gestao@cmdcapinda.org` (editor),
-  com senha provisória e troca obrigatória. As senhas provisórias ficam só em
-  `C:\Users\Ze\Backups\vps-zewithane\cms-contas-iniciais.txt` (fora do repositório).
-- **SEO:** `manifest.webmanifest`, ícones PNG/Apple, `/.well-known/security.txt`; robots, sitemap,
-  canonical, Open Graph e JSON-LD já existiam e foram conferidos.
-- **Visual:** ícones, cartões com resposta ao mouse/toque, entrada da capa, contador do 6%, copiar
-  CNPJ/conta, voltar ao topo (`styles/motion.css`, camada `enhance`).
-- **QA:** 27 rotas públicas em 320/390/768/1366 (status, h1, descrição, alt, nomes acessíveis,
-  estouro horizontal) e todas as coleções/globais do painel. Achado e corrigido: e-mail longo
-  estourando 320 px numa notícia.
-- **VPS:** reboot de teste agendado para 28/10 03:00 (`reboot-teste-0300.timer`, transitório). Todos
-  os containers têm `restart=unless-stopped`; Docker e o `t3code.service` (usuário com linger) sobem
-  no boot. IP da VPS é fixo.
+## Estado em produção
 
-## Rodada de 26/10/2026
+- **https://www.cmdcapinda.org** no ar, painel em `/admin`. `cmdcapinda.org`, `pt.cmdcapinda.org` e
+  `cmdca.zewithane.vps.brz.dev.br` redirecionam 301 para o `www`. Certificados Let's Encrypt novos (06/11).
+- VPS `zewithane` com a plataforma `vps-platform` **1.0** (reinstalada em 06/11 por decisão do Zé). Site `cmdca`:
+  512 MB, raiz gravável (`--rw`, motivo em `docs/ARQUITETURA.md`), banco `cmdca` no Postgres 17 da plataforma, mídia em
+  `/srv/sites/cmdca/data/media`.
+- Dados restaurados da exportação feita antes de zerar: 74 tabelas, 17 notícias (16 publicadas), 3 mídias,
+  8 migrations, 6 usuários. Arquivos de mídia com SHA-256 idêntico ao de antes.
+- Versão no ar: ver `ssh zewithane-vps 'site versoes cmdca'` e o cabeçalho `X-Release-Commit`.
+- Deploy automático pelo GitHub Actions com chave nova (`site chave-deploy cmdca`, 06/11), secrets só no ambiente
+  `production`.
+- Não é PWA. Runtime só na VPS: Vercel pausada (503), Neon e R2 legados sem uso.
 
-Decisões do dono (Q/A de 26/10): zerar a VPS e reconstruí-la como plataforma
-multi-site (CMDCA é o 1º site), com Cockpit; tudo na `main`, direto em produção.
-Conteúdo: pesquisar fontes públicas de Pindamonhangaba-SP (resultado em
-`docs/research/conteudo-pesquisa.md`). Usuários do CMS: dono (perfil dev/admin) e
-conselheiros (editor geral); credenciais iniciais foram passadas em chat e
-devem ir só para env/seed local, nunca para o repo. Custo zero (free tier/VPS).
-Visual: redesenho moderno. Domínio no Wix: avisar o dono quando for configurar o DNS.
-E-mail: sem SMTP (ADR 0009). Dados que faltam (encarregado LGPD,
-FMDCA etc.) ficam como `XXXX` e aparecem como pendência no CMS. Dados saem do Neon/R2 para a VPS
-e a Vercel será desligada depois.
+## Feito em 06/11 (segunda auditoria)
 
-## Estado em 27/10/2026 — NO AR EM https://www.cmdcapinda.org
+Relatório completo: [`docs/audit/RELATORIO-FINAL.md`](docs/audit/RELATORIO-FINAL.md).
 
-- **Domínio definitivo ativo desde 27/10 00:50** (DNS no Wix apontado pelo dono). `cmdcapinda.org`,
-  `pt.cmdcapinda.org` e `cmdca.zewithane.vps.brz.dev.br` respondem 301 para `https://www.cmdcapinda.org`,
-  com Let's Encrypt nos 4 hosts. `SITE_INDEXABLE=true`, sitemap com as notícias, `robots.txt` liberado.
-- **E-mail:** o site não envia e-mail (ADR 0009). Senhas são redefinidas por um administrador.
-- **Painel:** https://www.cmdcapinda.org/admin. Política: quem edita publica; revisão jurídica é só
-  informativa (`docs/CMS.md`).
-- **Conteúdo real novo:** Resolução 153/2025 e Edital CMDCA 02/2024 (2ª retificação), com o PDF da p. 4
-  do Diário Oficial de 28/03/2025. Reuniões e entidades seguem vazias: não há fonte aberta (`docs/research`).
-- **Corrigido nesta rodada (com teste):**
-  - páginas do build vazias após cada deploy (truque do mtime no Dockerfile + passo no CI);
-  - sitemap congelado no build;
-  - `noindex` nos PDFs públicos;
-  - limite de login por IP (ADR 0010);
-  - CSP aplicada no `/admin`;
-  - mídia sem arquivo publicável e sem autosave (migration `20261027_044136`);
-  - regras mortas de "aprovação jurídica";
-  - dois botões de menu no painel;
-  - botão Menu saindo da tela em 320 px;
-  - link de PDF sem aviso de formato;
-  - resumo do Lighthouse que quebrava em silêncio.
-- **Evidências:** `docs/QA.md` → "27/10/2026".
-- **Conta temporária de QA:** `qa-temporario@cmdcapinda.org` foi criada para o teste do painel e
-  **apagada no fim**. A senha ficou em `C:\Users\Ze\Backups\vps-zewithane\cms-qa-temporario.env`, que
-  também foi apagado.
+1. **Segurança (P1):** documentos e PDFs enviados à lixeira continuavam públicos (`?trash=true` e
+   `/api/media/file/`). Corrigido com `publishedLiveOrLoggedIn` e coberto por unitário, integração e E2E.
+2. **Segurança (P1):** três contas de teste/seed do painel bloqueadas em produção (não apagadas).
+3. Limpeza do legado: scripts Neon/R2/Coolify/Vercel, `vercel.json`, `@payloadcms/storage-s3`, secrets antigos.
+4. Backup: scripts reforçados instalados; off-site **manual** provado com restauração completa fora da VPS
+   (banco num PostgreSQL 17 local e mídia com hashes idênticos).
+5. Recuperação real depois do zeramento da VPS, com domínio, HTTPS e redirecionamentos de volta.
+6. Auditoria visual e axe em 20 rotas × 8 larguras sem violações; APIs anônimas sem vazamento.
+7. Documentação atual reescrita; antigos em `docs/historico/`. Pacote `cmdca-pindamonhangaba` 2.2.0, `UNLICENSED`.
 
-## Próximos passos (dependem do dono)
-1. **Desligar o projeto na Vercel** (`cmdca.vercel.app/admin` ainda responde 200 em 28/10, sobre o Neon
-   antigo). Vercel → projeto `cmdca` → Settings → *Pause*/*Delete*. Não há login da Vercel nesta máquina.
-   Depois: export final do Neon e do R2 e desligamento dos dois.
-2. **Backup off-site:** criar bucket e token no R2 (passo a passo em `DEPLOY.md` → "Backup fora da VPS").
-   Exige login na Cloudflare; não há sessão da Cloudflare nesta máquina.
-3. Conteúdo: calendário de reuniões, entidades registradas e dados em `XXXX` (lista no painel).
+## Pendências
 
-## Rodadas anteriores
-Atualizado: 2026-10-13 19:15
+| # | O quê | Quem | Como |
+| --- | --- | --- | --- |
+| 1 | **Off-site automático (R2)** — único gate que falta para `stable` | Zé cria a conta Cloudflare; agente faz o resto | Bucket privado + token só do bucket → `/srv/platform/.env` (passo a passo em `docs/OPERACOES.md`) |
+| 2 | Apagar as 3 contas de teste bloqueadas | Zé (admin) | Painel → Usuários |
+| 3 | Desligar de vez Vercel, Neon e R2 legados | Zé (logins dessas contas) | Export final → excluir. Nada no portal depende deles |
+| 4 | Conteúdo sem fonte pública: calendário de reuniões, entidades registradas, dados bancários do Fundo, encarregado LGPD | Conselho | Painel → pendências (o site mostra estado vazio honesto) |
+| 5 | Raiz somente-leitura no container | Agente | `cacheHandler` do Next + teste no CI; depois recriar o site sem `--rw` |
+| 6 | Testes manuais com leitor de tela e Android físico | Zé ou agente com aparelho | `docs/QA.md` |
 
-## Rodada de 13/10/2026 (UX independente + pacote editorial)
+## Como continuar
 
-Revisao independente de UI/UX (codex exec read-only) sem P0; todos os P1
-aplicados em cf238ec: Participe sem beco sem saida, FMDCA com passos de
-destinacao no IR, menu com "Fundo e IR", reunioes futuras/realizadas, ajuda com
-telefones tocaveis, mobile do header/capa/rodape, data da noticia na coluna
-principal do CMS. Pacote `src/seed/content-pack-2026-10.ts`: 11 noticias com
-data e fonte (Tribuna do Norte, imprensa oficial; ata Edital-10434.pdf), 6 FAQ,
-2 destaques; despublica 2 destaques defasados. Script idempotente
-`pnpm apply:content-pack` (transacao unica, marcador, trava de banco nao local).
-CI aplica o pacote duas vezes (19 criados, depois 0). Noticias sem data agora
-vao para o fim na home, lista e conferencias (`sortByDateDesc`).
-CI 38474174232: pacote, 121 unitarios e 128/128 E2E aprovados; auditoria do
-portal reprovou a linha "Fonte:" como alvo de toque pequeno; corrigida para
-texto corrido. CI 38475913896 (bce6716) APROVADO: pacote 19/0, 128/128 E2E,
-admin 16/16, portal 116 capturas sem estouro, h1 unico, sem alvo pequeno.
-Capturas da lista de noticias (390) e da noticia da conferencia conferidas.
-O PACOTE NAO FOI APLICADO NO NEON. Isso exige backup novo, as 2 migrations
-pendentes (`20260929_150216_payload_upgrade_compatibility`,
-`20261011_073400_editorial_controls`) e o e-mail de um usuario real como autor.
-A Vercel (cmdca.vercel.app) le esse banco: aplicar torna o conteudo publico.
-
-## Estado atual
-
-Retomada em main a partir de c715800. SSH funciona com parametros explicitos;
-VPS usa Traefik e ja hospeda quarau/teste, nao Coolify. Dependencias locais
-reparadas pelo lockfile. Implementados preview autenticado de noticias, menu
-administravel, capa editavel e entrega de arquivos via autorizacao Payload.
-Lint/tipos/111 unitarios passaram. Migration nova gerada sem conectar no Neon.
-CI 38122123588 passou migration, integracao, build/imagem e 124 E2E, mas falhou
-em 4 cenarios novos: origem interna do container no preview e imagem da capa
-tratada como URL remota. Correcoes com regressao local: 114 unitarios, lint/tipos
-aprovados. Novo CI ainda necessario. Nao houve deploy ou mutacao do banco fonte.
-Backup Neon e restore isolado confirmados: 46 tabelas, 6 noticias, 297 KiB.
-CI 38291796075 confirmou correcoes de origem e imagem. Seletores novos ajustados
-para texto exato de previa e abrir menu antes de consultá-lo. Next 16.3.8 e
-patches transitivos reduziram auditoria prod para 1 high (braces, sem release
-corrigida no npm consultado).
-CI 38294655430: 127/128 E2E passaram. Grupo Fonte na sidebar desktop nao
-montou inputs mesmo apos rolagem; movido ao formulario principal. Novo CI necessario.
-CI 38295915240 (a412f99) APROVADO: 115 unitarios, 128/128 E2E, auditorias
-admin 16/16 e portal nas quatro larguras sem estouro. Capturas do CMS revisadas.
-Isso aprova o codigo em ambiente efemero, nao a producao.
-Backup R2 de 3 objetos (55.064 bytes) criptografado e restaurado com hash.
-Fonte e restore Neon conferidos: 6 noticias, 2 midias, 2 usuarios.
-
-## Como rodar
-
-`pnpm dev --hostname 127.0.0.1 --port 3000` em http://127.0.0.1:3000.
-Servidor iniciado e restrito a loopback. CMS usa http://localhost:3000/admin.
-`pnpm check` para lint/tipos/unitarios. Escritas CMS somente no Postgres efemero do Actions.
-Nao executar seed/migrate sobre .env.local. API media local retorna 500
-por migration antiga ainda nao aplicada (_objectkey); home com fallback
-nao comprova CMS local pronto.
-
-## Feito nesta sessao
-
-Diagnostico real em docs/ESTADO_REAL.md, decisao de CI em docs/CI_CD_DECISOES.md
-e plataforma em docs/OPERACAO.md. Novos E2E cobrem preview/revogacao, menu/capa
-CMS->publico, PDF publicado e privado com comparacao SHA256.
-
-## Pendencias
-
-Privacidade direta R2 (HEAD anonimo 200), SMTP institucional,
-backup automatico/offsite, conteudo atual/fonte publica, DNS Wix exato e implantacao HTTPS.
-Auditoria prod: 1 high em braces 3.0.3 sem versao corrigida no registry.
-Pendencias editoriais detalhadas no historico abaixo continuam abertas.
-
-## Proxima acao unica
-
-Tornar o bucket R2 privado (desligar acesso publico/r2.dev no painel Cloudflare)
-e repetir HEAD anonimo esperando 403/404; so depois preparar o deploy via
-comando site/Traefik na VPS com backup Neon novo antes das migrations.
-
-## Pendencias editoriais e operacionais detalhadas
-
-- Nao acionar Producao Coolify: adaptar entrega ao comando site/Traefik da VPS.
-- Aplicar migrations operacionais somente apos gate e referencia de backup.
-- Conteudo: composicao atual, contatos/endereco, dados bancarios do Fundo,
-  reunioes, atas, resolucoes, editais, entidades, rede e indicadores com fonte.
-- Duas noticias [A CONFIRMAR] continuam ocultas. Nenhuma importacao nova.
-- Robots da Prefeitura restringe crawlers de IA; coleta automatizada interrompida.
-- Biblioteca global de documentos, SEO editavel por pagina e fonte publica
-  ainda precisam de aceite completo.
-- Teste R2: `node scripts/verify-storage.mjs`, objeto unico com limpeza verificada.
-
+- Código: `main`, commits pequenos em inglês, push dispara qualidade → imagem → deploy → E2E/Lighthouse de produção.
+- Local: `pnpm check`; integração do CMS contra PostgreSQL 17 portátil (README → "Rodar localmente").
+- Auditoria visual: `CHROME_PATH=<chrome.exe> node scripts/audit-visual.mjs https://www.cmdcapinda.org <pasta>`.
+- Servidor: skill `vps-zewithane`; `docs/OPERACOES.md` para backup, rollback, recuperação e incidente.

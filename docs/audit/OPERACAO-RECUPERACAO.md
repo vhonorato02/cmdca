@@ -1,3 +1,5 @@
+> Fotografia de 04/11/2026. Estado atual: [RELATORIO-FINAL.md](RELATORIO-FINAL.md) e [RISCOS.md](RISCOS.md).
+
 # Operação, CI e recuperação: estado verificado
 
 **Configuração por código:** `quality.yml` com Postgres efêmero, migrations, lint, types, unidade, testes CMS, Playwright+axe+auditoria, container; `deploy.yml` gera imagem GHCR com SHA e pede deploy restrito. `e2e-producao.yml` testa a leitura do SHA da execução; `uptime.yml` verifica saúde e home periodicamente. Commit anterior `cc437d7` com deploy Actions bem-sucedido. Commit `f630bda` iniciou novo pipeline após alinhar versão CI PostgreSQL.

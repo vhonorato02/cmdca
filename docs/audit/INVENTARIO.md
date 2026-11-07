@@ -1,3 +1,5 @@
+> Fotografia de 04/11/2026. Estado atual: [RELATORIO-FINAL.md](RELATORIO-FINAL.md) e [RISCOS.md](RISCOS.md).
+
 # Inventário verificável · CMDCA
 Data de inspeção: 2026-11-04 (America/Sao_Paulo). Baseline de código: `cc437d745db3f47a237272bc2795f431f1789972`. Primeira correção: `f630bda5a1cb1d459e1a0ac43eb35e5feaec2dad`.
 

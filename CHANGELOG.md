@@ -4,6 +4,27 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 
 ## [Não publicado]
 
+## [2.3.1] — 2026-11-07
+
+Quarta rodada de auditoria (front, back, CMS, banco, design e dependências).
+
+### Alterado
+
+- páginas internas no mesmo vocabulário da capa: cartões de Transparência e do 404 viram itens com régua no topo; estados vazios com régua à esquerda, sem caixa tracejada nem ícone; limites do Fundo sem o bloco amarelo (o maior ganha só a régua amarela); cartões da Ajuda com fundo branco e régua grossa na cor da situação; chamada de aviso sem fundo amarelo;
+- atribuições do conselho sem os ícones em quadradinhos.
+
+### Segurança
+
+- `zod` 4.6.7 (alerta alto, só de desenvolvimento) e `rimraf` 6.1.4, que leva o `glob` corrigido. Ficam registrados: `deepmerge` (baixo, produção, sem versão corrigida publicada no npm) e `minimatch` (moderado, só no eslint, exige troca de versão principal).
+
+### Removido
+
+- ícones sem uso (11) e o `TopicIcon`.
+
+### Verificado (sem mudança)
+
+- APIs anônimas em produção: sem rascunho, lixeira, versões, usuários ou campos internos; banco de 17 MB sem chave estrangeira sem índice nem varredura sequencial pesada, migrações em dia.
+
 ### Operação (07/11/2026, sem mudança de código)
 
 - portal de volta ao domínio oficial `www.cmdcapinda.org`, com indexação liberada (`SITE_INDEXABLE=true`); raiz, `pt.` e o

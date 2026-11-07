@@ -58,6 +58,10 @@
     letter-spacing: -0.012em;
     font-variant-numeric: lining-nums;
     text-wrap: balance;
+    /* Títulos vêm do CMS: uma palavra longa ("Pindamonhangaba") não pode estourar a
+       tela estreita: em último caso, a palavra quebra. */
+    hyphens: manual;
+    overflow-wrap: break-word;
   }
 
   h1 {

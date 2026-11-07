@@ -19,8 +19,9 @@
   }
 
   .home-hero h1 {
-    max-width: 14ch;
-    font-size: clamp(2.6rem, 1.5rem + 4.4vw, 4.75rem);
+    /* 15ch e mínimo de 34 px: "Pindamonhangaba", do título padrão, cabe inteiro em 320 px. */
+    max-width: 15ch;
+    font-size: clamp(2.125rem, 1.25rem + 4.6vw, 4.75rem);
     font-weight: 500;
     line-height: 1.02;
     letter-spacing: -0.028em;

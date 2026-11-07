@@ -33,6 +33,7 @@ Executor: Claude Opus 5.5 (T3, notebook do Zé). Matriz viva em [`RISCOS.md`](RI
 | A10 | P3 | Dependências: `deepmerge` (baixo, runtime, sem correção publicada); `minimatch` (médio, só desenvolvimento, exige versão maior) | Aceito e registrado; revisar a cada atualização do Payload |
 | A11 | P3 | Log do container avisa `metadataBase` ausente em alguma rota (as páginas públicas têm OG/canonical absolutos corretos) | Aberto, sem impacto visível |
 | A12 | P3 | `robots.txt` tem a diretiva `Host:` (só Yandex) | Aberto, inofensivo |
+| A13 | P3 | `/fmdca` oscila 93–97 de desempenho no Lighthouse de produção | Aberto, ver tabela de versões |
 
 ## O que foi verificado sem achado
 
@@ -67,7 +68,11 @@ Executor: Claude Opus 5.5 (T3, notebook do Zé). Matriz viva em [`RISCOS.md`](RI
 | --- | --- | --- | --- |
 | `ad2e8bc` (lixeira) | Produção `42303572792` ✓ · E2E produção `42304937769` ✓ · Lighthouse `42305596575` ✓ | `ghcr.io/vhonorato02/cmdca:ad2e8bc…` | no ar 19:17–20:4x (VPS antiga) e de novo desde 23:43 (plataforma 1.0), `X-Release-Commit` conferido |
 
-A linha final (commit desta documentação e versão 2.2.0) está no `HANDOFF.md`.
+| `994041a` (2.2.0 + docs) | Produção `42331180510` ✓ (deploy pela chave nova) · E2E produção `42331789412` ✓ · Lighthouse `42332218957` ✓ na 2ª tentativa | `ghcr.io/vhonorato02/cmdca:994041a…` | no ar desde 23:57 de 06/11, `X-Release-Commit` e `site versoes` conferidos |
+
+Lighthouse de `994041a`: 1ª tentativa reprovou só `/fmdca` com desempenho 93 (mínimo 95; LCP 1,7 s, TBT 87 ms, CLS 0);
+a mesma imagem deu 97 na reexecução, e em `ad2e8bc` deu 95. Entre os dois commits não houve mudança de front-end. A
+página oscila perto do limite (P3, A13): vale aliviar o JS da calculadora/contador antes de subir o mínimo.
 
 ## Gates para `stable`
 
@@ -77,7 +82,7 @@ A linha final (commit desta documentação e versão 2.2.0) está no `HANDOFF.md
 | Nada de runtime em Neon/R2/Vercel | ✓ (código, dependências e secrets limpos; Vercel pausada 503) |
 | PWA ausente, responsividade aprovada | ✓ |
 | Documentos privados e lixeira protegidos em teste integrado | ✓ |
-| CI, imagem, VPS, E2E e Lighthouse do mesmo SHA | ✓ para `ad2e8bc` |
+| CI, imagem, VPS, E2E e Lighthouse do mesmo SHA | ✓ para `ad2e8bc` e `994041a` |
 | Backup off-site com restauração real | ✓ manual · ✗ **automático (R2)** |
 | Rollback de código e banco documentado e executável | ✓ (`docs/OPERACOES.md`; recuperação total executada) |
 | Conteúdo institucional com fonte | Parcial: reuniões, entidades e dados bancários do Fundo seguem vazios por falta de fonte pública (estado honesto no site) |

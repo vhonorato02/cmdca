@@ -12,7 +12,8 @@ Histórico: [`docs/historico/HANDOFF-2026-10-28.md`](docs/historico/HANDOFF-2026
   `/srv/sites/cmdca/data/media`.
 - Dados restaurados da exportação feita antes de zerar: 74 tabelas, 17 notícias (16 publicadas), 3 mídias,
   8 migrations, 6 usuários. Arquivos de mídia com SHA-256 idêntico ao de antes.
-- Versão no ar: ver `ssh zewithane-vps 'site versoes cmdca'` e o cabeçalho `X-Release-Commit`.
+- Versão no ar: **`994041a`** (2.2.0, tag `v2.2.0`), publicada pelo CI com a chave nova: Produção `42331180510`, E2E
+  `42331789412` e Lighthouse `42332218957` verdes. Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
 - Deploy automático pelo GitHub Actions com chave nova (`site chave-deploy cmdca`, 06/11), secrets só no ambiente
   `production`.
 - Não é PWA. Runtime só na VPS: Vercel pausada (503), Neon e R2 legados sem uso.

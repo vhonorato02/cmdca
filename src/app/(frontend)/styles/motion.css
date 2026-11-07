@@ -56,29 +56,6 @@
     flex: none;
   }
 
-  /* Atribuições do conselho: o ícone identifica o assunto, sem enfeite animado. */
-  .topic-icon {
-    display: inline-grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    margin-bottom: var(--s-2);
-    border-radius: var(--r-sm);
-    background: var(--c-bg-soft);
-    color: var(--c-heading);
-  }
-
-  .topic-icon svg {
-    width: 1.4rem;
-    height: 1.4rem;
-  }
-
-  html.contrast .topic-icon {
-    background: #000;
-    border: 2px solid var(--amarelo);
-    color: var(--amarelo);
-  }
-
   /* ───────── Botões: resposta ao toque, sem pulo ───────── */
   .btn {
     transition:

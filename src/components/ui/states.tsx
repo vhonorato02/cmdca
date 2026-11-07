@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Alert, Document } from './icons'
+import { Alert } from './icons'
 
 /** Lista vazia: explica o motivo e oferece o próximo passo. */
 export function EmptyState({
@@ -16,7 +16,6 @@ export function EmptyState({
 }) {
   return (
     <div className="state">
-      <Document className="state__icon" />
       <Heading className="state__title">{title}</Heading>
       {children ? <div>{children}</div> : null}
       {action}

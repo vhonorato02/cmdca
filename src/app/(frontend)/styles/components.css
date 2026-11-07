@@ -149,15 +149,15 @@
   }
 
   /* ───────── Cartões e caixas ───────── */
+  /* "Caderno público": item com régua no topo, sem caixa nem sombra (como na home). */
   .card {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--s-3);
-    padding: var(--s-5);
-    background: var(--c-bg);
-    border: var(--border);
-    border-radius: var(--r-sm);
+    padding: var(--s-4) 0 var(--s-2);
+    background: transparent;
+    border-top: 1px solid var(--c-border-strong);
   }
 
   .card__title {
@@ -191,11 +191,12 @@
 
   .card:has(.card__title a:focus-visible) {
     outline: 3px solid var(--c-focus-ring);
-    box-shadow: 0 0 0 7px var(--c-focus-halo);
+    outline-offset: 6px;
+    box-shadow: 0 0 0 13px var(--c-focus-halo);
   }
 
   .card:has(.card__title a:hover) {
-    border-color: var(--c-primary);
+    border-top-color: var(--c-primary);
   }
 
   .card:has(.card__title a:hover) .card__title {
@@ -206,7 +207,7 @@
 
   .card-grid {
     display: grid;
-    gap: var(--s-4);
+    gap: var(--s-6) var(--s-5);
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
     list-style: none;
     padding: 0;
@@ -217,7 +218,7 @@
     display: grid;
     gap: var(--s-2);
     padding: var(--s-5);
-    border-radius: var(--r-md);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
     border-left: 3px solid var(--c-primary);
     background: var(--c-bg-soft);
     max-width: var(--measure);
@@ -227,9 +228,9 @@
     font-size: var(--fs-lg);
   }
 
+  /* Amarelo só como sinal: a régua marca, o fundo fica neutro. */
   .callout--signal {
-    background: var(--amarelo-50);
-    border-left-color: var(--c-signal);
+    border-left: 4px solid var(--c-signal);
   }
 
   .callout--signal .callout__title {
@@ -252,13 +253,13 @@
   }
 
   /* Estados */
+  /* Estado vazio editorial: régua à esquerda, sem caixa tracejada nem ícone. */
   .state {
     display: grid;
     justify-items: start;
     gap: var(--s-3);
-    padding: var(--s-6);
-    border: 2px dashed var(--c-border);
-    border-radius: var(--r-md);
+    padding: var(--s-2) 0 var(--s-2) var(--s-5);
+    border-left: 3px solid var(--c-border-strong);
     max-width: var(--measure);
   }
 
@@ -273,8 +274,8 @@
   }
 
   .state--error {
-    border-style: solid;
-    border-color: var(--urgencia);
+    padding: var(--s-5);
+    border-left-color: var(--urgencia);
     background: var(--urgencia-50);
   }
 
@@ -980,13 +981,13 @@
     }
   }
 
+  /* Numerais grandes sobre régua; o maior limite ganha a régua amarela (sinal). */
   .limit {
     display: grid;
     align-content: start;
     gap: var(--s-2);
-    padding: var(--s-5);
-    border-radius: var(--r-md);
-    background: var(--c-bg-soft);
+    padding-top: var(--s-4);
+    border-top: 2px solid var(--c-heading);
   }
 
   .limit__value {
@@ -1002,13 +1003,7 @@
   }
 
   .limit:first-child {
-    background: var(--c-signal);
-  }
-
-  .limit:first-child .limit__value,
-  .limit:first-child .limit__title,
-  .limit:first-child p {
-    color: var(--anil);
+    border-top: 6px solid var(--c-signal);
   }
 
   html.contrast .limit,

@@ -1,4 +1,4 @@
-import type { ReactNode, SVGProps } from 'react'
+import type { SVGProps } from 'react'
 
 type IconProps = SVGProps<SVGSVGElement>
 
@@ -62,50 +62,9 @@ export const Close = (props: IconProps) => (
   </svg>
 )
 
-export const Document = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" />
-    <path d="M14 3v5h5M9 13h6M9 17h6" />
-  </svg>
-)
-
-export const Calendar = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <rect x="4" y="5" width="16" height="16" rx="2" />
-    <path d="M8 3v4M16 3v4M4 10h16" />
-  </svg>
-)
-
-export const Search = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <circle cx="11" cy="11" r="6.5" />
-    <path d="m20 20-4.2-4.2" />
-  </svg>
-)
-
 export const Alert = (props: IconProps) => (
   <svg {...base} {...props}>
     <path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
-  </svg>
-)
-
-export const Shield = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6Z" />
-    <path d="m9 12 2 2 4-4" />
-  </svg>
-)
-
-export const Coins = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <ellipse cx="9" cy="7" rx="5" ry="2.5" />
-    <path d="M4 7v4c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V7M10 16.5c.6 1.3 2.6 2 5 2 2.8 0 5-1.1 5-2.5v-4c0-1.4-2.2-2.5-5-2.5" />
-  </svg>
-)
-
-export const Gavel = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <path d="m14 4 6 6M11 7l6 6M12.5 5.5 8 10l6 6 4.5-4.5M10 13l-6.5 6.5M3 21h8" />
   </svg>
 )
 
@@ -181,56 +140,3 @@ export const Check = (props: IconProps) => (
   </svg>
 )
 
-export const Compass = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <circle cx="12" cy="12" r="9" />
-    <path d="m15.5 8.5-2 5-5 2 2-5Z" />
-  </svg>
-)
-
-export const Building = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6M9 11h.01M15 11h.01" />
-  </svg>
-)
-
-export const Ballot = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <path d="M4 13h16v8H4ZM8 13V4h8v9" />
-    <path d="m10 8 1.5 1.5L14 7" />
-  </svg>
-)
-
-export const Scale = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <path d="M12 4v17M7 21h10M5 7h14M12 4l-1 3h2Z" />
-    <path d="m5 7-3 7a3 3 0 0 0 6 0ZM19 7l-3 7a3 3 0 0 0 6 0Z" />
-  </svg>
-)
-
-export const People = (props: IconProps) => (
-  <svg {...base} {...props}>
-    <circle cx="9" cy="8" r="3" />
-    <circle cx="17" cy="9" r="2.4" />
-    <path d="M3.5 20v-1.5A5.5 5.5 0 0 1 9 13a5.5 5.5 0 0 1 5.5 5.5V20M15 14.2a4.5 4.5 0 0 1 6 4.3V20" />
-  </svg>
-)
-
-const TOPICS: [RegExp, (props: IconProps) => ReactNode][] = [
-  [/fundo|fmdca|recurso|imposto/, Coins],
-  [/tutelar|escolha|elei/, Ballot],
-  [/entidade|programa|registr/, Building],
-  [/politica|diretriz|plano/, Compass],
-  [/fiscaliz|lei|resolu|delibera/, Scale],
-  [/reuni|particip|conferen|pessoa/, People],
-]
-
-const normalize = (text: string) => text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
-
-/** Escolhe um ícone pelo assunto de um texto editável no CMS: primeiro o título, depois o texto. */
-export function TopicIcon({ title, text = '', className }: { title: string; text?: string; className?: string }) {
-  const t = normalize(title)
-  const d = normalize(text)
-  const Icon = TOPICS.find(([re]) => re.test(t))?.[1] ?? TOPICS.find(([re]) => re.test(d))?.[1] ?? Check
-  return <Icon className={className} />
-}

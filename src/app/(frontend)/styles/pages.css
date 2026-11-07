@@ -364,14 +364,16 @@
     }
   }
 
+  /* Canal de ajuda: régua grossa no topo na cor da situação, fundo branco. */
   .help-card {
     display: grid;
     align-content: start;
     gap: var(--s-3);
     padding: var(--s-5);
-    border-radius: var(--r-md);
+    border: 1px solid var(--c-border);
+    border-top: 5px solid var(--c-heading);
+    border-radius: var(--r-sm);
     background: var(--c-bg);
-    border: 2px solid var(--c-heading);
   }
 
   .help-card__title {
@@ -392,17 +394,13 @@
   }
 
   .help-card--emergencia {
-    border-color: var(--urgencia);
-    background: var(--urgencia-50);
+    border-top-color: var(--urgencia);
   }
 
   .help-card--emergencia .help-card__title {
     color: var(--urgencia);
   }
 
-  .help-card--denuncia {
-    background: var(--amarelo-50);
-  }
 
   /* Fica preso logo abaixo do cabeçalho, sem ocupar espaço no fluxo. */
   .quick-exit-bar {

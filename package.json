@@ -1,8 +1,9 @@
 {
-  "name": "cmdca",
-  "version": "1.0.0",
-  "description": "Site institucional do CMDCA de Pindamonhangaba",
-  "license": "MIT",
+  "name": "cmdca-pindamonhangaba",
+  "private": true,
+  "version": "2.2.0",
+  "description": "Portal institucional e painel de conteúdo do CMDCA de Pindamonhangaba-SP",
+  "license": "UNLICENSED",
   "type": "module",
   "packageManager": "pnpm@11.15.0",
   "scripts": {

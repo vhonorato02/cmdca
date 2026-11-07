@@ -4,12 +4,31 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 
 ## [Não publicado]
 
-### Revisão de escopo / hospedagem (04/11/2026)
-- portal responsivo comum, sem manifesto de instalação, modo PWA ou notificações;
-- remoção dos fallbacks Vercel/R2 do código de produção e armazenamento persistente local na VPS;
-- suíte de responsividade 320/390/768/1440 px e regressões dos limites do runtime;
-- projeto Vercel antigo pausado, mantendo o histórico para descomissionamento seguro;
-- melhorias nos scripts de backup da plataforma VPS preparadas no repositório privado, **pendentes de instalação e credenciais off-site**.
+## [2.2.0] — 2026-11-06
+
+Segunda auditoria completa, somada à de 04/11 ([relatório](docs/audit/RELATORIO-FINAL.md)).
+
+### Segurança
+
+- documentos publicados e depois enviados à lixeira continuavam legíveis por visitantes em `?trash=true` e, no caso de PDFs e imagens, pelo endereço direto `/api/media/file/<arquivo>`. As coleções agora usam `publishedLiveOrLoggedIn` (publicado e fora da lixeira); reuniões reservadas também. Regressão no teste de integração do CMS e no E2E;
+- três contas de teste/seed do painel (domínios `.local`/`.teste`) bloqueadas em produção.
+
+### Removido
+
+- escopo PWA: manifest de instalação, ícones de app e `appleWebApp` (o portal é um site responsivo comum);
+- fallbacks de runtime Vercel/R2/S3, scripts legados de Neon/R2/Coolify/Vercel, `vercel.json` e a dependência `@payloadcms/storage-s3` (com o AWS SDK);
+- secrets antigos da Vercel e de deploy no GitHub.
+
+### Alterado
+
+- CI com PostgreSQL 17, igual à produção; testes de responsividade 320–1440 px;
+- pacote renomeado para `cmdca-pindamonhangaba`, `private` e `UNLICENSED` (a licença MIT declarada não tinha arquivo nem verificação de titularidade dos assets);
+- documentação atual reescrita (`HANDOFF.md`, `docs/ARQUITETURA.md`, `docs/OPERACOES.md`, `DEPLOY.md`); versões antigas em `docs/historico/`.
+
+### Operação
+
+- VPS reinstalada em 06/11 (plataforma 1.0); o CMDCA voltou com banco e mídia idênticos aos de antes e domínio, HTTPS e redirecionamentos restaurados;
+- backup off-site provado com restauração completa fora da VPS (ver `docs/OPERACOES.md`).
 
 ## [2.1.0] — 2026-10-28
 

@@ -5,7 +5,7 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 
-# O desenvolvimento ocorre no Windows e o runtime da Vercel usa Linux x64
+# O desenvolvimento ocorre no Windows e a imagem de produção (VPS) usa Linux x64
 # com glibc. Manter as duas arquiteturas evita podar binários opcionais do sharp.
 supportedArchitectures:
   os:

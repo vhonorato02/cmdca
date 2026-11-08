@@ -12,7 +12,8 @@ import type { PublicationRule } from '../hooks/editorialPolicy'
  *   consentimento dos responsáveis não afasta a proibição de identificar essas pessoas.
  * - Notícias só vão ao ar com a declaração de quem publica de que texto e imagens não
  *   identificam essas crianças e adolescentes. A declaração é humana: só é exigida
- *   quando há uma pessoa autenticada publicando (scripts de sistema não atestam nada).
+ *   quando há uma pessoa autenticada publicando; scripts de sistema não atestam nada
+ *   (o pacote editorial é revisado no próprio repositório).
  */
 
 export const SITUACAO_PROTEGIDA_ROTULO =
@@ -58,5 +59,8 @@ export const declaracaoProtecaoRule: PublicationRule = {
   path: 'declaracaoProtecao',
   label: 'declaração de proteção de crianças e adolescentes (ECA) marcada por quem publica',
   optional: true,
-  validate: (value, _document, req) => !req.user || value === true,
+  // Scripts de sistema (sem usuário, ou com `context.operation`, como o pacote editorial
+  // versionado no repositório) não atestam nada em nome de ninguém.
+  validate: (value, _document, req) =>
+    !req.user || Boolean((req.context as { operation?: unknown } | undefined)?.operation) || value === true,
 }

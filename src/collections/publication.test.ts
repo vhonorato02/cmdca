@@ -168,6 +168,13 @@ describe('travas do ECA na publicação', () => {
     await expect(
       publishNews({ ...news, declaracaoProtecao: true }, { role: 'editor' }),
     ).resolves.toBeTruthy()
+    // Script de sistema identificado (pacote editorial versionado) não atesta por ninguém.
+    await expect(
+      Noticias.hooks!.beforeChange![0]({
+        data: news,
+        req: { query: {}, user: { role: 'editor' }, context: { operation: 'apply-content-pack' } },
+      } as never),
+    ).resolves.toBeTruthy()
     // Rascunho não exige a declaração.
     await expect(
       publishNews({ ...news, _status: 'draft' }, { role: 'editor' }),

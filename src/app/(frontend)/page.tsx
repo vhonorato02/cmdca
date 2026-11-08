@@ -7,7 +7,6 @@ import {
   ArrowUpRight,
   Building2,
   CalendarDays,
-  ChevronRight,
   ClipboardList,
   FileText,
   HandCoins,
@@ -17,7 +16,6 @@ import {
   MessageCircleHeart,
   Phone,
   Quote,
-  Scale,
   Siren,
   Users,
 } from 'lucide-react'

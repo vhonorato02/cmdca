@@ -37,7 +37,9 @@ Redesign "Serviço público 2026": linguagem e usabilidade inspiradas no gov.br,
 - cartões que surgem ao rolar não mexem mais na opacidade: com opacidade parcial o texto ficava sem contraste antes de
   entrar na tela (axe acusava 1,3:1 em captura, impressão e lupa); agora só deslizam;
 - selo "Vigente" com o verde do padrão gov.br tinha 4,0:1 sobre o fundo verde-claro; verde escurecido para `#13731F`
-  (5,3:1).
+  (5,3:1);
+- transição animada entre páginas (`@view-transition`) retirada: travava a troca do "Carregando…" pelo conteúdo
+  depois de filtrar Reuniões.
 
 ### Testes
 

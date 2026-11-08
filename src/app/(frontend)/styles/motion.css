@@ -182,10 +182,8 @@
       animation: pulse 2.4s var(--ease) infinite;
     }
 
-    /* Navegação entre páginas com transição suave (View Transitions entre documentos). */
-    @view-transition {
-      navigation: auto;
-    }
+    /* Sem @view-transition entre documentos: com ele, a troca do carregamento (Suspense)
+       pelo conteúdo ficava presa em "Carregando…" nas listas com filtro (CI, 08/11/2026). */
   }
 
   @keyframes pulse {

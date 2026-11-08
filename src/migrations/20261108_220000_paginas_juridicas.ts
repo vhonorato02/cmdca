@@ -11,7 +11,7 @@ import { PAGINAS_PADRAO } from '../content/paginas'
 // 2. reescreve Privacidade, Termos e Acessibilidade só se o texto no banco ainda for
 //    exatamente o semeado em 26/10 (comparação pelo hash do texto, não por marcador);
 // 3. preenche o encarregado de dados do Município, publicado pela Prefeitura (LGPD,
-//    art. 41, § 1º), só onde ainda está o marcador de pendência;
+//    art. 41, § 1º), só em configurações publicadas e onde ainda está o marcador de pendência;
 // 4. acrescenta a pesquisa e as duas páginas ao rodapé só se o menu "Sobre o site" ainda for o padrão.
 
 const NOVAS = ['acesso-a-informacao', 'uso-de-imagem']
@@ -86,7 +86,10 @@ export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
     unknown
   >
   const lgpd = (config.lgpd ?? {}) as Record<string, unknown>
-  if (lgpd.encarregado === 'XXXX') {
+  // Só em configurações já publicadas (com fonte conferida): num banco novo, o global
+  // ainda é rascunho sem fonte e a publicação seria recusada pela validação editorial.
+  const editorial = (config.controleEditorial ?? {}) as Record<string, unknown>
+  if (config._status === 'published' && editorial.fonte && editorial.verificadoEm && lgpd.encarregado === 'XXXX') {
     const { id: _id, createdAt: _c, updatedAt: _u, globalType: _g, ...rest } = config
     await payload.updateGlobal({
       slug: 'configuracoes',

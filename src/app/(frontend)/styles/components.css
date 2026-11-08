@@ -1350,4 +1350,77 @@
   .rede-map {
     height: 100%;
   }
+
+  /* ───────── Pesquisa no portal (LAI, art. 8º, § 3º, I) ───────── */
+  .search-form {
+    display: grid;
+    gap: var(--s-2);
+    max-width: 44rem;
+    margin-bottom: var(--s-6);
+    padding: var(--s-5);
+    background: var(--c-bg-alt);
+    border-radius: var(--r-md);
+  }
+
+  .search-form label {
+    font-weight: 700;
+    color: var(--c-heading);
+  }
+
+  .search-form__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  .search-form input {
+    flex: 1 1 14rem;
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0 var(--s-3);
+    border: 2px solid var(--c-border-strong);
+    border-radius: var(--r-sm);
+    background-color: var(--c-bg);
+    color: var(--c-text);
+    font-size: var(--fs-md);
+  }
+
+  .search-form input:hover {
+    border-color: var(--c-primary);
+  }
+
+  .search-results__count {
+    margin-bottom: var(--s-4);
+    color: var(--c-text-muted);
+    font-weight: 700;
+  }
+
+  .search-results__list {
+    display: grid;
+    max-width: 52rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .search-result {
+    display: grid;
+    gap: var(--s-2);
+    padding-block: var(--s-5);
+    border-top: 1px solid var(--c-border);
+  }
+
+  .search-result__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+    color: var(--c-text-muted);
+    font-size: var(--fs-xs);
+  }
+
+  .search-result__title {
+    font-size: var(--fs-lg);
+    overflow-wrap: anywhere;
+  }
 }

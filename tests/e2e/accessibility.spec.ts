@@ -6,6 +6,7 @@ import { targetIsIndexable, usesCiFixtures } from './target'
 
 const PUBLIC_ROUTES = [
   '/',
+  '/acesso-a-informacao',
   '/acessibilidade',
   '/ajuda',
   '/conferencias',
@@ -17,10 +18,12 @@ const PUBLIC_ROUTES = [
   '/mapa-do-site',
   '/noticias',
   '/participe',
+  '/pesquisa',
   '/privacidade',
   '/resolucoes',
   '/reunioes',
   '/transparencia',
+  '/uso-de-imagem',
 ] as const
 const ALL_ROUTES = [...PUBLIC_ROUTES, '/admin/login'] as const
 

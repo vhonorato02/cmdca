@@ -159,6 +159,10 @@ export interface Noticia {
   id: number;
   title: string;
   /**
+   * Obrigatória para publicar. Nome, apelido, escola, endereço, parentesco, foto, voz ou detalhe que permita reconhecer a pessoa contam como identificação (ECA, arts. 17, 18, 143 e 247).
+   */
+  declaracaoProtecao?: boolean | null;
+  /**
    * Gerado automaticamente a partir do título. Edite apenas se necessário, pois altera a URL pública.
    */
   slug: string;
@@ -249,6 +253,10 @@ export interface Media {
    * Número de processo/arquivo interno. Não envie o termo para esta biblioteca pública.
    */
   referenciaConsentimento?: string | null;
+  /**
+   * Se marcado, o arquivo não pode ser publicado, mesmo com autorização dos responsáveis (ECA, arts. 17, 18, 143 e 247). Guarde-o fora do portal.
+   */
+  situacaoProtegida?: boolean | null;
   /**
    * Registre a origem e a data de conferência. Esses dados podem ser exigidos na publicação; a revisão interna é informativa.
    */
@@ -941,6 +949,7 @@ export interface PayloadMigration {
  */
 export interface NoticiasSelect<T extends boolean = true> {
   title?: T;
+  declaracaoProtecao?: T;
   slug?: T;
   categoria?: T;
   resumo?: T;
@@ -1212,6 +1221,7 @@ export interface MediaSelect<T extends boolean = true> {
   envolveMenorIdentificavel?: T;
   consentimentoMenor?: T;
   referenciaConsentimento?: T;
+  situacaoProtegida?: T;
   controleEditorial?:
     | T
     | {

@@ -7,6 +7,7 @@ import { gotoReady } from './ready'
 // de pelo menos 24 px (WCAG 2.5.8; links dentro de texto corrido são exceção).
 const ROUTES = [
   '/',
+  '/acesso-a-informacao',
   '/ajuda',
   '/conselho',
   '/editais',
@@ -14,9 +15,12 @@ const ROUTES = [
   '/fmdca',
   '/noticias',
   '/participe',
+  '/pesquisa?q=conselho',
   '/resolucoes',
   '/reunioes',
   '/transparencia',
+  '/uso-de-imagem',
+  '/privacidade',
   '/rota-inexistente-auditoria',
 ] as const
 const WIDTHS = [320, 390, 768, 1280, 1440] as const
@@ -75,6 +79,18 @@ test.describe('auditoria visual', () => {
       }
     })
   }
+
+  test('a pesquisa do portal encontra conteúdo publicado e nunca mostra o que é interno', async ({ page }) => {
+    await gotoReady(page, '/pesquisa?q=CMDCA')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Pesquisar no portal')
+    await expect(page.getByRole('searchbox', { name: 'O que você procura?' })).toHaveValue('CMDCA')
+    await expect(page.locator('.search-result').first()).toBeVisible()
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
+    await expect(page.getByText(/CI reserved meeting|CI draft/)).toHaveCount(0)
+    await gotoReady(page, '/pesquisa?q=zzzzzzzzqx')
+    await expect(page.getByRole('heading', { name: /Nada encontrado/ })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Lei de Acesso à Informação' })).toBeVisible()
+  })
 
   test('a capa publica JSON-LD válido da organização e do site', async ({ page }) => {
     await gotoReady(page, '/')

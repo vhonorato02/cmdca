@@ -101,7 +101,7 @@ try {
           children: [{ type: 'text', version: 1, text: 'Confirmed content used only in the isolated CI database.',
             format: 0, detail: 0, mode: 'normal', style: '' }] }] } },
       categoria: 'noticia', autor: 'CI fixture author', data: new Date().toISOString(),
-      _status: 'published',
+      _status: 'published', declaracaoProtecao: true,
       controleEditorial: { fonte: 'CI isolated fixture', verificadoEm: new Date().toISOString() },
     },
   })
@@ -184,6 +184,45 @@ try {
     file: { data: imageBytes, name: 'ci-cover.png', mimetype: 'image/png', size: imageBytes.length },
     data: { alt: 'CI isolated cover', _status: 'published', controleEditorial: provenance },
   })
+
+  // Fotos com EXIF (GPS, aparelho, autor) não podem ir ao ar com esses metadados: o
+  // original é reprocessado no envio (resizeOptions em Media).
+  const exifBytes = await sharp({
+    create: { width: 800, height: 600, channels: 3, background: '#335577' },
+  }).jpeg().withExif({ IFD0: { Artist: 'CI EXIF author', Copyright: 'CI EXIF secret' } }).toBuffer()
+  assert.ok((await sharp(exifBytes).metadata()).exif, 'Fixture JPEG carries EXIF before upload')
+  const exifMedia = await payload.create({
+    collection: 'media', overrideAccess: false, user: editor,
+    file: { data: exifBytes, name: 'ci-exif.jpg', mimetype: 'image/jpeg', size: exifBytes.length },
+    data: { alt: 'CI EXIF photo', _status: 'published', controleEditorial: provenance },
+  })
+  const storedExif = await readFile(path.join(process.env.MEDIA_DIR!, exifMedia.filename!))
+  assert.equal((await sharp(storedExif).metadata()).exif, undefined, 'Stored original has no EXIF')
+  assert.ok(!storedExif.includes('CI EXIF secret'), 'EXIF text does not survive in the stored file')
+
+  // ECA: arquivo marcado como situação protegida nunca é publicado, nem com autorização.
+  await assert.rejects(payload.create({
+    collection: 'media', overrideAccess: false, user: editor,
+    file: { data: imageBytes, name: 'ci-protected.png', mimetype: 'image/png', size: imageBytes.length },
+    data: { alt: 'CI protected situation', _status: 'published', controleEditorial: provenance,
+      envolveMenorIdentificavel: true, consentimentoMenor: true, referenciaConsentimento: 'CI-TERM-1',
+      situacaoProtegida: true },
+  }), /situação protegida/, 'Protected-situation media cannot be published even with consent')
+  // ECA: notícia publicada por uma pessoa exige a declaração de proteção.
+  await assert.rejects(payload.create({
+    collection: 'noticias', overrideAccess: false, user: editor,
+    data: {
+      title: 'CI news without ECA declaration', slug: 'ci-news-without-eca', categoria: 'noticia',
+      autor: 'CI fixture author',
+      resumo: 'Published fixture that must be refused without the child protection declaration.',
+      corpo: { root: { type: 'root', version: 1, format: '', indent: 0, direction: null,
+        children: [{ type: 'paragraph', version: 1, format: '', indent: 0, direction: null,
+          children: [{ type: 'text', version: 1, text: 'Refused fixture body.',
+            format: 0, detail: 0, mode: 'normal', style: '' }] }] } },
+      data: new Date().toISOString(), _status: 'published', controleEditorial: provenance,
+    },
+  }), /declaração de proteção/, 'News needs the ECA declaration to be published by a person')
+  console.log('Media EXIF is stripped; ECA publication guards refuse protected media and undeclared news.')
   await payload.updateGlobal({
     slug: 'pagina-inicial', overrideAccess: false, user: editor,
     data: { capa: { titulo: 'CMDCA de Pindamonhangaba', imagem: image.id }, _status: 'published',
@@ -235,7 +274,8 @@ try {
         children: [{ type: 'paragraph', version: 1, format: '', indent: 0, direction: null,
           children: [{ type: 'text', version: 1, text: 'Trashed fixture body.',
             format: 0, detail: 0, mode: 'normal', style: '' }] }] } },
-      data: new Date().toISOString(), _status: 'published', controleEditorial: provenance,
+      data: new Date().toISOString(), _status: 'published', declaracaoProtecao: true,
+      controleEditorial: provenance,
     },
   })
   await assert.rejects(payload.update({

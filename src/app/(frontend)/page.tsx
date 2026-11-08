@@ -215,6 +215,11 @@ export default async function HomePage() {
         url: absoluteUrl('/'),
         inLanguage: 'pt-BR',
         publisher: { '@id': ORGANIZATION_ID() },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: { '@type': 'EntryPoint', urlTemplate: `${absoluteUrl('/pesquisa')}?q={search_term_string}` },
+          'query-input': 'required name=search_term_string',
+        },
       },
     ],
   }

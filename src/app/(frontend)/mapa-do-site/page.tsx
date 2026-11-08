@@ -63,7 +63,10 @@ export default async function MapaDoSitePage() {
     },
     {
       title: 'Sobre o portal',
-      items: paginas.map((p) => ({ href: `/${p.slug}`, label: p.titulo })),
+      items: [
+        { href: '/pesquisa', label: 'Pesquisar no portal' },
+        ...paginas.map((p) => ({ href: `/${p.slug}`, label: p.titulo })),
+      ],
     },
   ].filter((group) => group.items.length)
 

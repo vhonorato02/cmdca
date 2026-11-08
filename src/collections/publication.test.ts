@@ -123,3 +123,59 @@ describe('proteção de publicação e consentimento', () => {
     await expect(Depoimentos.hooks!.beforeChange![1](args)).rejects.toThrow(/autorização/)
   })
 })
+
+describe('travas do ECA na publicação', () => {
+  const imagem = {
+    _status: 'published',
+    filename: 'foto.jpg',
+    mimeType: 'image/jpeg',
+    alt: 'Conferência municipal',
+    controleEditorial: { fonte: 'Registro do conselho', verificadoEm: '2026-01-01' },
+  }
+  const publishMedia = (data: object) =>
+    Media.hooks!.beforeChange![0]({ data, req: { query: {}, user: { role: 'editor' } } } as never)
+
+  it('nunca publica mídia de situação protegida, nem com consentimento', async () => {
+    await expect(
+      publishMedia({
+        ...imagem,
+        envolveMenorIdentificavel: true,
+        consentimentoMenor: true,
+        referenciaConsentimento: 'Processo 123',
+        situacaoProtegida: true,
+      }),
+    ).rejects.toThrow(/situação protegida/)
+  })
+
+  it('publica mídia com criança identificável só com termo conferido e referência', async () => {
+    await expect(publishMedia({ ...imagem, envolveMenorIdentificavel: true })).rejects.toThrow(
+      /consentimento/,
+    )
+    await expect(
+      publishMedia({
+        ...imagem,
+        envolveMenorIdentificavel: true,
+        consentimentoMenor: true,
+        referenciaConsentimento: 'Processo 123',
+      }),
+    ).resolves.toBeTruthy()
+  })
+
+  it('exige a declaração de proteção de quem publica a notícia', async () => {
+    const publishNews = (data: object, user?: object) =>
+      Noticias.hooks!.beforeChange![0]({ data, req: { query: {}, user } } as never)
+    await expect(publishNews(news, { role: 'editor' })).rejects.toThrow(/declaração de proteção/)
+    await expect(
+      publishNews({ ...news, declaracaoProtecao: true }, { role: 'editor' }),
+    ).resolves.toBeTruthy()
+    // Rascunho não exige a declaração.
+    await expect(
+      publishNews({ ...news, _status: 'draft' }, { role: 'editor' }),
+    ).resolves.toBeTruthy()
+  })
+
+  it('remove metadados da imagem original no envio', () => {
+    expect(Media.upload).toMatchObject({ resizeOptions: { fit: 'inside', withoutEnlargement: true } })
+    expect((Media.upload as { withMetadata?: unknown }).withMetadata).toBeFalsy()
+  })
+})

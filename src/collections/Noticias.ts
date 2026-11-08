@@ -7,6 +7,7 @@ import {
   editorialControlField,
   imageFilter,
 } from '../fields/editorial'
+import { declaracaoProtecaoField, declaracaoProtecaoRule } from '../fields/protecao'
 import { slugField } from '../fields/slug'
 import { TEMA_OPTIONS } from '../fields/tema'
 import {
@@ -62,6 +63,7 @@ export const Noticias: CollectionConfig = {
           validate: (value, _document, req) =>
             value == null || value === '' ? true : uploadHasMime(value, req, IMAGE_MIMES),
         },
+        declaracaoProtecaoRule,
       ]),
     ],
     ...revalidation,
@@ -75,6 +77,7 @@ export const Noticias: CollectionConfig = {
   },
   fields: [
     { name: 'title', label: 'Título', type: 'text', required: true, maxLength: 180 },
+    declaracaoProtecaoField(),
     slugField(),
     {
       name: 'categoria',

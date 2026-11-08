@@ -4,6 +4,39 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 
 ## [Não publicado]
 
+## [2.5.0] — 2026-11-08
+
+Blindagem jurídica do portal (ECA, LGPD, LAI, LBI, legislação eleitoral). Dossiê em
+[`docs/juridico/`](docs/juridico/README.md) e decisão [0012](docs/decisions/0012-blindagem-juridica.md).
+
+### Adicionado
+
+- páginas "Acesso à informação" (LAI e Decreto Municipal nº 5.099/2014: transparência ativa, como pedir, prazos,
+  recursos, restrições) e "Publicação e uso de imagem" (ECA: o que nunca é publicado, condições, retirada);
+- pesquisa no portal (`/pesquisa`, LAI art. 8º, § 3º, I), só com conteúdo público, com `SearchAction` no JSON-LD;
+- trava de mídia em situação protegida pelo ECA (vítima, acolhimento, risco, ato infracional): não publica nem com
+  autorização;
+- declaração de proteção obrigatória para publicar notícia (exigida de quem publica no painel);
+- atalho "Não encontrou o que procura?" na Transparência; links novos no rodapé e no mapa do site;
+- dossiê técnico-jurídico: matriz de conformidade, inventário de tratamentos (art. 37), relatório de impacto (art.
+  38), plano de incidentes (Resolução CD/ANPD nº 15/2024), atendimento a titular e LAI, política editorial e modelos
+  de termo de autorização de imagem.
+
+### Alterado
+
+- aviso de privacidade reescrito: bases legais por tratamento, retenção real dos logs e das cópias de segurança,
+  terceiros sob demanda (VLibras, mapa), armazenamento local, direitos e prazo de 15 dias, ANPD;
+- termos de uso: o CMDCA não atende casos, uso proibido (CP, art. 154-A), período eleitoral, reprodução e logotipo;
+- acessibilidade: cita o art. 63 da LBI e descreve as verificações automáticas;
+- encarregado de dados do Município publicado no quadro de privacidade (LGPD, art. 41, § 1º), conforme a página
+  oficial da Prefeitura. Migration `20261108_220000_paginas_juridicas` só troca texto que ainda é o original
+  (comparação por hash) e só preenche o que ainda está pendente.
+
+### Corrigido
+
+- imagens enviadas ao painel eram guardadas e servidas com os metadados EXIF originais (GPS, aparelho, autor); agora
+  o original é reprocessado no envio e os metadados são descartados (teste no CI com JPEG com EXIF).
+
 ## [2.4.0] — 2026-11-08
 
 Redesign "Serviço público 2026": linguagem e usabilidade inspiradas no gov.br, com forma atual. Ver

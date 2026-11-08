@@ -3,7 +3,7 @@ import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Section } from '@/components/ui/Section'
-import { EmptyState } from '@/components/ui/states'
+import { Callout, EmptyState } from '@/components/ui/states'
 import { ButtonLink } from '@/components/ui/Button'
 import { getConfiguracoes, getTextos } from '@/lib/content'
 import { getPayloadClient } from '@/lib/payload'
@@ -89,6 +89,15 @@ export default async function TransparenciaPage() {
             </div>
           }
         />
+      </Section>
+      <Section id="pedir-informacao">
+        <Callout title="Não encontrou o que procura?">
+          <p>
+            Qualquer pessoa pode pedir informações públicas ao CMDCA, sem precisar dizer o motivo. A
+            resposta vem em até 20 dias, prorrogáveis por mais 10 (Lei de Acesso à Informação).{' '}
+            <Link href="/acesso-a-informacao">Veja como pedir</Link>.
+          </p>
+        </Callout>
       </Section>
     </>
   )

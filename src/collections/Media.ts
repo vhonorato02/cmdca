@@ -12,6 +12,7 @@ import {
   EDITORIAL_VERSIONS,
   editorialControlField,
 } from '../fields/editorial'
+import { situacaoProtegidaField, situacaoProtegidaRule } from '../fields/protecao'
 import { enforceEditorDraftOnly, validatePublication } from '../hooks/editorialPolicy'
 import { revalidateCollection } from '../hooks/revalidate'
 
@@ -75,6 +76,7 @@ export const Media: CollectionConfig = {
             !document.envolveMenorIdentificavel ||
             (typeof value === 'string' && Boolean(value.trim())),
         },
+        situacaoProtegidaRule,
       ]),
     ],
     ...revalidation,
@@ -93,6 +95,10 @@ export const Media: CollectionConfig = {
       return headers
     },
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'],
+    // Reprocessa a imagem original no envio. Sem isso o Payload grava o arquivo como veio,
+    // com EXIF (GPS, aparelho, data, autor) e o serve publicamente. O sharp descarta os
+    // metadados porque `withMetadata` não está ligado; a orientação é aplicada antes.
+    resizeOptions: { width: 2560, height: 2560, fit: 'inside', withoutEnlargement: true },
     imageSizes: [
       { name: 'thumbnail', width: 400 },
       { name: 'card', width: 768 },
@@ -150,6 +156,7 @@ export const Media: CollectionConfig = {
           'Número de processo/arquivo interno. Não envie o termo para esta biblioteca pública.',
       },
     },
+    situacaoProtegidaField(),
     editorialControlField(),
   ],
 }

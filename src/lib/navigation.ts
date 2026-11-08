@@ -25,10 +25,13 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
     { label: 'Notícias', href: '/noticias' },
   ],
   rodapeSobreSite: [
+    { label: 'Pesquisar no portal', href: '/pesquisa' },
     { label: 'Mapa do site', href: '/mapa-do-site' },
+    { label: 'Acesso à informação', href: '/acesso-a-informacao' },
     { label: 'Acessibilidade', href: '/acessibilidade' },
     { label: 'Privacidade (LGPD)', href: '/privacidade' },
     { label: 'Termos de uso', href: '/termos' },
+    { label: 'Uso de imagem', href: '/uso-de-imagem' },
     { label: 'Créditos de imagens', href: '/creditos' },
   ],
 }

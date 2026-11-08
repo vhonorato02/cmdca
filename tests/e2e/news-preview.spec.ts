@@ -119,6 +119,8 @@ test('notícia em rascunho exige sessão atual inclusive com cookie de prévia a
   const date = page.getByLabel('Verificado em', { exact: true })
   await date.fill('11/10/2026')
   await date.press('Tab')
+  // ECA: sem a declaração de quem publica, a publicação é recusada.
+  await page.getByRole('checkbox', { name: /^Conferi que o texto e as imagens não identificam/ }).check()
   await page.getByRole('button', { name: /^publicar(?: alterações)?$/i }).click()
   const visitor = await browser.newContext({ baseURL })
   const publishedPage = await visitor.newPage()

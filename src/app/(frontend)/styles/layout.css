@@ -7,7 +7,7 @@
   }
 
   .section {
-    padding-block: clamp(var(--s-7), 6vw, var(--s-9));
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
   }
 
   .section + .section {
@@ -20,7 +20,7 @@
 
   .section--alt + .section,
   .section + .section--alt {
-    padding-top: clamp(var(--s-7), 6vw, var(--s-9));
+    padding-top: clamp(2.5rem, 5vw, 4.5rem);
   }
 
   .stack > * + * {
@@ -76,7 +76,7 @@
     align-items: center;
     gap: var(--s-2);
     min-height: 2.75rem;
-    padding: 0 0.625rem;
+    padding: 0 0.5rem;
     color: var(--c-on-dark-muted);
     text-decoration: none;
     border-radius: var(--r-sm);
@@ -90,7 +90,7 @@
   .channel-link__number {
     color: var(--c-signal);
     font-family: var(--font-display);
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: var(--w-display);
     line-height: 1;
     font-variant-numeric: tabular-nums;
@@ -178,8 +178,23 @@
     position: sticky;
     top: 0;
     z-index: var(--z-header);
+    /* Vidro fosco: o conteúdo passa por baixo, desfocado. */
+    background: rgb(255 255 255 / 82%);
+    backdrop-filter: blur(18px) saturate(1.5);
+    box-shadow: 0 1px 0 rgb(19 81 180 / 12%);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .site-header {
+      background: var(--c-bg);
+    }
+  }
+
+  html.contrast .site-header {
+    border-bottom: 2px solid #fff;
     background: var(--c-bg);
-    border-bottom: var(--border);
+    backdrop-filter: none;
+    box-shadow: none;
   }
 
   .site-header__inner {
@@ -213,10 +228,13 @@
     flex: none;
   }
 
+  /* Assinatura no padrão gov.br: símbolo, divisória vertical e nome. */
   .brand__text {
     display: flex;
     flex-direction: column;
     min-width: 0;
+    padding-left: var(--s-3);
+    border-left: 1px solid var(--c-border);
     line-height: 1;
   }
 
@@ -229,15 +247,15 @@
 
   .brand__name {
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     font-weight: var(--w-display-strong);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
 
   .brand__place {
-    margin-top: 3px;
+    margin-top: 4px;
     font-size: 0.8125rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--c-text-muted);
   }
 
@@ -248,10 +266,10 @@
     min-height: 2.75rem;
     padding: 0 var(--s-4);
     border: 2px solid var(--c-primary);
-    border-radius: var(--r-md);
+    border-radius: var(--r-pill);
     background: var(--c-bg);
     color: var(--c-primary);
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .menu-toggle svg {
@@ -269,30 +287,75 @@
   }
 
   .site-nav__link {
+    position: relative;
     display: inline-flex;
     align-items: center;
     min-height: 2.75rem;
     padding: 0 var(--s-3);
-    border-radius: var(--r-sm);
+    border-radius: var(--r-pill);
     color: var(--c-text);
     font-weight: 600;
     font-size: var(--fs-sm);
     text-decoration: none;
-    transition: background-color var(--t-fast) var(--ease);
+    white-space: nowrap;
+    transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+  }
+
+  /* Entre 900 e 1180 px, o menu inteiro precisa caber numa linha. */
+  @media (min-width: 900px) and (max-width: 1179.98px) {
+    .site-header__inner {
+      gap: var(--s-3);
+    }
+
+    .brand__place {
+      display: none;
+    }
+
+    .site-nav__link {
+      padding: 0 0.5rem;
+      font-size: 0.9375rem;
+    }
+
+    .site-nav__help {
+      margin-left: var(--s-1);
+    }
+
+    .site-nav__help .btn {
+      white-space: nowrap;
+      padding-inline: var(--s-4);
+    }
   }
 
   .site-nav__link:hover {
-    color: var(--c-heading);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.5em;
+    background: var(--azul-palido);
+    color: var(--c-primary);
+  }
+
+  /* Item ativo: barra azul sob o rótulo, que cresce do centro. */
+  .site-nav__link::after {
+    content: '';
+    position: absolute;
+    left: var(--s-3);
+    right: var(--s-3);
+    bottom: 4px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--c-primary);
+    transform: scaleX(0);
+    transition: transform var(--t-base) var(--ease);
   }
 
   .site-nav__link[aria-current='page'] {
-    color: var(--c-heading);
+    color: var(--c-primary);
+  }
+
+  .site-nav__link[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  html.contrast .site-nav__link:hover {
+    background: transparent;
     text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.5em;
   }
 
   .site-nav__help {
@@ -445,11 +508,13 @@
   }
 
   /* ───────── Cabeçalho das páginas internas ───────── */
+  /* Painel azul-pálido com trilha, título e apresentação, no mesmo formato inset da capa. */
   .page-header {
     position: relative;
-    padding-block: clamp(var(--s-5), 4vw, var(--s-7)) clamp(var(--s-6), 4vw, var(--s-7));
-    background: var(--c-bg);
-    border-bottom: var(--border);
+    margin: var(--s-3) clamp(0.5rem, 1.2vw, var(--s-4)) 0;
+    padding-block: var(--s-4) clamp(var(--s-6), 4vw, var(--s-7));
+    border-radius: var(--r-lg);
+    background: var(--c-bg-soft);
   }
 
   .page-header__inner {
@@ -458,18 +523,20 @@
   }
 
   .page-header__title {
-    max-width: 20ch;
-    font-size: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
-    font-weight: 500;
-    line-height: 1.04;
-    letter-spacing: -0.025em;
+    max-width: 24ch;
+    margin-top: var(--s-3);
+    font-size: var(--fs-4xl);
+    font-weight: var(--w-display-strong);
+    line-height: 1.06;
+    letter-spacing: -0.024em;
+    text-wrap: balance;
   }
 
   .page-header__lead {
-    max-width: 56ch;
+    max-width: 60ch;
     margin-top: var(--s-4);
     font-size: var(--fs-lg);
-    color: var(--c-text-muted);
+    color: var(--c-text);
   }
 
   .page-header__meta {
@@ -490,19 +557,30 @@
     color: var(--c-text-muted);
   }
 
+  /* Separador em seta, desenhado (não tipográfico). */
   .breadcrumb li + li::before {
-    content: '/';
-    margin-right: var(--s-2);
-    color: var(--c-border-strong);
+    content: '';
+    width: 0.45em;
+    height: 0.45em;
+    margin: 0 var(--s-3) 0 var(--s-1);
+    border-top: 2px solid var(--c-border-strong);
+    border-right: 2px solid var(--c-border-strong);
+    transform: rotate(45deg);
   }
 
   .breadcrumb a {
     display: inline-flex;
     align-items: center;
+    gap: var(--s-2);
     min-height: 2.75rem;
     min-width: 2.75rem;
-    color: var(--c-text-muted);
-    font-weight: 700;
+    color: var(--c-link);
+    font-weight: 600;
+  }
+
+  .breadcrumb__home svg {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   .breadcrumb li {
@@ -518,8 +596,11 @@
   }
 
   /* ───────── Rodapé ───────── */
+  /* Mesma moldura da capa: afastado das bordas, cantos de cima arredondados. */
   .site-footer {
     margin-top: auto;
+    margin-inline: clamp(0.5rem, 1.2vw, var(--s-4));
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
     background: var(--c-dark);
     color: var(--c-on-dark);
     font-size: var(--fs-sm);

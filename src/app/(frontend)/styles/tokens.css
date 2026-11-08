@@ -1,68 +1,87 @@
-/* Tokens do design system "Caderno público" (2026-11). Ver docs/design/DIRECAO.md. */
+/* Tokens "Serviço público 2026" (2026-11-08): clareza de serviço público (gov.br) com forma
+   e tipografia atuais, na marca do CMDCA. Ver docs/design/DIRECAO.md. */
 @layer tokens {
   :root {
-    /* Marca: cores médias medidas no logo oficial */
-    --anil: #231a5c;
-    --anil-900: #1a1140;
-    --anil-600: #4a3d8f;
-    --anil-100: #dfe2ee;
-    --anil-50: #eef0f6;
+    /* Paleta gov.br (azul "blue-warm-vivid") e neutros do padrão */
+    --azul: #1351b4;
+    --azul-escuro: #0c326f;
+    --azul-noite: #0a1c3f;
+    --azul-medio: #2670e8;
+    --azul-claro: #dbe8fb;
+    --azul-palido: #edf5ff;
+    --cinza-fundo: #f2f5fa;
+    --cinza-linha: #cccccc;
+    --cinza-texto: #1f2a3d;
+    --cinza-suave: #4a5568;
+    --foco: #c2850c;
+
+    /* Marca do CMDCA: amarelo do logo, só como sinal */
     --amarelo: #f6ec27;
-    --amarelo-50: #fdf8c2;
-    --grafite: #1f1d2b;
-    --grafite-2: #4f5163;
-    --linha: #dcdfe8;
-    --linha-forte: #767a90;
+    --amarelo-50: #fff8d6;
+
+    /* Nomes antigos remapeados (referências diretas no CSS) */
+    --anil: var(--azul-escuro);
+    --anil-900: var(--azul-noite);
+    --anil-600: var(--azul);
+    --anil-100: var(--azul-claro);
+    --anil-50: var(--azul-palido);
+    --grafite: var(--cinza-texto);
+    --grafite-2: var(--cinza-suave);
+    --linha: #dddddd;
+    --linha-forte: #888888;
     --branco: #ffffff;
-    --nevoa: #f3f5f9;
+    --nevoa: var(--cinza-fundo);
     --urgencia: #b42318;
     --urgencia-50: #fdecea;
-    --vigente: #1d6b3a;
-    --vigente-50: #e6f2ea;
+    --vigente: #13731f;
+    --vigente-50: #e3f5e1;
     --atencao: #8a5300;
-    --atencao-50: #fbf0dc;
+    --atencao-50: #fff5c2;
 
     /* Papéis semânticos (o alto contraste troca só estes) */
     --c-bg: var(--branco);
-    --c-bg-alt: var(--nevoa);
-    --c-bg-soft: var(--anil-50);
-    --c-text: var(--grafite);
-    --c-text-muted: var(--grafite-2);
-    --c-heading: var(--anil);
-    --c-link: var(--anil);
-    --c-link-hover: var(--anil-600);
+    --c-bg-alt: var(--cinza-fundo);
+    --c-bg-soft: var(--azul-palido);
+    --c-text: var(--cinza-texto);
+    --c-text-muted: var(--cinza-suave);
+    --c-heading: var(--azul-escuro);
+    --c-link: var(--azul);
+    --c-link-hover: var(--azul-escuro);
     --c-border: var(--linha);
     --c-border-strong: var(--linha-forte);
-    --c-primary: var(--anil);
+    --c-primary: var(--azul);
+    --c-primary-hover: var(--azul-escuro);
     --c-on-primary: var(--branco);
+    --c-icon-bg: var(--azul-claro);
+    --c-icon: var(--azul);
     --c-signal: var(--amarelo);
-    --c-on-signal: var(--anil);
-    --c-dark: var(--anil-900);
+    --c-on-signal: var(--azul-noite);
+    --c-dark: var(--azul-noite);
     --c-on-dark: var(--branco);
-    --c-on-dark-muted: #c9c5e2;
+    --c-on-dark-muted: #c5d4eb;
     --c-danger: var(--urgencia);
     --c-on-danger: var(--branco);
-    --c-focus-ring: var(--anil);
-    --c-focus-halo: var(--amarelo);
+    --c-focus-ring: var(--foco);
+    --c-focus-halo: transparent;
 
-    /* Tipografia */
-    --font-display: var(--font-newsreader), Georgia, 'Times New Roman', serif;
-    --font-text: var(--font-atkinson), system-ui, -apple-system, 'Segoe UI', sans-serif;
+    /* Tipografia: Bricolage Grotesque (títulos, eixo óptico e largura) e Public Sans (texto) */
+    --font-display: var(--font-bricolage), 'Arial Narrow', Arial, sans-serif;
+    --font-text: var(--font-public-sans), system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
     --stretch-display: 100%;
-    /* Pesos da serifa: títulos médios, numerais um pouco mais firmes. */
-    --w-display: 560;
-    --w-display-strong: 620;
+    --w-display: 700;
+    --w-display-strong: 800;
     --fs-xs: 0.875rem;
     --fs-sm: 1rem;
     --fs-md: 1.125rem;
-    --fs-lg: 1.3125rem;
-    --fs-xl: 1.5rem;
-    --fs-2xl: clamp(1.75rem, 1.45rem + 1.1vw, 2.25rem);
-    --fs-3xl: clamp(2.125rem, 1.6rem + 2vw, 3rem);
-    --fs-4xl: clamp(2.5rem, 1.55rem + 4vw, 4.5rem);
+    --fs-lg: 1.25rem;
+    --fs-xl: 1.4rem;
+    --fs-2xl: clamp(1.6rem, 1.35rem + 1vw, 2rem);
+    --fs-3xl: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+    --fs-4xl: clamp(2.4rem, 1.4rem + 4vw, 4.25rem);
+    --fs-hero: clamp(2.5rem, 0.9rem + 4.6vw, 4.75rem);
     --lh-text: 1.6;
-    --lh-tight: 1.1;
-    --measure: 68ch;
+    --lh-tight: 1.2;
+    --measure: 70ch;
 
     /* Espaço (base 4) */
     --s-1: 0.25rem;
@@ -78,18 +97,25 @@
     --gutter: clamp(1rem, 0.6rem + 1.8vw, 2rem);
     --max: 75rem;
 
-    /* Forma */
+    /* Forma (2026): raios em escala pela hierarquia (campo < cartão < painel/capa),
+       pílula nos botões; sombras tingidas de azul com um anel fino no lugar de borda. */
     --r-0: 0;
-    --r-sm: 4px;
-    --r-md: 8px;
-    --r-pill: 999px;
+    --r-sm: 10px;
+    --r-md: 18px;
+    --r-lg: 24px;
+    --r-xl: 32px;
+    --r-pill: 100em;
     --border: 1px solid var(--c-border);
-    --shadow-float: 0 16px 40px -18px rgb(35 26 92 / 30%);
+    --ring: 0 0 0 1px rgb(19 81 180 / 12%);
+    --shadow-sm: 0 1px 2px rgb(7 29 65 / 6%), var(--ring);
+    --shadow-md: 0 14px 32px -14px rgb(7 29 65 / 34%), 0 0 0 1px rgb(19 81 180 / 22%);
+    --shadow-float: 0 28px 64px -28px rgb(7 29 65 / 50%), var(--ring);
 
-    /* Movimento: só em resposta a ações */
+    /* Movimento */
     --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
-    --t-fast: 120ms;
-    --t-base: 180ms;
+    --t-fast: 140ms;
+    --t-base: 220ms;
+    --t-slow: 520ms;
 
     /* Camadas */
     --z-header: 30;
@@ -120,8 +146,11 @@
     --c-on-dark-muted: #fff;
     --c-danger: var(--amarelo);
     --c-on-danger: #000;
-    --c-focus-ring: #fff;
-    --c-focus-halo: var(--amarelo);
+    --c-focus-ring: var(--amarelo);
+    --c-focus-halo: transparent;
+    --c-primary-hover: #fff;
+    --c-icon-bg: #000;
+    --c-icon: var(--amarelo);
     --vigente: #fff;
     --vigente-50: #000;
     --atencao: #fff;
@@ -134,6 +163,7 @@
     :root {
       --t-fast: 0ms;
       --t-base: 0ms;
+      --t-slow: 0ms;
     }
   }
 }

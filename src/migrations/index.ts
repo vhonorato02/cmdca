@@ -7,6 +7,9 @@ import * as migration_20261026_092854_textos_paginas_pendencias from './20261026
 import * as migration_20261027_044136_media_sem_autosave from './20261027_044136_media_sem_autosave'
 import * as migration_20261027_235800_trocar_senha from './20261027_235800_trocar_senha'
 import * as migration_20261107_120000_creditos_capa from './20261107_120000_creditos_capa'
+import * as migration_20261107_220000_copy_govbr from './20261107_220000_copy_govbr'
+import * as migration_20261108_010012_textos_padrao_govbr from './20261108_010012_textos_padrao_govbr'
+import * as migration_20261108_020000_creditos_tipografia from './20261108_020000_creditos_tipografia'
 
 export const migrations = [
   {
@@ -53,5 +56,20 @@ export const migrations = [
     up: migration_20261107_120000_creditos_capa.up,
     down: migration_20261107_120000_creditos_capa.down,
     name: '20261107_120000_creditos_capa',
+  },
+  {
+    up: migration_20261107_220000_copy_govbr.up,
+    down: migration_20261107_220000_copy_govbr.down,
+    name: '20261107_220000_copy_govbr',
+  },
+  {
+    up: migration_20261108_010012_textos_padrao_govbr.up,
+    down: migration_20261108_010012_textos_padrao_govbr.down,
+    name: '20261108_010012_textos_padrao_govbr',
+  },
+  {
+    up: migration_20261108_020000_creditos_tipografia.up,
+    down: migration_20261108_020000_creditos_tipografia.down,
+    name: '20261108_020000_creditos_tipografia',
   },
 ]

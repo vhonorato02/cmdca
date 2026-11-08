@@ -5,13 +5,14 @@
     align-items: center;
     justify-content: center;
     gap: var(--s-2);
-    min-height: 3rem;
+    min-height: 2.75rem;
     padding: 0 var(--s-5);
     border: 2px solid transparent;
-    border-radius: var(--r-sm);
+    /* Botões em pílula, como no padrão gov.br */
+    border-radius: var(--r-pill);
     font-family: var(--font-text);
     font-size: var(--fs-sm);
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.2;
     text-align: center;
     text-decoration: none;
@@ -31,12 +32,12 @@
   }
 
   .btn--primary:hover {
-    background: var(--anil-600);
+    background: var(--c-primary-hover);
     color: var(--c-on-primary);
   }
 
   .btn--secondary {
-    background: transparent;
+    background: var(--c-bg);
     border-color: var(--c-primary);
     color: var(--c-primary);
   }
@@ -56,6 +57,18 @@
     background: var(--c-on-signal);
     border-color: var(--c-on-signal);
     color: var(--c-signal);
+  }
+
+  /* Contorno branco, para usar sobre a foto da capa. */
+  .btn--inverse {
+    background: transparent;
+    border-color: #fff;
+    color: #fff;
+  }
+
+  .btn--inverse:hover {
+    background: #fff;
+    color: var(--azul-noite);
   }
 
   .btn--danger {
@@ -99,7 +112,7 @@
     align-items: center;
     gap: var(--s-2);
     min-height: 2.75rem;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .more-link svg {
@@ -134,6 +147,17 @@
     max-width: 62ch;
   }
 
+  .section-head h2 {
+    font-size: var(--fs-3xl);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .section--dark .section-head h2 {
+    color: #fff;
+  }
+
   .section-head__lead {
     margin-top: var(--s-3);
     color: var(--c-text-muted);
@@ -149,15 +173,22 @@
   }
 
   /* ───────── Cartões e caixas ───────── */
-  /* "Caderno público": item com régua no topo, sem caixa nem sombra (como na home). */
+  /* Cartão no padrão gov.br: fundo branco, cantos de 4 px, sombra leve que sobe no hover. */
   .card {
     position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--s-3);
-    padding: var(--s-4) 0 var(--s-2);
-    background: transparent;
-    border-top: 1px solid var(--c-border-strong);
+    padding: var(--s-5);
+    background: var(--c-bg);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--t-base) var(--ease), transform var(--t-base) var(--ease);
+  }
+
+  html.contrast .card {
+    border: 2px solid #fff;
+    box-shadow: none;
   }
 
   .card__title {
@@ -190,13 +221,13 @@
   }
 
   .card:has(.card__title a:focus-visible) {
-    outline: 3px solid var(--c-focus-ring);
-    outline-offset: 6px;
-    box-shadow: 0 0 0 13px var(--c-focus-halo);
+    outline: 4px dashed var(--c-focus-ring);
+    outline-offset: 4px;
   }
 
   .card:has(.card__title a:hover) {
-    border-top-color: var(--c-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
   }
 
   .card:has(.card__title a:hover) .card__title {
@@ -207,7 +238,7 @@
 
   .card-grid {
     display: grid;
-    gap: var(--s-6) var(--s-5);
+    gap: var(--s-4);
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
     list-style: none;
     padding: 0;
@@ -347,11 +378,39 @@
     background: var(--urgencia-50);
   }
 
+  /* Etiqueta em pílula (padrão gov.br "tag"). */
   .tag {
-    display: inline-block;
-    color: var(--c-text-muted);
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.75rem;
+    border-radius: var(--r-pill);
+    background: var(--azul-palido);
+    color: var(--c-primary);
     font-size: var(--fs-xs);
-    font-weight: 700;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  html.contrast .tag {
+    border: 1px solid currentColor;
+  }
+
+  /* Ícone em círculo azul-claro, usado em serviços, canais e fatos. */
+  .icon-badge {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--c-icon-bg);
+    color: var(--c-icon);
+    transition: background-color var(--t-base) var(--ease), color var(--t-base) var(--ease);
+  }
+
+  .icon-badge svg {
+    width: 1.375rem;
+    height: 1.375rem;
   }
 
   /* ───────── Lista de atos (reuniões, resoluções, editais, entidades) ───────── */
@@ -599,14 +658,18 @@
     color: var(--c-on-primary);
   }
 
-  /* ───────── Notícias: itens editoriais, sem caixa ───────── */
+  /* ───────── Notícias: cartões no padrão gov.br ───────── */
   .news-grid {
     display: grid;
-    gap: var(--s-6) var(--s-6);
+    gap: var(--s-4);
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
     list-style: none;
     padding: 0;
     margin: 0;
+  }
+
+  .news-grid > li {
+    display: flex;
   }
 
   .news-grid__lead {
@@ -617,22 +680,29 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--s-4);
+    width: 100%;
     height: 100%;
-    padding-top: var(--s-4);
-    border-top: 1px solid var(--c-border-strong);
+    overflow: hidden;
+    background: var(--c-bg);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--t-base) var(--ease), transform var(--t-base) var(--ease);
   }
 
-  .news-card--media {
-    border-top: 0;
-    padding-top: 0;
+  .news-card:has(.news-card__title a:hover) {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+
+  html.contrast .news-card {
+    border: 2px solid #fff;
+    box-shadow: none;
   }
 
   .news-card__media {
     position: relative;
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
-    border-radius: var(--r-sm);
     background: var(--c-bg-soft);
   }
 
@@ -645,7 +715,7 @@
     right: var(--s-2);
     bottom: var(--s-2);
     padding: 2px var(--s-2);
-    background: rgb(35 26 92 / 80%);
+    background: rgb(7 29 65 / 80%);
     color: #fff;
     font-size: 0.75rem;
     border-radius: var(--r-sm);
@@ -654,26 +724,34 @@
   .news-card__body {
     display: flex;
     flex-direction: column;
-    gap: var(--s-2);
+    gap: var(--s-3);
     flex: 1;
+    padding: var(--s-5);
   }
 
   .news-card__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0 var(--s-3);
+    align-items: center;
+    gap: var(--s-2) var(--s-3);
     color: var(--c-text-muted);
     font-size: var(--fs-xs);
   }
 
-  .news-card__kind {
-    color: var(--c-heading);
-    font-weight: 700;
+  .news-card__date {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+  }
+
+  .news-card__date svg {
+    width: 1rem;
+    height: 1rem;
   }
 
   .news-card__title {
-    font-size: var(--fs-xl);
-    line-height: 1.18;
+    font-size: var(--fs-lg);
+    line-height: 1.3;
   }
 
   .news-card__title a {
@@ -693,9 +771,8 @@
   }
 
   .news-card:has(.news-card__title a:focus-visible) {
-    outline: 3px solid var(--c-focus-ring);
-    outline-offset: 6px;
-    box-shadow: 0 0 0 10px var(--c-focus-halo);
+    outline: 4px dashed var(--c-focus-ring);
+    outline-offset: 4px;
   }
 
   .news-card:has(.news-card__title a:hover) .news-card__title {
@@ -1240,32 +1317,6 @@
 
   .definition-list dd {
     margin: 0;
-  }
-
-  .quote {
-    display: grid;
-    gap: var(--s-3);
-    padding: var(--s-5) 0 0;
-    border-top: 1px solid var(--c-border-strong);
-  }
-
-  .quote blockquote {
-    color: var(--c-heading);
-    font-family: var(--font-display);
-    font-size: var(--fs-2xl);
-    font-weight: 400;
-    line-height: 1.25;
-    letter-spacing: -0.012em;
-  }
-
-  .quote figcaption {
-    color: var(--c-text-muted);
-    font-size: var(--fs-sm);
-  }
-
-  .quote figcaption b {
-    display: block;
-    color: var(--c-text);
   }
 
   .preview-banner {

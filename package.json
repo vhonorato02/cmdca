@@ -1,7 +1,7 @@
 {
   "name": "cmdca-pindamonhangaba",
   "private": true,
-  "version": "2.3.1",
+  "version": "2.4.0",
   "description": "Portal institucional e painel de conteúdo do CMDCA de Pindamonhangaba-SP",
   "license": "UNLICENSED",
   "type": "module",
@@ -39,6 +39,7 @@
     "dotenv": "17.4.2",
     "graphql": "^16.14.2",
     "leaflet": "^1.9.4",
+    "lucide-react": "^1.70.0",
     "next": "16.4.3",
     "nodemailer": "10.2.1",
     "payload": "3.92.0",

@@ -54,8 +54,9 @@
     color: var(--c-heading);
     font-family: var(--font-display);
     font-weight: var(--w-display);
+    font-optical-sizing: auto;
     line-height: var(--lh-tight);
-    letter-spacing: -0.012em;
+    letter-spacing: -0.02em;
     font-variant-numeric: lining-nums;
     text-wrap: balance;
     /* Títulos vêm do CMS: uma palavra longa ("Pindamonhangaba") não pode estourar a
@@ -66,8 +67,9 @@
 
   h1 {
     font-size: var(--fs-3xl);
-    font-weight: var(--w-display);
-    letter-spacing: -0.02em;
+    font-weight: var(--w-display-strong);
+    letter-spacing: -0.03em;
+    line-height: 1.02;
   }
 
   h2 {
@@ -144,11 +146,11 @@
     touch-action: manipulation;
   }
 
-  /* Foco: anel anil com halo amarelo, visível em fundo claro e escuro. */
+  /* Foco no padrão gov.br: contorno tracejado laranja-ouro, visível em fundo claro e escuro. */
   :focus-visible {
-    outline: 3px solid var(--c-focus-ring);
-    outline-offset: 0;
-    box-shadow: 0 0 0 7px var(--c-focus-halo);
+    outline: 4px dashed var(--c-focus-ring);
+    outline-offset: 4px;
+    box-shadow: none;
   }
 
   :focus:not(:focus-visible) {

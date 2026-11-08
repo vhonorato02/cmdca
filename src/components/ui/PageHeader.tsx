@@ -1,5 +1,7 @@
-import { AppLink as Link } from '@/components/ui/AppLink'
+import { House } from 'lucide-react'
 import type { ReactNode } from 'react'
+
+import { AppLink as Link } from '@/components/ui/AppLink'
 
 
 export type Crumb = { label: string; href?: string }
@@ -13,7 +15,14 @@ export function Breadcrumb({ items }: { items: Crumb[] }) {
           return (
             <li key={`${item.label}-${index}`}>
               {item.href && !last ? (
-                <Link href={item.href}>{item.label}</Link>
+                index === 0 && item.href === '/' ? (
+                  <Link className="breadcrumb__home" href="/">
+                    <House aria-hidden="true" strokeWidth={2} />
+                    <span className="sr-only">{item.label}</span>
+                  </Link>
+                ) : (
+                  <Link href={item.href}>{item.label}</Link>
+                )
               ) : (
                 <span aria-current={last ? 'page' : undefined}>{item.label}</span>
               )}
@@ -25,10 +34,7 @@ export function Breadcrumb({ items }: { items: Crumb[] }) {
   )
 }
 
-/**
- * Cabeçalho das páginas internas: trilha, título único (h1), apresentação e a
- * órbita da marca. A faixa amarela inferior repete a faixa do logo.
- */
+/** Cabeçalho das páginas internas: trilha, título único (h1) e apresentação. */
 export function PageHeader({
   title,
   lead,

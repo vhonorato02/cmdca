@@ -43,7 +43,7 @@ export const TEXTOS_PADRAO = {
         rotulo: 'Emergência',
         numero: '190',
         discagem: '190',
-        situacao: 'Há perigo agora',
+        situacao: 'Alguém corre perigo agora',
         descricao: 'Alguém está sendo agredido, ameaçado ou corre risco neste momento.',
         observacao: 'Polícia Militar, 24 horas.',
         naFaixa: true,
@@ -53,7 +53,7 @@ export const TEXTOS_PADRAO = {
         rotulo: 'Denúncia',
         numero: 'Disque 100',
         discagem: '100',
-        situacao: 'Quero denunciar uma violação de direitos',
+        situacao: 'Denunciar violação de direitos',
         descricao:
           'Violência, negligência, abuso, exploração ou a suspeita de qualquer uma delas.',
         observacao: 'Gratuito, 24 horas. Você não precisa se identificar.',
@@ -64,7 +64,7 @@ export const TEXTOS_PADRAO = {
         rotulo: 'Conselho Tutelar',
         numero: '(12) 3550-0513',
         discagem: '1235500513',
-        situacao: 'Preciso do Conselho Tutelar',
+        situacao: 'Falar com o Conselho Tutelar',
         descricao:
           'Para casos de ameaça ou violação de direitos que precisam de acompanhamento na cidade.',
         observacao: '1º Conselho Tutelar. Confirme o plantão antes de ir.',
@@ -75,7 +75,7 @@ export const TEXTOS_PADRAO = {
         rotulo: 'Para crianças',
         numero: 'Disque 100',
         discagem: '100',
-        situacao: 'Sou criança ou adolescente e preciso falar com alguém',
+        situacao: 'Sou criança ou adolescente e preciso de ajuda',
         descricao:
           'Se algo está machucando, assustando ou ameaçando você, peça ajuda. A culpa não é sua.',
         observacao: 'A ligação é gratuita e você não precisa dizer seu nome.',
@@ -84,15 +84,15 @@ export const TEXTOS_PADRAO = {
     ],
   },
   ajuda: {
-    titulo: 'Uma criança ou adolescente precisa de ajuda?',
+    titulo: 'Pedir ajuda para uma criança ou adolescente',
     introducao:
-      'Escolha a situação mais parecida com a sua e ligue. Se houver perigo agora, ligue 190 antes de qualquer outra coisa.',
+      'Escolha a situação mais parecida com a sua e ligue para o canal indicado. Se alguém corre perigo agora, ligue 190.',
     conselhosTitulo: 'Conselhos Tutelares',
     conselhosTexto:
       'Pindamonhangaba tem dois Conselhos Tutelares. Eles recebem casos de ameaça ou violação de direitos e encaminham cada situação à rede de proteção.',
     redeTitulo: 'Outros serviços da rede de proteção',
     redeTexto:
-      'CRAS e CREAS atendem famílias e acompanham situações de risco. Confirme endereço e horário antes de sair de casa.',
+      'O CRAS e o CREAS atendem famílias e acompanham situações de risco. Confirme o endereço e o horário de atendimento antes de ir.',
     fontes: [
       { rotulo: 'Disque 100, Governo Federal', url: SOURCES.disque100 },
       { rotulo: 'Telefones úteis da Prefeitura', url: SOURCES.telefonesUteis },
@@ -100,26 +100,26 @@ export const TEXTOS_PADRAO = {
     ],
   },
   fmdca: {
-    titulo: 'Destine parte do seu Imposto de Renda à infância de Pinda',
+    titulo: 'Destinar parte do Imposto de Renda ao Fundo Municipal',
     introducao:
-      'O Fundo Municipal dos Direitos da Criança e do Adolescente recebe parte do imposto devido e financia projetos aprovados pelo CMDCA. Você não paga nada a mais: só escolhe onde parte do imposto será aplicada.',
-    oQueETitulo: 'O que é o Fundo',
+      'Você pode direcionar parte do Imposto de Renda devido ao Fundo Municipal dos Direitos da Criança e do Adolescente (FMDCA). O valor é abatido do imposto: você não paga nada a mais, e o dinheiro financia projetos aprovados pelo CMDCA.',
+    oQueETitulo: 'O que é o Fundo Municipal',
     oQueE:
       'O FMDCA reúne recursos para programas e projetos de promoção, proteção e defesa dos direitos de crianças e adolescentes de Pindamonhangaba. O CMDCA define as prioridades, aprova os projetos e acompanha a aplicação do dinheiro, com prestação de contas pública.',
     passosTitulo: 'Como destinar na declaração',
     passos: [
       {
-        titulo: 'Faça a declaração completa',
+        titulo: 'Preencha a declaração completa',
         texto:
           'Preencha rendimentos, bens e deduções. A destinação só aparece no modelo por deduções legais.',
       },
       {
-        titulo: 'Abra “Doações Diretamente na Declaração”',
+        titulo: 'Informe a doação na ficha própria',
         texto:
-          'Na ficha Criança e Adolescente, escolha o fundo municipal de Pindamonhangaba (SP) e informe o valor. O programa mostra o limite disponível.',
+          'Em “Doações Diretamente na Declaração”, na ficha Criança e Adolescente, escolha o fundo municipal de Pindamonhangaba (SP) e informe o valor. O programa mostra o limite disponível.',
       },
       {
-        titulo: 'Pague o DARF no prazo',
+        titulo: 'Pague o DARF até o prazo',
         texto:
           'Depois de transmitir, emita e pague o DARF da doação até o vencimento da declaração. Sem esse pagamento, a destinação não vale.',
       },
@@ -147,11 +147,11 @@ export const TEXTOS_PADRAO = {
     ],
     aviso:
       'São regras gerais. Antes de destinar, confirme prazos e limites com a Receita Federal ou com quem cuida da sua contabilidade.',
-    simuladorTitulo: 'Faça uma estimativa',
+    simuladorTitulo: 'Simular o valor da doação',
     simuladorTexto:
       'Digite o imposto devido para ver quanto pode ir ao Fundo pela declaração. O valor final é calculado pelo programa da Receita Federal.',
     simuladorPercentual: 3,
-    bancarioTitulo: 'Doação fora da declaração',
+    bancarioTitulo: 'Doar fora da declaração',
     bancarioAviso:
       'Os dados bancários do Fundo estão sendo conferidos e serão publicados nesta página. Não faça depósitos com base em mensagens, ligações ou dados que não estejam aqui ou em ato oficial.',
     fontes: [
@@ -161,32 +161,32 @@ export const TEXTOS_PADRAO = {
     ],
   },
   conselho: {
-    titulo: 'O que é o CMDCA',
+    titulo: 'Sobre o CMDCA',
     introducao:
-      'O Conselho Municipal dos Direitos da Criança e do Adolescente decide e fiscaliza a política para a infância em Pindamonhangaba. Metade das cadeiras é da Prefeitura, metade da sociedade civil.',
+      'O Conselho Municipal dos Direitos da Criança e do Adolescente (CMDCA) define as prioridades da política para a infância em Pindamonhangaba e acompanha sua execução. Metade dos conselheiros representa a Prefeitura e metade, a sociedade civil.',
     composicaoTitulo: 'Composição paritária',
     composicaoTexto:
       'Poder público e sociedade civil têm o mesmo número de conselheiros. O colegiado se reúne em sessões ordinárias e extraordinárias e decide por resolução, publicada na imprensa oficial.',
-    composicaoLinkRotulo: 'Ver a posse da gestão atual',
+    composicaoLinkRotulo: 'Ler a notícia da posse da gestão atual',
     composicaoLinkUrl: SOURCES.posse,
-    atribuicoesTitulo: 'O que o conselho faz',
+    atribuicoesTitulo: 'Atribuições do conselho',
     atribuicoes: [
       {
-        titulo: 'Define a política municipal',
+        titulo: 'Definir a política municipal',
         texto:
           'Delibera diretrizes e prioridades para o atendimento de crianças e adolescentes, com base nas conferências municipais (art. 88 do ECA).',
       },
       {
-        titulo: 'Decide sobre o Fundo Municipal',
+        titulo: 'Decidir sobre o Fundo Municipal',
         texto: 'Escolhe prioridades, aprova projetos e acompanha a aplicação dos recursos do FMDCA.',
       },
       {
-        titulo: 'Registra entidades e programas',
+        titulo: 'Registrar entidades e programas',
         texto:
           'Registra e fiscaliza organizações e programas de atendimento, conforme os arts. 90 e 91 do ECA.',
       },
       {
-        titulo: 'Conduz a escolha do Conselho Tutelar',
+        titulo: 'Conduzir a escolha do Conselho Tutelar',
         texto:
           'Organiza o processo de escolha dos conselheiros tutelares, sob fiscalização do Ministério Público (art. 139 do ECA).',
       },
@@ -197,43 +197,43 @@ export const TEXTOS_PADRAO = {
     ],
   },
   participe: {
-    titulo: 'Participe das decisões',
+    titulo: 'Participar do CMDCA',
     introducao:
-      'As reuniões do CMDCA são abertas, salvo quando a pauta exige sigilo. Veja como acompanhar, opinar e colaborar.',
+      'As reuniões do conselho são abertas ao público, exceto quando a pauta envolve informações protegidas. Veja como acompanhar, opinar e colaborar.',
     caminhos: [
       {
-        titulo: 'Assista a uma reunião',
+        titulo: 'Assistir a uma reunião',
         texto: 'Confira data, horário e local no calendário. A pauta sai antes de cada sessão.',
         href: '/reunioes',
       },
       {
-        titulo: 'Acompanhe as decisões',
+        titulo: 'Acompanhar as decisões',
         texto: 'Resoluções e editais mostram o que foi aprovado, com documento e publicação oficial.',
         href: '/resolucoes',
       },
       {
-        titulo: 'Registre sua entidade',
+        titulo: 'Registrar uma entidade',
         texto:
           'Organizações que atendem crianças e adolescentes precisam de registro no CMDCA. Veja quem já está registrado e fale com o conselho.',
         href: '/entidades',
       },
       {
-        titulo: 'Destine seu Imposto de Renda',
+        titulo: 'Destinar Imposto de Renda',
         texto: 'Parte do imposto que você já paga pode financiar projetos na cidade.',
         href: '/fmdca',
       },
       {
-        titulo: 'Vá a uma conferência',
+        titulo: 'Participar de uma conferência',
         texto: 'A cada edição, a cidade avalia a política da infância e vota prioridades.',
         href: '/conferencias',
       },
     ],
-    contatoTitulo: 'Fale com o conselho',
+    contatoTitulo: 'Falar com o conselho',
   },
   transparencia: {
     titulo: 'Transparência',
     introducao:
-      'O que o CMDCA decide e como o Fundo Municipal é aplicado, com documento, data e fonte.',
+      'Consulte as decisões do CMDCA e a aplicação dos recursos do Fundo Municipal, com documento, data e fonte.',
     documentosTitulo: 'Plano de aplicação e prestação de contas do Fundo',
     documentosTexto:
       'Planos de aplicação, receitas, projetos financiados e prestações de contas entram nesta página assim que forem oficializados.',
@@ -242,29 +242,29 @@ export const TEXTOS_PADRAO = {
   atos: {
     reunioesTitulo: 'Reuniões',
     reunioesIntro:
-      'Calendário, pautas e atas das reuniões do colegiado. As atas entram depois de aprovadas.',
+      'Consulte o calendário, as pautas e as atas das reuniões do conselho. As atas são publicadas depois de aprovadas.',
     reunioesComoAcompanhar:
       'Reuniões públicas podem ser acompanhadas por qualquer pessoa. Algumas sessões são reservadas quando a pauta envolve dados protegidos de crianças, adolescentes ou famílias. Se houver transmissão, o link aparece no registro da reunião.',
     resolucoesTitulo: 'Resoluções',
     resolucoesIntro:
-      'Decisões do colegiado com número, data e situação. Abra o documento ou, quando houver, a publicação oficial.',
+      'Consulte as decisões do conselho por número, data e situação, com o documento ou a publicação oficial.',
     editaisTitulo: 'Editais',
     editaisIntro:
-      'Chamamentos, processos de escolha e seleções, com prazo, situação, anexos e retificações.',
+      'Consulte chamamentos, seleções e processos de escolha, com prazos, situação, anexos e retificações.',
     entidadesTitulo: 'Entidades registradas',
     entidadesIntro:
-      'Organizações e programas com registro no CMDCA, com número e validade quando informados.',
-    entidadesOrientacaoTitulo: 'Registro ou renovação',
+      'Consulte as organizações e os programas registrados no CMDCA, com número e validade do registro quando informados.',
+    entidadesOrientacaoTitulo: 'Como registrar ou renovar',
     entidadesOrientacao:
       'Organizações que atendem crianças e adolescentes precisam de registro no CMDCA. Os requisitos dependem do programa e dos atos em vigor: antes de protocolar documentos, consulte editais e resoluções e fale com o conselho.',
   },
   publicacoes: {
     noticiasTitulo: 'Notícias',
     noticiasIntro:
-      'Comunicados, campanhas e o que acontece no conselho. Atos oficiais ficam em Resoluções e Editais.',
+      'Comunicados, campanhas e ações do conselho. Os atos oficiais estão em Resoluções e Editais.',
     conferenciasTitulo: 'Conferências e fóruns',
     conferenciasIntro:
-      'Encontros abertos em que a cidade avalia a política para a infância e vota prioridades.',
+      'Encontros abertos em que a cidade avalia a política para a infância e define prioridades.',
     conferenciasTexto:
       'A conferência municipal reúne poder público, entidades, famílias e adolescentes. As propostas aprovadas orientam o plano de ação do CMDCA e seguem para as etapas estadual e nacional. Convocações e regulamentos aparecem em Editais.',
     registroTitulo: 'Semana Municipal de 2025',
@@ -276,9 +276,9 @@ export const TEXTOS_PADRAO = {
   geral: {
     rodapeDescricao:
       'Órgão paritário que delibera e fiscaliza a política para crianças e adolescentes em Pindamonhangaba.',
-    naoEncontradaTitulo: 'Esta página não existe',
+    naoEncontradaTitulo: 'Página não encontrada',
     naoEncontradaTexto:
-      'O endereço pode ter mudado ou sido digitado errado. Escolha um dos caminhos abaixo.',
+      'O endereço pode estar errado ou a página foi removida. Use um dos caminhos abaixo para continuar.',
   },
 }
 
@@ -286,22 +286,22 @@ export type TextosPadrao = typeof TEXTOS_PADRAO
 
 export const PAGINA_INICIAL_PADRAO = {
   capa: {
-    titulo: 'Direitos de crianças e adolescentes, decididos em público.',
+    titulo: 'Proteção e direitos de crianças e adolescentes em Pindamonhangaba',
     texto:
-      'O CMDCA reúne Prefeitura e sociedade civil para cuidar da política da infância em Pindamonhangaba: define prioridades, aplica o Fundo Municipal e fiscaliza a rede de proteção.',
+      'O CMDCA define as prioridades da política para a infância, decide como usar o Fundo Municipal e acompanha os serviços de proteção da cidade.',
   },
   sobre: {
-    titulo: 'Quem decide e como',
+    titulo: 'Sobre o CMDCA',
     texto:
-      'O CMDCA é paritário: metade dos conselheiros representa a Prefeitura, metade a sociedade civil. As decisões saem de reuniões abertas e viram resoluções publicadas.',
+      'O conselho reúne representantes da Prefeitura e da sociedade civil em número igual. As decisões são tomadas em reuniões e publicadas como resoluções.',
   },
   rotas: {
-    protecaoTitulo: 'Proteger agora',
-    protecaoTexto: 'Emergência, denúncia e Conselho Tutelar, com telefones de um toque.',
-    fundoTitulo: 'Destinar seu IR',
-    fundoTexto: 'Parte do imposto que você já paga pode financiar projetos da cidade.',
-    atosTitulo: 'Acompanhar o conselho',
-    atosTexto: 'Reuniões, resoluções e editais, com data e documento.',
+    protecaoTitulo: 'Precisa de ajuda agora?',
+    protecaoTexto: 'Escolha o canal de acordo com a situação. Em caso de perigo imediato, ligue 190.',
+    fundoTitulo: 'Destinar Imposto de Renda',
+    fundoTexto: 'Direcione parte do imposto devido ao Fundo Municipal, sem pagar nada a mais.',
+    atosTitulo: 'Acompanhar reuniões',
+    atosTexto: 'Calendário, pautas e atas das reuniões do conselho.',
   },
 }
 

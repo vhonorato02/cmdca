@@ -1,4 +1,6 @@
+import { CalendarDays } from 'lucide-react'
 import Image from 'next/image'
+
 import { AppLink as Link } from '@/components/ui/AppLink'
 
 import { formatDateLong } from '@/lib/format'
@@ -16,8 +18,8 @@ export const CATEGORIA_LABEL: Record<string, string> = {
 }
 
 /**
- * Item de notícia editorial: categoria e data numa linha discreta, título em
- * serifa e resumo. A imagem só aparece quando há capa conferida no CMS.
+ * Cartão de notícia (padrão gov.br): capa quando houver imagem conferida no CMS,
+ * etiqueta da categoria, data, título e resumo. O cartão todo é clicável.
  */
 export function NewsCard({
   noticia,
@@ -51,12 +53,13 @@ export function NewsCard({
       ) : null}
       <div className="news-card__body">
         <p className="news-card__meta">
-          <span className="news-card__kind">{CATEGORIA_LABEL[noticia.categoria] || 'Notícia'}</span>
+          <span className="tag">{CATEGORIA_LABEL[noticia.categoria] || 'Notícia'}</span>
           {noticia.data ? (
-            <>
+            <span className="news-card__date">
+              <CalendarDays aria-hidden="true" />
               <span className="sr-only">, publicada em </span>
               <time dateTime={noticia.data}>{formatDateLong(noticia.data)}</time>
-            </>
+            </span>
           ) : null}
         </p>
         <Heading className="news-card__title">

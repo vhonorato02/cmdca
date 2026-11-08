@@ -1,352 +1,758 @@
 @layer pages {
-  /* ───────── Home: capa editorial com a cidade ───────── */
-  .home-hero {
-    background: var(--c-bg);
+  /* ───────── Home: capa ─────────
+     Foto da cidade numa moldura de cantos grandes. À esquerda, o título grande; à direita
+     (desktop), o painel de ajuda em vidro fosco sobre a própria foto. */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    margin: var(--s-3) clamp(0.5rem, 1.2vw, var(--s-4)) 0;
+    overflow: hidden;
+    border-radius: var(--r-xl);
+    background: var(--azul-noite);
+    color: #fff;
   }
 
-  .home-hero__inner {
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .hero__media img {
+    object-fit: cover;
+    object-position: 50% 62%;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(120% 90% at 0% 100%, rgb(10 28 63 / 96%) 0%, rgb(10 28 63 / 70%) 45%, transparent 80%),
+      linear-gradient(90deg, rgb(10 28 63 / 88%) 0%, rgb(10 28 63 / 55%) 50%, rgb(10 28 63 / 35%) 100%);
+  }
+
+  .hero__grid {
     display: grid;
-    gap: var(--s-6);
-    padding-block: clamp(var(--s-6), 5vw, var(--s-8)) clamp(var(--s-7), 6vw, var(--s-9));
+    gap: var(--s-7);
+    align-items: end;
+    padding-block: clamp(var(--s-7), 7vw, 7.5rem) clamp(var(--s-6), 5vw, var(--s-8));
   }
 
-  @media (min-width: 900px) {
-    .home-hero__inner {
-      grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+  @media (min-width: 1100px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr) 25rem;
       gap: var(--s-8);
-      align-items: end;
+      min-height: min(78vh, 46rem);
     }
   }
 
-  .home-hero h1 {
-    /* 15ch e mínimo de 34 px: "Pindamonhangaba", do título padrão, cabe inteiro em 320 px. */
-    max-width: 15ch;
-    font-size: clamp(2.125rem, 1.25rem + 4.6vw, 4.75rem);
-    font-weight: 500;
-    line-height: 1.02;
-    letter-spacing: -0.028em;
+  .hero__text {
+    align-self: center;
   }
 
-  .home-hero__lead {
+  /* Etiqueta de situação: o ponto pulsa (só para quem não pediu menos movimento). */
+  .hero__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 2.25rem;
+    padding: 0.35rem 0.9rem 0.35rem 0.7rem;
+    border: 1px solid rgb(255 255 255 / 24%);
+    border-radius: var(--r-pill);
+    background: rgb(255 255 255 / 10%);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  a.hero__status:hover {
+    background: rgb(255 255 255 / 18%);
+    color: #fff;
+  }
+
+  .hero__pulse {
+    position: relative;
+    width: 0.55rem;
+    height: 0.55rem;
+    flex: none;
+    border-radius: 50%;
+    background: var(--amarelo);
+  }
+
+  .hero h1 {
+    margin-top: var(--s-5);
+    max-width: 14ch;
+    color: #fff;
+    font-size: var(--fs-hero);
+    font-weight: 800;
+    font-stretch: 94%;
+    font-variation-settings: 'wdth' 94;
+    line-height: 0.98;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  .hero__lead {
     max-width: 46ch;
     margin-top: var(--s-5);
-    font-size: var(--fs-lg);
-    color: var(--c-text);
+    font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.3rem);
+    line-height: 1.55;
+    color: rgb(255 255 255 / 88%);
   }
 
-  .home-hero .actions {
+  .hero .actions {
     margin-top: var(--s-6);
   }
 
-  .home-hero__figure {
-    margin: 0;
+  .hero__credit {
+    position: absolute;
+    left: var(--s-5);
+    bottom: var(--s-2);
+    font-size: 0.75rem;
+    color: rgb(255 255 255 / 72%);
   }
 
-  .home-hero__image {
-    position: relative;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    border-radius: var(--r-sm);
-    background: var(--c-bg-soft);
-  }
-
-  @media (max-width: 899.98px) {
-    .home-hero__image {
-      aspect-ratio: 16 / 10;
+  @media (min-width: 1100px) {
+    .hero__credit {
+      left: auto;
+      right: var(--s-5);
     }
   }
 
-  .home-hero__image img {
-    object-fit: cover;
-    object-position: 50% 60%;
-  }
-
-  .home-hero__figure figcaption {
-    margin-top: var(--s-2);
-    font-size: var(--fs-xs);
-    color: var(--c-text-muted);
-  }
-
   /* Link sozinho na legenda: alvo de pelo menos 24 px de altura (WCAG 2.5.8). */
-  .home-hero__figure figcaption a {
+  .hero__credit a {
     display: inline-block;
     padding-block: 0.25rem;
     color: inherit;
   }
 
-  /* ───────── Home: painel de ajuda (o elemento mais forte da página) ───────── */
-  .help-panel {
-    background: var(--c-dark);
-    color: var(--c-on-dark);
-  }
-
-  .help-panel__inner {
+  /* ───────── Painel de ajuda em vidro fosco ───────── */
+  .help-glass {
     display: grid;
-    gap: var(--s-6);
-    padding-block: clamp(var(--s-7), 6vw, var(--s-9));
+    gap: var(--s-4);
+    padding: var(--s-5);
+    border: 1px solid rgb(255 255 255 / 20%);
+    border-radius: var(--r-lg);
+    background: rgb(10 28 63 / 58%);
+    backdrop-filter: blur(22px) saturate(1.3);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 60%);
+    margin-bottom: var(--s-5);
   }
 
-  @media (min-width: 900px) {
-    .help-panel__inner {
-      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-      gap: var(--s-8);
-      align-items: start;
-    }
+  html.contrast .help-glass {
+    background: #000;
+    border: 2px solid #fff;
+    backdrop-filter: none;
   }
 
-  .help-panel h2 {
-    color: var(--c-on-dark);
-    font-size: var(--fs-3xl);
+  .help-glass h2 {
+    color: #fff;
+    font-size: var(--fs-xl);
+    letter-spacing: -0.02em;
   }
 
-  .help-panel__intro p {
-    max-width: 38ch;
-    margin-top: var(--s-4);
-    color: var(--c-on-dark-muted);
+  .help-glass__intro {
+    margin-top: calc(-1 * var(--s-2));
+    font-size: var(--fs-xs);
+    color: rgb(255 255 255 / 80%);
   }
 
-  .help-panel__more {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.75rem;
-    color: var(--c-on-dark);
-    font-weight: 700;
-  }
-
-  .help-panel__more:hover {
-    color: var(--c-signal);
-  }
-
-  .help-panel__list {
+  .help-glass__list {
     display: grid;
+    gap: var(--s-2);
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid rgb(255 255 255 / 22%);
   }
 
-  .help-call {
-    border-bottom: 1px solid rgb(255 255 255 / 22%);
+  /* Tablet: o painel ocupa a largura, então os três canais ficam lado a lado. */
+  @media (min-width: 700px) and (max-width: 1099.98px) {
+    .help-glass__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
-  .help-call__link {
+  /* Ícone à esquerda; à direita, situação, número grande e quem atende. */
+  .help-line {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
-      'situation number'
-      'who number';
+      'icon situation'
+      'icon number'
+      'icon who';
     align-items: center;
-    gap: var(--s-1) var(--s-5);
-    min-height: 5.5rem;
-    padding: var(--s-4) var(--s-2);
-    color: var(--c-on-dark);
+    column-gap: var(--s-3);
+    min-height: 3.75rem;
+    padding: var(--s-3);
+    border-radius: var(--r-md);
+    background: rgb(255 255 255 / 8%);
+    color: #fff;
     text-decoration: none;
-    transition: background-color var(--t-fast) var(--ease);
+    transition: background-color var(--t-base) var(--ease), transform var(--t-base) var(--ease);
   }
 
-  .help-call__link:hover {
-    background: rgb(255 255 255 / 6%);
-    color: var(--c-on-dark);
+  .help-line:hover {
+    background: rgb(255 255 255 / 16%);
+    color: #fff;
   }
 
-  .help-call__situation {
+  .help-line__icon {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 12%);
+  }
+
+  .help-line__icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .help-line--emergencia .help-line__icon {
+    background: var(--urgencia);
+  }
+
+  .help-line__icon {
+    grid-area: icon;
+    align-self: start;
+  }
+
+  .help-line__text {
+    display: contents;
+  }
+
+  .help-line__situation {
     grid-area: situation;
-    font-size: var(--fs-lg);
-    font-weight: 700;
+    font-size: var(--fs-xs);
+    font-weight: 600;
     line-height: 1.3;
   }
 
-  .help-call__who {
+  .help-line__who {
     grid-area: who;
-    color: var(--c-on-dark-muted);
-    font-size: var(--fs-sm);
+    line-height: 1.3;
+    font-size: 0.8125rem;
+    color: rgb(255 255 255 / 70%);
   }
 
-  .help-call__number {
+  .help-line__number {
     grid-area: number;
-    justify-self: end;
-    color: var(--c-signal);
+    margin-block: 2px;
+    color: var(--amarelo);
     font-family: var(--font-display);
-    font-size: clamp(1.75rem, 1.1rem + 2.6vw, 3rem);
-    font-weight: var(--w-display);
-    line-height: 1;
+    font-size: 1.375rem;
+    font-weight: 800;
     letter-spacing: -0.02em;
     white-space: nowrap;
     font-variant-numeric: lining-nums tabular-nums;
   }
 
-  .help-call__link:hover .help-call__number {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 6px;
+  .help-glass__more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 2.75rem;
+    color: #fff;
+    font-size: var(--fs-xs);
+    font-weight: 600;
   }
 
-  .help-call--emergencia .help-call__situation::before {
-    content: '';
-    display: inline-block;
-    width: 0.6em;
-    height: 0.6em;
-    margin-right: 0.45em;
-    border-radius: 50%;
-    background: #ff6b5f;
-    vertical-align: 0.05em;
+  .help-glass__more:hover {
+    color: var(--amarelo);
   }
 
-  @media (max-width: 479.98px) {
-    .help-call__link {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-areas:
-        'situation'
-        'number'
-        'who';
-    }
-
-    .help-call__number {
-      justify-self: start;
-    }
+  .help-glass__more svg {
+    width: 1rem;
+    height: 1rem;
   }
 
-  html.contrast .help-panel {
-    background: #000;
-    border-block: 2px solid #fff;
-  }
-
-  /* ───────── Home: dois caminhos em texto, sem cartões ───────── */
-  .paths {
+  /* ───────── Home: bento de serviços ─────────
+     Dois blocos grandes com dado real (6% do IR, data da próxima reunião) e quatro tarefas. */
+  .bento {
     display: grid;
-    gap: var(--s-6);
+    gap: var(--s-3);
     list-style: none;
     margin: 0;
-    /* Embaixo, o respiro vem da seção seguinte (como em .section + .section). */
-    padding: clamp(var(--s-7), 6vw, var(--s-9)) 0 var(--s-4);
+    padding: 0;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  @media (min-width: 900px) {
-    .paths {
+  @media (min-width: 640px) {
+    .bento {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--s-8);
-    }
-
-    .path + .path {
-      padding-left: var(--s-8);
-      border-left: var(--border);
     }
   }
 
-  .path {
+  @media (min-width: 1100px) {
+    .bento {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--s-4);
+    }
+
+    .bento__item--ir,
+    .bento__item--meet {
+      grid-column: span 2;
+    }
+  }
+
+  .bento__item {
+    display: flex;
+  }
+
+  .tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    width: 100%;
+    min-height: 11rem;
+    padding: var(--s-5);
+    padding-right: var(--s-8);
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    background: var(--c-bg-alt);
+    color: var(--c-text);
+    text-decoration: none;
+    transition:
+      transform var(--t-base) var(--ease),
+      box-shadow var(--t-base) var(--ease),
+      background-color var(--t-base) var(--ease);
+  }
+
+  .tile:hover {
+    color: var(--c-text);
+    background: var(--azul-palido);
+    box-shadow: var(--ring);
+  }
+
+  .tile__icon {
     display: grid;
-    align-content: start;
-    gap: var(--s-3);
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: auto;
+    border-radius: 14px;
+    background: var(--c-bg);
+    color: var(--c-primary);
+    box-shadow: var(--ring);
   }
 
-  .path__title {
-    font-size: var(--fs-2xl);
+  .tile__icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
   }
 
-  .path__title a {
-    color: inherit;
-    text-decoration-color: color-mix(in srgb, currentColor 30%, transparent);
-    text-decoration-thickness: 0.05em;
-    text-underline-offset: 0.16em;
+  .tile__title {
+    margin-top: var(--s-5);
+    color: var(--c-heading);
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
   }
 
-  .path p {
-    max-width: 52ch;
+  .tile__text {
+    max-width: 44ch;
+    font-size: var(--fs-xs);
+    line-height: 1.5;
     color: var(--c-text-muted);
   }
 
-  .path .path__fact {
-    color: var(--c-text);
+  .tile__go {
+    position: absolute;
+    top: var(--s-5);
+    right: var(--s-5);
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--c-primary);
+    transition: transform var(--t-base) var(--ease);
   }
 
-  .path__fact strong {
-    color: var(--c-heading);
+  .tile:hover .tile__go {
+    transform: translate(3px, -3px);
+  }
+
+  /* Celular: as tarefas menores viram linhas compactas, com o ícone à esquerda. */
+  @media (max-width: 639.98px) {
+    .tile:not(.tile--signal, .tile--primary) {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: var(--s-4);
+      row-gap: var(--s-1);
+      min-height: 0;
+      padding: var(--s-4) var(--s-7) var(--s-4) var(--s-4);
+    }
+
+    .tile:not(.tile--signal, .tile--primary) .tile__icon {
+      grid-row: span 2;
+      margin: 0;
+    }
+
+    .tile:not(.tile--signal, .tile--primary) .tile__title {
+      margin-top: 0;
+      align-self: end;
+    }
+
+    .tile:not(.tile--signal, .tile--primary) .tile__go {
+      top: 50%;
+      right: var(--s-4);
+      transform: translateY(-50%);
+    }
+
+    .tile--signal,
+    .tile--primary {
+      min-height: 14rem;
+    }
+  }
+
+  /* Bloco amarelo (sinal do CMDCA): o percentual grande é o assunto. */
+  .tile--signal {
+    min-height: 17rem;
+    background: var(--amarelo);
+    color: var(--azul-noite);
+  }
+
+  .tile--signal:hover {
+    background: #fff27a;
+    color: var(--azul-noite);
+    box-shadow: none;
+  }
+
+  .tile--signal .tile__title,
+  .tile--signal .tile__go {
+    color: var(--azul-noite);
+  }
+
+  .tile--signal .tile__text {
+    color: rgb(10 28 63 / 82%);
+  }
+
+  /* Bloco azul: a data da próxima reunião. */
+  .tile--primary {
+    min-height: 17rem;
+    background:
+      radial-gradient(90% 120% at 100% 0%, var(--azul-medio) 0%, transparent 60%),
+      var(--azul);
+    color: #fff;
+  }
+
+  .tile--primary:hover {
+    background:
+      radial-gradient(90% 120% at 100% 0%, #3d82f0 0%, transparent 60%),
+      var(--azul);
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .tile--primary .tile__title,
+  .tile--primary .tile__go {
+    color: #fff;
+  }
+
+  .tile--primary .tile__text {
+    color: rgb(255 255 255 / 86%);
+  }
+
+  .tile__figure,
+  .tile__date b {
     font-family: var(--font-display);
-    font-size: 1.35em;
-    font-weight: var(--w-display-strong);
+    font-weight: 800;
+    font-variation-settings: 'wdth' 80;
+    font-stretch: 80%;
+    line-height: 0.85;
+    letter-spacing: -0.03em;
+    font-variant-numeric: lining-nums;
   }
 
-  /* Bloco "o conselho" */
-  .about {
+  .tile__figure {
+    margin-bottom: auto;
+    font-size: clamp(5rem, 3rem + 7vw, 8.5rem);
+  }
+
+  .tile__figure small {
+    margin-left: 0.06em;
+    font-size: 0.45em;
+    letter-spacing: 0;
+  }
+
+  .tile__date {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    margin-bottom: auto;
+    font-family: var(--font-display);
+    font-size: var(--fs-2xl);
+    font-weight: 700;
+  }
+
+  .tile__date b {
+    font-size: clamp(4.5rem, 3rem + 6vw, 7.5rem);
+  }
+
+  .tile__glyph {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: auto;
+    stroke-width: 1.5;
+  }
+
+  html.contrast .tile {
+    border: 2px solid #fff;
+    background: #000;
+    color: #fff;
+  }
+
+  /* ───────── Home: notícias com uma em destaque ───────── */
+  .news-feature {
     display: grid;
-    gap: var(--s-6);
+    gap: var(--s-4);
   }
 
-  @media (min-width: 900px) {
-    .about {
+  @media (min-width: 1000px) {
+    .news-feature {
       grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-      gap: var(--s-8);
       align-items: start;
     }
   }
 
-  .about__title {
-    font-size: var(--fs-3xl);
+  .news-feature__lead {
+    display: flex;
   }
 
-  .about p {
-    margin-top: var(--s-4);
-    max-width: var(--measure);
-  }
-
-  .highlights {
+  .news-feature__list {
     display: grid;
-    gap: var(--s-4);
+    gap: var(--s-3);
     list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
   }
 
-  @media (min-width: 900px) {
-    .highlights {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+  .news-feature__list .news-card__summary {
+    display: none;
+  }
+
+  .news-feature__list .news-card__body {
+    padding: var(--s-4) var(--s-5);
+  }
+
+  .news-feature .news-card--lead .news-card__title {
+    font-size: var(--fs-2xl);
+    letter-spacing: -0.025em;
+  }
+
+  .news-feature .news-card--lead:not(.news-card--media) {
+    min-height: 100%;
+    background:
+      radial-gradient(80% 90% at 100% 0%, var(--azul-claro) 0%, transparent 70%),
+      var(--c-bg);
+  }
+
+  .news-feature .news-card--lead:not(.news-card--media) .news-card__body {
+    padding: clamp(var(--s-5), 3vw, var(--s-7));
+    justify-content: flex-end;
+    min-height: 20rem;
+  }
+
+  /* ───────── Home: sobre o CMDCA, em seção escura com números ───────── */
+  .section--dark {
+    margin: 0 clamp(0.5rem, 1.2vw, var(--s-4));
+    border-radius: var(--r-xl);
+    background:
+      radial-gradient(70% 90% at 100% 0%, rgb(19 81 180 / 55%) 0%, transparent 65%),
+      var(--azul-noite);
+    color: #fff;
+  }
+
+  .section--dark + .section,
+  .section + .section--dark {
+    padding-top: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  html.contrast .section--dark {
+    background: #000;
+    border: 2px solid #fff;
+  }
+
+  .about {
+    display: grid;
+    gap: var(--s-7);
+    align-items: center;
+  }
+
+  @media (min-width: 1000px) {
+    .about {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--s-9);
     }
   }
 
-  .highlight {
-    position: relative;
+  .about__text {
     display: grid;
-    align-content: start;
+    justify-items: start;
+    gap: var(--s-5);
+  }
+
+  .about__title {
+    color: #fff;
+    font-size: var(--fs-4xl);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .about__lead {
+    font-size: var(--fs-lg);
+    line-height: 1.55;
+    color: rgb(255 255 255 / 86%);
+  }
+
+  .stats {
+    display: grid;
     gap: var(--s-3);
-    padding-top: var(--s-4);
-    border-top: 1px solid var(--c-border-strong);
+    margin: 0;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   }
 
-  .highlight:has(.card__title a:focus-visible) {
-    outline: 3px solid var(--c-focus-ring);
-    outline-offset: 6px;
-    box-shadow: 0 0 0 13px var(--c-focus-halo);
+  .stat {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    padding: var(--s-5);
+    border: 1px solid rgb(255 255 255 / 14%);
+    border-radius: var(--r-lg);
+    background: rgb(255 255 255 / 6%);
   }
 
-  .highlight:has(.card__title a:hover) .card__title {
-    text-decoration: underline;
-    text-decoration-thickness: 0.08em;
-    text-underline-offset: 0.15em;
+  .stat--wide {
+    grid-column: 1 / -1;
   }
 
-  .highlight .more-link {
-    min-height: auto;
-    color: var(--c-link);
-  }
-
-  .highlight__kicker {
-    color: var(--c-text-muted);
+  .stat dt {
     font-size: var(--fs-xs);
+    font-weight: 600;
+    color: rgb(255 255 255 / 70%);
+  }
+
+  .stat dd {
+    display: grid;
+    gap: var(--s-1);
+    margin: 0;
+    font-size: var(--fs-xs);
+    color: rgb(255 255 255 / 80%);
+  }
+
+  .stat dd > b {
+    color: var(--amarelo);
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 2rem + 3vw, 4.5rem);
+    font-weight: 800;
+    font-variation-settings: 'wdth' 80;
+    font-stretch: 80%;
+    line-height: 0.9;
+    letter-spacing: -0.025em;
+  }
+
+  .stat--wide dd {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--s-4);
+  }
+
+  .stat__person {
+    display: grid;
+    gap: 2px;
+  }
+
+  .stat__person b {
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
     font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  /* ───────── Home: destaques em trilho e depoimentos ───────── */
+  .highlights {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(min(84%, 19rem), 1fr);
+    gap: var(--s-4);
+    list-style: none;
+    margin: calc(-1 * var(--s-3));
+    padding: var(--s-3);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--s-3);
+    scrollbar-width: thin;
+  }
+
+  .highlights > li {
+    scroll-snap-align: start;
+  }
+
+  .highlight {
+    align-items: flex-start;
+  }
+
+  .highlight .card__title {
+    font-size: var(--fs-xl);
+    letter-spacing: -0.025em;
   }
 
   .quotes {
     display: grid;
-    gap: var(--s-6);
+    gap: var(--s-4);
     list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
   }
 
-  @media (min-width: 900px) {
-    .quotes {
-      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-    }
+  .quotes > li {
+    display: flex;
+  }
+
+  .quote {
+    width: 100%;
+    margin: 0;
+    padding: var(--s-6);
+  }
+
+  .quote__mark {
+    width: 2rem;
+    height: 2rem;
+    color: var(--azul-claro);
+    fill: var(--azul-claro);
+  }
+
+  .quote blockquote p {
+    color: var(--c-heading);
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+
+  .quote figcaption {
+    display: grid;
+    margin-top: auto;
+    padding-top: var(--s-4);
+    font-size: var(--fs-xs);
+    color: var(--c-text-muted);
+  }
+
+  .quote figcaption b {
+    font-size: var(--fs-sm);
+    color: var(--c-heading);
   }
 
   /* ───────── Buscar ajuda ───────── */

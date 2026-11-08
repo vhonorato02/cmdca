@@ -16,6 +16,8 @@ export default defineConfig({
     navigationTimeout: 30_000,
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
+    // Local: usa um Chrome já instalado (CHROME_PATH) em vez de baixar o do Playwright.
+    ...(process.env.CHROME_PATH ? { launchOptions: { executablePath: process.env.CHROME_PATH } } : {}),
   },
   projects: [
     {

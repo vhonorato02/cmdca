@@ -201,7 +201,7 @@ export const PAGINAS_PADRAO: PaginaPadrao[] = [
     titulo: 'Créditos',
     slug: 'creditos',
     resumo: 'Identidade visual, imagens, mapas, tipografia e tecnologias usadas neste portal.',
-    atualizadoEm: '2026-11-07T12:00:00.000Z',
+    atualizadoEm: '2026-11-08T12:00:00.000Z',
     contato: 'nenhum',
     blocos: [
       ['h2', 'Identidade visual'],
@@ -223,8 +223,10 @@ export const PAGINAS_PADRAO: PaginaPadrao[] = [
       ['h2', 'Tipografia'],
       [
         'p',
-        'Newsreader, da Production Type, nos títulos, e Atkinson Hyperlegible Next, do Braille Institute, no texto. As duas usam a [licença SIL Open Font](' + OFL + ') e são entregues pelo próprio portal.',
+        'Bricolage Grotesque, de Mathieu Triay, nos títulos, e Public Sans, do programa U.S. Web Design System, no texto. As duas usam a [licença SIL Open Font](' + OFL + ') e são entregues pelo próprio portal.',
       ],
+      ['h2', 'Ícones'],
+      ['p', 'Ícones da [Lucide](https://lucide.dev), sob a licença ISC.'],
       ['h2', 'Tecnologia'],
       [
         'p',

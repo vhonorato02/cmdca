@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Atkinson_Hyperlegible_Next, Newsreader } from 'next/font/google'
+import { Bricolage_Grotesque, Public_Sans } from 'next/font/google'
 import React from 'react'
 
 import { canaisDaFaixa, ProtectionBar, ProtectionDock } from '@/components/layout/Protection'
@@ -12,22 +12,22 @@ import { absoluteUrl, DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from '@/lib/s
 
 import './globals.css'
 
-// Títulos e numerais: serifa editorial com eixo óptico (desenho de texto em tamanhos
-// pequenos, de título nos grandes). Acentos do português conferidos.
-const newsreader = Newsreader({
+// Títulos: grotesca contemporânea com eixo óptico (desenho mais firme nos tamanhos
+// grandes) e largura variável. Texto: Public Sans, fonte cívica, neutra e legível.
+// Ambas com licença SIL OFL 1.1, servidas pelo próprio site.
+const display = Bricolage_Grotesque({
   subsets: ['latin'],
-  axes: ['opsz'],
-  style: ['normal'],
+  axes: ['opsz', 'wdth'],
   display: 'swap',
-  variable: '--font-newsreader',
-  fallback: ['Georgia', 'Times New Roman', 'serif'],
+  variable: '--font-bricolage',
+  fallback: ['Arial', 'sans-serif'],
 })
 
-// Texto e interface: desenhada para leitores com baixa visão.
-const atkinson = Atkinson_Hyperlegible_Next({
+const text = Public_Sans({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-atkinson',
+  variable: '--font-public-sans',
+  fallback: ['system-ui', 'Segoe UI', 'Arial', 'sans-serif'],
 })
 
 export const metadata: Metadata = {
@@ -89,7 +89,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   return (
     <html
       lang="pt-BR"
-      className={`${newsreader.variable} ${atkinson.variable}`}
+      className={`${display.variable} ${text.variable}`}
       suppressHydrationWarning
     >
       <head>

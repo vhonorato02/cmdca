@@ -1,46 +1,48 @@
-# Direção visual: "Caderno público" (07/11/2026)
+# Direção visual: "Serviço público 2026" (08/11/2026)
 
-Substitui a direção "Sinal amarelo" (26/10/2026; `CRITICA.md` e `REFERENCIAS.md` são daquela rodada). O motivo da troca foi a avaliação do Zé ("design tá feio que dói"): bloco amarelo saturado na capa, títulos condensados pesados, cartões com estilos diferentes, ícones sem critério, animações de entrada e nenhuma foto real.
+Substitui o "Caderno público" de 07/11 ([`DIRECAO-2026-11-07-caderno-publico.md`](DIRECAO-2026-11-07-caderno-publico.md)).
+Pedido do Zé: "a copy tá bem ruim; se inspire na linguagem do gov.br, UI/UX, posição das seções, animações, ícones"
+e "pode ser mais moderno e cidadão como o gov.br, mas sem esquecer que é 2026".
 
 ## Conceito
-O CMDCA decide em público: reuniões abertas, resoluções numeradas, Fundo com prestação de contas. O site lê como o **caderno de um órgão público bem editado**: serifa nos títulos, texto claro, réguas finas separando assuntos, a cidade de verdade na capa. O amarelo do logo continua, mas só como **sinal**: telefones de proteção, foco do teclado, o botão "Buscar ajuda" e a marca. Ele não preenche áreas.
+Clareza de serviço público (o que eu posso fazer aqui, em verbo no infinitivo, linguagem simples) com forma atual:
+capa e cabeçalhos em moldura arredondada afastada das bordas, raios que crescem com a hierarquia, sombras tingidas de
+azul com anel fino, grade bento nos serviços. Não é cópia do portal federal: a marca é do CMDCA (logo e amarelo).
 
-Frase-guia: "Diário oficial que dá vontade de ler".
-
-## Paleta (tokens em `src/app/(frontend)/styles/tokens.css`)
+## Paleta (`src/app/(frontend)/styles/tokens.css`)
 | Token | Hex | Uso |
 |---|---|---|
-| `--anil` | #231A5C | títulos, botões, links |
-| `--anil-900` | #1A1140 | faixa de proteção, painel "Proteger agora", rodapé |
-| `--anil-600` | #4A3D8F | hover, detalhes |
-| `--anil-100` / `--anil-50` | #DFE2EE / #EEF0F6 | superfícies de apoio (frias, sem o lilás anterior) |
-| `--nevoa` | #F3F5F9 | seção alternada |
-| `--amarelo` | #F6EC27 | sinal: números de proteção sobre anil, foco, "Buscar ajuda", marca |
-| `--grafite` / `--grafite-2` | #1F1D2B / #4F5163 | texto e texto secundário |
-| `--linha` / `--linha-forte` | #DCDFE8 / #767A90 | réguas e bordas de campos (não-texto ≥ 3:1) |
+| `--azul` | #1351B4 | ação principal, links, ícones (azul do padrão gov.br) |
+| `--azul-escuro` / `--azul-noite` | #0C326F / #0A1C3F | títulos, faixa de proteção, rodapé, véu da capa |
+| `--azul-claro` / `--azul-palido` | #DBE8FB / #EDF5FF | fundo dos ícones, cabeçalho das páginas, cartões do painel de ajuda |
+| `--cinza-fundo` | #F2F5FA | seção alternada (fria) |
+| `--amarelo` | #F6EC27 | sinal do CMDCA: telefones na faixa, "Pedir ajuda", "Buscar ajuda", marca |
 | `--urgencia` | #B42318 | 190 e alertas |
 
-Regras: o amarelo nunca é texto sobre branco. Fundo branco, sem creme. O alto contraste (`html.contrast`) troca só os papéis `--c-*`.
-
 ## Tipografia
-- **Newsreader** (Production Type, OFL, eixo óptico `opsz`) nos títulos e numerais, peso 560 (títulos) e 620 (numerais). O eixo óptico desenha letra de texto nos tamanhos pequenos e de título nos grandes.
-- **Atkinson Hyperlegible Next** (Braille Institute, OFL) no texto e na interface. Mantida por ser desenhada para baixa visão. O zero cortado é dela, de propósito (distingue 0 de O em telefones), e não tem alternativa sem corte.
-- Ambas por `next/font/google`, servidas pelo próprio site.
+**Bricolage Grotesque** (títulos e numerais; eixos `opsz` e `wdth`, peso 700–800, espaçamento negativo e
+`text-wrap: balance`) e **Public Sans** (texto e interface; fonte cívica, neutra, com acentuação completa). Ambas SIL
+OFL 1.1, por `next/font/google`, servidas pelo próprio site. A Rawline do gov.br foi testada e trocada na mesma rodada,
+para a marca não parecer cópia do portal federal. Algarismos alinhados nos telefones.
 
-## Capa (home)
-1. Título editorial grande ("Direitos de crianças e adolescentes, decididos em público.") com apresentação e dois botões; ao lado, **foto real da cidade** (telhados com a Serra da Mantiqueira, Facs90, CC BY-SA 4.0, crédito na legenda e em `/creditos`). Se o CMS tiver uma capa conferida, ela substitui a foto.
-2. **Proteger agora**: painel anil com os canais do CMS como linhas "situação → número", em vez de cartões.
-3. **Caminhos**: Destinar o IR e Acompanhar o conselho, como dois blocos tipográficos separados por régua.
-4. Destaques, Quem decide (presidência), Quem participa (citações) e Notícias (uma em destaque e três em lista), todos com régua no topo, sem cartão com sombra.
+## Forma
+`--r-sm` 10 px (campos), `--r-md` 18 px (cartões), `--r-lg` 24 px (painel de ajuda, cartões grandes), `--r-xl` 32 px (capa, cabeçalho interno), pílula
+nos botões. Ícones Lucide (ISC) de traço 1,75 em círculo azul-claro.
+
+## Home (ordem padrão, editável no painel)
+1. Capa inset com a foto da cidade e o véu azul-noite; título e duas ações (Pedir ajuda, Destinar Imposto de Renda).
+2. "Precisa de ajuda agora?" em vidro fosco sobre a própria foto (à direita no desktop): três canais discáveis, número
+   em amarelo, 190 com ícone vermelho.
+3. "O que você pode fazer aqui": bento com Imposto de Renda e Reuniões em destaque (cartões azuis) e quatro serviços.
+4. Destaques em trilho com rolagem horizontal (preenche a largura com poucos itens).
+5. Notícias, Sobre o CMDCA (com a diretoria), indicadores e depoimentos.
 
 ## Movimento
-Só o que tem função: menu, copiar, voltar ao topo, detalhes. Saíram as entradas em cascata, os cartões que "sobem" no hover e o contador animado. Com `prefers-reduced-motion`, tudo vai a 0.
+Uma abertura orquestrada na capa (texto sobe, foto se aproxima, painel de ajuda assenta); cartões surgem ao rolar
+(animação guiada pela rolagem, sem JavaScript; só deslocamento, sem mexer na opacidade, para o texto nunca perder contraste); resposta ao toque nos botões e nos cartões.
+Tudo desligado com `prefers-reduced-motion` e no alto contraste.
 
-## O que saiu
-- A **órbita** (elipse do logo usada como enfeite na capa, nos cabeçalhos internos e no 404) e o **pictograma** da capa.
-- O cartão de notícia com borda, carimbo de data gigante e pictograma por tema.
-- O bloco amarelo da capa, a faixa amarela grossa nos cabeçalhos internos e o item ativo do menu em bloco amarelo (agora sublinhado).
-- A Archivo condensada local.
-
-## Mantido
-Faixa de proteção no topo (no desktop cabe numa linha a partir de 1280 px), barra fixa de três botões no celular, "Sair rápido" na página de Ajuda, foco anil com halo amarelo, tamanho de letra, alto contraste e VLibras.
+## Redação
+Linguagem simples do gov.br: títulos de serviço com verbo no infinitivo ("Consultar resoluções", "Registrar uma
+entidade"), frases curtas, sem jargão ("colegiado" virou "conselho"). Textos do painel trocados por migração só onde
+ainda estavam iguais ao original.

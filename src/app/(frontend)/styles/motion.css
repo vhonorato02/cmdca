@@ -1,14 +1,13 @@
 /*
  * Camada "enhance": ícones dos controles e movimento.
  * Regras (2026-11):
- *  - um único momento de abertura (título e foto da capa da home);
- *  - o resto do movimento só responde a uma ação e mostra o que mudou;
- *  - nada de cartão que sobe, contador ou entrada ao rolar;
+ *  - abertura da capa (título, foto e painel de ajuda) e cartões que surgem ao rolar;
+ *  - cartões sobem de leve no hover (padrão gov.br), o resto responde a uma ação;
  *  - tudo some com prefers-reduced-motion e no alto contraste.
  */
 @layer enhance {
   :root {
-    --shadow-lift: 0 2px 4px rgb(35 26 92 / 6%), 0 18px 36px -18px rgb(35 26 92 / 40%);
+    --shadow-lift: var(--shadow-md);
   }
 
   /* ───────── Ícones nos controles ───────── */
@@ -145,28 +144,90 @@
     color: var(--amarelo);
   }
 
-  /* ───────── O único momento de abertura: a capa ───────── */
+  /* ───────── Abertura da capa ───────── */
   @media (prefers-reduced-motion: no-preference) {
     /* O título não fica transparente: é o maior elemento da primeira pintura (LCP). */
-    .home-hero h1 {
-      animation: settle 640ms var(--ease) both;
+    .hero__text > * {
+      animation: settle 700ms var(--ease) both;
     }
 
-    .home-hero__image img {
-      animation: reveal 900ms 120ms var(--ease) both;
+    .hero__text > :nth-child(2) {
+      animation-delay: 60ms;
+    }
+
+    .hero__text > :nth-child(3) {
+      animation-delay: 120ms;
+    }
+
+    .hero__text > :nth-child(4) {
+      animation-delay: 180ms;
+    }
+
+    /* A foto se aproxima devagar, uma vez. */
+    .hero__media img {
+      animation: drift 2400ms var(--ease) both;
+    }
+
+    .help-glass {
+      animation: settle 800ms 200ms var(--ease) both;
+    }
+
+    /* Ponto da etiqueta da capa: um anel que se expande, para indicar algo "ao vivo". */
+    .hero__pulse::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: inherit;
+      animation: pulse 2.4s var(--ease) infinite;
+    }
+
+    /* Navegação entre páginas com transição suave (View Transitions entre documentos). */
+    @view-transition {
+      navigation: auto;
+    }
+  }
+
+  @keyframes pulse {
+    from {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(3);
     }
   }
 
   @keyframes settle {
     from {
-      transform: translateY(20px);
+      transform: translateY(18px);
     }
   }
 
-  @keyframes reveal {
+  @keyframes drift {
     from {
-      opacity: 0;
-      transform: scale(1.03);
+      transform: scale(1.06);
+    }
+  }
+
+  /* ───────── Cartões que surgem ao rolar ─────────
+     Animação guiada pela rolagem (sem JavaScript). Onde o navegador não suporta,
+     o conteúdo aparece direto. Só desloca: a opacidade fica em 1 para o texto nunca
+     ficar sem contraste (captura de tela, impressão, lupa, quem lê a página parada). */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 55%;
+      }
+    }
+  }
+
+  @keyframes rise {
+    from {
+      transform: translateY(32px) scale(0.985);
     }
   }
 

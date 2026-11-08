@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
 import { ExternalIcon } from './icons'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'signal' | 'danger'
+export type ButtonVariant = 'primary' | 'secondary' | 'signal' | 'danger' | 'inverse'
 
 type CommonProps = {
   variant?: ButtonVariant

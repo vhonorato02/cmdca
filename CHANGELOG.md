@@ -4,6 +4,47 @@ As mudanças relevantes do projeto seguem o formato do [Keep a Changelog](https:
 
 ## [Não publicado]
 
+## [2.4.0] — 2026-11-08
+
+Redesign "Serviço público 2026": linguagem e usabilidade inspiradas no gov.br, com forma atual. Ver
+[`docs/design/DIRECAO.md`](docs/design/DIRECAO.md).
+
+### Alterado
+
+- Bricolage Grotesque (títulos, eixos óptico e de largura) e Public Sans (texto, fonte cívica) no lugar de Newsreader e
+  Atkinson, ambas OFL e servidas pelo próprio site;
+- paleta azul do padrão gov.br com o amarelo do CMDCA só como sinal; raios em escala (campo, cartão, painel) e sombras
+  tingidas de azul;
+- capa e cabeçalho das páginas internas em moldura arredondada; título maior;
+- painel "Precisa de ajuda agora?" em vidro fosco sobre a foto da capa, com ícone por situação e número em amarelo
+  (190 com ícone vermelho);
+- "O que você pode fazer aqui" em grade bento, com Imposto de Renda e Reuniões em destaque; os pedidos de ajuda ficam
+  só no painel logo acima, sem repetição;
+- destaques em trilho com rolagem horizontal; notícias em cartões com etiqueta e data com ícone;
+- ícones Lucide em serviços, canais, fatos, rodapé e ferramentas de acessibilidade; trilha com ícone de casa;
+- textos padrão reescritos em linguagem simples (verbos no infinitivo, sem jargão). Migrations
+  `20261107_220000_copy_govbr` (troca só o que ainda está igual ao original e reordena os blocos da página inicial
+  quando a ordem é a padrão) e `20261108_010012_textos_padrao_govbr` (valores padrão das colunas);
+- créditos citam as fontes novas e a Lucide (migration `20261108_020000_creditos_tipografia`, só se o texto ainda for o
+  de 07/11);
+- movimento: abertura da capa e cartões que surgem ao rolar, sem JavaScript, desligados com movimento reduzido e no
+  alto contraste.
+
+### Corrigido
+
+- faixa de telefones do topo de volta a uma linha a partir de 1280 px com a fonte nova;
+- depoimentos sem espaçamento interno (regra antiga de citação sobrescrevia a nova);
+- cartões que surgem ao rolar não mexem mais na opacidade: com opacidade parcial o texto ficava sem contraste antes de
+  entrar na tela (axe acusava 1,3:1 em captura, impressão e lupa); agora só deslizam;
+- selo "Vigente" com o verde do padrão gov.br tinha 4,0:1 sobre o fundo verde-claro; verde escurecido para `#13731F`
+  (5,3:1).
+
+### Testes
+
+- nova suíte `tests/e2e/visual-audit.spec.ts`: rotas públicas e a 404 em 320, 390, 768, 1280 e 1440 px sem rolagem
+  lateral, com um h1, imagens com alt e alvos de toque ≥ 24 px; JSON-LD da capa válido;
+- `playwright.config.ts` aceita `CHROME_PATH` para rodar localmente com o Chrome instalado.
+
 ## [2.3.1] — 2026-11-07
 
 Quarta rodada de auditoria (front, back, CMS, banco, design e dependências).

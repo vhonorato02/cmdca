@@ -106,12 +106,12 @@ export const PaginaInicial: GlobalConfig = {
         initCollapsed: true,
       },
       defaultValue: [
-        { tipo: 'slider', ativo: true },
-        { tipo: 'sobre', ativo: true },
         { tipo: 'atalhos', ativo: true },
+        { tipo: 'slider', ativo: true },
+        { tipo: 'noticias', ativo: true },
+        { tipo: 'sobre', ativo: true },
         { tipo: 'indicadores', ativo: true },
         { tipo: 'vozes', ativo: true },
-        { tipo: 'noticias', ativo: true },
       ],
       fields: [
         {
@@ -122,7 +122,7 @@ export const PaginaInicial: GlobalConfig = {
           options: [
             { label: 'Destaques', value: 'slider' },
             { label: 'O Conselho', value: 'sobre' },
-            { label: 'Três caminhos (sempre logo abaixo da capa)', value: 'atalhos' },
+            { label: 'Ajuda e serviços (o painel de ajuda fica sempre logo abaixo da capa)', value: 'atalhos' },
             { label: 'Indicadores (só aparece com dados publicados)', value: 'indicadores' },
             { label: 'Vozes', value: 'vozes' },
             { label: 'Notícias recentes', value: 'noticias' },

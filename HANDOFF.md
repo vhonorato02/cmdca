@@ -16,10 +16,9 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
   `docs/ARQUITETURA.md`), banco `cmdca` no Postgres 17 da plataforma, mídia em `/srv/sites/cmdca/data/media`.
 - Painel: contas de teste **apagadas**; as 3 contas reais (2 administradores, 1 editor) com senhas novas em
   `C:\Users\Ze\Backups\vps-zewithane\cms-acessos-2026-11-07.txt` (fora do repositório; apagar depois de anotar).
-- Versão no ar: **`b2f9a7b`** (2.4.0, redesign "Serviço público 2026"): Produção `42455365947` verde (qualidade,
-  imagem, deploy, fumaça); E2E de produção `42455929265` e Lighthouse: ver "Feito em 08/11". Confira com
-  `site versoes cmdca` e o cabeçalho `X-Release-Commit`. A tentativa anterior (`42fb103`) foi barrada na CI e não
-  chegou à produção (ver abaixo).
+- Versão no ar: **`e5ab604`** (2.4.0, redesign "Serviço público 2026"): Produção `42458848812`, E2E
+  `42459537382` e Lighthouse `42459850414` verdes (celular, mediana de 3: home 95, demais 96–98; acessibilidade, boas
+  práticas e SEO 100 em todas). Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
 
 ## Feito em 08/11 (2.4.0, redesign "Serviço público 2026")
 
@@ -36,7 +35,15 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
    alt, alvos ≥ 24 px; JSON-LD da capa). `playwright.config.ts` aceita `CHROME_PATH` para rodar com o Chrome local.
 5. Evidência local (build de produção sobre a cópia do banco): visual-audit + axe em 17 rotas nos perfis desktop e
    celular + login do CMS: 42/42 verdes; lint e tipos verdes. Na CI: 148 unitários e 136 E2E verdes.
-6. Observação: o unitário `rate-limit › continua rápido` estoura 2 s no notebook quando a CPU está a 100% (outras
+6. A cadeia de produção pegou o que o teste local não pegou, corrigido em `b2f9a7b`, `9bdeca5` e `e5ab604`: o
+   `@view-transition` travava o "Carregando…" do filtro de Reuniões (barrou o deploy de `42fb103`); a 320 px o título
+   da capa alargava a coluna e cortava título, botões e painel (o `overflow: hidden` escondia isso da checagem de
+   rolagem; a `visual-audit` agora procura conteúdo fora da tela); o e-mail do rodapé empurrava 2 px com a fonte
+   reserva do Linux; `hyphens: auto` hifenizava o título; home com 80 de desempenho (foto da capa sem
+   `fetchpriority`, fonte de títulos de 132 KB) foi a 95.
+7. Atenção: a home está no limite do gate de desempenho (95). Se cair, os próximos passos são AVIF só para a foto da
+   capa (pré-gerado em `public/`, sem encoder no container) e adiar a fonte de títulos.
+8. Observação: o unitário `rate-limit › continua rápido` estoura 2 s no notebook quando a CPU está a 100% (outras
    threads); passa na CI. Ao rodar local, use a porta 3107 se a 3100 estiver ocupada por outro projeto.
 
 ## Feito em 07/11 (terceira auditoria)

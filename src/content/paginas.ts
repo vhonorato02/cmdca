@@ -243,7 +243,7 @@ export const PAGINAS_PADRAO: PaginaPadrao[] = [
         [
           'Pela internet: no [protocolo eletrônico da Prefeitura (1Doc)](https://pindamonhangaba.1doc.com.br/atendimento), escolha a opção “Acesso à Informação” e informe que o pedido é sobre o CMDCA.',
           'Pessoalmente: no Serviço de Informação ao Cidadão, no Paço Municipal (Av. Nossa Senhora do Bom Sucesso, 1400, Alto do Cardoso), das 8h às 16h. Telefone (12) 3644-5600.',
-          'Mais orientações na [página de acesso à informação da Prefeitura](https://pindamonhangaba.sp.gov.br/servicos-ao-cidadao/acesso-a-informacao).',
+          'Orientações completas sobre o serviço, com os contatos atualizados, estão na [página de acesso à informação da Prefeitura](https://pindamonhangaba.sp.gov.br/servicos-ao-cidadao/acesso-a-informacao).',
         ],
       ],
       [

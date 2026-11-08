@@ -2,7 +2,7 @@ import { chromium } from '@playwright/test'
 import fs from 'node:fs/promises'
 
 const base = process.env.AUDIT_BASE_URL || 'http://localhost:3000'
-const routes = ['/', '/ajuda', '/conselho', '/reunioes', '/transparencia', '/noticias', '/participe', '/fmdca', '/editais', '/resolucoes', '/entidades', '/conferencias', '/privacidade', '/acessibilidade', '/creditos', '/mapa-do-site', '/pagina-inexistente-ci']
+const routes = ['/', '/ajuda', '/conselho', '/reunioes', '/transparencia', '/noticias', '/participe', '/fmdca', '/editais', '/resolucoes', '/entidades', '/conferencias', '/privacidade', '/termos', '/acesso-a-informacao', '/uso-de-imagem', '/acessibilidade', '/creditos', '/mapa-do-site', '/pesquisa', '/pagina-inexistente-ci']
 if (process.env.AUDIT_INCLUDE_ADMIN !== 'false') routes.push('/admin/login')
 if (process.env.AUDIT_NEWS === 'true') {
   const response = await fetch(new URL('/api/noticias?limit=100&depth=0', base))
@@ -46,8 +46,8 @@ try {
           smallTargets: [...document.querySelectorAll('a,button,input,select')].filter(shown).filter(e => {
             // Only the selectors the stylesheet renders inline, and only when the block has
             // running text outside links (not a list of links with a date or file type).
-            if (e.tagName === 'A' && getComputedStyle(e).display === 'inline' && e.matches('main p a, main .post-body li a')) {
-              const block = e.closest('p, li')
+            if (e.tagName === 'A' && getComputedStyle(e).display === 'inline' && e.matches('main p a, main .post-body li a, main .prose li a, main .state > div a')) {
+              const block = e.closest('p, li, .state > div')
               const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT)
               let prose = ''
               while (walker.nextNode()) if (!walker.currentNode.parentElement.closest('a')) prose += walker.currentNode.textContent

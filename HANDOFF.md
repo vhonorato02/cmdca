@@ -16,11 +16,10 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
   `docs/ARQUITETURA.md`), banco `cmdca` no Postgres 17 da plataforma, mídia em `/srv/sites/cmdca/data/media`.
 - Painel: contas de teste **apagadas**; as 3 contas reais (2 administradores, 1 editor) com senhas novas em
   `C:\Users\Ze\Backups\vps-zewithane\cms-acessos-2026-11-07.txt` (fora do repositório; apagar depois de anotar).
-- Versão no ar: imagem de **`337fe2b`** (código da 2.3.0, redesign "Caderno público", recompilada com a URL oficial):
-  Produção `42411586932`, E2E `42412835340` e Lighthouse `42413997121` verdes (capa 96; uma rodada anterior deu 87
-  com cache de imagem frio logo após o deploy). Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
-  O primeiro push do redesign (`c1cc66b`, run `42407697861`) parou na qualidade (estouro de 23 px em 320 px com o
-  título padrão do CI) e não publicou nada; a correção é o `6e63238`.
+- Versão no ar: **`321cc77`** (2.3.1, tag `v2.3.1`): Produção `42425496759`, E2E `42426566241` e Lighthouse
+  `42427100043` verdes (home 96/100/100/100). A primeira tentativa de E2E e Lighthouse falhou por sobrecarga da VPS
+  (load ~4,6 em 2 vCPUs, deploy de outro site no mesmo horário, clínica com 502); repetidos com a VPS ociosa, passaram.
+  Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
 
 ## Feito em 07/11 (terceira auditoria)
 
@@ -44,6 +43,16 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
    client OAuth próprio (`backup-vps-zewithane`, escopo `drive.file`), primeira cópia e restauração conferidas;
    `site saude` mostra "backup externo confirmado". Detalhes no `docs/RUNBOOK.md` do `vps-platform`.
 3. Bucket R2 `cmdca-media` excluído (3 arquivos conferidos na VPS antes; cópia extra em `Z:\Dev\sandbox\r2-cmdca-final`).
+
+## Feito em 07/11 (quarta rodada de auditoria, 2.3.1)
+
+1. Páginas internas no vocabulário da capa (régua no lugar de caixa, amarelo só como sinal, estados vazios sem
+   ícone, Ajuda com fundo branco, atribuições sem ícones); 11 ícones mortos removidos.
+2. Dependências: `zod` (alto) e `glob` corrigidos; `deepmerge` (baixo, sem versão corrigida no npm) e `minimatch`
+   (moderado, só eslint, exige versão principal nova) ficam registrados.
+3. Conferido sem mudança: APIs anônimas em produção (sem rascunho, lixeira, versões, usuários ou campos internos) e
+   banco (17 MB, todas as chaves estrangeiras com índice, migrações em dia).
+4. Evidência local: 160 combinações rota × largura sem estouro, axe sem violações, 148 unitários, lint e tipos.
 
 ## Pendências
 

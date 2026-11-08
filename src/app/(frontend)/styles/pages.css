@@ -95,7 +95,6 @@
     text-wrap: balance;
     /* Título do CMS com palavra ainda mais longa: quebra em vez de ser cortado. */
     overflow-wrap: break-word;
-    hyphens: auto;
   }
 
   .hero__lead {

@@ -462,6 +462,7 @@ export default async function HomePage() {
               fill
               preload
               fetchPriority="high"
+              quality={50}
               sizes="100vw"
             />
           )}

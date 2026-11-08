@@ -619,6 +619,7 @@
 
   .site-footer__top {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s-7);
     padding-block: var(--s-8) var(--s-7);
   }
@@ -695,6 +696,14 @@
     align-items: center;
     min-height: 2.75rem;
     min-width: 2.75rem;
+    max-width: 100%;
+  }
+
+  /* E-mail e endereço longos quebram em vez de empurrar a página a 320 px (antes de a
+     fonte carregar, a reserva é mais larga e o e-mail sozinho passava da tela). */
+  .site-footer__contact a,
+  .site-footer__contact dd {
+    overflow-wrap: anywhere;
   }
 
   .site-footer__links {

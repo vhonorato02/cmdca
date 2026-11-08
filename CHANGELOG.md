@@ -41,9 +41,11 @@ Redesign "Serviço público 2026": linguagem e usabilidade inspiradas no gov.br,
 - transição animada entre páginas (`@view-transition`) retirada: travava a troca do "Carregando…" pelo conteúdo
   depois de filtrar Reuniões;
 - capa a 320 px: "Pindamonhangaba" no tamanho mínimo do título alargava a coluna e cortava título, botões e painel de
-  ajuda; título com mínimo de 30 px e coluna travada na largura da tela;
+  ajuda; título com mínimo de 30 px e coluna travada na largura da tela; no rodapé, o e-mail longo (com a fonte reserva,
+  antes de a fonte carregar) empurrava a página 2 px: coluna travada e quebra em qualquer ponto;
 - desempenho da capa (Lighthouse celular 80, LCP 4,6 s): a foto da capa sai com `fetchpriority="high"` (`preload` no
-  lugar do `priority`, obsoleto no Next 16) e a fonte de títulos perdeu o eixo de largura (132 KB → 77 KB).
+  lugar do `priority`, obsoleto no Next 16) a fonte de títulos perdeu o eixo de largura (132 KB → 77 KB) e a foto padrão sai com qualidade 50 (fica sob o véu
+  escuro).
 
 ### Testes
 

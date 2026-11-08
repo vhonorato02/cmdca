@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
       { pathname: '/images/**' },
     ],
     remotePatterns: [],
+    // 50: foto da capa, coberta por um véu azul escuro (não perde nada visível).
+    qualities: [50, 75],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

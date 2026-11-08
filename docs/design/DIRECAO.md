@@ -20,7 +20,7 @@ azul com anel fino, grade bento nos serviços. Não é cópia do portal federal:
 | `--urgencia` | #B42318 | 190 e alertas |
 
 ## Tipografia
-**Bricolage Grotesque** (títulos e numerais; eixos `opsz` e `wdth`, peso 700–800, espaçamento negativo e
+**Bricolage Grotesque** (títulos e numerais; eixo óptico `opsz`, sem o de largura para o arquivo ficar leve; peso 700–800, espaçamento negativo e
 `text-wrap: balance`) e **Public Sans** (texto e interface; fonte cívica, neutra, com acentuação completa). Ambas SIL
 OFL 1.1, por `next/font/google`, servidas pelo próprio site. A Rawline do gov.br foi testada e trocada na mesma rodada,
 para a marca não parecer cópia do portal federal. Algarismos alinhados nos telefones.

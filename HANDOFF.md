@@ -1,6 +1,6 @@
 # HANDOFF · Portal CMDCA Pindamonhangaba
 
-Atualizado: **07/11/2026, BRT**. Fotografia verificável; revalide no git, no CI e na VPS antes de agir.
+Atualizado: **08/11/2026, BRT**. Fotografia verificável; revalide no git, no CI e na VPS antes de agir.
 Histórico: [`docs/historico/HANDOFF-2026-10-28.md`](docs/historico/HANDOFF-2026-10-28.md) e anteriores; a rodada de 06/11
 está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/RELATORIO-FINAL.md).
 
@@ -16,10 +16,28 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
   `docs/ARQUITETURA.md`), banco `cmdca` no Postgres 17 da plataforma, mídia em `/srv/sites/cmdca/data/media`.
 - Painel: contas de teste **apagadas**; as 3 contas reais (2 administradores, 1 editor) com senhas novas em
   `C:\Users\Ze\Backups\vps-zewithane\cms-acessos-2026-11-07.txt` (fora do repositório; apagar depois de anotar).
-- Versão no ar: **`321cc77`** (2.3.1, tag `v2.3.1`): Produção `42425496759`, E2E `42426566241` e Lighthouse
-  `42427100043` verdes (home 96/100/100/100). A primeira tentativa de E2E e Lighthouse falhou por sobrecarga da VPS
-  (load ~4,6 em 2 vCPUs, deploy de outro site no mesmo horário, clínica com 502); repetidos com a VPS ociosa, passaram.
-  Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
+- Versão no ar: **`b2f9a7b`** (2.4.0, redesign "Serviço público 2026"): Produção `42455365947` verde (qualidade,
+  imagem, deploy, fumaça); E2E de produção `42455929265` e Lighthouse: ver "Feito em 08/11". Confira com
+  `site versoes cmdca` e o cabeçalho `X-Release-Commit`. A tentativa anterior (`42fb103`) foi barrada na CI e não
+  chegou à produção (ver abaixo).
+
+## Feito em 08/11 (2.4.0, redesign "Serviço público 2026")
+
+1. Direção em [`docs/design/DIRECAO.md`](docs/design/DIRECAO.md): linguagem simples do gov.br (verbos no infinitivo),
+   capa com foto e painel "Precisa de ajuda agora?" em vidro, bento de serviços, ícones Lucide, Bricolage Grotesque +
+   Public Sans. A thread anterior chegou a usar a Rawline do gov.br e trocou de fonte; docs, créditos e a migration
+   (renomeada para `20261108_020000_creditos_tipografia`) foram alinhados com o que está no código.
+2. Migrations de conteúdo (`copy_govbr`, `textos_padrao_govbr`, `creditos_tipografia`) testadas antes numa cópia do
+   banco de produção (dump de 07/11) e aplicadas em produção no deploy; só trocam texto ainda igual ao original.
+3. Auditoria: cartões que surgem ao rolar não mexem mais na opacidade (axe acusava contraste de 1,3:1 antes de
+   entrarem na tela); verde "Vigente" escurecido (`#13731F`, 5,3:1); `@view-transition` entre páginas retirado
+   (travava o "Carregando…" do filtro de Reuniões na CI, embora o servidor mandasse a página completa).
+4. Nova suíte `tests/e2e/visual-audit.spec.ts` (12 rotas × 320/390/768/1280/1440 px: sem rolagem lateral, h1 único,
+   alt, alvos ≥ 24 px; JSON-LD da capa). `playwright.config.ts` aceita `CHROME_PATH` para rodar com o Chrome local.
+5. Evidência local (build de produção sobre a cópia do banco): visual-audit + axe em 17 rotas nos perfis desktop e
+   celular + login do CMS: 42/42 verdes; lint e tipos verdes. Na CI: 148 unitários e 136 E2E verdes.
+6. Observação: o unitário `rate-limit › continua rápido` estoura 2 s no notebook quando a CPU está a 100% (outras
+   threads); passa na CI. Ao rodar local, use a porta 3107 se a 3100 estiver ocupada por outro projeto.
 
 ## Feito em 07/11 (terceira auditoria)
 

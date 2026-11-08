@@ -257,7 +257,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                     src={mediaSrc}
                     alt={publicText(capa?.alt) || ''}
                     fill
-                    priority
+                    preload
+                    fetchPriority="high"
                     unoptimized={isEnabled || mediaSrc.startsWith('/api/media/file/')}
                     sizes="(max-width: 1200px) 100vw, 1100px"
                   />

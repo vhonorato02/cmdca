@@ -50,7 +50,17 @@ test.describe('auditoria visual', () => {
               return box.width < 24 || box.height < 24
             })
             .map((el) => (el.getAttribute('aria-label') || el.textContent || el.tagName).trim().slice(0, 40))
+          // Conteúdo cortado por overflow: hidden não gera rolagem, mas some da tela:
+          // títulos, botões e links precisam caber na largura (trilhos com rolagem são exceção).
+          const clipped = [...document.querySelectorAll<HTMLElement>('main :is(h1, h2, h3, a, button)')]
+            .filter((el) => {
+              if (el.closest('.highlights, [data-scroll-rail], .sr-only, .skip-link')) return false
+              const box = el.getBoundingClientRect()
+              return box.width > 0 && (box.right > doc.clientWidth + 1 || box.left < -1)
+            })
+            .map((el) => `${el.tagName} ${(el.textContent || '').trim().slice(0, 30)}`)
           return {
+            clipped: [...new Set(clipped)].slice(0, 5),
             overflow: doc.scrollWidth - doc.clientWidth,
             h1: document.querySelectorAll('h1').length,
             imgNoAlt: [...document.querySelectorAll('img')].filter((img) => !img.hasAttribute('alt')).length,
@@ -58,6 +68,7 @@ test.describe('auditoria visual', () => {
           }
         })
         expect.soft(m.overflow, `${route} @${width}: rolagem lateral`).toBeLessThanOrEqual(1)
+        expect.soft(m.clipped, `${route} @${width}: conteúdo fora da tela`).toEqual([])
         expect.soft(m.h1, `${route} @${width}: quantidade de h1`).toBe(1)
         expect.soft(m.imgNoAlt, `${route} @${width}: imagens sem alt`).toBe(0)
         expect.soft(m.small, `${route} @${width}: alvos < 24 px`).toEqual([])

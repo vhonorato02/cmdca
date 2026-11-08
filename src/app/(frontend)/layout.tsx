@@ -13,11 +13,11 @@ import { absoluteUrl, DEFAULT_DESCRIPTION, getSiteUrl, SITE_NAME } from '@/lib/s
 import './globals.css'
 
 // Títulos: grotesca contemporânea com eixo óptico (desenho mais firme nos tamanhos
-// grandes) e largura variável. Texto: Public Sans, fonte cívica, neutra e legível.
+// grandes; sem o eixo de largura: 77 KB em vez de 132 KB). Texto: Public Sans, fonte cívica, neutra e legível.
 // Ambas com licença SIL OFL 1.1, servidas pelo próprio site.
 const display = Bricolage_Grotesque({
   subsets: ['latin'],
-  axes: ['opsz', 'wdth'],
+  axes: ['opsz'],
   display: 'swap',
   variable: '--font-bricolage',
   fallback: ['Arial', 'sans-serif'],

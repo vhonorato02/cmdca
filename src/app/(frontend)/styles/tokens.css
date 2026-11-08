@@ -78,7 +78,8 @@
     --fs-2xl: clamp(1.6rem, 1.35rem + 1vw, 2rem);
     --fs-3xl: clamp(2rem, 1.4rem + 2.4vw, 3rem);
     --fs-4xl: clamp(2.4rem, 1.4rem + 4vw, 4.25rem);
-    --fs-hero: clamp(2.5rem, 0.9rem + 4.6vw, 4.75rem);
+    /* "Pindamonhangaba" (a palavra mais longa da capa) precisa caber em 320 px. */
+    --fs-hero: clamp(1.875rem, 0.6rem + 6.4vw, 4.75rem);
     --lh-text: 1.6;
     --lh-tight: 1.2;
     --measure: 70ch;

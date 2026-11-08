@@ -12,7 +12,7 @@ export default function AdminLogo() {
       alt="CMDCA Pindamonhangaba"
       width={260}
       height={62}
-      priority
+      preload
       style={{ height: 'auto', width: 'auto', maxWidth: 260 }}
     />
   )

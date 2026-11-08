@@ -450,12 +450,20 @@ export default async function HomePage() {
               src={coverURL}
               alt={coverAlt || ''}
               fill
-              priority
+              preload
+              fetchPriority="high"
               unoptimized={coverURL.startsWith('/api/media/file/')}
               sizes="100vw"
             />
           ) : (
-            <Image src={FOTO_CIDADE.src} alt={FOTO_CIDADE.alt} fill priority sizes="100vw" />
+            <Image
+              src={FOTO_CIDADE.src}
+              alt={FOTO_CIDADE.alt}
+              fill
+              preload
+              fetchPriority="high"
+              sizes="100vw"
+            />
           )}
         </div>
         <div className="wrap hero__grid">

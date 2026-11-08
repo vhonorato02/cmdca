@@ -11,7 +11,7 @@ Redesign "Serviço público 2026": linguagem e usabilidade inspiradas no gov.br,
 
 ### Alterado
 
-- Bricolage Grotesque (títulos, eixos óptico e de largura) e Public Sans (texto, fonte cívica) no lugar de Newsreader e
+- Bricolage Grotesque (títulos, eixo óptico) e Public Sans (texto, fonte cívica) no lugar de Newsreader e
   Atkinson, ambas OFL e servidas pelo próprio site;
 - paleta azul do padrão gov.br com o amarelo do CMDCA só como sinal; raios em escala (campo, cartão, painel) e sombras
   tingidas de azul;
@@ -39,7 +39,11 @@ Redesign "Serviço público 2026": linguagem e usabilidade inspiradas no gov.br,
 - selo "Vigente" com o verde do padrão gov.br tinha 4,0:1 sobre o fundo verde-claro; verde escurecido para `#13731F`
   (5,3:1);
 - transição animada entre páginas (`@view-transition`) retirada: travava a troca do "Carregando…" pelo conteúdo
-  depois de filtrar Reuniões.
+  depois de filtrar Reuniões;
+- capa a 320 px: "Pindamonhangaba" no tamanho mínimo do título alargava a coluna e cortava título, botões e painel de
+  ajuda; título com mínimo de 30 px e coluna travada na largura da tela;
+- desempenho da capa (Lighthouse celular 80, LCP 4,6 s): a foto da capa sai com `fetchpriority="high"` (`preload` no
+  lugar do `priority`, obsoleto no Next 16) e a fonte de títulos perdeu o eixo de largura (132 KB → 77 KB).
 
 ### Testes
 

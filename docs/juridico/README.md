@@ -13,7 +13,7 @@ no conteúdo, como provar e o que ainda depende do conselho ou da Prefeitura.
 | --- | --- | --- |
 | Controlador dos dados | Município de Pindamonhangaba (CNPJ 45.226.214/0001-19), por meio do CMDCA | LGPD, art. 5º, VI; Lei Municipal nº 2.626/1991 |
 | Encarregado (DPO) | Encarregado de dados do Município, publicado pela Prefeitura ([página oficial](https://pindamonhangaba.sp.gov.br/lei-geral-de-protecao-de-dados-lei-federal-n-137092018), conferida em 08/11/2026) | LGPD, art. 41; Resolução CD/ANPD nº 18/2024 |
-| Operador da infraestrutura | Responsável técnico do portal (VPS `zehonorato`, no Brasil) | LGPD, art. 5º, VII, e art. 39 |
+| Operador da infraestrutura | Responsável técnico do portal (VPS `zewithane`, no Brasil) | LGPD, art. 5º, VII, e art. 39 |
 | Quem publica | Contas do painel (administrador, editor, jurídico), cada ação registrada | LGPD, art. 37; ECA |
 | Serviço de Informação ao Cidadão | SIC da Prefeitura (Decreto Municipal nº 5.099/2014) | LAI, art. 9º |
 

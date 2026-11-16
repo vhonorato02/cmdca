@@ -76,6 +76,6 @@ Causas do "antes": imagem de capa grande, VLibras e tiles do mapa carregados sem
   - UFW ativo, mas a porta 22 escutando.
 - **Deploy:** imagem `:latest` no GHCR com auto-deploy por polling.
 - **Ação tomada:**
-  - backup completo, com SHA conferido, em `C:\Users\Ze\Backups\vps-zehonorato\`;
+  - backup completo, com SHA conferido, em `C:\Users\Ze\Backups\vps-zewithane\`;
   - dados do quarau em `Desktop\quarau-backup-2026-10-26`;
   - reconstrução pelo repo `vhonorato02/vps-platform`, ver o README de lá.

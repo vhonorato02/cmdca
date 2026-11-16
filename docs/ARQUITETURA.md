@@ -18,7 +18,7 @@ Navegador ──HTTPS/HTTP3──► Caddy (borda da VPS, Let's Encrypt)
 
 | Camada | Onde roda | Observação |
 | --- | --- | --- |
-| Site público + painel `/admin` | Container na VPS `zehonorato` (plataforma `vps-platform` 1.0) | Imagem `ghcr.io/vhonorato02/cmdca:<sha>`, limite de 512 MB, raiz gravável (`--rw`, ver abaixo) |
+| Site público + painel `/admin` | Container na VPS `zewithane` (plataforma `vps-platform` 1.0) | Imagem `ghcr.io/vhonorato02/cmdca:<sha>`, limite de 512 MB, raiz gravável (`--rw`, ver abaixo) |
 | Banco | Postgres 17 da plataforma | `DATABASE_URL` injetada pela plataforma; migrations rodam no start (`prodMigrations`) |
 | Mídia | Disco da VPS | Servida por `/api/media/file/<arquivo>` com a regra de acesso do Payload |
 | HTTPS, redirecionamentos 301 | Caddy da plataforma | `www.cmdcapinda.org` canônico; raiz, `pt.` e o domínio temporário redirecionam |

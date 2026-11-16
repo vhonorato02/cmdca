@@ -132,7 +132,7 @@ Terceira auditoria e redesign. O site saiu do domínio oficial e ficou só no te
 
 ### Operação
 
-- site só em `https://cmdca.zehonorato.vps.brz.dev.br`, com `noindex` global e `robots.txt` fechado; `www.cmdcapinda.org` e `cmdcapinda.org` mostram "Em preparação" (503, noindex);
+- site só em `https://cmdca.zewithane.vps.brz.dev.br`, com `noindex` global e `robots.txt` fechado; `www.cmdcapinda.org` e `cmdcapinda.org` mostram "Em preparação" (503, noindex);
 - contas de teste do painel apagadas; as três contas reais com senhas novas (arquivo fora do repositório).
 
 ## [2.2.0] — 2026-11-06

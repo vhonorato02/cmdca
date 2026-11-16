@@ -1,8 +1,8 @@
 > Atualizado em 06/11/2026: VPS reinstalada com a plataforma `vps-platform` 1.0 (Caddy com rotas geradas pelo CLI, sem Dockge). O CMDCA voltou com os mesmos dados. Portal responsivo **sem PWA**; runtime só na VPS (sem Vercel, Neon ou R2). Backup e recuperação: [`docs/OPERACOES.md`](docs/OPERACOES.md).
 
-# Deploy do CMDCA (VPS zewithane, plataforma `vps-platform`)
+# Deploy do CMDCA (VPS zehonorato, plataforma `vps-platform`)
 
-Produção: **https://www.cmdcapinda.org** (DNS no Wix; o endereço antigo `cmdca.zewithane.vps.brz.dev.br` redireciona com 301).
+Produção: **https://www.cmdcapinda.org** (DNS no Wix; o endereço antigo `cmdca.zehonorato.vps.brz.dev.br` redireciona com 301).
 A infraestrutura é a plataforma multi-site do repositório privado `vhonorato02/vps-platform`:
 
 - Caddy com HTTPS automático e rota gerada pelo CLI `site` (`/srv/platform/caddy/sites/cmdca.caddy`);
@@ -23,7 +23,7 @@ Workflow `Producao (VPS)` (`.github/workflows/deploy.yml`). Mudanças só em `*.
    - E2E Playwright no container, incluindo o CMS autenticado e os downloads de mídia;
    - auditorias de acessibilidade e layout.
 2. **Imagem:** o build roda contra um banco vazio e migrado, então nenhum conteúdo de teste vai embutido. A imagem é publicada como `ghcr.io/vhonorato02/cmdca:<sha>`.
-3. **Deploy:** `ssh -p 22322 deploy@ssh.zewithane.vps.brz.dev.br "deploy <sha>"`.
+3. **Deploy:** `ssh -p 22322 deploy@ssh.zehonorato.vps.brz.dev.br "deploy <sha>"`.
    - A chave só executa esse comando (forced command), e só para o `cmdca`.
    - O `GITHUB_TOKEN` do job vai pelo stdin e serve só para baixar a imagem. Nenhum token fica no servidor.
    - O servidor sobe a versão nova ao lado da atual e espera `/api/health`. Só então desliga a antiga, sem downtime.
@@ -36,14 +36,14 @@ Configuração no GitHub (ambiente `production`):
 | Tipo | Nome | Valor |
 | --- | --- | --- |
 | Variable | `CMDCA_PUBLIC_URL` | `https://www.cmdcapinda.org` |
-| Variable | `DEPLOY_HOST` | `ssh.zewithane.vps.brz.dev.br` |
+| Variable | `DEPLOY_HOST` | `ssh.zehonorato.vps.brz.dev.br` |
 | Variable | `DEPLOY_PORT` | `22322` |
 | Secret (ambiente) | `DEPLOY_SSH_KEY` | gerado por `site chave-deploy cmdca` na VPS (renovado em 06/11/2026) |
 | Secret (ambiente) | `DEPLOY_KNOWN_HOSTS` | idem |
 
 ## Variáveis do app na VPS
 
-Para editar: monte o arquivo no notebook e rode `cat app.env | ssh zewithane-vps 'site config cmdca --stdin'` (vale no próximo deploy).
+Para editar: monte o arquivo no notebook e rode `cat app.env | ssh zehonorato-vps 'site config cmdca --stdin'` (vale no próximo deploy).
 `DATABASE_URL`, `PORT` e `HOSTNAME` são injetados pela plataforma.
 
 ```
@@ -92,12 +92,12 @@ coluna e só a seguinte a remove.
 
 ## Domínios
 
-`www.cmdcapinda.org` é o canônico (ADR 0007); `cmdcapinda.org`, `pt.cmdcapinda.org` e `cmdca.zewithane.vps.brz.dev.br`
+`www.cmdcapinda.org` é o canônico (ADR 0007); `cmdcapinda.org`, `pt.cmdcapinda.org` e `cmdca.zehonorato.vps.brz.dev.br`
 respondem 301 para ele, preservando caminho e query. DNS no Wix: `www` e `pt` em CNAME para
-`cmdca.zewithane.vps.brz.dev.br`, `@` em A para o IP da VPS (177.107.94.31 em 06/11/2026). Comando aplicado na VPS:
+`cmdca.zehonorato.vps.brz.dev.br`, `@` em A para o IP da VPS (177.107.94.31 em 06/11/2026). Comando aplicado na VPS:
 
 ```bash
-site dominio cmdca www.cmdcapinda.org,cmdcapinda.org,pt.cmdcapinda.org,cmdca.zewithane.vps.brz.dev.br   --redirecionar cmdcapinda.org,pt.cmdcapinda.org,cmdca.zewithane.vps.brz.dev.br --para www.cmdcapinda.org
+site dominio cmdca www.cmdcapinda.org,cmdcapinda.org,pt.cmdcapinda.org,cmdca.zehonorato.vps.brz.dev.br   --redirecionar cmdcapinda.org,pt.cmdcapinda.org,cmdca.zehonorato.vps.brz.dev.br --para www.cmdcapinda.org
 ```
 
 O histórico da troca de domínio (27/10) está em `docs/historico/HANDOFF-2026-10-28.md`.

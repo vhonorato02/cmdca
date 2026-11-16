@@ -1,6 +1,6 @@
 # Lighthouse mobile em produção (26/10/2026)
 
-Medido no site publicado (`https://cmdca.zewithane.vps.brz.dev.br`, commit `e48a7e6`)
+Medido no site publicado (`https://cmdca.zehonorato.vps.brz.dev.br`, commit `e48a7e6`)
 pelo workflow `Lighthouse (producao)`, run
 [40377222536](https://github.com/vhonorato02/cmdca/actions/runs/40377222536), em
 hardware padrão do GitHub (benchmark de CPU ~3000). Lighthouse 12.8.2, perfil mobile

@@ -4,7 +4,7 @@ Portal do CMDCA de Pindamonhangaba. Situação em **08/11/2026**, conferida no c
 do Município para inclusão no inventário municipal.
 
 Controlador: Município de Pindamonhangaba, por meio do CMDCA. Operador da infraestrutura: responsável técnico do
-portal. Servidor: VPS no Brasil (`zewithane`, Ubuntu 24.04, Docker), banco PostgreSQL 17 e arquivos de mídia no
+portal. Servidor: VPS no Brasil (`zehonorato`, Ubuntu 24.04, Docker), banco PostgreSQL 17 e arquivos de mídia no
 mesmo servidor.
 
 ## Operações

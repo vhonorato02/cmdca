@@ -7,15 +7,15 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
 ## Estado em produção
 
 - **De volta ao domínio oficial (07/11, ~17:30, a pedido do Zé).** Canônico **https://www.cmdcapinda.org** (painel em
-  `/admin`); `cmdcapinda.org`, `pt.cmdcapinda.org` e `cmdca.zewithane.vps.brz.dev.br` redirecionam com 301 para o `www`.
+  `/admin`); `cmdcapinda.org`, `pt.cmdcapinda.org` e `cmdca.zehonorato.vps.brz.dev.br` redirecionam com 301 para o `www`.
   Indexação liberada: `SITE_INDEXABLE=true` e `CMDCA_PUBLIC_URL=https://www.cmdcapinda.org` nas variáveis do
   repositório **e** do ambiente `Production` do GitHub (o ambiente sobrepõe o repositório) e no `app.env` da VPS.
   O site estático `cmdca-oficial` (página "Em preparação") foi removido; cópia em
   `/srv/backups/removidos/cmdca-oficial-20261107-173219`.
-- VPS `zewithane`, plataforma `vps-platform` 1.0. Site `cmdca`: 512 MB, raiz gravável (`--rw`, motivo em
+- VPS `zehonorato`, plataforma `vps-platform` 1.0. Site `cmdca`: 512 MB, raiz gravável (`--rw`, motivo em
   `docs/ARQUITETURA.md`), banco `cmdca` no Postgres 17 da plataforma, mídia em `/srv/sites/cmdca/data/media`.
 - Painel: contas de teste **apagadas**; as 3 contas reais (2 administradores, 1 editor) com senhas novas em
-  `C:\Users\Ze\Backups\vps-zewithane\cms-acessos-2026-11-07.txt` (fora do repositório; apagar depois de anotar).
+  `C:\Users\Ze\Backups\vps-zehonorato\cms-acessos-2026-11-07.txt` (fora do repositório; apagar depois de anotar).
 - Versão no ar: **`e5ab604`** (2.4.0, redesign "Serviço público 2026"): Produção `42458848812`, E2E
   `42459537382` e Lighthouse `42459850414` verdes (celular, mediana de 3: home 95, demais 96–98; acessibilidade, boas
   práticas e SEO 100 em todas). Confira com `site versoes cmdca` e o cabeçalho `X-Release-Commit`.
@@ -65,7 +65,7 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
 
 1. Domínio oficial de volta, indexável (ver "Estado em produção").
 2. **Backup off-site automático ligado** (era o único gate para `stable`): restic criptografado no Google Drive do Zé,
-   client OAuth próprio (`backup-vps-zewithane`, escopo `drive.file`), primeira cópia e restauração conferidas;
+   client OAuth próprio (`backup-vps-zehonorato`, escopo `drive.file`), primeira cópia e restauração conferidas;
    `site saude` mostra "backup externo confirmado". Detalhes no `docs/RUNBOOK.md` do `vps-platform`.
 3. Bucket R2 `cmdca-media` excluído (3 arquivos conferidos na VPS antes; cópia extra em `Z:\Dev\sandbox\r2-cmdca-final`).
 
@@ -99,4 +99,4 @@ está no CHANGELOG (2.2.0) e em [`docs/audit/RELATORIO-FINAL.md`](docs/audit/REL
   local: `ENFORCE_PRODUCTION_ENV=false` e `NEXT_PUBLIC_SERVER_URL` em HTTPS (ex.: `https://127.0.0.1:3100`), porque o
   config recusa origem HTTP fora do CI isolado.
 - Auditoria visual: `CHROME_PATH=<chrome.exe> node scripts/audit-visual.mjs <url> <pasta>`.
-- Servidor: skill `vps-zewithane`; `docs/OPERACOES.md` para backup, rollback, recuperação e incidente.
+- Servidor: skill `vps-zehonorato`; `docs/OPERACOES.md` para backup, rollback, recuperação e incidente.

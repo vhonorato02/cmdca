@@ -19,7 +19,7 @@ Verificacao: 2026-10-11. Base inicial: c71580083f5849ab5084737843144ba124e233cb.
 - VPS Ubuntu 24.04.5, 2 CPUs, 1.9 GiB RAM, 3 GiB swap, 14 GiB disco livre.
   Traefik central, Postgres privado, sites quarau e teste ativos. Coolify ausente.
   Handoff anterior sobre acesso recusado/Coolify ficou desatualizado.
-- cmdca.zewithane.vps.brz.dev.br resolve para 177.107.94.31. Isso comprova
+- cmdca.zehonorato.vps.brz.dev.br resolve para 177.107.94.31. Isso comprova
   DNS, nao publicacao CMDCA ou certificado TLS.
 
 ## Mapa

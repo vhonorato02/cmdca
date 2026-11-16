@@ -8,7 +8,7 @@ Portal institucional do Conselho Municipal dos Direitos da Criança e do Adolesc
 - Payload CMS 3 em `/admin`;
 - PostgreSQL 17 (banco `cmdca` no Postgres compartilhado da VPS);
 - arquivos e imagens em disco persistente (`/srv/sites/cmdca/data/media`), servidos por `/api/media/file/`;
-- entrega pelo GitHub Actions, em container, na VPS `zewithane` (plataforma `vps-platform`: Caddy + Docker);
+- entrega pelo GitHub Actions, em container, na VPS `zehonorato` (plataforma `vps-platform`: Caddy + Docker);
 - Node.js 24 e pnpm 11 fixados em `package.json`.
 
 O navegador acessa o Caddy (HTTPS automático) e o container Next.js/Payload. As migrations rodam quando o container sobe. Os dados ficam no Postgres da plataforma e a mídia num volume. Os dois entram no backup restic diário, que tem teste semanal de restauração e cópia fora da VPS (ver `docs/OPERACOES.md`). Produção: <https://www.cmdcapinda.org>. Detalhes em [`DEPLOY.md`](DEPLOY.md).

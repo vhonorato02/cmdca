@@ -162,7 +162,7 @@ Próxima ação: integrar correção de hierarquia, publicar revisão e repetir 
 - Escopo confirmado pelo usuário: CMDCA somente; implantação na VPS do Zé com Coolify. Vercel deixa de ser o destino de entrega.
 - Preservadas 11 alterações rastreadas e 3 arquivos novos anteriores. HANDOFF antigo declarava ausência de pendências em conflito com este log, será corrigido.
 - Agentes ativos: interface (frontend), codigo (CMS/backend), rapido (baseline), revisor (auditoria independente). Coordenador: entrega, QA, integração e commits.
-- SSH para zewithane-vps recusado com as chaves disponíveis; nenhum serviço remoto alterado. URL Coolify, domínio e acesso solicitados sem pedir segredos no chat.
+- SSH para zehonorato-vps recusado com as chaves disponíveis; nenhum serviço remoto alterado. URL Coolify, domínio e acesso solicitados sem pedir segredos no chat.
 - Banco Neon e armazenamento R2 operacionais preservados. Mutações de QA somente PostgreSQL efêmero no Actions.
 - Cache .next movido parcialmente ao C:; diretórios vazios readonly ficaram no Z:. Revisão automática bloqueou remoção residual. Preservados; diagnóstico usa cópia em C:\Users\Ze\.codex\tmp\cmdca-qa\runtime. Nenhum build de produção local.
 - Próxima ação: implementar artefato standalone e pipeline Coolify, executar QA remoto, integrar correções, revisar e registrar bloqueios reais.
